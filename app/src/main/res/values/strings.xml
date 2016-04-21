@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">100 фур</string>
+    <string name="loading">Пожалуйста, подождите</string>
+
+    //////////////Drawer Items//////////////////////////////////////////////////
+    <string name="nav_profile">Профиль</string>
+    <string name="nav_logout">Выйти</string>
+
+
+
+    ////////////Login Activity, Registration, Forgot password//////////////////////////////////////
+    <string name="email_hint">E-mail</string>
+    <string name="email_correction_toast">Некорректный e-mail</string>
+    <string name="password_registration_hint">Пароль (не менее 5 символов)</string>
+    <string name="password_login_hint">Пароль</string>
+    <string name="password_length_toast">Пароль должен быть не менее пяти символов</string>
+    <string name="password_confirmation_toast">Пароли не совпадают</string>
+    <string name="confirm_password_hint">Повторите пароль</string>
+    <string name="register_hint">Зарегистрироваться</string>
+    <string name="login_hint">Войти</string>
+    <string name="forgot_password_hint">Забыли?</string>
+    <string name="forgot_password_send_email_hint">Далее</string>
+    <string name="forgot_password_close">Завершить</string>
+    <string name="forgot_password_activity">Восстановление пароля</string>
+    <string name="registration_activity">Регистрация</string>
+    <string name="email_sent_text">На ваш Email\nбыло отправлено письмо\nдля восстановления пароля</string>
+
+
+
+
+    ///////////////Request Task////////////////////////////////////
+    <string name="something_went_wrong">Что-то пошло не так</string>
+    <string name="internet_not_exist">Отсутствует интернет!</string>
+    <string name="title_activity_main">Профиль</string>
+    
+    
+    /////////////Profile Fragment///////////////////////////////////
+    <string name="hint_fio">ФИО</string>
+    <string name="hint_company_name">Название компании</string>
+    <string name="hint_company_position">Должность</string>
+    <string name="hint_telephone">Телефон</string>
+    <string name="hint_save">Сохранить</string>
+
+
+    //////////////Main Activity/////////////////////////////////////
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+
+</resources>

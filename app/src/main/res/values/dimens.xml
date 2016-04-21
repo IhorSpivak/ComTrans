@@ -1,0 +1,10 @@
+<resources>
+    <dimen name="login_input_layout_side_padding">20dp</dimen>
+    <dimen name="forgot_password_button_bottom_margin">15dp</dimen>
+    <dimen name="forgot_password_text_top_margin">10dp</dimen>
+    <dimen name="forgot_password_text_size">18sp</dimen>
+    <dimen name="register_activity_input_top_margin">20dp</dimen>
+    <dimen name="register_button_text_size">18sp</dimen>
+    <dimen name="register_button_bottom_margin">10dp</dimen>
+
+</resources>
