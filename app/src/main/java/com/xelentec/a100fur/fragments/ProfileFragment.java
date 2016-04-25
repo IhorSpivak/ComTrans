@@ -12,7 +12,9 @@ import android.widget.EditText;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.xelentec.a100fur.R;
+import com.xelentec.a100fur.helpers.Const;
 import com.xelentec.a100fur.helpers.RequestTask;
+import com.xelentec.a100fur.helpers.Utility;
 import com.xelentec.a100fur.items.ResponseItem;
 
 /**
@@ -20,46 +22,89 @@ import com.xelentec.a100fur.items.ResponseItem;
  */
 public class ProfileFragment extends Fragment {
 
-    EditText etFio, etCompany,etPosition,etTelephone;
+    EditText etName, etLastName, etCompany,etPosition,etTelephone,etEmail;
     Button btnSaveProfile;
+    boolean isFromRegistration;
+
+    public static ProfileFragment newInstance(boolean isFromRegistration){
+        ProfileFragment fragment = new ProfileFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Const.IS_FROM_REGISTRATION,isFromRegistration);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile,container,false);
 
-        etFio = (EditText) v.findViewById(R.id.et_fio);
+        etName = (EditText) v.findViewById(R.id.et_first_name);
+        etLastName = (EditText)v.findViewById(R.id.et_last_name);
         etCompany = (EditText)v.findViewById(R.id.et_company);
         etPosition = (EditText)v.findViewById(R.id.et_company_position);
         etTelephone = (EditText)v.findViewById(R.id.et_telephone);
-        btnSaveProfile =(Button)v.findViewById(R.id.btn_save);
+        btnSaveProfile =(Button)v.findViewById(R.id.btn_save_profile);
+        etEmail = (EditText)v.findViewById(R.id.et_email);
 
-        getProfile();
+        isFromRegistration = getArguments().getBoolean(Const.IS_FROM_REGISTRATION);
 
-        btnSaveProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveProfile();
-            }
-        });
+        if(isFromRegistration){
+            btnSaveProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    JsonObject object = new JsonObject();
+                    object.addProperty("firstName", etName.getText().toString().trim());
+                    object.addProperty("lastName", etName.getText().toString().trim());
+                    object.addProperty("company",etCompany.getText().toString().trim());
+                    object.addProperty("companyPosition",etPosition.getText().toString().trim());
+                    object.addProperty("phone",etTelephone.getText().toString().trim());
+
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .add(R.id.container,RegistrationFragment.newInstance(object))
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+            etEmail.setVisibility(View.GONE);
+        }else {
+            etEmail.setVisibility(View.VISIBLE);
+            getProfile();
+            btnSaveProfile.setText(R.string.hint_save);
+            btnSaveProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    saveProfile();
+                }
+            });
+        }
+
+
+
+
 
         return v;
     }
 
     private void getProfile(){
 
+        etEmail.setText(Utility.getSavedData(Const.EMAIL));
 
-        String token = "111";
-        String url = getString(R.string.api_url)+getString(R.string.profile);
+        String url = getString(R.string.api_url)+getString(R.string.profile)+Utility.getToken();
+
+        JsonObject object = new JsonObject();
+        object.addProperty("token",Utility.getToken());
+
         RequestTask task = new RequestTask.RequestTaskBuilder(getActivity(),
-                url,token,new JsonObject(),RequestTask.HTTP_GET_REQUEST).obtainListener(new RequestTask.OnRequestObtainedListener() {
+                url, null,new JsonObject(),RequestTask.HTTP_GET_REQUEST).obtainListener(new RequestTask.OnRequestObtainedListener() {
             @Override
             public void onRequestObtained(ResponseItem responseItem) {
                 JsonObject response = new Gson().fromJson(responseItem.getResponse(),JsonObject.class);
 
-                etFio.setText(response.get("name").getAsString());
+                etName.setText(response.get("firstName").getAsString());
+                etLastName.setText(response.get("lastName").getAsString());
                 etCompany.setText(response.get("company").getAsString());
-                etPosition.setText(response.get("position").getAsString());
+                etPosition.setText(response.get("companyPosition").getAsString());
                 etTelephone.setText(response.get("phone").getAsString());
 
             }
@@ -75,16 +120,17 @@ public class ProfileFragment extends Fragment {
 
     private void saveProfile(){
         JsonObject object = new JsonObject();
-        object.addProperty("name",etFio.getText().toString().trim());
+        object.addProperty("firstName", etName.getText().toString().trim());
+        object.addProperty("lastName", etName.getText().toString().trim());
         object.addProperty("company",etCompany.getText().toString().trim());
-        object.addProperty("position",etPosition.getText().toString().trim());
+        object.addProperty("companyPosition",etPosition.getText().toString().trim());
         object.addProperty("phone",etTelephone.getText().toString().trim());
 
 
 
         String url = getString(R.string.api_url)+getString(R.string.profile);
         RequestTask task = new RequestTask.RequestTaskBuilder(getActivity(),
-                url,null,object,RequestTask.HTTP_PUT_REQUEST).obtainListener(new RequestTask.OnRequestObtainedListener() {
+                url,null,object,RequestTask.HTTP_POST_REQUEST).obtainListener(new RequestTask.OnRequestObtainedListener() {
             @Override
             public void onRequestObtained(ResponseItem responseItem) {
                 JsonObject response = new Gson().fromJson(responseItem.getResponse(),JsonObject.class);

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">100 фур</string>
+    <string name="app_name">ComTrans</string>
     <string name="loading">Пожалуйста, подождите</string>
 
     //////////////Drawer Items//////////////////////////////////////////////////
@@ -35,7 +35,8 @@
     
     
     /////////////Profile Fragment///////////////////////////////////
-    <string name="hint_fio">ФИО</string>
+    <string name="hint_name">Ваше имя</string>
+    <string name="hint_last_name">Ваша фамилия</string>
     <string name="hint_company_name">Название компании</string>
     <string name="hint_company_position">Должность</string>
     <string name="hint_telephone">Телефон</string>

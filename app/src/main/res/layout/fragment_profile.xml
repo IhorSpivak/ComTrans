@@ -1,46 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@android:color/white"
     android:layout_height="match_parent">
 
-    <EditText
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingEnd="@dimen/login_input_layout_side_padding"
+        android:paddingRight="@dimen/login_input_layout_side_padding"
+        android:paddingStart="@dimen/login_input_layout_side_padding"
+        android:paddingLeft="@dimen/login_input_layout_side_padding"
+        android:paddingTop="@dimen/profile_fragment_inputs_top_margin"
+        android:orientation="vertical">
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:theme="@style/TextLabel"
+            android:layout_height="wrap_content">
 
-        android:hint="@string/hint_fio"
-        android:id="@+id/et_fio"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:drawableEnd="@drawable/ic_pen"
+                android:drawableRight="@drawable/ic_pen"
+                android:hint="@string/hint_name"
+                android:id="@+id/et_first_name"/>
 
+        </android.support.design.widget.TextInputLayout>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:theme="@style/TextLabel"
+            android:layout_height="wrap_content">
 
-        android:hint="@string/hint_company_name"
-        android:id="@+id/et_company"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:drawableEnd="@drawable/ic_pen"
+                android:drawableRight="@drawable/ic_pen"
+                android:hint="@string/hint_last_name"
+                android:id="@+id/et_last_name"/>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        </android.support.design.widget.TextInputLayout>
 
-        android:hint="@string/hint_company_position"
-        android:id="@+id/et_company_position"/>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:theme="@style/TextLabel"
+            android:layout_height="wrap_content">
 
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:drawableEnd="@drawable/ic_pen"
+                android:drawableRight="@drawable/ic_pen"
+                android:hint="@string/hint_company_name"
+                android:id="@+id/et_company"/>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/hint_telephone"
-        android:id="@+id/et_telephone"
-        android:inputType="phone" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:theme="@style/TextLabel"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:drawableEnd="@drawable/ic_pen"
+                android:drawableRight="@drawable/ic_pen"
+                android:hint="@string/hint_company_position"
+                android:id="@+id/et_company_position"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:theme="@style/TextLabel"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_telephone"
+                android:textColor="@android:color/black"
+                android:drawableEnd="@drawable/ic_pen"
+                android:drawableRight="@drawable/ic_pen"
+                android:id="@+id/et_telephone"
+                android:inputType="phone"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:theme="@style/TextLabel"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/email_hint"
+                android:textColor="@android:color/black"
+                android:drawableEnd="@drawable/ic_pen"
+                android:drawableRight="@drawable/ic_pen"
+                android:id="@+id/et_email"
+                android:inputType="textEmailAddress"/>
+
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
 
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hint_save"
-        android:id="@+id/btn_save"/>
+        android:layout_marginRight="@dimen/login_input_layout_side_padding"
+        android:layout_marginEnd="@dimen/login_input_layout_side_padding"
+        android:layout_marginLeft="@dimen/login_input_layout_side_padding"
+        android:layout_marginStart="@dimen/login_input_layout_side_padding"
+        android:textColor="@android:color/white"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/forgot_password_button_bottom_margin"
+        android:text="@string/forgot_password_send_email_hint"
+        android:id="@+id/btn_save_profile"/>
 
 
 
 
-</LinearLayout>
+</RelativeLayout>

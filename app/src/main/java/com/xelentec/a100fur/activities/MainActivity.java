@@ -42,14 +42,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        getSupportActionBar().setTitle(getString(R.string.nav_profile));
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-
-
-            transaction.add(R.id.container,new ProfileFragment());
-
-
-
+        transaction.add(R.id.container,ProfileFragment.newInstance(false));
         transaction.commit();
     }
 
@@ -75,7 +70,8 @@ public class MainActivity extends AppCompatActivity
 
         switch (id){
             case R.id.nav_profile:
-                transaction.replace(R.id.container,new ProfileFragment());
+                getSupportActionBar().setTitle(getString(R.string.nav_profile));
+                transaction.replace(R.id.container,ProfileFragment.newInstance(false));
                 transaction.commit();
                 break;
             case R.id.nav_logout:

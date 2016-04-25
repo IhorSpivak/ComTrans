@@ -71,6 +71,22 @@ public class Utility {
 
     }
 
+    public static String getToken() {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        return appData.getString(Const.TOKEN, "").trim();
+    }
+
+    public static void saveToken(String token) {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        SharedPreferences.Editor editor = appData.edit();
+        editor.putString(Const.TOKEN, token);
+        editor.apply();
+    }
+
+
+
 
 
 

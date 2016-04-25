@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(!response.get("status").isJsonNull()&&response.get("status").getAsString().equals("1")){
                     Utility.saveData(Const.EMAIL,etEmail.getText().toString());
                     Utility.saveData(Const.PASSWORD,etPassword.getText().toString());
+                    Utility.saveToken(response.get("token").getAsString());
                     Intent i = new Intent(LoginActivity.this,MainActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
