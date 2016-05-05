@@ -2,7 +2,6 @@ package com.xelentec.a100fur.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +20,7 @@ import com.xelentec.a100fur.items.ResponseItem;
 /**
  * Created by Artco on 20.04.2016.
  */
-public class ForgotPasswordInputFragment extends Fragment {
+public class ForgotPasswordInputFragment extends BaseFragment {
 
     EditText etEmail;
     Button btnForgotPassword;

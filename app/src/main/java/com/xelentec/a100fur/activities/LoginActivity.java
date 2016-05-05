@@ -35,6 +35,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         etEmail.setText(Utility.getSavedData(Const.EMAIL));
         etPassword.setText(Utility.getSavedData(Const.PASSWORD));
 
+
+
+
         btnLogin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
         btnForgotPassword.setOnClickListener(this);
@@ -43,6 +46,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
     }
+
+
 
 
     private void signIn(){

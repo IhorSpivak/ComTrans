@@ -7,7 +7,6 @@
     <string name="nav_logout">Выйти</string>
 
 
-
     ////////////Login Activity, Registration, Forgot password//////////////////////////////////////
     <string name="email_hint">E-mail</string>
     <string name="email_correction_toast">Некорректный e-mail</string>
@@ -26,14 +25,12 @@
     <string name="email_sent_text">На ваш Email\nбыло отправлено письмо\nдля восстановления пароля</string>
 
 
-
-
     ///////////////Request Task////////////////////////////////////
     <string name="something_went_wrong">Что-то пошло не так</string>
     <string name="internet_not_exist">Отсутствует интернет!</string>
     <string name="title_activity_main">Профиль</string>
-    
-    
+
+
     /////////////Profile Fragment///////////////////////////////////
     <string name="hint_name">Ваше имя</string>
     <string name="hint_last_name">Ваша фамилия</string>
@@ -46,6 +43,9 @@
     //////////////Main Activity/////////////////////////////////////
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="switch_cam">switch</string>
+    <string name="camera_alert">camera alert</string>
 
 
 </resources>

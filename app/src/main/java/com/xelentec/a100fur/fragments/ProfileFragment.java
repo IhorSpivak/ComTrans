@@ -2,7 +2,6 @@ package com.xelentec.a100fur.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import com.xelentec.a100fur.items.ResponseItem;
 /**
  * Created by Artco on 15.04.2016.
  */
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends BaseFragment {
 
     EditText etName, etLastName, etCompany,etPosition,etTelephone,etEmail;
     Button btnSaveProfile;

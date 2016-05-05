@@ -27,7 +27,6 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.concurrent.TimeUnit;
 
 
 

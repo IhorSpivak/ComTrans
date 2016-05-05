@@ -3,7 +3,6 @@ package com.xelentec.a100fur.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import com.xelentec.a100fur.items.ResponseItem;
 /**
  * Created by Artco on 25.04.2016.
  */
-public class RegistrationFragment extends Fragment {
+public class RegistrationFragment extends BaseFragment {
     EditText etEmail, etPassword, etConfirmPassword;
     Button btnRegister;
 
