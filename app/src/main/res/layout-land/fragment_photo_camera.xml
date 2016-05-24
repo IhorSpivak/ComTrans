@@ -1,44 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
 
 
 
     <RelativeLayout
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@android:color/black"
         android:id="@+id/bottomBar">
 
-        <Button
-            android:id="@+id/button_capture"
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Capture"
-            />
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:id="@+id/progressLayout">
+
+            <ru.comtrans.views.VerticalTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/photo_count"
+                android:textColor="@android:color/white"
+                android:paddingEnd="3dp"
+                android:paddingRight="3dp"
+                android:layout_alignParentBottom="true"
+                android:gravity="bottom"
+                android:text="1/18 фото"/>
+
+            <ru.comtrans.views.VerticalTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/defects_count"
+                android:textColor="@android:color/white"
+                android:paddingLeft="3dp"
+                android:paddingStart="3dp"
+                android:gravity="bottom"
+                android:text="0 дефектов"/>
+
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="5dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_above="@id/photo_count"
+                android:layout_below="@id/defects_count"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:progressDrawable="@drawable/vertical_progressbar"
+                android:progress="40"
+                />
+
+        </RelativeLayout>
+
+        <ListView
+            android:layout_width="@dimen/photo_list_width"
+            android:stackFromBottom="true"
+            android:id="@android:id/list"
+            android:scrollbars="none"
+            android:layout_toEndOf="@id/progressLayout"
+            android:layout_toRightOf="@id/progressLayout"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            android:dividerHeight="2dp"
+            android:divider="@null"
+            android:layout_height="match_parent"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@android:id/list"
+            android:layout_toEndOf="@android:id/list">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_take_photo"
+                android:layout_centerInParent="true"/>
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_photo_defect"
+                android:layout_marginTop="15dp"
+                />
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_photo_done"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="15dp"
+                />
+
+
+        </RelativeLayout>
+
 
     </RelativeLayout>
 
 
-    <FrameLayout
+    <ru.comtrans.camera.CameraPreview
+        android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toStartOf="@id/bottomBar"
         android:layout_toLeftOf="@id/bottomBar"
-        android:id="@+id/previewContainer">
+        android:orientation="vertical"/>
 
-
-
-
-
-
-    </FrameLayout>
 
 
 

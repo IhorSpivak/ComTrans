@@ -9,9 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
-
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,8 +40,13 @@ public class CameraPreviewFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_camera_preview,container,false);
         myContext = getActivity();
+
+
         mPreview = (CameraPreview) v.findViewById(R.id.camera_preview);
         mPreview.setCamera(mCamera);
+
+
+
         return v;
     }
 
@@ -154,7 +157,7 @@ public class CameraPreviewFragment extends BaseFragment {
             Camera.getCameraInfo(i, info);
             if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 cameraId = i;
-                boolean cameraFront = false;
+ boolean                cameraFront = false;
                 break;
             }
         }
