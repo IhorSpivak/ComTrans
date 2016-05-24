@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-
 
 
 
@@ -117,11 +116,17 @@
         android:layout_toLeftOf="@id/bottomBar"
         android:orientation="vertical"/>
 
-
-
-
-
-
-
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:minHeight="?attr/actionBarSize"
+        android:background="#80000000"
+        app:contentInsetLeft="0dp"
+        android:layout_toStartOf="@id/bottomBar"
+        android:layout_toLeftOf="@id/bottomBar"
+        app:contentInsetStart="0dp"
+        app:popupTheme="@style/Theme.AppCompat.Light"
+        app:theme="@style/Theme.AppCompat"/>
 
 </RelativeLayout>
