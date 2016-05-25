@@ -108,8 +108,8 @@
     </RelativeLayout>
 
 
-    <ru.comtrans.camera.CameraPreview
-        android:id="@+id/camera_preview"
+    <FrameLayout
+        android:id="@+id/cameraContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toStartOf="@id/bottomBar"

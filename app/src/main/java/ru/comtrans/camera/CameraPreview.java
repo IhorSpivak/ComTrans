@@ -9,6 +9,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
+import java.util.List;
+
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
     private Camera mCamera;
@@ -24,6 +26,20 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         super(context,attrs);
         mHolder = getHolder();
         mHolder.addCallback(this);
+    }
+
+
+    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes) {
+        Camera.Size bestSize = sizes.get(0);
+        int largestArea = bestSize.width * bestSize.height;
+        for (Camera.Size s : sizes) {
+            int area = s.width * s.height;
+            if (area > largestArea) {
+                bestSize = s;
+                largestArea = area;
+            }
+        }
+        return bestSize;
     }
 
 
@@ -53,9 +69,18 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         } catch (Exception e) {
             // ignore: tried to stop a non-existent preview
         }
-        // set preview size and make any resize, rotate or
-        // reformatting changes here
-        // start preview with new settings
+        try{
+            setCamera(mCamera);
+            setCameraDisplayOrientation(0);
+            Camera.Parameters parameters = mCamera.getParameters();
+            Camera.Size s = null;
+            s = getOptimalPreviewSize(parameters.getSupportedPreviewSizes());
+            parameters.setPreviewSize(s.width, s.height);
+            mCamera.setParameters(parameters);
+        }catch (Exception ignored){
+
+        }
+
         setCamera(camera);
         setCameraDisplayOrientation(0);
         try {
@@ -68,9 +93,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         Log.d("TAG","surface changed");
-        // If your preview can change or rotate, take care of those events here.
-        // Make sure to stop the preview before resizing or reformatting it.
+
         refreshCamera(mCamera);
+
 
 
 

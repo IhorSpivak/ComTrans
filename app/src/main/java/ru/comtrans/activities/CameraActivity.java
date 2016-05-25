@@ -30,8 +30,7 @@ public class CameraActivity extends AppCompatActivity {
 //
 //        decorView.setSystemUiVisibility(uiOptions);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         getSupportFragmentManager().beginTransaction().replace(R.id.container,new CameraFragment()).commit();
     }
 
