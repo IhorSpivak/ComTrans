@@ -12,8 +12,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
         android:background="@android:color/black"
         android:id="@+id/bottomBar">
 
@@ -66,8 +66,8 @@
             android:scrollbars="none"
             android:layout_toEndOf="@id/progressLayout"
             android:layout_toRightOf="@id/progressLayout"
-            android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:dividerHeight="2dp"
             android:divider="@null"
             android:layout_height="match_parent"/>
@@ -81,12 +81,14 @@
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
+                android:id="@+id/take_photo"
                 android:src="@drawable/ic_take_photo"
                 android:layout_centerInParent="true"/>
 
             <ImageView
                 android:layout_width="70dp"
                 android:layout_height="70dp"
+                android:id="@+id/take_defect"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/ic_photo_defect"
                 android:layout_marginTop="15dp"
@@ -95,6 +97,7 @@
             <ImageView
                 android:layout_width="45dp"
                 android:layout_height="45dp"
+                android:id="@+id/btn_done"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/ic_photo_done"
                 android:layout_alignParentBottom="true"
@@ -110,6 +113,7 @@
 
     <FrameLayout
         android:id="@+id/cameraContainer"
+        android:background="@android:color/black"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toStartOf="@id/bottomBar"

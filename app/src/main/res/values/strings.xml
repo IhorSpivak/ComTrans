@@ -48,4 +48,8 @@
     <string name="camera_alert">camera alert</string>
 
 
+    /////////////////Photo Activity///////////////////////////////////////
+    <string name="photo_save_error">Фотография не сохранена, произошла ошибка.</string>
+
+
 </resources>

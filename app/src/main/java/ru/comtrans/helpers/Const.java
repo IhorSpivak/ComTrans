@@ -12,6 +12,12 @@ public class Const {
     public static final String EXTRA_PROFILE_OBJECT = "extra_profile_object";
 
 
+    public static final String EXTRA_PHOTO_ITEM = "extra_photo_item";
+
+    public static final String CAMERA_PREVIEW = "camera_preview";
+    public static final String PHOTO_VIEWER = "photo_viewer";
+
+
 
 
 

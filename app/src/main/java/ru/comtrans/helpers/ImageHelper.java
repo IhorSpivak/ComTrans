@@ -27,7 +27,7 @@ public class ImageHelper {
     public static Bitmap compressBitmap(String path) throws IOException {
             File file = new File(path);
 
-            Bitmap bitmap = ImageHelper.decodeUri(path);
+            Bitmap bitmap = decodeUri(path);
             FileOutputStream stream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 

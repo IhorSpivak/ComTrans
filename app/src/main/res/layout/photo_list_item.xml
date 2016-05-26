@@ -2,18 +2,59 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="@dimen/photo_list_width"
-    android:layout_height="@dimen/photo_list_width"
+    android:background="@android:color/black"
+    android:layout_height="@dimen/photo_list_height"
    >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@drawable/photo_background">
+       >
+
+        <RelativeLayout
+            android:layout_width="@dimen/photo_list_height"
+            android:layout_height="@dimen/photo_list_height"
+            android:background="@drawable/photo_background"
+            android:layout_centerVertical="true"
+            android:id="@+id/image_layout">
+
+            <ImageView
+                android:layout_width="@dimen/photo_image_size"
+                android:layout_height="@dimen/photo_image_size"
+                android:layout_centerInParent="true"
+                android:scaleType="centerCrop"
+                android:id="@+id/img_photo"
+                />
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_add_photo"
+                android:id="@+id/img_add_photo"
+                />
+
+
+        </RelativeLayout>
 
 
 
-    </LinearLayout>
+        <ru.comtrans.views.VerticalTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/title"
+            android:layout_toEndOf="@id/image_layout"
+            android:layout_toRightOf="@id/image_layout"
+            android:ellipsize="end"
+            android:textColor="@android:color/white"
+            android:text="Гос номер"
+            android:gravity="bottom|center"/>
+
+
+    </RelativeLayout>
+
+
 
 
 
