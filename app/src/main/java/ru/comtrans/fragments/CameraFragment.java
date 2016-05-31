@@ -1,18 +1,26 @@
 package ru.comtrans.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -23,6 +31,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import ru.comtrans.R;
+import ru.comtrans.activities.CameraActivity;
 import ru.comtrans.adapters.CameraPhotoAdapter;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.items.PhotoItem;
@@ -33,26 +42,42 @@ import ru.comtrans.items.PhotoItem;
 public class CameraFragment extends Fragment implements View.OnClickListener{
     ListView listView;
     Toolbar toolbar;
+    TextView toolbarTitle;
+    TextView defectsCount;
+    TextView photosCount;
     ImageView takePhoto, takeDefect, done;
     CameraPreviewFragment cameraPreviewFragment;
     PhotoFragment photoFragment;
-    CameraPhotoAdapter photoAdapter;
+    CountUpdateReceiver countUpdateReceiver = null;
+    ProgressBar progressBar;
+    String[] titles;
+    private CameraActivity activity;
 
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_camera,container,false);
+        final View v = inflater.inflate(R.layout.fragment_camera,container,false);
         toolbar = (Toolbar)v.findViewById(R.id.toolbar);
+        toolbarTitle  = (TextView) toolbar.findViewById(R.id.toolbarTitle);
+        toolbarTitle.setSelected(true);
 
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
+
+
+
+        activity = (CameraActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        activity.getSupportActionBar().setTitle("");
 
         takeDefect = (ImageView) v.findViewById(R.id.take_defect);
         takePhoto = (ImageView) v.findViewById(R.id.take_photo);
         done = (ImageView) v.findViewById(R.id.btn_done);
+        progressBar = (ProgressBar)v.findViewById(R.id.progress_bar);
+        defectsCount = (TextView)v.findViewById(R.id.defects_count);
+        photosCount = (TextView)v.findViewById(R.id.photos_count);
+
 
         takeDefect.setOnClickListener(this);
         takePhoto.setOnClickListener(this);
@@ -61,28 +86,44 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
 
         listView = (ListView)v.findViewById(android.R.id.list);
-        ArrayList<PhotoItem> items = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            items.add(new PhotoItem());
-        }
-        photoAdapter = new CameraPhotoAdapter(items,getActivity());
-        listView.setAdapter(photoAdapter);
+
+        titles = getResources().getStringArray(R.array.photo_general);
+
+        toolbarTitle.setText(titles[0]);
+        setDefectsCount(0);
+        setPhotosCount(0);
+        setProgressCount(0);
+
+        countUpdateReceiver = new CountUpdateReceiver();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(countUpdateReceiver,new IntentFilter(Const.RECEIVE_UPDATE_COUNT));
+
+
+        listView.setAdapter(activity.getPhotoAdapter());
+
+        listView.post(new Runnable() {
+            @Override
+            public void run() {
+                listView.setSelection(activity.getPhotoAdapter().getCount());
+            }
+        });
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PhotoItem photoItem = photoAdapter.getItem(position);
+                activity.updatePositionInAdapter(position);
+                PhotoItem photoItem = activity.getPhotoAdapter().getItem(position);
+                Log.d("TAG","imagepath "+photoItem.getImagePath());
+                Log.d("TAG","camera preview "+getFragmentManager().findFragmentByTag(Const.CAMERA_PREVIEW));
+                Log.d("TAG","photo preview "+getFragmentManager().findFragmentByTag(Const.PHOTO_VIEWER));
+
+                toolbarTitle.setText(photoItem.getTitle());
                 if(photoItem.getImagePath()==null){
                     if(getFragmentManager().findFragmentByTag(Const.CAMERA_PREVIEW)==null)
                          replaceWithCamera();
                 }else {
-                    if(photoFragment != null
-                            &&getFragmentManager().findFragmentByTag(Const.PHOTO_VIEWER)!=null
-                            &&!photoFragment.getItem().getImagePath().equals(photoItem.getImagePath())){
-                        replaceWithPhotoViewer(photoItem);
-                    }else if(photoFragment==null){
-                        replaceWithPhotoViewer(photoItem);
+                    if(getFragmentManager().findFragmentByTag(Const.PHOTO_VIEWER)==null){
+                        replaceWithPhotoViewer(photoItem,position);
                     }
-
                 }
             }
         });
@@ -98,53 +139,134 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         photoFragment = null;
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
     }
-    private void replaceWithPhotoViewer(PhotoItem item){
-        photoFragment = PhotoFragment.newInstance(item);
+    private void replaceWithPhotoViewer(PhotoItem item,int position){
+        photoFragment = PhotoFragment.newInstance(item,position);
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,photoFragment,Const.PHOTO_VIEWER).commit();
     }
+
 
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.take_defect:
+                takePicture(true,0);
                 break;
             case R.id.take_photo:
-                takePhoto.setEnabled(false);
-                try {
-                    cameraPreviewFragment.getCamera().takePicture(null, null, new Camera.PictureCallback() {
-                        @Override
-                        public void onPictureTaken(byte[] data, Camera camera) {
-                            try {
-                                File directory = new File(Environment.getExternalStorageDirectory(),"/Comtrans/photos/");
-                                if(directory.mkdirs()||directory.exists()){
-                                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-                                    File photoFile = new File(directory, "comtans" + timeStamp + ".jpg");
-                                    FileOutputStream fos = new FileOutputStream(photoFile);
-                                    fos.write(data);
-                                    fos.close();
-                                    PhotoItem item = new PhotoItem();
-                                    item.setDefect(false);
-                                    item.setImagePath(photoFile.getAbsolutePath());
-                                    photoAdapter.addItem(item);
-                                    replaceWithPhotoViewer(item);
-                                }else {
-                                    Toast.makeText(getActivity(),R.string.photo_save_error,Toast.LENGTH_SHORT).show();
-                                }
-
-                                takePhoto.setEnabled(true);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                takePicture(false,activity.getPhotoAdapter().getSelectedPosition());
                 break;
             case R.id.btn_done:
+                getActivity().finish();
                 break;
 
         }
+    }
+
+    private void setDefectsCount(int count){
+        defectsCount.setText(getResources().getQuantityString(R.plurals.defects_count,count,count));
+    }
+
+    private void setPhotosCount(int count){
+        photosCount.setText(String.format(getString(R.string.photos_count),count,titles.length));
+    }
+
+    private void setProgressCount(int count){
+        if(count!=0) {
+            int percent = (int)((count * 100.0f) / titles.length);
+            Log.d("TAG","currentProgress "+percent);
+            progressBar.setProgress(percent);
+        }else {
+            progressBar.setProgress(0);
+        }
+    }
+
+    private void takePicture(final boolean isDefect, final int selectedPosition){
+        switchButtons(false);
+        try {
+            cameraPreviewFragment.getCamera().takePicture(null, null, new Camera.PictureCallback() {
+                @Override
+                public void onPictureTaken(byte[] data, Camera camera) {
+                    PhotoItem item = createFileFromData(data,isDefect);
+                    switchButtons(true);
+                    if(item!=null){
+                        if(isDefect){
+                            int suffix = activity.getPhotoAdapter().getDefectsCount()+1;
+                            String defectTitle = String.format(getString(R.string.defect_n),suffix);
+                            item.setTitle(defectTitle);
+                            activity.getPhotoAdapter().addItem(item);
+                            listView.setSelection(activity.getPhotoAdapter().getSelectedPosition());
+                            setDefectsCount(activity.getPhotoAdapter().getDefectsCount());
+                            replaceWithCamera();
+                        }else {
+                            item.setTitle(toolbarTitle.getText().toString());
+                            activity.getPhotoAdapter().setItem(item,activity.getPhotoAdapter().getSelectedPosition());
+                            setPhotosCount(activity.getPhotoAdapter().getPhotosCount());
+                            setProgressCount(activity.getPhotoAdapter().getPhotosCount());
+                            replaceWithPhotoViewer(item,selectedPosition);
+                        }
+
+
+                    }
+                }
+            });
+        }catch (Exception e){
+            switchButtons(true);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Method helps to block/unblock buttons when camera is in takePicture mode.
+     * @param disableOrEnable
+     *             pass true if you want all buttons to be enable
+     *             or false to disable.
+     */
+    private void switchButtons(boolean disableOrEnable){
+        takeDefect.setEnabled(disableOrEnable);
+        takePhoto.setEnabled(disableOrEnable);
+        done.setEnabled(disableOrEnable);
+    }
+
+    private PhotoItem createFileFromData(byte[] data,boolean isDefect){
+        try {
+            File directory = new File(Environment.getExternalStorageDirectory(),"/Comtrans/photos/");
+            if(directory.mkdirs()||directory.exists()){
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+                String prefix = isDefect? getString(R.string.prefix_defect) : getString(R.string.prefix_photo);
+                File photoFile = new File(directory, prefix + timeStamp + ".jpg");
+                FileOutputStream fos = new FileOutputStream(photoFile);
+                fos.write(data);
+                fos.close();
+                PhotoItem item = new PhotoItem();
+                item.setDefect(isDefect);
+                item.setImagePath(photoFile.getAbsolutePath());
+
+                return item;
+
+            }else {
+                Toast.makeText(getActivity(),R.string.photo_save_error,Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private class CountUpdateReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setDefectsCount(activity.getPhotoAdapter().getDefectsCount());
+            setPhotosCount(activity.getPhotoAdapter().getPhotosCount());
+            toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(countUpdateReceiver);
+        countUpdateReceiver = null;
     }
 }

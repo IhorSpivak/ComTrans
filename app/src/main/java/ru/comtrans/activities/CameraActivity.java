@@ -3,14 +3,24 @@ package ru.comtrans.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.util.ArrayList;
+
 import ru.comtrans.R;
+import ru.comtrans.adapters.CameraPhotoAdapter;
 import ru.comtrans.fragments.CameraFragment;
+import ru.comtrans.items.PhotoItem;
 
 
 public class CameraActivity extends AppCompatActivity {
+
+    private CameraPhotoAdapter photoAdapter;
+    String[] titles;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +37,33 @@ public class CameraActivity extends AppCompatActivity {
 //        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 //
 //        decorView.setSystemUiVisibility(uiOptions);
-
+        final ArrayList<PhotoItem> items = new ArrayList<>();
+        titles = getResources().getStringArray(R.array.photo_general);
+        for (int i=titles.length-1; i>=0; i--) {
+            items.add(new PhotoItem(titles[i]));
+        }
+        photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container,new CameraFragment()).commit();
     }
 
+    public CameraPhotoAdapter getPhotoAdapter() {
+        return photoAdapter;
+    }
+
+
+    public void updatePositionInAdapter(int position){
+        photoAdapter.setSelectedPosition(position);
+        photoAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

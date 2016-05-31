@@ -2,8 +2,10 @@ package ru.comtrans.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class VerticalTextView extends TextView {
@@ -14,9 +16,9 @@ public class VerticalTextView extends TextView {
         final int gravity = getGravity();
         if(Gravity.isVertical(gravity) && (gravity&Gravity.VERTICAL_GRAVITY_MASK) == Gravity.BOTTOM) {
             setGravity((gravity&Gravity.HORIZONTAL_GRAVITY_MASK) | Gravity.TOP);
-            topDown = false;
-        }else
             topDown = true;
+        }else
+            topDown = false;
     }
 
     @Override
@@ -26,20 +28,23 @@ public class VerticalTextView extends TextView {
     }
 
     @Override
-    protected boolean setFrame(int l, int t, int r, int b){
-        return super.setFrame(l, t, l+(b-t), t+(r-l));
-    }
+    protected void onDraw(Canvas canvas){
+        TextPaint textPaint = getPaint();
+        textPaint.setColor(getCurrentTextColor());
+        textPaint.drawableState = getDrawableState();
 
-    @Override
-    public void draw(Canvas canvas){
+        canvas.save();
+
         if(topDown){
-            canvas.translate(getHeight(), 0);
+            canvas.translate(getWidth(), 0);
             canvas.rotate(90);
         }else {
-            canvas.translate(0, getWidth());
+            canvas.translate(0, getHeight());
             canvas.rotate(-90);
         }
-        canvas.clipRect(0, 0, getWidth(), getHeight(), android.graphics.Region.Op.REPLACE);
-        super.draw(canvas);
+
+        canvas.translate(getCompoundPaddingLeft(), getExtendedPaddingTop());
+        getLayout().draw(canvas);
+        canvas.restore();
     }
 }

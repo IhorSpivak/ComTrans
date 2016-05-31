@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     >
 
 
@@ -12,9 +14,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        android:background="@android:color/black"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         android:id="@+id/bottomBar">
 
         <RelativeLayout
@@ -26,13 +27,12 @@
             <ru.comtrans.views.VerticalTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/photo_count"
+                android:id="@+id/photos_count"
                 android:textColor="@android:color/white"
                 android:paddingEnd="3dp"
                 android:paddingRight="3dp"
                 android:layout_alignParentBottom="true"
-                android:gravity="bottom"
-                android:text="1/18 фото"/>
+               />
 
             <ru.comtrans.views.VerticalTextView
                 android:layout_width="wrap_content"
@@ -41,8 +41,7 @@
                 android:textColor="@android:color/white"
                 android:paddingLeft="3dp"
                 android:paddingStart="3dp"
-                android:gravity="bottom"
-                android:text="0 дефектов"/>
+               />
 
 
             <ProgressBar
@@ -50,7 +49,7 @@
                 android:layout_width="5dp"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:layout_above="@id/photo_count"
+                android:layout_above="@id/photos_count"
                 android:layout_below="@id/defects_count"
                 style="@android:style/Widget.ProgressBar.Horizontal"
                 android:progressDrawable="@drawable/vertical_progressbar"
@@ -61,7 +60,8 @@
 
         <ListView
             android:layout_width="@dimen/photo_list_width"
-            android:stackFromBottom="true"
+            android:layout_height="match_parent"
+            android:stackFromBottom="false"
             android:id="@android:id/list"
             android:scrollbars="none"
             android:layout_toEndOf="@id/progressLayout"
@@ -69,8 +69,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp"
             android:dividerHeight="2dp"
-            android:divider="@null"
-            android:layout_height="match_parent"/>
+            android:divider="@null"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -113,7 +112,6 @@
 
     <FrameLayout
         android:id="@+id/cameraContainer"
-        android:background="@android:color/black"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toStartOf="@id/bottomBar"
@@ -131,6 +129,19 @@
         android:layout_toLeftOf="@id/bottomBar"
         app:contentInsetStart="0dp"
         app:popupTheme="@style/Theme.AppCompat.Light"
-        app:theme="@style/Theme.AppCompat"/>
+        app:theme="@style/Theme.AppCompat">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:shadowColor="@android:color/black"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center"
+            android:id="@+id/toolbarTitle" />
+
+        </android.support.v7.widget.Toolbar>
 
 </RelativeLayout>

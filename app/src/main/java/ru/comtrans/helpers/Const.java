@@ -13,9 +13,12 @@ public class Const {
 
 
     public static final String EXTRA_PHOTO_ITEM = "extra_photo_item";
+    public static final String EXTRA_SELECTED_POSITION = "extra_selected_position";
 
     public static final String CAMERA_PREVIEW = "camera_preview";
     public static final String PHOTO_VIEWER = "photo_viewer";
+
+    public static final String RECEIVE_UPDATE_COUNT = "update_count";
 
 
 

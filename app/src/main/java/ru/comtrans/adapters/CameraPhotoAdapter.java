@@ -11,7 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
 
@@ -24,16 +27,28 @@ import ru.comtrans.items.PhotoItem;
 public class CameraPhotoAdapter extends BaseAdapter {
     private ArrayList<PhotoItem> items;
     private Context context;
+    int selectedPosition = 0; //needs to highlight first selected position
+
+    public void setSelectedPosition(int selectedPosition) {
+        this.selectedPosition = selectedPosition;
+    }
+
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
 
     public CameraPhotoAdapter(ArrayList<PhotoItem> items, Context context){
         this.items = items;
         this.context = context;
+        this.selectedPosition = items.size()-1;
     }
 
     static class ViewHolder{
         public TextView title;
         public ImageView photo;
         public ImageView addPhoto;
+        public ImageView imgDefect;
+        public RelativeLayout photoLayout;
     }
 
     @Override
@@ -46,9 +61,39 @@ public class CameraPhotoAdapter extends BaseAdapter {
         return items.get(position);
     }
 
-    public void addItem(PhotoItem item) {
-        items.add(item);
+    public void setItem(PhotoItem item,int position) {
+        items.remove(position);
+        items.add(position,item);
         notifyDataSetChanged();
+    }
+
+    public void removeItem(int position){
+        items.remove(position);
+        notifyDataSetChanged();
+    }
+
+    public void addItem(PhotoItem item) {
+        items.add(0,item);
+        selectedPosition++;
+        notifyDataSetChanged();
+    }
+
+    public int getDefectsCount(){
+        int count = 0;
+        for(PhotoItem item:items){
+            if(item.isDefect())
+                count++;
+        }
+        return count;
+    }
+
+    public int getPhotosCount(){
+        int count = 0;
+        for(PhotoItem item:items){
+            if(item.getImagePath()!=null&&!item.isDefect())
+                count++;
+        }
+        return count;
     }
 
     @Override
@@ -66,31 +111,51 @@ public class CameraPhotoAdapter extends BaseAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.photo_list_item, parent, false);
             viewHolder = new ViewHolder();
-           // viewHolder.title = (TextView) convertView.findViewById(R.id.photo_title);
+            viewHolder.title = (TextView) convertView.findViewById(R.id.title);
             viewHolder.photo  = (ImageView)convertView.findViewById(R.id.img_photo);
             viewHolder.addPhoto = (ImageView)convertView.findViewById(R.id.img_add_photo);
+            viewHolder.imgDefect = (ImageView)convertView.findViewById(R.id.img_defect);
+            viewHolder.photoLayout = (RelativeLayout)convertView.findViewById(R.id.photo_layout);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+
+        if(selectedPosition==position){
+            viewHolder.photoLayout.setBackgroundResource(R.drawable.photo_selected_background);
+        }else {
+            viewHolder.photoLayout.setBackgroundResource(R.drawable.photo_not_selected_background);
+        }
+
+        if(item.isDefect()){
+            viewHolder.imgDefect.setVisibility(View.VISIBLE);
+        }else {
+            viewHolder.imgDefect.setVisibility(View.GONE);
+        }
+
+        viewHolder.title.setText(item.getTitle());
+
         if(item.getImagePath()!=null) {
             viewHolder.addPhoto.setVisibility(View.GONE);
             viewHolder.photo.setVisibility(View.VISIBLE);
 
-            try {
-                int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, context.getResources().getDisplayMetrics());
-                Bitmap bitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(item.getImagePath()), value, value);
 
-                Matrix matrix = new Matrix();
-                matrix.postRotate(270);
-                Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
-                        matrix, true);
-                bitmap.recycle();
-                viewHolder.photo.setImageBitmap(rotatedBitmap);
-            }catch (NullPointerException e){
-                e.printStackTrace();
-                //if photo has been deleted in other app
-            }
+            Ion.with(viewHolder.photo).load(item.getImagePath());
+
+//            try {
+//                int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, context.getResources().getDisplayMetrics());
+//                Bitmap bitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(item.getImagePath()), value, value);
+//
+//                Matrix matrix = new Matrix();
+//                matrix.postRotate(270);
+//                Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
+//                        matrix, true);
+//                bitmap.recycle();
+//                viewHolder.photo.setImageBitmap(rotatedBitmap);
+//            }catch (NullPointerException e){
+//                e.printStackTrace();
+//                //if photo has been deleted in other app
+//            }
         }else {
             viewHolder.addPhoto.setVisibility(View.VISIBLE);
             viewHolder.photo.setVisibility(View.INVISIBLE);
