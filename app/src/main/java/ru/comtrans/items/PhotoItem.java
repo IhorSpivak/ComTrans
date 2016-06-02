@@ -15,6 +15,11 @@ public class PhotoItem implements Parcelable {
 
     public PhotoItem(){}
 
+    public PhotoItem(String title,boolean isDefect){
+        this.title = title;
+        this.isDefect = isDefect;
+    }
+
     public PhotoItem(String title){
         this.title = title;
     }

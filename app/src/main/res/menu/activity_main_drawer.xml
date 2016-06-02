@@ -9,6 +9,16 @@
             android:title="@string/nav_profile" />
 
         <item
+            android:id="@+id/nav_photo"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/nav_photo" />
+
+        <item
+            android:id="@+id/nav_video"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/nav_video" />
+
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/nav_logout" />

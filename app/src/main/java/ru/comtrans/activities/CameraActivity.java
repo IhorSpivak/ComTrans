@@ -2,6 +2,7 @@ package ru.comtrans.activities;
 
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.Window;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import ru.comtrans.R;
 import ru.comtrans.adapters.CameraPhotoAdapter;
 import ru.comtrans.fragments.CameraFragment;
+import ru.comtrans.fragments.VideoFragment;
+import ru.comtrans.helpers.Const;
 import ru.comtrans.items.PhotoItem;
 
 
@@ -29,22 +32,42 @@ public class CameraActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_camera);
 
-//        View decorView = getWindow().getDecorView();
-//// Hide both the navigation bar and the status bar.
-//// SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
-//// a general rule, you should design your app to hide the status bar whenever you
-//// hide the navigation bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-//
-//        decorView.setSystemUiVisibility(uiOptions);
+        int flag = getIntent().getIntExtra(Const.CAMERA_MODE,0);
+        Fragment fragment = null;
         final ArrayList<PhotoItem> items = new ArrayList<>();
-        titles = getResources().getStringArray(R.array.photo_general);
-        for (int i=titles.length-1; i>=0; i--) {
-            items.add(new PhotoItem(titles[i]));
-        }
-        photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
+        switch (flag){
+            case 0:
+                finish();
+                break;
+            case Const.MODE_PHOTO:
+                titles = getResources().getStringArray(R.array.photo_general);
+                for (int i=titles.length-1; i>=0; i--) {
+                    if(i==titles.length-1){
+                        PhotoItem defectItem = new PhotoItem(String.format(getString(R.string.defect_n),1));
+                        defectItem.setDefect(true);
+                        items.add(defectItem);
+                    }
+                    PhotoItem item = new PhotoItem(titles[i]);
+                    items.add(item);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,new CameraFragment()).commit();
+                }
+                photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
+                fragment = new CameraFragment();
+                 break;
+            case Const.MODE_VIDEO:
+
+                titles = getResources().getStringArray(R.array.video_functionality_test);
+                for (int i=titles.length-1; i>=0; i--) {
+                    items.add(new PhotoItem(titles[i]));
+                }
+                photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
+                fragment = new VideoFragment();
+                break;
+
+        }
+
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
     }
 
     public CameraPhotoAdapter getPhotoAdapter() {

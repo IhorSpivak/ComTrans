@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import ru.comtrans.R;
 import ru.comtrans.fragments.ProfileFragment;
+import ru.comtrans.helpers.Const;
 
 
 public class MainActivity extends AppCompatActivity
@@ -69,6 +70,16 @@ public class MainActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(getString(R.string.nav_profile));
                 transaction.replace(R.id.container,ProfileFragment.newInstance(false));
                 transaction.commit();
+                break;
+            case R.id.nav_photo:
+                i = new Intent(MainActivity.this,CameraActivity.class);
+                i.putExtra(Const.CAMERA_MODE,Const.MODE_PHOTO);
+                startActivity(i);
+                break;
+            case R.id.nav_video:
+                i = new Intent(MainActivity.this,CameraActivity.class);
+                i.putExtra(Const.CAMERA_MODE,Const.MODE_VIDEO);
+                startActivity(i);
                 break;
             case R.id.nav_logout:
                 i = new Intent(MainActivity.this,LoginActivity.class);

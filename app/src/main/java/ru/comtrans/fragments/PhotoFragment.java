@@ -80,26 +80,15 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.re_photo:
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Const.RE_PHOTO));
                 break;
             case R.id.photo_full_screen:
                 Intent i = new Intent(getActivity(), GalleryActivity.class);
                 i.putExtra(Const.EXTRA_PHOTO_ITEM,item);
-                startActivityForResult(i,102);
+                startActivityForResult(i,Const.GALLERY_RESULT);
                 break;
             case R.id.delete_photo:
-                if(imgFile.delete()){
-                    if(!item.isDefect()) {
-                        item.setImagePath(null);
-                        activity.getPhotoAdapter().setItem(item, selectedPosition);
-                    }else {
-                        activity.getPhotoAdapter().removeItem(selectedPosition);
-                    }
-                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Const.RECEIVE_UPDATE_COUNT));
-                    Toast.makeText(getActivity(),R.string.photo_deleted,Toast.LENGTH_SHORT).show();
-                    replaceWithCamera();
-                }else {
-                    Toast.makeText(getActivity(),R.string.photo_not_deleted,Toast.LENGTH_SHORT).show();
-                }
+                deletePhotoAndClose();
                 break;
 
 
@@ -109,5 +98,36 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
     private void replaceWithCamera(){
         CameraPreviewFragment cameraPreviewFragment = new CameraPreviewFragment();
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
+    }
+
+    private void deletePhotoAndClose(){
+        if(imgFile.delete()){
+            if(!item.isDefect()) {
+                item.setImagePath(null);
+                activity.getPhotoAdapter().setItem(item, selectedPosition);
+            }else {
+                activity.getPhotoAdapter().removeItem(selectedPosition);
+            }
+            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Const.RECEIVE_UPDATE_COUNT));
+            Toast.makeText(getActivity(),R.string.photo_deleted,Toast.LENGTH_SHORT).show();
+        //    replaceWithCamera();
+        }else {
+            Toast.makeText(getActivity(),R.string.photo_not_deleted,Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==Const.GALLERY_RESULT){
+            switch (data.getIntExtra(Const.GALLERY_RESULT_STRING,0)){
+                case Const.GALLERY_RESULT_RE_PHOTO:
+                    replaceWithCamera();
+                    break;
+                case Const.GALLERY_RESULT_DELETE:
+                    deletePhotoAndClose();
+                    break;
+            }
+        }
     }
 }

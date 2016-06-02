@@ -78,15 +78,15 @@
             android:layout_toEndOf="@android:id/list">
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:id="@+id/take_photo"
                 android:src="@drawable/ic_take_photo"
                 android:layout_centerInParent="true"/>
 
             <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
                 android:id="@+id/take_defect"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/ic_photo_defect"
@@ -131,16 +131,35 @@
         app:popupTheme="@style/Theme.AppCompat.Light"
         app:theme="@style/Theme.AppCompat">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:shadowColor="@android:color/black"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white"
-            android:layout_gravity="center"
-            android:id="@+id/toolbarTitle" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/defect_name"
+                android:visibility="invisible"
+                android:singleLine="true"
+                android:textColor="@android:color/black"
+                android:background="@android:color/white"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:shadowColor="@android:color/black"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/white"
+                android:layout_centerInParent="true"
+                android:id="@+id/toolbarTitle" />
+
+        </RelativeLayout>
+
+
+
+
 
         </android.support.v7.widget.Toolbar>
 

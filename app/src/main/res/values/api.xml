@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="api_url">http://test.100fur.ru/ru/api</string>
+    <string name="api_url">http://dev1.100fur.ru/ru/api</string>
     <string name="sign_up">/sign-up/</string>
     <string name="forgot_password">/forgot-password/</string>
     <string name="sign_in">/sign-in/</string>

@@ -1,7 +1,9 @@
 package ru.comtrans.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,11 +15,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 
 import ru.comtrans.R;
-import ru.comtrans.fragments.FullScreenPhotoFragment;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.items.PhotoItem;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -26,28 +28,20 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class GalleryActivity extends AppCompatActivity {
+public class GalleryActivity extends AppCompatActivity implements View.OnClickListener {
 
     PhotoItem item;
     File imgFile;
-    PhotoViewAttacher mAttacher;
+    PhotoViewAttacher photoViewAttacher;
     ImageView imgPhoto;
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
+    private ImageView rePhoto;
+    private ImageView deletePhoto;
+    private ImageView smallScreenPhoto;
+
     private static final boolean AUTO_HIDE = true;
 
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
@@ -55,11 +49,7 @@ public class GalleryActivity extends AppCompatActivity {
         @SuppressLint("InlinedApi")
         @Override
         public void run() {
-            // Delayed removal of status and navigation bar
 
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
             mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -72,7 +62,7 @@ public class GalleryActivity extends AppCompatActivity {
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
         public void run() {
-            // Delayed display of UI elements
+
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.show();
@@ -87,11 +77,7 @@ public class GalleryActivity extends AppCompatActivity {
             hide();
         }
     };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
+
     private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -115,6 +101,13 @@ public class GalleryActivity extends AppCompatActivity {
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.content_view);
         imgPhoto = (ImageView)findViewById(R.id.img_photo);
+        rePhoto = (ImageView)findViewById(R.id.re_photo);
+        smallScreenPhoto = (ImageView)findViewById(R.id.photo_small_screen);
+        deletePhoto = (ImageView)findViewById(R.id.delete_photo);
+
+        rePhoto.setOnClickListener(this);
+        smallScreenPhoto.setOnClickListener(this);
+        deletePhoto.setOnClickListener(this);
 
 
         item =  getIntent().getParcelableExtra(Const.EXTRA_PHOTO_ITEM);
@@ -128,16 +121,15 @@ public class GalleryActivity extends AppCompatActivity {
             imgPhoto.setImageBitmap(BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
         }
 
-        mAttacher = new PhotoViewAttacher(imgPhoto);
-
-        // Set up the user interaction to manually show or hide the system UI.
-   //     mContentView.setOnTouchListener(mDelayHideTouchListener);
-        mContentView.setOnClickListener(new View.OnClickListener() {
+        photoViewAttacher = new PhotoViewAttacher(imgPhoto);
+        photoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
             @Override
-            public void onClick(View v) {
+            public void onViewTap(View view, float v, float v1) {
                 toggle();
             }
         });
+
+
     }
 
     @Override
@@ -184,12 +176,32 @@ public class GalleryActivity extends AppCompatActivity {
         mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
     }
 
-    /**
-     * Schedules a call to hide() in [delay] milliseconds, canceling any
-     * previously scheduled calls.
-     */
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent i;
+        switch (v.getId()){
+            case R.id.re_photo:
+                i = new Intent();
+                i.putExtra(Const.GALLERY_RESULT_STRING,Const.GALLERY_RESULT_RE_PHOTO);
+                setResult(Const.GALLERY_RESULT,i);
+                finish();
+                break;
+            case R.id.photo_small_screen:
+                onBackPressed();
+                break;
+            case R.id.delete_photo:
+                i = new Intent();
+                i.putExtra(Const.GALLERY_RESULT_STRING,Const.GALLERY_RESULT_DELETE);
+                setResult(Const.GALLERY_RESULT,i);
+                finish();
+                break;
+
+
+        }
     }
 }

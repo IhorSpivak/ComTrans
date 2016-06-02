@@ -13,10 +13,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -34,6 +37,7 @@ import ru.comtrans.R;
 import ru.comtrans.activities.CameraActivity;
 import ru.comtrans.adapters.CameraPhotoAdapter;
 import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.PhotoItem;
 
 /**
@@ -45,12 +49,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     TextView toolbarTitle;
     TextView defectsCount;
     TextView photosCount;
+    EditText defectName;
     ImageView takePhoto, takeDefect, done;
     CameraPreviewFragment cameraPreviewFragment;
     PhotoFragment photoFragment;
     CountUpdateReceiver countUpdateReceiver = null;
+    RePhotoReceiver rePhotoReceiver = null;
     ProgressBar progressBar;
     String[] titles;
+    int currentPosition;
     private CameraActivity activity;
 
 
@@ -70,15 +77,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         activity.getSupportActionBar().setTitle("");
-
         takeDefect = (ImageView) v.findViewById(R.id.take_defect);
         takePhoto = (ImageView) v.findViewById(R.id.take_photo);
         done = (ImageView) v.findViewById(R.id.btn_done);
         progressBar = (ProgressBar)v.findViewById(R.id.progress_bar);
         defectsCount = (TextView)v.findViewById(R.id.defects_count);
         photosCount = (TextView)v.findViewById(R.id.photos_count);
+        defectName  = (EditText)v.findViewById(R.id.defect_name);
 
-
+        toolbarTitle.setOnClickListener(this);
         takeDefect.setOnClickListener(this);
         takePhoto.setOnClickListener(this);
         done.setOnClickListener(this);
@@ -93,9 +100,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         setDefectsCount(0);
         setPhotosCount(0);
         setProgressCount(0);
+        currentPosition = titles.length;
 
         countUpdateReceiver = new CountUpdateReceiver();
+        rePhotoReceiver = new RePhotoReceiver();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(countUpdateReceiver,new IntentFilter(Const.RECEIVE_UPDATE_COUNT));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(rePhotoReceiver,new IntentFilter(Const.RE_PHOTO));
 
 
         listView.setAdapter(activity.getPhotoAdapter());
@@ -112,6 +122,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 activity.updatePositionInAdapter(position);
                 PhotoItem photoItem = activity.getPhotoAdapter().getItem(position);
+                defectName.setVisibility(View.INVISIBLE);
+                Utility.hideKeyboard(getActivity(),getActivity().getCurrentFocus());
+                currentPosition = position;
                 Log.d("TAG","imagepath "+photoItem.getImagePath());
                 Log.d("TAG","camera preview "+getFragmentManager().findFragmentByTag(Const.CAMERA_PREVIEW));
                 Log.d("TAG","photo preview "+getFragmentManager().findFragmentByTag(Const.PHOTO_VIEWER));
@@ -123,12 +136,17 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 }else {
                     if(getFragmentManager().findFragmentByTag(Const.PHOTO_VIEWER)==null){
                         replaceWithPhotoViewer(photoItem,position);
+                    }else if(photoFragment!=null&&!photoFragment.getItem().getImagePath().equals(photoItem.getImagePath())){
+                        replaceWithPhotoViewer(photoItem,position);
                     }
                 }
             }
         });
 
         replaceWithCamera();
+
+       // if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_LAUNCH))
+        getFragmentManager().beginTransaction().add(R.id.container,new ViewPagerPhotoDemoFragment()).addToBackStack(null).commit();
 
 
         return v;
@@ -153,10 +171,46 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 takePicture(true,0);
                 break;
             case R.id.take_photo:
+                if(!activity.getPhotoAdapter().isPositionDefect(currentPosition))
                 takePicture(false,activity.getPhotoAdapter().getSelectedPosition());
                 break;
             case R.id.btn_done:
                 getActivity().finish();
+                break;
+            case R.id.toolbarTitle:
+                final PhotoItem item = activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition());
+                if(item.isDefect()&&item.getImagePath()!=null){
+                    defectName.setVisibility(View.VISIBLE);
+                    toolbarTitle.setVisibility(View.INVISIBLE);
+                    defectName.setText(item.getTitle());
+                    defectName.requestFocus();
+                    defectName.setOnKeyListener(new View.OnKeyListener() {
+                        public boolean onKey(View v, int keyCode, KeyEvent event) {
+                            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                                if(!defectName.getText().toString().equals("")){
+                                    item.setTitle(defectName.getText().toString());
+                                    toolbarTitle.setText(defectName.getText().toString());
+                                    toolbarTitle.setVisibility(View.VISIBLE);
+                                    defectName.setVisibility(View.INVISIBLE);
+                                    activity.getPhotoAdapter().setTitleForItem(item,activity.getPhotoAdapter().getSelectedPosition());
+                                }
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+                    defectName.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.showSoftInput(defectName, InputMethodManager.SHOW_IMPLICIT);
+
+                            if (defectName.getText().length() > 0) {
+                                defectName.setSelection(defectName.getText().length());
+                            }
+                        }
+                    });
+                }
                 break;
 
         }
@@ -190,13 +244,29 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                     switchButtons(true);
                     if(item!=null){
                         if(isDefect){
-                            int suffix = activity.getPhotoAdapter().getDefectsCount()+1;
-                            String defectTitle = String.format(getString(R.string.defect_n),suffix);
-                            item.setTitle(defectTitle);
-                            activity.getPhotoAdapter().addItem(item);
-                            listView.setSelection(activity.getPhotoAdapter().getSelectedPosition());
-                            setDefectsCount(activity.getPhotoAdapter().getDefectsCount());
-                            replaceWithCamera();
+
+                            PhotoItem factItem = activity.getPhotoAdapter().getItem(currentPosition);
+                            Log.d("TAG","is defect "+factItem.isDefect()+" "+factItem.getImagePath()+" "+currentPosition);
+                            if(factItem.getImagePath()==null) {
+                                int suffix = activity.getPhotoAdapter().getDefectsCount();
+                                activity.getPhotoAdapter().setDefectsCount(suffix);
+                                String defectTitle = String.format(getString(R.string.defect_n), suffix);
+                                item.setTitle(defectTitle);
+                                activity.getPhotoAdapter().setItem(item, activity.getPhotoAdapter().getLastDefectPosition());
+                                listView.setSelection(activity.getPhotoAdapter().getSelectedPosition());
+                                setDefectsCount(activity.getPhotoAdapter().getFactDefectCount());
+
+                            }else {
+                                factItem.setImagePath(item.getImagePath());
+                                activity.getPhotoAdapter().setImagePathForItem(factItem,currentPosition);
+                            }
+
+                            if (activity.getPhotoAdapter().isPositionDefect(currentPosition)) {
+                                replaceWithPhotoViewer(item, currentPosition);
+                            } else {
+                                replaceWithCamera();
+                            }
+
                         }else {
                             item.setTitle(toolbarTitle.getText().toString());
                             activity.getPhotoAdapter().setItem(item,activity.getPhotoAdapter().getSelectedPosition());
@@ -257,9 +327,30 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            setDefectsCount(activity.getPhotoAdapter().getDefectsCount());
+            setDefectsCount(activity.getPhotoAdapter().getFactDefectCount());
             setPhotosCount(activity.getPhotoAdapter().getPhotosCount());
-            toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
+            setProgressCount(activity.getPhotoAdapter().getPhotosCount());
+            PhotoItem item = activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition());
+            toolbarTitle.setText(item.getTitle());
+
+            if(item.getImagePath()==null){
+                replaceWithCamera();
+            }else {
+                replaceWithPhotoViewer(item,currentPosition);
+            }
+
+        }
+    }
+
+    private class RePhotoReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Log.d("TAG","position "+listView.getSelectedItemPosition());
+            currentPosition = activity.getPhotoAdapter().getSelectedPosition();
+            replaceWithCamera();
+
         }
     }
 
@@ -267,6 +358,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     public void onDestroyView() {
         super.onDestroyView();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(countUpdateReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(rePhotoReceiver);
+        rePhotoReceiver = null;
         countUpdateReceiver = null;
     }
 }

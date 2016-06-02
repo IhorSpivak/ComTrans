@@ -28,6 +28,15 @@ public class CameraPhotoAdapter extends BaseAdapter {
     private ArrayList<PhotoItem> items;
     private Context context;
     int selectedPosition = 0; //needs to highlight first selected position
+    int defectsCount = 1;
+
+    public void setDefectsCount(int defectsCount) {
+        this.defectsCount = defectsCount;
+    }
+
+    public int getDefectsCount() {
+        return defectsCount;
+    }
 
     public void setSelectedPosition(int selectedPosition) {
         this.selectedPosition = selectedPosition;
@@ -64,6 +73,25 @@ public class CameraPhotoAdapter extends BaseAdapter {
     public void setItem(PhotoItem item,int position) {
         items.remove(position);
         items.add(position,item);
+
+        if(item.isDefect()){
+            selectedPosition++;
+            defectsCount++;
+            items.add(0,new PhotoItem(String.format(context.getString(R.string.defect_n),defectsCount),true));
+        }
+        notifyDataSetChanged();
+    }
+
+
+    public void setTitleForItem(PhotoItem item,int position) {
+        items.remove(position);
+        items.add(position,item);
+        notifyDataSetChanged();
+    }
+
+    public void setImagePathForItem(PhotoItem item,int position) {
+        items.remove(position);
+        items.add(position,item);
         notifyDataSetChanged();
     }
 
@@ -72,20 +100,39 @@ public class CameraPhotoAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void addItem(PhotoItem item) {
-        items.add(0,item);
-        selectedPosition++;
-        notifyDataSetChanged();
+    public int getLastDefectPosition(){
+        for(int i=0; i<items.size();i++){
+            if(items.get(i).isDefect()&&items.get(i).getImagePath()==null){
+                return i;
+            }
+        }
+        return 0;
     }
 
-    public int getDefectsCount(){
+    public int getFactDefectCount(){
         int count = 0;
-        for(PhotoItem item:items){
-            if(item.isDefect())
+        for(int i=0; i<items.size(); i++){
+            if(items.get(i).isDefect()&&items.get(i).getImagePath()!=null){
                 count++;
+            }
         }
         return count;
     }
+
+    public boolean isPositionDefect(int position){
+        if(items.get(position).isDefect()){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+//    public void addItem(PhotoItem item) {
+//        items.add(0,item);
+//        selectedPosition++;
+//        notifyDataSetChanged();
+//    }
+
 
     public int getPhotosCount(){
         int count = 0;
