@@ -8,10 +8,18 @@ import android.os.Parcelable;
  */
 public class PhotoItem implements Parcelable {
     private boolean isDefect;
-    private boolean isSelected;
     private String title;
     private String imagePath;
     private String id;
+    private boolean isVideo;
+
+    public boolean isVideo() {
+        return isVideo;
+    }
+
+    public void setVideo(boolean video) {
+        isVideo = video;
+    }
 
     public PhotoItem(){}
 
@@ -56,13 +64,6 @@ public class PhotoItem implements Parcelable {
         this.id = id;
     }
 
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
 
     @Override
     public int describeContents() {
@@ -72,18 +73,18 @@ public class PhotoItem implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte(this.isDefect ? (byte) 1 : (byte) 0);
-        dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
         dest.writeString(this.title);
         dest.writeString(this.imagePath);
         dest.writeString(this.id);
+        dest.writeByte(this.isVideo ? (byte) 1 : (byte) 0);
     }
 
     protected PhotoItem(Parcel in) {
         this.isDefect = in.readByte() != 0;
-        this.isSelected = in.readByte() != 0;
         this.title = in.readString();
         this.imagePath = in.readString();
         this.id = in.readString();
+        this.isVideo = in.readByte() != 0;
     }
 
     public static final Creator<PhotoItem> CREATOR = new Creator<PhotoItem>() {

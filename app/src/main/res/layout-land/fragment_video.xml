@@ -101,6 +101,20 @@
         android:layout_toLeftOf="@id/bottomBar"
         android:orientation="vertical"/>
 
+    <ru.comtrans.views.VerticalChronometer
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/bottomBar"
+        android:layout_toLeftOf="@id/bottomBar"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/chronometer"
+        android:visibility="invisible"
+        android:textColor="@android:color/holo_red_dark"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        android:layout_centerVertical="true"/>
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"

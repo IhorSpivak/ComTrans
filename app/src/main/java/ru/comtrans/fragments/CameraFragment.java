@@ -10,7 +10,6 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -29,13 +28,11 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 import ru.comtrans.R;
 import ru.comtrans.activities.CameraActivity;
-import ru.comtrans.adapters.CameraPhotoAdapter;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.PhotoItem;
@@ -52,7 +49,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     EditText defectName;
     ImageView takePhoto, takeDefect, done;
     CameraPreviewFragment cameraPreviewFragment;
-    PhotoFragment photoFragment;
+    PhotoViewerFragment photoViewerFragment;
     CountUpdateReceiver countUpdateReceiver = null;
     RePhotoReceiver rePhotoReceiver = null;
     ProgressBar progressBar;
@@ -136,7 +133,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 }else {
                     if(getFragmentManager().findFragmentByTag(Const.PHOTO_VIEWER)==null){
                         replaceWithPhotoViewer(photoItem,position);
-                    }else if(photoFragment!=null&&!photoFragment.getItem().getImagePath().equals(photoItem.getImagePath())){
+                    }else if(photoViewerFragment !=null&&!photoViewerFragment.getItem().getImagePath().equals(photoItem.getImagePath())){
                         replaceWithPhotoViewer(photoItem,position);
                     }
                 }
@@ -154,12 +151,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
     private void replaceWithCamera(){
         cameraPreviewFragment = new CameraPreviewFragment();
-        photoFragment = null;
+        photoViewerFragment = null;
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
     }
     private void replaceWithPhotoViewer(PhotoItem item,int position){
-        photoFragment = PhotoFragment.newInstance(item,position);
-        getFragmentManager().beginTransaction().replace(R.id.cameraContainer,photoFragment,Const.PHOTO_VIEWER).commit();
+        photoViewerFragment = PhotoViewerFragment.newInstance(item,position);
+        getFragmentManager().beginTransaction().replace(R.id.cameraContainer, photoViewerFragment,Const.PHOTO_VIEWER).commit();
     }
 
 

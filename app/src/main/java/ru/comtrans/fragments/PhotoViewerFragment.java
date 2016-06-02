@@ -2,12 +2,10 @@ package ru.comtrans.fragments;
 
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.graphics.BitmapCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +23,7 @@ import ru.comtrans.items.PhotoItem;
 /**
  * Created by Artco on 26.05.2016.
  */
-public class PhotoFragment extends Fragment implements View.OnClickListener {
+public class PhotoViewerFragment extends Fragment implements View.OnClickListener {
     private ImageView photoView;
     private ImageView rePhoto;
     private ImageView deletePhoto;
@@ -35,11 +33,11 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
     int selectedPosition;
     File imgFile;
 
-    public static PhotoFragment newInstance(PhotoItem item, int selectedPosition) {
+    public static PhotoViewerFragment newInstance(PhotoItem item, int selectedPosition) {
         Bundle args = new Bundle();
         args.putParcelable(Const.EXTRA_PHOTO_ITEM,item);
         args.putInt(Const.EXTRA_SELECTED_POSITION,selectedPosition);
-        PhotoFragment fragment = new PhotoFragment();
+        PhotoViewerFragment fragment = new PhotoViewerFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,7 +49,7 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_photo,container,false);
+        View v = inflater.inflate(R.layout.fragment_photo_viewer,container,false);
 
         activity = (CameraActivity)getActivity();
 
