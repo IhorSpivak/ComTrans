@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
@@ -39,7 +41,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((LinearLayout) object);
+        return view == ((RelativeLayout) object);
     }
 
     @Override
@@ -49,18 +51,21 @@ public class ViewPagerAdapter extends PagerAdapter {
         ImageView imageView = (ImageView) itemView.findViewById(R.id.img_pager_item);
         imageView.setImageResource(mResources[position]);
 
+        TextView skip = (TextView)itemView.findViewById(R.id.skip);
 
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(position==2) {
-                        Utility.saveBoolean(Const.IS_FIRST_CAMERA_LAUNCH,true);
-                        activity.onBackPressed();
-                    }else {
-                        viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
-                    }
-                }
-            });
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utility.saveBoolean(Const.IS_FIRST_CAMERA_LAUNCH,true);
+                activity.onBackPressed();
+            }
+        });
+
+        if(position==2){
+            skip.setText(R.string.start);
+        }else {
+            skip.setText(R.string.skip);
+        }
 
 
         container.addView(itemView);

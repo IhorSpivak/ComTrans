@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ public class CameraPhotoAdapter extends BaseAdapter {
 
     public void setSelectedPosition(int selectedPosition) {
         this.selectedPosition = selectedPosition;
+        notifyDataSetChanged();
     }
 
     public int getSelectedPosition() {
@@ -185,7 +187,7 @@ public class CameraPhotoAdapter extends BaseAdapter {
         if(item.getImagePath()!=null) {
             viewHolder.addPhoto.setVisibility(View.GONE);
             viewHolder.photo.setVisibility(View.VISIBLE);
-
+            Log.d("TAG",item.getImagePath());
 
             Ion.with(viewHolder.photo).load(item.getImagePath());
 

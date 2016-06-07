@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import ru.comtrans.R;
 import ru.comtrans.fragments.ProfileFragment;
+import ru.comtrans.fragments.SettingsFragment;
 import ru.comtrans.helpers.Const;
 
 
@@ -80,6 +81,11 @@ public class MainActivity extends AppCompatActivity
                 i = new Intent(MainActivity.this,CameraActivity.class);
                 i.putExtra(Const.CAMERA_MODE,Const.MODE_VIDEO);
                 startActivity(i);
+                break;
+            case R.id.nav_settings:
+                getSupportActionBar().setTitle(getString(R.string.nav_settings));
+                transaction.replace(R.id.container,new SettingsFragment());
+                transaction.commit();
                 break;
             case R.id.nav_logout:
                 i = new Intent(MainActivity.this,LoginActivity.class);

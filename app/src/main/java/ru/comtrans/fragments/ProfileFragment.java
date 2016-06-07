@@ -2,6 +2,7 @@ package ru.comtrans.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,13 +92,13 @@ public class ProfileFragment extends BaseFragment {
 
         etEmail.setText(Utility.getSavedData(Const.EMAIL));
 
-        String url = getString(R.string.api_url)+getString(R.string.profile)+Utility.getToken();
-
-        JsonObject object = new JsonObject();
-        object.addProperty("token",Utility.getToken());
+        String url = getString(R.string.api_url)+getString(R.string.profile);
+        Log.d("TAG",Utility.getToken());
+      //  JsonObject object = new JsonObject();
+      //  object.addProperty("token",Utility.getToken());
 
         RequestTask task = new RequestTask.RequestTaskBuilder(getActivity(),
-                url, null,new JsonObject(),RequestTask.HTTP_GET_REQUEST).obtainListener(new RequestTask.OnRequestObtainedListener() {
+                url, Utility.getToken(),new JsonObject(),RequestTask.HTTP_GET_REQUEST).obtainListener(new RequestTask.OnRequestObtainedListener() {
             @Override
             public void onRequestObtained(ResponseItem responseItem) {
                 JsonObject response = new Gson().fromJson(responseItem.getResponse(),JsonObject.class);

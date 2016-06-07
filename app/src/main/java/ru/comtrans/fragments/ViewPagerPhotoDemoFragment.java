@@ -10,9 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import ru.comtrans.R;
 import ru.comtrans.adapters.ViewPagerAdapter;
+import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.Utility;
 
 /**
  * Created by Artco on 31.05.2016.
@@ -25,6 +28,7 @@ public class ViewPagerPhotoDemoFragment extends Fragment implements ViewPager.On
     private int dotsCount;
     private ImageView[] dots;
     private ViewPagerAdapter mAdapter;
+
 
     private int[] mImageResources = {
             R.drawable.instruction1,
@@ -93,6 +97,8 @@ public class ViewPagerPhotoDemoFragment extends Fragment implements ViewPager.On
         }
 
         dots[position].setImageDrawable(getResources().getDrawable(R.drawable.selected_item_dot));
+
+
 
 
     }

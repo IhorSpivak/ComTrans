@@ -7,6 +7,7 @@
     <string name="nav_photo">Фото</string>
     <string name="nav_video">Видео</string>
     <string name="nav_logout">Выйти</string>
+    <string name="nav_settings">Настройки</string>
 
 
     ////////////Login Activity, Registration, Forgot password//////////////////////////////////////
@@ -59,19 +60,23 @@
     <string name="photo_not_deleted">Ошибка при удалении фото</string>
     <string name="video_deleted">Видео успешно удалено</string>
     <string name="video_not_deleted">Ошибка при удалении видео</string>
+    <string name="skip">Пропустить</string>
+    <string name="start">Начать</string>
 
 
-    <plurals name="defects_count">
-        <item quantity="zero">%d дефектов</item>
-        <item quantity="one">%d дефект</item>
-        <item quantity="few">%d дефекта</item>
-        <item quantity="many">%d дефектов</item>
-        <item quantity="other">%d дефектов</item>
-    </plurals>
+    
 
-    <string name="title_activity_gallery">GalleryActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_gallery">Галерея</string>
+    
+    
+    /////////////////////////////Settings Fragment/////////////////////////
+    <string name="enable_sending_without_wifi">Разрешить отправку данных по 3G/LTE</string>
+    <string name="enable_sending_more_than_100">Разрешить отправку данных свыше 100м</string>
+
+
+
+
+
 
 
 </resources>

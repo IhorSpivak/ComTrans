@@ -141,7 +141,8 @@ public class RequestTask extends AsyncTask<Void, Void, ResponseItem> {
                         postConnection = (HttpURLConnection) requestUrl.openConnection();
                         postConnection.setDoInput(true);
                         postConnection.setUseCaches(false);
-                        postConnection.setRequestProperty("Authorization",
+                        if (token != null && !token.equals(""))
+                        postConnection.setRequestProperty("token",
                                 token);
                         postConnection.setRequestMethod("GET");
                         postConnection.setConnectTimeout(SEND_TIMEOUT);
@@ -169,11 +170,11 @@ public class RequestTask extends AsyncTask<Void, Void, ResponseItem> {
                         postConnection.setDoOutput(true);
                         postConnection.setDoInput(true);
                         if (token != null && !token.equals(""))
-                            postConnection.setRequestProperty("Authorization",
+                            postConnection.setRequestProperty("token",
                                     token);
                         postConnection.setRequestMethod("POST");
                         postConnection.setConnectTimeout(SEND_TIMEOUT);
-                      //  postConnection.setRequestProperty("Content-Type", "application/json");
+                        postConnection.setRequestProperty("Content-Type", "application/json");
                         postConnection.setRequestProperty("Connection","keep-alive");
 
                       //  postConnection.setRequestProperty("Accept", "application/json");

@@ -52,7 +52,7 @@
                 android:layout_above="@id/photos_count"
                 android:layout_below="@id/defects_count"
                 style="@android:style/Widget.ProgressBar.Horizontal"
-                android:progressDrawable="@drawable/vertical_progressbar"
+                android:progressDrawable="@drawable/vertical_progressbar_red"
                 android:progress="40"
                 />
 

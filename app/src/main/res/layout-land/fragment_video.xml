@@ -43,7 +43,7 @@
                 android:layout_centerInParent="true"
                 android:layout_above="@id/videos_count"
                 style="@android:style/Widget.ProgressBar.Horizontal"
-                android:progressDrawable="@drawable/vertical_progressbar"
+                android:progressDrawable="@drawable/vertical_progressbar_red"
                 android:progress="40"
                 />
 

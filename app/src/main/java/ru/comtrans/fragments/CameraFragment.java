@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -224,6 +225,11 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     private void setProgressCount(int count){
         if(count!=0) {
             int percent = (int)((count * 100.0f) / titles.length);
+            if(percent==100){
+                progressBar.setProgressDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.vertical_progressbar_green));
+            }else {
+                progressBar.setProgressDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.vertical_progressbar_red));
+            }
             Log.d("TAG","currentProgress "+percent);
             progressBar.setProgress(percent);
         }else {
@@ -269,7 +275,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                             activity.getPhotoAdapter().setItem(item,activity.getPhotoAdapter().getSelectedPosition());
                             setPhotosCount(activity.getPhotoAdapter().getPhotosCount());
                             setProgressCount(activity.getPhotoAdapter().getPhotosCount());
-                            replaceWithPhotoViewer(item,selectedPosition);
+                            replaceWithCamera();
+                            int selectedPosition = activity.getPhotoAdapter().getSelectedPosition();
+                            if(selectedPosition!=0)
+                                selectedPosition--;
+
+                            activity.getPhotoAdapter().setSelectedPosition(selectedPosition);
+                           // replaceWithPhotoViewer(item,selectedPosition);
                         }
 
 

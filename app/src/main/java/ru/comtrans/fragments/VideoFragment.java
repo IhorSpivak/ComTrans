@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -189,6 +190,11 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     private void setProgressCount(int count){
         if(count!=0) {
             int percent = (int)((count * 100.0f) / titles.length);
+            if(percent==100){
+                progressBar.setProgressDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.vertical_progressbar_green));
+            }else {
+                progressBar.setProgressDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.vertical_progressbar_red));
+            }
             Log.d("TAG","currentProgress "+percent);
             progressBar.setProgress(percent);
         }else {
@@ -213,7 +219,21 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 activity.getPhotoAdapter().setItem(item,currentPosition);
                 setVideosCount(activity.getPhotoAdapter().getPhotosCount());
                 setProgressCount(activity.getPhotoAdapter().getPhotosCount());
-                replaceWithVideoViewer(item,currentPosition);
+                int selectedPosition = activity.getPhotoAdapter().getSelectedPosition();
+                if(selectedPosition!=0){
+                    selectedPosition--;
+                    activity.getPhotoAdapter().setSelectedPosition(selectedPosition);
+                    currentPosition = selectedPosition;
+                    replaceWithCamera();
+                }else {
+                    activity.getPhotoAdapter().setSelectedPosition(selectedPosition);
+                    currentPosition = selectedPosition;
+                    replaceWithVideoViewer(item,currentPosition);
+                }
+
+
+
+              //  replaceWithVideoViewer(item,currentPosition);
             }
         }else {
 
@@ -256,7 +276,8 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         if(directory.mkdirs()||directory.exists()){
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
             String prefix = getString(R.string.prefix_video);
-            videoFile = new File(directory, prefix + timeStamp + ".mp4");
+            File file = new File(directory, prefix + timeStamp + ".mp4");
+            videoFile = file;
 
             cameraPreviewFragment.getCamera().unlock();
 
@@ -267,7 +288,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
             mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             mediaRecorder.setProfile(CamcorderProfile
                     .get(CamcorderProfile.QUALITY_HIGH));
-            mediaRecorder.setOutputFile(videoFile.getAbsolutePath());
+            mediaRecorder.setOutputFile(file.getAbsolutePath());
             mediaRecorder.setPreviewDisplay(cameraPreviewFragment.getPreview().getHolder().getSurface());
 
             try {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="defects_count">
+        <item quantity="zero">%d дефектов</item>
+        <item quantity="one">%d дефект</item>
+        <item quantity="few">%d дефекта</item>
+        <item quantity="many">%d дефектов</item>
+        <item quantity="other">%d дефектов</item>
+    </plurals>
+</resources>
