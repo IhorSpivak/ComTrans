@@ -9,7 +9,7 @@ public class Const {
     public static final String PASSWORD = "password";
     public static final String TOKEN = "token";
     public static final String IS_FROM_REGISTRATION = "is_from_registration";
-    public static final String EXTRA_PROFILE_OBJECT = "extra_profile_object";
+    public static final String EXTRA_USER_OBJECT = "extra_user_object";
 
 
     public static final String EXTRA_PHOTO_ITEM = "extra_photo_item";

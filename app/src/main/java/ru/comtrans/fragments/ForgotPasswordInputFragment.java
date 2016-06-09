@@ -10,13 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.comtrans.R;
-import ru.comtrans.helpers.RequestTask;
 import ru.comtrans.helpers.Utility;
-import ru.comtrans.items.ResponseItem;
+import ru.comtrans.items.User;
+import ru.comtrans.singlets.AppController;
+import ru.comtrans.views.ConnectionProgressDialog;
 
 
 /**
@@ -26,6 +27,7 @@ public class ForgotPasswordInputFragment extends BaseFragment {
 
     EditText etEmail;
     Button btnForgotPassword;
+    ConnectionProgressDialog progressDialog;
 
     @Nullable
     @Override
@@ -34,6 +36,8 @@ public class ForgotPasswordInputFragment extends BaseFragment {
 
         etEmail = (EditText)v.findViewById(R.id.et_email);
         btnForgotPassword = (Button)v.findViewById(R.id.btn_forgot_password);
+
+        progressDialog = new ConnectionProgressDialog(getActivity());
 
         btnForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,32 +55,29 @@ public class ForgotPasswordInputFragment extends BaseFragment {
     }
 
     private void forgotPassword(){
-        JsonObject object = new JsonObject();
-        object.addProperty("email",etEmail.getText().toString().trim());
-
-
-
-        String url = getString(R.string.api_url)+getString(R.string.forgot_password);
-        RequestTask task = new RequestTask.RequestTaskBuilder(getActivity(),
-                url,null,object, RequestTask.HTTP_POST_REQUEST).obtainListener(new RequestTask.OnRequestObtainedListener() {
+        progressDialog.show();
+        final User user = new User(etEmail.getText().toString().trim());
+        Call<User> call = AppController.apiInterface.forgotPassword(user);
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onRequestObtained(ResponseItem responseItem) {
-                Log.d("TAG","status");
-                JsonObject response = new Gson().fromJson(responseItem.getResponse(),JsonObject.class);
-                if(response.get("status").getAsInt()==1){
-                    Log.d("TAG","status");
+            public void onResponse(Call<User> call, Response<User> response) {
+                progressDialog.dismiss();
+                if(response.body().getStatus()==1){
                     getActivity().getSupportFragmentManager().beginTransaction()
                             .replace(R.id.container,new ForgotPasswordDoneFragment())
                             .commit();
+                }else {
+                    Toast.makeText(getActivity(),response.body().getMessage(),Toast.LENGTH_SHORT).show();
                 }
+
             }
-        }).errorListener(new RequestTask.OnRequestErrorListener() {
+
             @Override
-            public void onRequestError(String error) {
-                Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<User> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.d("TAG","fail",t);
+                Toast.makeText(getActivity(),R.string.something_went_wrong,Toast.LENGTH_SHORT).show();
             }
-        }).buildRequestTask();
-        task.setNeedDialog(true);
-        task.execute();
+        });
     }
 }

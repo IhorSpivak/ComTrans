@@ -41,6 +41,7 @@
     <string name="hint_company_position">Должность</string>
     <string name="hint_telephone">Телефон</string>
     <string name="hint_save">Сохранить</string>
+    <string name="profile_saved">Профиль сохранён</string>
 
 
     //////////////Main Activity/////////////////////////////////////

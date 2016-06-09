@@ -25,6 +25,7 @@
                 android:inputType="textEmailAddress"
                 android:textColor="@android:color/black"
                 android:hint="@string/email_hint"
+                android:singleLine="true"
                 android:drawableEnd="@drawable/ic_pen"
                 android:drawableRight="@drawable/ic_pen"
                 android:id="@+id/et_email"/>
@@ -39,6 +40,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:inputType="textPassword"
                 android:textColor="@android:color/black"
                 android:hint="@string/password_login_hint"
@@ -61,6 +63,7 @@
                 android:drawableRight="@drawable/ic_pen"
                 android:hint="@string/confirm_password_hint"
                 android:inputType="textPassword"
+                android:singleLine="true"
                 android:id="@+id/et_confirm_password"/>
 
         </android.support.design.widget.TextInputLayout>
