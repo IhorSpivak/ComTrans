@@ -56,9 +56,17 @@ public class CameraActivity extends AppCompatActivity {
                  break;
             case Const.MODE_VIDEO:
 
-                titles = getResources().getStringArray(R.array.video_functionality_test);
+                titles = getResources().getStringArray(R.array.video_main);
+
+
                 for (int i=titles.length-1; i>=0; i--) {
-                    items.add(new PhotoItem(titles[i]));
+                    PhotoItem item = new PhotoItem(titles[i]);
+                    if(i<=3){
+                        item.setDuration(15);
+                    }else {
+                        item.setDuration(30);
+                    }
+                    items.add(item);
                 }
                 photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
                 fragment = new VideoFragment();
@@ -75,10 +83,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
-    public void updatePositionInAdapter(int position){
-        photoAdapter.setSelectedPosition(position);
-        photoAdapter.notifyDataSetChanged();
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

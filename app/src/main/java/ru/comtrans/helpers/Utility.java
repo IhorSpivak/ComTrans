@@ -85,6 +85,34 @@ public class Utility {
         editor.apply();
     }
 
+    public static boolean isAllowBigData() {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        return appData.getBoolean(Const.SETTINGS_ALLOWS_BIG_DATA, false);
+    }
+
+    public static void setIsAllowBigData(boolean isAllowBigData) {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        SharedPreferences.Editor editor = appData.edit();
+        editor.putBoolean(Const.SETTINGS_ALLOWS_BIG_DATA, isAllowBigData);
+        editor.apply();
+    }
+
+    public static boolean isAllowMobileConnection() {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        return appData.getBoolean(Const.SETTINGS_ALLOWS_MOBILE_CONN, false);
+    }
+
+    public static void setIsAllowMobileConnection(boolean isAllowMobileConnection) {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        SharedPreferences.Editor editor = appData.edit();
+        editor.putBoolean(Const.SETTINGS_ALLOWS_MOBILE_CONN, isAllowMobileConnection);
+        editor.apply();
+    }
+
 
 
 

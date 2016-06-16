@@ -13,7 +13,7 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/switch_1"
+            android:id="@+id/sw_allow_mob_connection"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"/>
@@ -23,8 +23,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="@string/enable_sending_without_wifi"
-            android:layout_toStartOf="@id/switch_1"
-            android:layout_toLeftOf="@id/switch_1"
+            android:layout_toStartOf="@id/sw_allow_mob_connection"
+            android:layout_toLeftOf="@id/sw_allow_mob_connection"
             android:textColor="@android:color/black"
             android:gravity="start"/>
 
@@ -39,7 +39,7 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/switch_2"
+            android:id="@+id/sw_allow_big_data"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"/>
@@ -49,8 +49,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="@string/enable_sending_more_than_100"
-            android:layout_toStartOf="@id/switch_2"
-            android:layout_toLeftOf="@id/switch_2"
+            android:layout_toStartOf="@id/sw_allow_big_data"
+            android:layout_toLeftOf="@id/sw_allow_big_data"
             android:textColor="@android:color/black"
             android:gravity="start"/>
 

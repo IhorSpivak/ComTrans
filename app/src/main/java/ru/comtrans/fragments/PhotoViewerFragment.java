@@ -61,6 +61,7 @@ public class PhotoViewerFragment extends Fragment implements View.OnClickListene
         rePhoto.setOnClickListener(this);
         fullScreenPhoto.setOnClickListener(this);
         deletePhoto.setOnClickListener(this);
+        photoView.setOnClickListener(this);
 
         item = getArguments().getParcelable(Const.EXTRA_PHOTO_ITEM);
         selectedPosition = getArguments().getInt(Const.EXTRA_SELECTED_POSITION);
@@ -76,12 +77,19 @@ public class PhotoViewerFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
+        Intent i;
         switch (v.getId()){
+
             case R.id.re_photo:
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Const.RE_PHOTO));
                 break;
             case R.id.photo_full_screen:
-                Intent i = new Intent(getActivity(), GalleryActivity.class);
+                i = new Intent(getActivity(), GalleryActivity.class);
+                i.putExtra(Const.EXTRA_PHOTO_ITEM,item);
+                startActivityForResult(i,Const.GALLERY_RESULT);
+                break;
+            case R.id.img_photo:
+                i = new Intent(getActivity(), GalleryActivity.class);
                 i.putExtra(Const.EXTRA_PHOTO_ITEM,item);
                 startActivityForResult(i,Const.GALLERY_RESULT);
                 break;

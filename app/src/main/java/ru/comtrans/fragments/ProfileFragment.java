@@ -84,9 +84,6 @@ public class ProfileFragment extends BaseFragment {
         }
 
 
-
-
-
         return v;
     }
 
@@ -99,14 +96,13 @@ public class ProfileFragment extends BaseFragment {
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                progressDialog.hide();
+                progressDialog.dismiss();
                 if(response.body().getStatus()==1){
                     etName.setText(response.body().getFirstName());
                     etLastName.setText(response.body().getLastName());
                     etCompany.setText(response.body().getCompany());
                     etPosition.setText(response.body().getCompanyPosition());
-                    if(response.body().getPhone()!=0)
-                    etTelephone.setText(String.valueOf(response.body().getPhone()));
+                    etTelephone.setText(response.body().getPhone());
                 }else {
                     Toast.makeText(getActivity(),response.body().getMessage(),Toast.LENGTH_SHORT).show();
                 }
@@ -114,7 +110,7 @@ public class ProfileFragment extends BaseFragment {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                progressDialog.hide();
+                progressDialog.dismiss();
                 Log.d("TAG","fail",t);
                 Toast.makeText(getActivity(),R.string.something_went_wrong,Toast.LENGTH_SHORT).show();
             }
@@ -130,7 +126,7 @@ public class ProfileFragment extends BaseFragment {
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                progressDialog.hide();
+                progressDialog.dismiss();
                 if(response.body().getStatus()==1){
                     Toast.makeText(getActivity(),R.string.profile_saved,Toast.LENGTH_SHORT).show();
                 }else {
@@ -147,15 +143,13 @@ public class ProfileFragment extends BaseFragment {
         });
     }
 
+
+
     private User createUser(){
-        Integer phone = 0;
-        if(!etTelephone.getText().toString().equals("")){
-            phone  = Integer.valueOf(etTelephone.getText().toString().trim());
-        }
         return new User(etName.getText().toString().trim(),
                 etName.getText().toString().trim(),
                 etCompany.getText().toString().trim(),
                 etPosition.getText().toString().trim(),
-                phone);
+                etTelephone.getText().toString().trim());
     }
 }

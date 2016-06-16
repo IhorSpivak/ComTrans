@@ -30,6 +30,14 @@ public class Const {
     public static final int GALLERY_RESULT_DELETE = 103;
 
 
+    public static final int REQUEST_PERMISSION_CAMERA = 101;
+    public static final int REQUEST_PERMISSION_VIDEO = 102;
+
+
+
+    public static final String SETTINGS_ALLOWS_MOBILE_CONN = "allow_mobile_conn";
+    public static final String SETTINGS_ALLOWS_BIG_DATA = "allow_big_data";
+
 
 
 

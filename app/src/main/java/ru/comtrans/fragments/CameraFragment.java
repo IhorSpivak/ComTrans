@@ -55,7 +55,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     RePhotoReceiver rePhotoReceiver = null;
     ProgressBar progressBar;
     String[] titles;
-    int currentPosition;
     private CameraActivity activity;
 
 
@@ -98,7 +97,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         setDefectsCount(0);
         setPhotosCount(0);
         setProgressCount(0);
-        currentPosition = titles.length;
+
 
         countUpdateReceiver = new CountUpdateReceiver();
         rePhotoReceiver = new RePhotoReceiver();
@@ -118,16 +117,18 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                activity.updatePositionInAdapter(position);
+                activity.getPhotoAdapter().setSelectedPosition(position);
                 PhotoItem photoItem = activity.getPhotoAdapter().getItem(position);
                 defectName.setVisibility(View.INVISIBLE);
                 Utility.hideKeyboard(getActivity(),getActivity().getCurrentFocus());
-                currentPosition = position;
+
                 Log.d("TAG","imagepath "+photoItem.getImagePath());
                 Log.d("TAG","camera preview "+getFragmentManager().findFragmentByTag(Const.CAMERA_PREVIEW));
                 Log.d("TAG","photo preview "+getFragmentManager().findFragmentByTag(Const.PHOTO_VIEWER));
 
                 toolbarTitle.setText(photoItem.getTitle());
+
+
                 if(photoItem.getImagePath()==null){
                     if(getFragmentManager().findFragmentByTag(Const.CAMERA_PREVIEW)==null)
                          replaceWithCamera();
@@ -143,7 +144,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
         replaceWithCamera();
 
-       // if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_LAUNCH))
+        if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_LAUNCH))
         getFragmentManager().beginTransaction().add(R.id.container,new ViewPagerPhotoDemoFragment()).addToBackStack(null).commit();
 
 
@@ -151,6 +152,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     }
 
     private void replaceWithCamera(){
+        toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
         cameraPreviewFragment = new CameraPreviewFragment();
         photoViewerFragment = null;
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
@@ -166,11 +168,11 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.take_defect:
-                takePicture(true,0);
+                takePicture(true);
                 break;
             case R.id.take_photo:
-                if(!activity.getPhotoAdapter().isPositionDefect(currentPosition))
-                takePicture(false,activity.getPhotoAdapter().getSelectedPosition());
+                if(!activity.getPhotoAdapter().isPositionDefect(activity.getPhotoAdapter().getSelectedPosition()))
+                takePicture(false);
                 break;
             case R.id.btn_done:
                 getActivity().finish();
@@ -237,7 +239,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private void takePicture(final boolean isDefect, final int selectedPosition){
+    private void takePicture(final boolean isDefect){
         switchButtons(false);
         try {
             cameraPreviewFragment.getCamera().takePicture(null, null, new Camera.PictureCallback() {
@@ -248,8 +250,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                     if(item!=null){
                         if(isDefect){
 
-                            PhotoItem factItem = activity.getPhotoAdapter().getItem(currentPosition);
-                            Log.d("TAG","is defect "+factItem.isDefect()+" "+factItem.getImagePath()+" "+currentPosition);
+                            PhotoItem factItem = activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition());
+                            Log.d("TAG","is defect "+factItem.isDefect()+" "+factItem.getImagePath()+" "+activity.getPhotoAdapter().getSelectedPosition());
                             if(factItem.getImagePath()==null) {
                                 int suffix = activity.getPhotoAdapter().getDefectsCount();
                                 activity.getPhotoAdapter().setDefectsCount(suffix);
@@ -261,28 +263,41 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
                             }else {
                                 factItem.setImagePath(item.getImagePath());
-                                activity.getPhotoAdapter().setImagePathForItem(factItem,currentPosition);
+                                activity.getPhotoAdapter().setImagePathForItem(factItem,activity.getPhotoAdapter().getSelectedPosition());
                             }
 
-                            if (activity.getPhotoAdapter().isPositionDefect(currentPosition)) {
-                                replaceWithPhotoViewer(item, currentPosition);
-                            } else {
-                                replaceWithCamera();
+                            if(factItem.isDefect()){
+                                int selectedPosition = activity.getPhotoAdapter().getSelectedPosition();
+                                if(selectedPosition!=0)
+                                    selectedPosition--;
+                                activity.getPhotoAdapter().setSelectedPosition(selectedPosition);
+
+                                try {
+                                    listView.smoothScrollToPositionFromTop(activity.getPhotoAdapter().getSelectedPosition() - 2, 0);
+                                }catch (Exception ignored){}
+
                             }
+                            replaceWithCamera();
+
 
                         }else {
                             item.setTitle(toolbarTitle.getText().toString());
                             activity.getPhotoAdapter().setItem(item,activity.getPhotoAdapter().getSelectedPosition());
                             setPhotosCount(activity.getPhotoAdapter().getPhotosCount());
                             setProgressCount(activity.getPhotoAdapter().getPhotosCount());
-                            replaceWithCamera();
+
                             int selectedPosition = activity.getPhotoAdapter().getSelectedPosition();
                             if(selectedPosition!=0)
                                 selectedPosition--;
-
                             activity.getPhotoAdapter().setSelectedPosition(selectedPosition);
-                           // replaceWithPhotoViewer(item,selectedPosition);
+                            replaceWithCamera();
+
+                            try {
+                                listView.smoothScrollToPositionFromTop(activity.getPhotoAdapter().getSelectedPosition() - 2, 0);
+                            }catch (Exception ignored){}
+
                         }
+
 
 
                     }
@@ -345,7 +360,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
             if(item.getImagePath()==null){
                 replaceWithCamera();
             }else {
-                replaceWithPhotoViewer(item,currentPosition);
+                replaceWithPhotoViewer(item,activity.getPhotoAdapter().getSelectedPosition());
             }
 
         }
@@ -357,7 +372,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         public void onReceive(Context context, Intent intent) {
 
             Log.d("TAG","position "+listView.getSelectedItemPosition());
-            currentPosition = activity.getPhotoAdapter().getSelectedPosition();
             replaceWithCamera();
 
         }

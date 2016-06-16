@@ -88,19 +88,13 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         takeVideo.setOnClickListener(this);
         done.setOnClickListener(this);
 
-        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer chronometer) {
-                Log.d("TAG", String.valueOf(chronometer.getDrawingTime()));
 
-            }
-        });
 
 
 
         listView = (ListView)v.findViewById(android.R.id.list);
 
-        titles = getResources().getStringArray(R.array.video_functionality_test);
+        titles = getResources().getStringArray(R.array.video_main);
 
         toolbarTitle.setText(titles[0]);
         setVideosCount(0);
@@ -125,7 +119,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                activity.updatePositionInAdapter(position);
+                activity.getPhotoAdapter().setSelectedPosition(position);
                 PhotoItem photoItem = activity.getPhotoAdapter().getItem(position);
                 currentPosition = position;
 
@@ -149,8 +143,8 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
 
         replaceWithCamera();
 
-        if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_LAUNCH))
-            getFragmentManager().beginTransaction().add(R.id.container,new ViewPagerPhotoDemoFragment()).addToBackStack(null).commit();
+//        if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_LAUNCH))
+//            getFragmentManager().beginTransaction().add(R.id.container,new ViewPagerPhotoDemoFragment()).addToBackStack(null).commit();
 
 
         return v;
@@ -195,7 +189,6 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
             }else {
                 progressBar.setProgressDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.vertical_progressbar_red));
             }
-            Log.d("TAG","currentProgress "+percent);
             progressBar.setProgress(percent);
         }else {
             progressBar.setProgress(0);
@@ -206,6 +199,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         Log.d("TAG","take video");
         if(isVideoRecording){
             if (mediaRecorder != null) {
+                takeVideo.setImageResource(R.drawable.ic_take_photo);
                 mediaRecorder.stop();
                 releaseMediaRecorder();
                 isVideoRecording = false;
@@ -231,6 +225,10 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                     replaceWithVideoViewer(item,currentPosition);
                 }
 
+                try {
+                    listView.smoothScrollToPositionFromTop(activity.getPhotoAdapter().getSelectedPosition() - 2, 0);
+                }catch (Exception ignored){}
+
 
 
               //  replaceWithVideoViewer(item,currentPosition);
@@ -238,7 +236,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         }else {
 
             if (prepareVideoRecorder()) {
-
+                takeVideo.setImageResource(R.drawable.ic_stop_video);
                 isVideoRecording = true;
                 mediaRecorder.start();
                 chronometer.setVisibility(View.VISIBLE);
@@ -247,6 +245,18 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                     public void run() {
                         chronometer.setBase(SystemClock.elapsedRealtime());
                         chronometer.start();
+                    }
+                });
+                PhotoItem item = activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition());
+                final int duration = item.getDuration()*1000;
+                chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+                    @Override
+                    public void onChronometerTick(Chronometer chronometer) {
+                        long elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
+                        Log.d("TAG", String.valueOf(elapsedMillis));
+                        if(elapsedMillis>=duration){
+                            takeVideo();
+                        }
                     }
                 });
 
@@ -266,45 +276,48 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
             takeVideo();
             isVideoRecording = false;
             chronometer.setBase(SystemClock.elapsedRealtime());
+            takeVideo.setImageResource(R.drawable.ic_take_photo);
         }
 
     }
 
     private boolean prepareVideoRecorder() {
+        try {
+            File directory = new File(Environment.getExternalStorageDirectory(), "/Comtrans/videos/");
+            if (directory.mkdirs() || directory.exists()) {
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+                String prefix = getString(R.string.prefix_video);
+                File file = new File(directory, prefix + timeStamp + ".mp4");
+                videoFile = file;
 
-        File directory = new File(Environment.getExternalStorageDirectory(),"/Comtrans/videos/");
-        if(directory.mkdirs()||directory.exists()){
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-            String prefix = getString(R.string.prefix_video);
-            File file = new File(directory, prefix + timeStamp + ".mp4");
-            videoFile = file;
+                cameraPreviewFragment.getCamera().unlock();
 
-            cameraPreviewFragment.getCamera().unlock();
+                mediaRecorder = new MediaRecorder();
 
-            mediaRecorder = new MediaRecorder();
+                mediaRecorder.setCamera(cameraPreviewFragment.getCamera());
+                mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+                mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+                mediaRecorder.setProfile(CamcorderProfile
+                        .get(CamcorderProfile.QUALITY_HIGH));
+                mediaRecorder.setOutputFile(file.getAbsolutePath());
+                mediaRecorder.setPreviewDisplay(cameraPreviewFragment.getPreview().getHolder().getSurface());
 
-            mediaRecorder.setCamera(cameraPreviewFragment.getCamera());
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
-            mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-            mediaRecorder.setProfile(CamcorderProfile
-                    .get(CamcorderProfile.QUALITY_HIGH));
-            mediaRecorder.setOutputFile(file.getAbsolutePath());
-            mediaRecorder.setPreviewDisplay(cameraPreviewFragment.getPreview().getHolder().getSurface());
+                try {
+                    mediaRecorder.prepare();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    releaseMediaRecorder();
+                    return false;
+                }
+                return true;
 
-            try {
-                mediaRecorder.prepare();
-            } catch (Exception e) {
-                e.printStackTrace();
-                releaseMediaRecorder();
+
+            } else {
+                Toast.makeText(getActivity(), R.string.photo_save_error, Toast.LENGTH_SHORT).show();
                 return false;
             }
-            return true;
-
-
-        }else {
-            Toast.makeText(getActivity(),R.string.photo_save_error,Toast.LENGTH_SHORT).show();
-            return false;
-        }
+        }catch (Exception ignored){}
+        return false;
     }
 
     private void releaseMediaRecorder() {
@@ -330,6 +343,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
             }else {
                 replaceWithVideoViewer(item,currentPosition);
             }
+
 
         }
     }

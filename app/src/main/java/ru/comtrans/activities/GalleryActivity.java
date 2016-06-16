@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -113,6 +114,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         item =  getIntent().getParcelableExtra(Const.EXTRA_PHOTO_ITEM);
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView toolbarTitle = (TextView)findViewById(R.id.toolbarTitle);
         toolbarTitle.setText(item.getTitle());
 
@@ -202,6 +204,17 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
 
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return false;
         }
     }
 }

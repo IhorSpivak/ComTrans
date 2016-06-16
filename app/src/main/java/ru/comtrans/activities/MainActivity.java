@@ -1,15 +1,26 @@
 package ru.comtrans.activities;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ru.comtrans.R;
 import ru.comtrans.fragments.ProfileFragment;
@@ -39,6 +50,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().getItem(0).setChecked(true);
 
         getSupportActionBar().setTitle(getString(R.string.nav_profile));
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -73,14 +85,10 @@ public class MainActivity extends AppCompatActivity
                 transaction.commit();
                 break;
             case R.id.nav_photo:
-                i = new Intent(MainActivity.this,CameraActivity.class);
-                i.putExtra(Const.CAMERA_MODE,Const.MODE_PHOTO);
-                startActivity(i);
+                checkCameraPermission(false);
                 break;
             case R.id.nav_video:
-                i = new Intent(MainActivity.this,CameraActivity.class);
-                i.putExtra(Const.CAMERA_MODE,Const.MODE_VIDEO);
-                startActivity(i);
+               checkCameraPermission(true);
                 break;
             case R.id.nav_settings:
                 getSupportActionBar().setTitle(getString(R.string.nav_settings));
@@ -99,5 +107,83 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkCameraPermission(boolean isVideo){
+        int hasCameraPermission = 0;
+        int hasStoragePermission = 0;
+        int hasRecorderPermission = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            hasCameraPermission = checkSelfPermission(Manifest.permission.CAMERA);
+            hasStoragePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            hasRecorderPermission = checkSelfPermission(Manifest.permission.RECORD_AUDIO);
+            List<String> permissions = new ArrayList<>();
+            if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.CAMERA);
+            }
+            if (hasStoragePermission != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            if(isVideo){
+                if(hasRecorderPermission!= PackageManager.PERMISSION_GRANTED){
+                    permissions.add(Manifest.permission.RECORD_AUDIO);
+                }
+            }
+            if (!permissions.isEmpty()) {
+                if(isVideo){
+                    requestPermissions(permissions.toArray(new String[permissions.size()]),
+                            Const.REQUEST_PERMISSION_VIDEO);
+                }else {
+                    requestPermissions(permissions.toArray(new String[permissions.size()]),
+                            Const.REQUEST_PERMISSION_CAMERA);
+                }
+
+            } else {
+                openCameraFragment(isVideo);
+            }
+        } else {
+            openCameraFragment(isVideo);
+        }
+    }
+
+    private void openCameraFragment(boolean isVideo){
+        Intent i = new Intent(MainActivity.this,CameraActivity.class);
+        if(isVideo)
+        i.putExtra(Const.CAMERA_MODE,Const.MODE_VIDEO);
+        else
+        i.putExtra(Const.CAMERA_MODE,Const.MODE_PHOTO);
+        startActivity(i);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean allow = true;
+        switch (requestCode){
+            case Const.REQUEST_PERMISSION_CAMERA:
+                for (int i = 0; i < permissions.length; i++) {
+                    if(grantResults[i] == PackageManager.PERMISSION_DENIED){
+                        allow = false;
+                    }
+                }
+                if(allow)
+                    openCameraFragment(false);
+                else
+                    Toast.makeText(MainActivity.this,R.string.not_all_permissions_granted,Toast.LENGTH_SHORT).show();
+                break;
+
+            case Const.REQUEST_PERMISSION_VIDEO:
+                for (int i = 0; i < permissions.length; i++) {
+                    if(grantResults[i] == PackageManager.PERMISSION_DENIED){
+                        allow = false;
+                    }
+                }
+                if(allow)
+                    openCameraFragment(true);
+                else
+                    Toast.makeText(MainActivity.this,R.string.not_all_permissions_granted,Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 }

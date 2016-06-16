@@ -11,7 +11,16 @@ public class PhotoItem implements Parcelable {
     private String title;
     private String imagePath;
     private String id;
+    private int duration;
     private boolean isVideo;
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 
     public boolean isVideo() {
         return isVideo;
@@ -76,6 +85,7 @@ public class PhotoItem implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.imagePath);
         dest.writeString(this.id);
+        dest.writeInt(this.duration);
         dest.writeByte(this.isVideo ? (byte) 1 : (byte) 0);
     }
 
@@ -84,6 +94,7 @@ public class PhotoItem implements Parcelable {
         this.title = in.readString();
         this.imagePath = in.readString();
         this.id = in.readString();
+        this.duration = in.readInt();
         this.isVideo = in.readByte() != 0;
     }
 

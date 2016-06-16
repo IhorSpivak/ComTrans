@@ -35,7 +35,7 @@ public class User implements Parcelable {
     private String companyPosition;
     @SerializedName("phone")
     @Expose
-    private int phone;
+    private String phone;
     @SerializedName("email")
     @Expose
     private String email;
@@ -60,7 +60,7 @@ public class User implements Parcelable {
         this.password = password;
     }
 
-    public User(String firstName,String lastName,String company,String companyPosition,int phone) {
+    public User(String firstName,String lastName,String company,String companyPosition,String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.company = company;
@@ -82,7 +82,7 @@ public class User implements Parcelable {
      * @param firstName
      * @param password
      */
-    public User(int status, String message, int errCode, String firstName, String lastName, String token, String company, String companyPosition, int phone, String email,String password) {
+    public User(int status, String message, int errCode, String firstName, String lastName, String token, String company, String companyPosition, String phone, String email,String password) {
         this.status = status;
         this.message = message;
         this.errCode = errCode;
@@ -284,7 +284,7 @@ public class User implements Parcelable {
      * @return
      * The phone
      */
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
@@ -293,11 +293,11 @@ public class User implements Parcelable {
      * @param phone
      * The phone
      */
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
-    public User withPhone(int phone) {
+    public User withPhone(String phone) {
         this.phone = phone;
         return this;
     }
@@ -368,7 +368,7 @@ public class User implements Parcelable {
         dest.writeString(this.token);
         dest.writeString(this.company);
         dest.writeString(this.companyPosition);
-        dest.writeInt(this.phone);
+        dest.writeString(this.phone);
         dest.writeString(this.email);
         dest.writeString(this.password);
     }
@@ -382,7 +382,7 @@ public class User implements Parcelable {
         this.token = in.readString();
         this.company = in.readString();
         this.companyPosition = in.readString();
-        this.phone = in.readInt();
+        this.phone = in.readString();
         this.email = in.readString();
         this.password = in.readString();
     }
