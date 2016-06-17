@@ -152,16 +152,14 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     }
 
     private void replaceWithCamera(){
-        takeDefect.setEnabled(true);
-        takePhoto.setEnabled(true);
+
         toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
         cameraPreviewFragment = new CameraPreviewFragment();
         photoViewerFragment = null;
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
     }
     private void replaceWithPhotoViewer(PhotoItem item,int position){
-        takeDefect.setEnabled(false);
-        takePhoto.setEnabled(false);
+
         photoViewerFragment = PhotoViewerFragment.newInstance(item,position);
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer, photoViewerFragment,Const.PHOTO_VIEWER).commit();
     }
@@ -172,11 +170,20 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.take_defect:
-                takePicture(true);
+                if(photoViewerFragment!=null){
+                    Toast.makeText(getActivity(),R.string.photo_blocked,Toast.LENGTH_SHORT).show();
+                }else {
+                    takePicture(true);
+                }
+
                 break;
             case R.id.take_photo:
-                if(!activity.getPhotoAdapter().isPositionDefect(activity.getPhotoAdapter().getSelectedPosition()))
-                takePicture(false);
+                if(photoViewerFragment!=null){
+                    Toast.makeText(getActivity(),R.string.photo_blocked,Toast.LENGTH_SHORT).show();
+                }else {
+                    if (!activity.getPhotoAdapter().isPositionDefect(activity.getPhotoAdapter().getSelectedPosition()))
+                        takePicture(false);
+                }
                 break;
             case R.id.btn_done:
                 getActivity().finish();

@@ -151,14 +151,12 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     }
 
     private void replaceWithCamera(){
-        takeVideo.setEnabled(true);
         cameraPreviewFragment = new CameraPreviewFragment();
         videoViewerFragment = null;
         toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
     }
     private void replaceWithVideoViewer(PhotoItem item, int position){
-        takeVideo.setEnabled(false);
         videoViewerFragment = VideoViewerFragment.newInstance(item,position);
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer, videoViewerFragment,Const.PHOTO_VIEWER).commit();
     }
@@ -169,7 +167,12 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.take_video:
-                takeVideo();
+                if(videoViewerFragment!=null){
+                    Toast.makeText(getActivity(),R.string.video_blocked,Toast.LENGTH_SHORT).show();
+                }else {
+                    takeVideo();
+                }
+
                 break;
             case R.id.btn_done:
                 getActivity().finish();

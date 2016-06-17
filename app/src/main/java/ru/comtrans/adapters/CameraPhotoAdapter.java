@@ -10,6 +10,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 
 import ru.comtrans.R;
 import ru.comtrans.items.PhotoItem;
+import ru.comtrans.views.VerticalTextView;
 
 /**
  * Created by Artco on 24.05.2016.
@@ -55,7 +58,7 @@ public class CameraPhotoAdapter extends BaseAdapter {
     }
 
     static class ViewHolder{
-        public TextView title;
+        public VerticalTextView title;
         public ImageView photo;
         public ImageView addPhoto;
         public ImageView imgDefect;
@@ -160,7 +163,7 @@ public class CameraPhotoAdapter extends BaseAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.photo_list_item, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.title = (TextView) convertView.findViewById(R.id.title);
+            viewHolder.title = (VerticalTextView) convertView.findViewById(R.id.title);
             viewHolder.photo  = (ImageView)convertView.findViewById(R.id.img_photo);
             viewHolder.addPhoto = (ImageView)convertView.findViewById(R.id.img_add_photo);
             viewHolder.imgDefect = (ImageView)convertView.findViewById(R.id.img_defect);
@@ -183,6 +186,8 @@ public class CameraPhotoAdapter extends BaseAdapter {
         }
 
         viewHolder.title.setText(item.getTitle());
+
+
 
         if(item.getImagePath()!=null) {
             viewHolder.addPhoto.setVisibility(View.GONE);

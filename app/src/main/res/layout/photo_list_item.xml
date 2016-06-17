@@ -60,7 +60,12 @@
             android:id="@+id/title"
             android:layout_toEndOf="@id/photo_layout"
             android:layout_toRightOf="@id/photo_layout"
-            android:lines="1"
+            android:paddingStart="1dp"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp"
+            android:paddingEnd="1dp"
+            android:maxLines="1"
+            android:textSize="13sp"
             android:gravity="center"
             android:textColor="@android:color/white"
            />

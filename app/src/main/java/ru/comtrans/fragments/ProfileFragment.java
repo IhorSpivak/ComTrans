@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import retrofit2.Call;
@@ -28,6 +29,7 @@ public class ProfileFragment extends BaseFragment {
 
     EditText etName, etLastName, etCompany,etPosition,etTelephone,etEmail;
     Button btnSaveProfile;
+    LinearLayout mainLayout;
     boolean isFromRegistration;
     ConnectionProgressDialog progressDialog;
 
@@ -51,6 +53,7 @@ public class ProfileFragment extends BaseFragment {
         etTelephone = (EditText)v.findViewById(R.id.et_telephone);
         btnSaveProfile =(Button)v.findViewById(R.id.btn_save_profile);
         etEmail = (EditText)v.findViewById(R.id.et_email);
+        mainLayout = (LinearLayout)v.findViewById(R.id.main_layout);
 
         isFromRegistration = getArguments().getBoolean(Const.IS_FROM_REGISTRATION);
 
@@ -127,6 +130,7 @@ public class ProfileFragment extends BaseFragment {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 progressDialog.dismiss();
+                mainLayout.requestFocus();
                 if(response.body().getStatus()==1){
                     Toast.makeText(getActivity(),R.string.profile_saved,Toast.LENGTH_SHORT).show();
                 }else {

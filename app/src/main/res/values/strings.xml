@@ -64,6 +64,8 @@
     <string name="video_not_deleted">Ошибка при удалении видео</string>
     <string name="skip">Пропустить</string>
     <string name="start">Начать</string>
+    <string name="photo_blocked">Для продолжения фотографирования перейдите в ячейку добавления фото</string>
+    <string name="video_blocked">Для продолжения cнятия видео перейдите в ячейку добавления видео</string>
 
 
     
