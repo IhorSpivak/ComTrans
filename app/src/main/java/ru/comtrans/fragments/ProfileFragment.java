@@ -147,7 +147,7 @@ public class ProfileFragment extends BaseFragment {
 
     private User createUser(){
         return new User(etName.getText().toString().trim(),
-                etName.getText().toString().trim(),
+                etLastName.getText().toString().trim(),
                 etCompany.getText().toString().trim(),
                 etPosition.getText().toString().trim(),
                 etTelephone.getText().toString().trim());

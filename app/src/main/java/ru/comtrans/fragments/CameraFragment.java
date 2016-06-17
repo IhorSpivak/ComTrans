@@ -152,12 +152,16 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     }
 
     private void replaceWithCamera(){
+        takeDefect.setEnabled(true);
+        takePhoto.setEnabled(true);
         toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
         cameraPreviewFragment = new CameraPreviewFragment();
         photoViewerFragment = null;
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
     }
     private void replaceWithPhotoViewer(PhotoItem item,int position){
+        takeDefect.setEnabled(false);
+        takePhoto.setEnabled(false);
         photoViewerFragment = PhotoViewerFragment.newInstance(item,position);
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer, photoViewerFragment,Const.PHOTO_VIEWER).commit();
     }
@@ -266,19 +270,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                                 activity.getPhotoAdapter().setImagePathForItem(factItem,activity.getPhotoAdapter().getSelectedPosition());
                             }
 
-                            if(factItem.isDefect()){
-                                int selectedPosition = activity.getPhotoAdapter().getSelectedPosition();
-                                if(selectedPosition!=0)
-                                    selectedPosition--;
-                                activity.getPhotoAdapter().setSelectedPosition(selectedPosition);
+                                activity.getPhotoAdapter().setSelectedPosition(1);
 
                                 try {
                                     listView.smoothScrollToPositionFromTop(activity.getPhotoAdapter().getSelectedPosition() - 2, 0);
                                 }catch (Exception ignored){}
 
-                            }
-                            replaceWithCamera();
-
+                                replaceWithPhotoViewer(item,1);
 
                         }else {
                             item.setTitle(toolbarTitle.getText().toString());

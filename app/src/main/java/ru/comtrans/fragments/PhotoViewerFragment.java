@@ -101,10 +101,6 @@ public class PhotoViewerFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    private void replaceWithCamera(){
-        CameraPreviewFragment cameraPreviewFragment = new CameraPreviewFragment();
-        getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
-    }
 
     private void deletePhotoAndClose(){
         if(imgFile.delete()){
@@ -128,7 +124,7 @@ public class PhotoViewerFragment extends Fragment implements View.OnClickListene
         if(resultCode==Const.GALLERY_RESULT){
             switch (data.getIntExtra(Const.GALLERY_RESULT_STRING,0)){
                 case Const.GALLERY_RESULT_RE_PHOTO:
-                    replaceWithCamera();
+                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Const.RE_PHOTO));
                     break;
                 case Const.GALLERY_RESULT_DELETE:
                     deletePhotoAndClose();

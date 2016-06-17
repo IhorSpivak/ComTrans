@@ -85,7 +85,6 @@ public class VideoViewerFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.re_photo:
-              //  replaceWithCamera();
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Const.RE_PHOTO));
                 break;
 
@@ -106,11 +105,6 @@ public class VideoViewerFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    private void replaceWithCamera(){
-        CameraPreviewFragment cameraPreviewFragment = new CameraPreviewFragment();
-        getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
-    }
-
     private void deletePhotoAndClose(){
         if(imgFile.delete()){
             if(!item.isDefect()) {
@@ -121,7 +115,6 @@ public class VideoViewerFragment extends Fragment implements View.OnClickListene
             }
             Toast.makeText(getActivity(),R.string.video_deleted,Toast.LENGTH_SHORT).show();
             LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Const.RECEIVE_UPDATE_COUNT));
-               // replaceWithCamera();
         }else {
             Toast.makeText(getActivity(),R.string.video_not_deleted,Toast.LENGTH_SHORT).show();
         }

@@ -151,11 +151,14 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     }
 
     private void replaceWithCamera(){
+        takeVideo.setEnabled(true);
         cameraPreviewFragment = new CameraPreviewFragment();
         videoViewerFragment = null;
+        toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
     }
     private void replaceWithVideoViewer(PhotoItem item, int position){
+        takeVideo.setEnabled(false);
         videoViewerFragment = VideoViewerFragment.newInstance(item,position);
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer, videoViewerFragment,Const.PHOTO_VIEWER).commit();
     }
@@ -199,14 +202,20 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         Log.d("TAG","take video");
         if(isVideoRecording){
             if (mediaRecorder != null) {
+                chronometer.setOnChronometerTickListener(null);
+                isVideoRecording = false;
                 takeVideo.setImageResource(R.drawable.ic_take_photo);
                 mediaRecorder.stop();
                 releaseMediaRecorder();
-                isVideoRecording = false;
                 chronometer.stop();
                 chronometer.setBase(SystemClock.elapsedRealtime());
                 chronometer.setVisibility(View.INVISIBLE);
-                PhotoItem item = new PhotoItem();
+                PhotoItem item = activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition());
+                if(item.getImagePath()!=null&&!item.getImagePath().equals("")){
+                    File file = new File(item.getImagePath());
+                    file.delete();
+                }
+
                 item.setVideo(true);
                 item.setImagePath(videoFile.getAbsolutePath());
                 item.setTitle(toolbarTitle.getText().toString());
@@ -254,7 +263,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                     public void onChronometerTick(Chronometer chronometer) {
                         long elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
                         Log.d("TAG", String.valueOf(elapsedMillis));
-                        if(elapsedMillis>=duration){
+                        if(elapsedMillis>=duration&&chronometer.getBase()!=0){
                             takeVideo();
                         }
                     }
