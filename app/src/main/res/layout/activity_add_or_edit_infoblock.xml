@@ -1,0 +1,35 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/mainAppBar"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <include layout="@layout/toolbar"
+                />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <include
+            layout="@layout/content_add_or_edit_infoblock"
+            android:layout_below="@id/mainAppBar"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            />
+
+    </RelativeLayout>
+
+
+
+
+
+
+</android.support.design.widget.CoordinatorLayout>
