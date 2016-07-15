@@ -3,6 +3,7 @@ package ru.comtrans.singlets;
 import android.app.Application;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.comtrans.interfaces.ApiInterface;
@@ -14,7 +15,7 @@ import ru.comtrans.interfaces.ApiInterface;
 public class AppController extends Application {
     private static AppController instance;
     public static ApiInterface apiInterface;
-    public static final String BASE_URL = "http://dev1.100fur.ru/ru/api/";
+    public static final String BASE_URL = "http://rc.100fur.ru/ru/api/";
 
     public AppController() {
         instance = this;
@@ -24,9 +25,16 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
 
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
+
+
        Retrofit retrofit =  new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-              //  .client(new OkHttpClient().writeTimeoutMillis())
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
        apiInterface =  retrofit.create(ApiInterface.class);

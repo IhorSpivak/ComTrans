@@ -1,9 +1,7 @@
 package ru.comtrans.fragments;
 
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.util.List;
 
 import ru.comtrans.R;
 import ru.comtrans.activities.CameraActivity;

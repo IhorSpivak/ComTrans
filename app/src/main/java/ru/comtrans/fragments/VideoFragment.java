@@ -34,7 +34,6 @@ import java.util.Locale;
 import ru.comtrans.R;
 import ru.comtrans.activities.CameraActivity;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.views.VerticalChronometer;
 

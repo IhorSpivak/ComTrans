@@ -3,6 +3,7 @@
     <string name="loading">Пожалуйста, подождите</string>
 
     //////////////Drawer Items//////////////////////////////////////////////////
+    <string name="nav_infoblocks">Мои инфоблоки</string>
     <string name="nav_profile">Профиль</string>
     <string name="nav_photo">Фото</string>
     <string name="nav_video">Видео</string>
@@ -68,19 +69,23 @@
     <string name="video_blocked">Для продолжения cнятия видео перейдите в ячейку добавления видео</string>
 
 
-    
-
     <string name="title_activity_gallery">Галерея</string>
-    
-    
+
+
     /////////////////////////////Settings Fragment/////////////////////////
     <string name="enable_sending_without_wifi">Разрешить отправку данных по 3G/LTE</string>
     <string name="enable_sending_more_than_100">Разрешить отправку данных свыше 100м</string>
 
 
+    ////////////////////////////AddOrEditInfoblockActivity/////////////////////
+    <string name="add_or_edit_infoblock_activity_title">Добавление инфоблока</string>
+    <string name="btn_previous">Назад</string>
+    <string name="btn_next">Далее</string>
+    <string name="btn_done">Отправить</string>
 
 
-
+    //////////////////////////SearchValueActivity////////////////////////////////
+    <string name="action_search">Поиск</string>
 
 
 </resources>

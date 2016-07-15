@@ -7,22 +7,23 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.comtrans.R;
+import ru.comtrans.fragments.MyInfoblocksFragment;
 import ru.comtrans.fragments.ProfileFragment;
 import ru.comtrans.fragments.SettingsFragment;
 import ru.comtrans.helpers.Const;
@@ -30,6 +31,7 @@ import ru.comtrans.helpers.Const;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    FloatingActionButton fab;
 
 
 
@@ -40,7 +42,14 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        fab = (FloatingActionButton)findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this,AddOrEditInfoBlockActivity.class);
+                startActivity(i);
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -52,9 +61,9 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
 
-        getSupportActionBar().setTitle(getString(R.string.nav_profile));
+        getSupportActionBar().setTitle(getString(R.string.nav_infoblocks));
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.container, ProfileFragment.newInstance(false));
+        transaction.add(R.id.container, new MyInfoblocksFragment());
         transaction.commit();
     }
 
@@ -74,11 +83,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        fab.hide();
         int id = item.getItemId();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Intent i;
 
         switch (id){
+            case R.id.nav_infoblocks:
+                fab.show();
+                getSupportActionBar().setTitle(getString(R.string.nav_infoblocks));
+                transaction.replace(R.id.container,new MyInfoblocksFragment());
+                transaction.commit();
+                break;
             case R.id.nav_profile:
                 getSupportActionBar().setTitle(getString(R.string.nav_profile));
                 transaction.replace(R.id.container,ProfileFragment.newInstance(false));
@@ -108,6 +124,8 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
 
     @TargetApi(Build.VERSION_CODES.M)
     private void checkCameraPermission(boolean isVideo){

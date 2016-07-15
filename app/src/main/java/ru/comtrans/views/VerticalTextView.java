@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.widget.Button;
 import android.widget.TextView;
 
 public class VerticalTextView extends TextView {

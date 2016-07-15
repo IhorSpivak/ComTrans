@@ -111,6 +111,8 @@ public class ProfileFragment extends BaseFragment {
                 }
             }
 
+
+
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 progressDialog.dismiss();
@@ -140,7 +142,7 @@ public class ProfileFragment extends BaseFragment {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                progressDialog.hide();
+                progressDialog.dismiss();
                 Log.d("TAG","fail",t);
                 Toast.makeText(getActivity(),R.string.something_went_wrong,Toast.LENGTH_SHORT).show();
             }

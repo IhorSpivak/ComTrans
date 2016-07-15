@@ -38,6 +38,14 @@ public class Const {
     public static final String SETTINGS_ALLOWS_MOBILE_CONN = "allow_mobile_conn";
     public static final String SETTINGS_ALLOWS_BIG_DATA = "allow_big_data";
 
+    public static final String JSON_PROP = "json_prop";
+
+
+
+    ////////////////Main Screen Fragment//////////////////////
+    public static final String PAGE = "page";
+    public static final String EXTRA_VALUES = "extra_values";
+
 
 
 

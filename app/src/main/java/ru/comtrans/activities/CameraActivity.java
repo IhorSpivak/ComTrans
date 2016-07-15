@@ -34,23 +34,16 @@ public class CameraActivity extends AppCompatActivity {
 
         int flag = getIntent().getIntExtra(Const.CAMERA_MODE,0);
         Fragment fragment = null;
-        final ArrayList<PhotoItem> items = new ArrayList<>();
+        final ArrayList<PhotoItem> items = getIntent().getParcelableArrayListExtra(Const.EXTRA_VALUES);
         switch (flag){
             case 0:
                 finish();
                 break;
             case Const.MODE_PHOTO:
-                titles = getResources().getStringArray(R.array.photo_general);
-                for (int i=titles.length-1; i>=0; i--) {
-                    if(i==titles.length-1){
-                        PhotoItem defectItem = new PhotoItem(String.format(getString(R.string.defect_n),1));
-                        defectItem.setDefect(true);
-                        items.add(defectItem);
-                    }
-                    PhotoItem item = new PhotoItem(titles[i]);
-                    items.add(item);
+                PhotoItem defectItem = new PhotoItem(String.format(getString(R.string.defect_n),1));
+                defectItem.setDefect(true);
+                items.add(defectItem);
 
-                }
                 photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
                 fragment = new CameraFragment();
                  break;
@@ -61,7 +54,7 @@ public class CameraActivity extends AppCompatActivity {
 
                 for (int i=titles.length-1; i>=0; i--) {
                     PhotoItem item = new PhotoItem(titles[i]);
-                    if(i<=3){
+                    if(i>=2){
                         item.setDuration(15);
                     }else {
                         item.setDuration(30);

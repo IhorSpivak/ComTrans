@@ -10,12 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import ru.comtrans.R;
 import ru.comtrans.adapters.ViewPagerAdapter;
-import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.Utility;
 
 /**
  * Created by Artco on 31.05.2016.
@@ -42,7 +39,7 @@ public class ViewPagerPhotoDemoFragment extends Fragment implements ViewPager.On
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_view_pager_photo_demo,container,false);
 
-        viewPager = (ViewPager) v.findViewById(R.id.pager_introduction);
+        viewPager = (ViewPager) v.findViewById(R.id.pager);
 
 
         pager_indicator = (LinearLayout) v.findViewById(R.id.viewPagerCountDots);
