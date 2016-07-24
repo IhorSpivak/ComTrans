@@ -1,5 +1,7 @@
 package ru.comtrans.helpers;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -110,6 +112,7 @@ public class PropHelper {
             }
 
             item.setName(object.get("name").getAsString());
+            item.setCode(object.get("code").getAsString());
 
             if(object.has("val")&&!object.get("val").isJsonNull()){
                 ArrayList<ListItem> listItems = new ArrayList<>();
@@ -118,7 +121,10 @@ public class PropHelper {
                     ListItem listItem = new ListItem(val.get(j).getAsJsonObject().get("id").getAsLong(),val.get(j).getAsJsonObject().get("name").getAsString());
                     listItems.add(listItem);
                 }
-                item.setValues(listItems);
+                item.setListValues(listItems);
+                item.setListValue(listItems.get(0));
+
+
             }
 
             items.add(item);
@@ -127,7 +133,7 @@ public class PropHelper {
         return items;
     }
 
-    private static ArrayList<MainItem> getPhotoItems(JsonArray array){
+    private static ArrayList<MainItem> getPhotoItems(JsonArray array, boolean isVideo,boolean isNeedDefects){
         ArrayList<MainItem> items = new ArrayList<>();
 
         MainItem item = new MainItem();
@@ -138,37 +144,50 @@ public class PropHelper {
         for (int i = 0; i < array.size(); i++) {
 
             JsonObject object = array.get(i).getAsJsonObject();
-            PhotoItem photoItem = new PhotoItem(object.get("name").getAsString(),false);
+            PhotoItem photoItem = new PhotoItem(object.get("name").getAsString());
+
+            if(i == array.size()-1){
+                if(isNeedDefects){
+                    photoItem.setDefect(true);
+                    Utility.saveData(Const.DEFAULT_DEFECT_NAME,photoItem.getTitle());
+                    photoItem.setTitle(photoItem.getTitle()+" 1");
+                }else {
+                    photoItem.setDefect(false);
+                }
+
+
+            }else {
+                photoItem.setDefect(false);
+            }
+            if(isVideo){
+                photoItem.setDuration(15);
+            }
             photoItems.add(photoItem);
 
 
 
         }
         MainItem photoItem = new MainItem();
-        photoItem.setType(MainItem.TYPE_PHOTO);
+        if(isVideo){
+            photoItem.setType(MainItem.TYPE_VIDEO);
+        }else {
+            photoItem.setType(MainItem.TYPE_PHOTO);
+        }
+
         photoItem.setPhotoItems(photoItems);
         items.add(photoItem);
 
-        MainItem defectItem = new MainItem();
-        defectItem.setType(MainItem.TYPE_PHOTO);
-        ArrayList<PhotoItem> defectItems = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            PhotoItem defect = new PhotoItem("Дефект "+(i+1),true);
-            defectItems.add(defect);
-        }
-        defectItem.setPhotoItems(defectItems);
-        items.add(defectItem);
 
         return items;
     }
+
     private ArrayList<MainItem> getFirstScreenItems(){
         ArrayList<MainItem> items = new ArrayList<>();
         items.addAll(getItems(general));
         items.addAll(getItems(tec));
         items.addAll(getItems(teh));
-        items.addAll(getPhotoItems(photogeneral));
-        MainItem item = new MainItem();
-        item.setType(MainItem.TYPE_BOTTOM_BAR);
+        items.addAll(getPhotoItems(photogeneral,false,true));
+        MainItem item = new MainItem(MainItem.TYPE_BOTTOM_BAR);
         items.add(item);
         return items;
     }
@@ -176,33 +195,33 @@ public class PropHelper {
     private ArrayList<MainItem> getSecondScreenItems(){
         ArrayList<MainItem> items = new ArrayList<>();
         items.addAll(getItems(cabn));
-        items.addAll(getPhotoItems(photocabine));
-        items.addAll(getPhotoItems(photoglass));
-        MainItem item = new MainItem();
-        item.setType(MainItem.TYPE_BOTTOM_BAR);
+        items.addAll(getPhotoItems(photocabine,false,true));
+        items.addAll(getPhotoItems(photoglass,false,true));
+        MainItem item = new MainItem(MainItem.TYPE_BOTTOM_BAR);
         items.add(item);
         return items;
+
     }
 
     private ArrayList<MainItem> getThirdScreenItems(){
         ArrayList<MainItem> items = new ArrayList<>();
         items.addAll(getItems(shas));
-        items.addAll(getPhotoItems(photochassis));
-        items.addAll(getPhotoItems(photoengine));
-        items.addAll(getPhotoItems(phototrans));
-        items.addAll(getPhotoItems(photoshas));
-        MainItem item = new MainItem();
-        item.setType(MainItem.TYPE_BOTTOM_BAR);
+        items.addAll(getPhotoItems(photochassis,false,true));
+        items.addAll(getPhotoItems(photoengine,false,true));
+        items.addAll(getPhotoItems(phototrans,false,true));
+        items.addAll(getPhotoItems(photoshas,false,true));
+        MainItem item = new MainItem(MainItem.TYPE_BOTTOM_BAR);
         items.add(item);
         return items;
     }
 
     private ArrayList<MainItem> getFourthScreenItems(){
         ArrayList<MainItem> items = new ArrayList<>();
+        MainItem schemeItem = new MainItem(MainItem.TYPE_TIRE_SCHEME);
+        items.add(schemeItem);
         items.addAll(getItems(shin));
-        items.addAll(getPhotoItems(photobus));
-        MainItem item = new MainItem();
-        item.setType(MainItem.TYPE_BOTTOM_BAR);
+        items.addAll(getPhotoItems(photobus,false,false));
+        MainItem item = new MainItem(MainItem.TYPE_BOTTOM_BAR);
         items.add(item);
         return items;
     }
@@ -210,9 +229,16 @@ public class PropHelper {
     private ArrayList<MainItem> getFifthScreenItems(){
         ArrayList<MainItem> items = new ArrayList<>();
         items.addAll(getItems(optional));
-        items.addAll(getPhotoItems(photodop));
-        MainItem item = new MainItem();
-        item.setType(MainItem.TYPE_BOTTOM_BAR);
+        items.addAll(getPhotoItems(photodop,false,false));
+        MainItem item = new MainItem(MainItem.TYPE_BOTTOM_BAR);
+        items.add(item);
+        return items;
+    }
+
+    private ArrayList<MainItem> getSixthScreenItems(){
+        ArrayList<MainItem> items = new ArrayList<>();
+        items.addAll(getPhotoItems(video,true,false));
+        MainItem item = new MainItem(MainItem.TYPE_BOTTOM_BAR);
         items.add(item);
         return items;
     }
@@ -229,6 +255,8 @@ public class PropHelper {
                 return getFourthScreenItems();
             case 5:
                 return getFifthScreenItems();
+            case 6:
+                return getSixthScreenItems();
             default:
                 return getFirstScreenItems();
         }

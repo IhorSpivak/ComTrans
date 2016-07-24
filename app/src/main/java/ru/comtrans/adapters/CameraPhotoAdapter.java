@@ -14,6 +14,8 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 
 import ru.comtrans.R;
+import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.views.VerticalTextView;
 
@@ -25,6 +27,11 @@ public class CameraPhotoAdapter extends BaseAdapter {
     private Context context;
     int selectedPosition = 0; //needs to highlight first selected position
     int defectsCount = 1;
+
+    public ArrayList<PhotoItem> getItems() {
+        return items;
+    }
+
 
     public void setDefectsCount(int defectsCount) {
         this.defectsCount = defectsCount;
@@ -74,7 +81,7 @@ public class CameraPhotoAdapter extends BaseAdapter {
         if(item.isDefect()){
             selectedPosition++;
             defectsCount++;
-            items.add(0,new PhotoItem(String.format(context.getString(R.string.defect_n),defectsCount),true));
+            items.add(0,new PhotoItem(Utility.getSavedData(Const.DEFAULT_DEFECT_NAME)+" "+defectsCount,true));
         }
         notifyDataSetChanged();
     }
@@ -140,6 +147,15 @@ public class CameraPhotoAdapter extends BaseAdapter {
         return count;
     }
 
+    public int getNonDefectPhotosCount(){
+        int count = 0;
+        for(PhotoItem item:items){
+            if(!item.isDefect())
+                count++;
+        }
+        return count;
+    }
+
     @Override
     public long getItemId(int position) {
         return 0;
@@ -177,8 +193,13 @@ public class CameraPhotoAdapter extends BaseAdapter {
             viewHolder.imgDefect.setVisibility(View.GONE);
         }
 
-        viewHolder.title.setText(item.getTitle());
 
+        if(item.getTitle().length()>9){
+            viewHolder.title.setText(item.getTitle().substring(0,9)+"...");
+        }else {
+            viewHolder.title.setText(item.getTitle());
+        }
+        Log.d("TAG",item.getTitle());
 
 
         if(item.getImagePath()!=null) {

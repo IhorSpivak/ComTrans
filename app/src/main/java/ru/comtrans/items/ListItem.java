@@ -55,6 +55,11 @@ public class ListItem implements Parcelable {
         this.name = in.readString();
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public static final Parcelable.Creator<ListItem> CREATOR = new Parcelable.Creator<ListItem>() {
         @Override
         public ListItem createFromParcel(Parcel source) {

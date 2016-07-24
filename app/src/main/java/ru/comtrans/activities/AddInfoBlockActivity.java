@@ -16,24 +16,26 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.singlets.AppController;
 import ru.comtrans.views.ConnectionProgressDialog;
+import ru.comtrans.views.NonSwipeableViewPager;
 
-public class AddOrEditInfoBlockActivity extends AppCompatActivity {
+public class AddInfoBlockActivity extends AppCompatActivity {
     ConnectionProgressDialog progressDialog;
+    public NonSwipeableViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_or_edit_infoblock);
+        setContentView(R.layout.activity_add_infoblock);
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        progressDialog = new ConnectionProgressDialog(AddOrEditInfoBlockActivity.this);
+        progressDialog = new ConnectionProgressDialog(AddInfoBlockActivity.this);
 
  //       if(Utility.getSavedData(Const.JSON_PROP).equals("")){
             getProp();
 //        }else {
-//            openFirstScreenFragment();
+//            openMainFragment();
 //        }
 
 
@@ -75,4 +77,5 @@ public class AddOrEditInfoBlockActivity extends AppCompatActivity {
                 return false;
         }
     }
+
 }

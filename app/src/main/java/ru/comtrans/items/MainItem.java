@@ -17,34 +17,88 @@ public class MainItem implements Parcelable {
     public static final int TYPE_PHOTO = 5;
     public static final int TYPE_VIDEO = 6;
     public static final int TYPE_BOTTOM_BAR = 7;
+    public static final int TYPE_TIRE_SCHEME = 8;
 
 
     long id;
     String name;
+    String code;
+    String value;
     int type;
-    ArrayList<ListItem> values;
+    boolean isChecked;
+    ListItem listValue;
+    ArrayList<ListItem> listValues;
     ArrayList<PhotoItem> photoItems;
 
+
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
+    public ListItem getListValue() {
+        return listValue;
+    }
+
+    public void setListValue(ListItem listValue) {
+        this.listValue = listValue;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public ArrayList<PhotoItem> getPhotoItems() {
-        if(values==null){
-            values = new ArrayList<>();
+        if(photoItems ==null){
+            photoItems = new ArrayList<>();
         }
         return photoItems;
+    }
+
+    public int getPhotosCount(){
+        if(photoItems ==null){
+            return 0;
+        }else {
+            int count = 0;
+            for(PhotoItem item:photoItems){
+                if(!item.isDefect())
+                    count++;
+            }
+            return count;
+        }
+
     }
 
     public void setPhotoItems(ArrayList<PhotoItem> photoItems) {
         this.photoItems = photoItems;
     }
 
-    public ArrayList<ListItem> getValues() {
-        if(values==null){
-            values = new ArrayList<>();
+    public ArrayList<ListItem> getListValues() {
+        if(listValues ==null){
+            listValues = new ArrayList<>();
         }
-        return values;
+        return listValues;
     }
 
-    public void setValues(ArrayList<ListItem> values) {
-        this.values = values;
+    public void setListValues(ArrayList<ListItem> listValues) {
+        this.listValues = listValues;
     }
 
     public int getType() {
@@ -75,6 +129,10 @@ public class MainItem implements Parcelable {
     public MainItem() {
     }
 
+    public MainItem(int type) {
+        this.type = type;
+    }
+
     public MainItem(long id, String name, int type) {
         this.id = id;
         this.name = name;
@@ -90,13 +148,25 @@ public class MainItem implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(this.id);
         dest.writeString(this.name);
+        dest.writeString(this.code);
+        dest.writeString(this.value);
         dest.writeInt(this.type);
+        dest.writeByte(this.isChecked ? (byte) 1 : (byte) 0);
+        dest.writeParcelable(this.listValue, flags);
+        dest.writeTypedList(this.listValues);
+        dest.writeTypedList(this.photoItems);
     }
 
     protected MainItem(Parcel in) {
         this.id = in.readLong();
         this.name = in.readString();
+        this.code = in.readString();
+        this.value = in.readString();
         this.type = in.readInt();
+        this.isChecked = in.readByte() != 0;
+        this.listValue = in.readParcelable(ListItem.class.getClassLoader());
+        this.listValues = in.createTypedArrayList(ListItem.CREATOR);
+        this.photoItems = in.createTypedArrayList(PhotoItem.CREATOR);
     }
 
     public static final Creator<MainItem> CREATOR = new Creator<MainItem>() {

@@ -31,6 +31,7 @@
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="actionMenuTextColor">@android:color/white</item>
         <item name="drawerArrowStyle">@style/DrawerArrowToggle</item>
+        <item name="colorControlActivated">#FFffffff</item>
     </style>
 
     <style name="DrawerArrowToggle" parent="Widget.AppCompat.DrawerArrowToggle">

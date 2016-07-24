@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -54,10 +56,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     CountUpdateReceiver countUpdateReceiver = null;
     RePhotoReceiver rePhotoReceiver = null;
     ProgressBar progressBar;
-    String[] titles;
     private CameraActivity activity;
 
-
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
@@ -91,12 +96,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
         listView = (ListView)v.findViewById(android.R.id.list);
 
-        titles = getResources().getStringArray(R.array.photo_general);
 
-        toolbarTitle.setText(titles[0]);
-        setDefectsCount(0);
-        setPhotosCount(0);
-        setProgressCount(0);
+
+
+        setDefectsCount(activity.getPhotoAdapter().getFactDefectCount());
+        setPhotosCount(activity.getPhotoAdapter().getPhotosCount());
+        setProgressCount(activity.getPhotoAdapter().getPhotosCount());
 
 
         countUpdateReceiver = new CountUpdateReceiver();
@@ -106,13 +111,17 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
 
         listView.setAdapter(activity.getPhotoAdapter());
+        activity.getPhotoAdapter().setSelectedPosition(activity.imagePosition);
+        Log.d("TAG","img pos"+activity.imagePosition);
 
         listView.post(new Runnable() {
             @Override
             public void run() {
-                listView.setSelection(activity.getPhotoAdapter().getCount());
+                listView.smoothScrollToPositionFromTop(activity.getPhotoAdapter().getSelectedPosition(), 0);
             }
         });
+
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -141,8 +150,14 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 }
             }
         });
+        PhotoItem item = activity.getPhotoAdapter().getItem(activity.imagePosition);
+        if(item.getImagePath()!=null){
+            toolbarTitle.setText(item.getTitle());
+            replaceWithPhotoViewer(item,activity.imagePosition);
+        }else {
+            replaceWithCamera();
+        }
 
-        replaceWithCamera();
 
         if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_LAUNCH))
         getFragmentManager().beginTransaction().add(R.id.container,new ViewPagerPhotoDemoFragment()).addToBackStack(null).commit();
@@ -186,7 +201,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 }
                 break;
             case R.id.btn_done:
-                getActivity().finish();
+                done();
                 break;
             case R.id.toolbarTitle:
                 final PhotoItem item = activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition());
@@ -232,12 +247,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     }
 
     private void setPhotosCount(int count){
-        photosCount.setText(String.format(getString(R.string.photos_count),count,titles.length));
+        photosCount.setText(String.format(getString(R.string.photos_count),count,activity.getPhotoAdapter().getNonDefectPhotosCount()));
     }
 
     private void setProgressCount(int count){
         if(count!=0) {
-            int percent = (int)((count * 100.0f) / titles.length);
+            int percent = (int)((count * 100.0f) / activity.getPhotoAdapter().getCount());
             if(percent==100){
                 progressBar.setProgressDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.vertical_progressbar_green));
             }else {
@@ -266,7 +281,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                             if(factItem.getImagePath()==null) {
                                 int suffix = activity.getPhotoAdapter().getDefectsCount();
                                 activity.getPhotoAdapter().setDefectsCount(suffix);
-                                String defectTitle = String.format(getString(R.string.defect_n), suffix);
+                                String defectTitle = Utility.getSavedData(Const.DEFAULT_DEFECT_NAME)+" "+suffix;
                                 item.setTitle(defectTitle);
                                 activity.getPhotoAdapter().setItem(item, activity.getPhotoAdapter().getLastDefectPosition());
                                 listView.setSelection(activity.getPhotoAdapter().getSelectedPosition());
@@ -324,6 +339,16 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         takeDefect.setEnabled(disableOrEnable);
         takePhoto.setEnabled(disableOrEnable);
         done.setEnabled(disableOrEnable);
+    }
+
+    private void done(){
+        Intent i = new Intent();
+        i.putExtra(Const.EXTRA_POSITION,activity.position);
+        i.putExtra(Const.EXTRA_IMAGE_POSITION,activity.imagePosition);
+        Collections.reverse(activity.getPhotoAdapter().getItems());
+        i.putExtra(Const.EXTRA_VALUES,activity.getPhotoAdapter().getItems());
+        getActivity().setResult(Const.CAMERA_PHOTO_RESULT,i);
+        getActivity().finish();
     }
 
     private PhotoItem createFileFromData(byte[] data,boolean isDefect){
@@ -389,5 +414,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(rePhotoReceiver);
         rePhotoReceiver = null;
         countUpdateReceiver = null;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                done();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -1,28 +1,34 @@
 package ru.comtrans.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import ru.comtrans.R;
 
-import ru.comtrans.activities.CameraActivity;
-import ru.comtrans.helpers.Const;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.PhotoItem;
+import ru.comtrans.views.DividerItemDecoration;
 
 /**
  * Created by Artco on 12.07.2016.
@@ -30,22 +36,25 @@ import ru.comtrans.items.PhotoItem;
 public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<MainItem> items;
-    Context c;
+    Context context;
     private final OnItemClickListener listener;
+    int page;
+    DividerItemDecoration decoration;
 
     public interface OnItemClickListener {
-        void onItemClick(MainItem item, View view);
+        void onItemClick(MainItem item, View view,int position);
     }
 
-    public InfoBlockAdapter(Context c, ArrayList<MainItem> items, OnItemClickListener listener){
-        this.c = c;
+    public InfoBlockAdapter(Context context, ArrayList<MainItem> items, int page, OnItemClickListener listener){
+        this.context = context;
         this.items = items;
         this.listener = listener;
+        this.page = page;
     }
 
-
-
-
+    public ArrayList<MainItem> getItems() {
+        return items;
+    }
 
     private static class CustomViewHolder extends RecyclerView.ViewHolder{
 
@@ -59,7 +68,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    listener.onItemClick(item,v);
+                    listener.onItemClick(item,v,getAdapterPosition());
                 }
             });
         }
@@ -78,14 +87,28 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
+    private static class TireSchemeViewHolder extends CustomViewHolder{
+        public ImageView schemeImage;
+
+        public TireSchemeViewHolder(View itemView) {
+            super(itemView);
+            schemeImage = (ImageView) itemView.findViewById(R.id.tire_scheme_image);
+
+        }
+
+    }
+
     private static class BottomBarViewHolder extends CustomViewHolder{
         public Button btnPrevious,btnNext;
+        public RelativeLayout previousLayout, nextLayout;
 
 
         public BottomBarViewHolder(View itemView) {
             super(itemView);
             btnNext = (Button) itemView.findViewById(R.id.btn_next);
             btnPrevious = (Button) itemView.findViewById(R.id.btn_previous);
+            previousLayout = (RelativeLayout)itemView.findViewById(R.id.previous_layout);
+            nextLayout = (RelativeLayout)itemView.findViewById(R.id.next_layout);
         }
 
     }
@@ -93,12 +116,15 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static class EditTextViewHolder extends CustomViewHolder{
         public EditText editText;
         public TextInputLayout textInputLayout;
+        public InfoBlockTextWatcher textWatcher;
 
 
-        public EditTextViewHolder(View itemView) {
+        public EditTextViewHolder(View itemView,InfoBlockTextWatcher textWatcher) {
             super(itemView);
             textInputLayout = (TextInputLayout)itemView.findViewById(R.id.text_input_layout);
             editText = (EditText) itemView.findViewById(R.id.edit_text);
+            this.textWatcher = textWatcher;
+            this.editText.addTextChangedListener(textWatcher);
         }
 
     }
@@ -126,13 +152,16 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     private static class PhotoViewHolder extends CustomViewHolder{
-        public RecyclerView list;
+        public RecyclerView photoList;
+        public RecyclerView defectsList;
         public ProgressBar progressBar;
+
 
 
         public PhotoViewHolder(View itemView) {
             super(itemView);
-            list = (RecyclerView) itemView.findViewById(android.R.id.list);
+            photoList = (RecyclerView) itemView.findViewById(R.id.list_photo);
+            defectsList = (RecyclerView)itemView.findViewById(R.id.list_defects);
             progressBar = (ProgressBar) itemView.findViewById(R.id.progress_bar);
         }
 
@@ -157,13 +186,13 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 v = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.edit_text_item, parent, false);
 
-                return new EditTextViewHolder(v);
+                return new EditTextViewHolder(v,new InfoBlockTextWatcher());
             case MainItem.TYPE_NUMBER:
                 v = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.edit_text_item, parent, false);
                 EditText editText = (EditText) v.findViewById(R.id.edit_text);
                 editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                return new EditTextViewHolder(v);
+                return new EditTextViewHolder(v,new InfoBlockTextWatcher());
             case MainItem.TYPE_HEADER:
                 v = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.header_item, parent, false);
@@ -182,11 +211,25 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 return new PhotoViewHolder(v);
 
+            case MainItem.TYPE_VIDEO:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.photo_container_recycler_view, parent, false);
+
+                return new PhotoViewHolder(v);
+
+            case MainItem.TYPE_TIRE_SCHEME:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.tire_scheme_item, parent, false);
+
+                return new TireSchemeViewHolder(v);
+
             case MainItem.TYPE_BOTTOM_BAR:
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.next_list_item, parent, false);
+                        .inflate(R.layout.bottom_bar_list_item, parent, false);
 
                 return new BottomBarViewHolder(v);
+
+
 
             default:
                 v = LayoutInflater.from(parent.getContext())
@@ -198,42 +241,134 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         final MainItem item = getItem(position);
-
+        PhotoContainerAdapter adapter;
+        PhotoContainerAdapter defectsAdapter;
+        int count;
 
 
         switch (getItemViewType(position)){
             case MainItem.TYPE_LIST:
                 ((ListViewHolder)holder).title.setText(item.getName());
-                ((ListViewHolder)holder).tvList.setText(item.getValues().get(0).getName());
+                ((ListViewHolder)holder).tvList.setText(item.getListValue().getName());
 
                 break;
 
 
             case MainItem.TYPE_PHOTO:
-                LinearLayoutManager manager = new LinearLayoutManager(c,LinearLayoutManager.HORIZONTAL,false);
-                ((PhotoViewHolder)holder).list.setLayoutManager(manager);
-                PhotoContainerAdapter photoContainerAdapter = new PhotoContainerAdapter(c, item.getPhotoItems(), new PhotoContainerAdapter.OnItemClickListener() {
+                ArrayList<PhotoItem> photoItems = new ArrayList<>();
+                ArrayList<PhotoItem> defects = new ArrayList<>();
+
+                for(PhotoItem photoItem:item.getPhotoItems()){
+                    if(!photoItem.isDefect()){
+                        photoItems.add(photoItem);
+                    }
+                }
+
+                LinearLayoutManager manager = new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
+                ((PhotoViewHolder)holder).photoList.setLayoutManager(manager);
+                 adapter = new PhotoContainerAdapter(context, photoItems, new PhotoContainerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(PhotoItem item, View view) {
-                        Intent i = new Intent(view.getContext(), CameraActivity.class);
-                        i.putExtra(Const.CAMERA_MODE,Const.MODE_PHOTO);
-                        i.putParcelableArrayListExtra(Const.EXTRA_VALUES,getItem(position).getPhotoItems());
-                        view.getContext().startActivity(i);
+                        MainItem mainItem = getItem(holder.getAdapterPosition());
+                       listener.onItemClick(mainItem,view,mainItem.getPhotoItems().indexOf(item));
                     }
-                });
-                ((PhotoViewHolder)holder).list.setAdapter(photoContainerAdapter);
+                },MainItem.TYPE_PHOTO);
+                ((PhotoViewHolder)holder).photoList.setAdapter(adapter);
+
+                count = 0;
+                for(PhotoItem photoItem:item.getPhotoItems()){
+                    if(photoItem.getImagePath()!=null&&!photoItem.isDefect())
+                        count++;
+                }
+                if(count!=0) {
+                    int percent = (int)((count * 100.0f) / item.getPhotosCount());
+                    if(percent==100){
+                        ((PhotoViewHolder)holder).progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_green));
+                    }else {
+                        ((PhotoViewHolder)holder).progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_red));
+                    }
+
+                    ((PhotoViewHolder)holder).progressBar.setProgress(percent);
+                }else {
+                    ((PhotoViewHolder)holder).progressBar.setProgress(0);
+                }
+
+
+
+                for(PhotoItem photoItem:item.getPhotoItems()){
+                    if(photoItem.isDefect()){
+                        defects.add(photoItem);
+                    }
+                }
+
+                if(defects.size()>0){
+                    LinearLayoutManager defectsManager = new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
+                    ((PhotoViewHolder)holder).defectsList.setLayoutManager(defectsManager);
+                    defectsAdapter = new PhotoContainerAdapter(context, defects, new PhotoContainerAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(PhotoItem item, View view) {
+                            MainItem mainItem = getItem(holder.getAdapterPosition());
+                            listener.onItemClick(mainItem,view,mainItem.getPhotoItems().indexOf(item));
+                        }
+                    },MainItem.TYPE_PHOTO);
+                    ((PhotoViewHolder)holder).defectsList.setAdapter(defectsAdapter);
+                }
+
+
+
+
+                break;
+
+            case MainItem.TYPE_VIDEO:
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(context,2);
+                ((PhotoViewHolder)holder).photoList.setLayoutManager(gridLayoutManager);
+                adapter = new PhotoContainerAdapter(context, item.getPhotoItems(), new PhotoContainerAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(PhotoItem item, View view) {
+                        MainItem mainItem = getItem(holder.getAdapterPosition());
+                        listener.onItemClick(mainItem,view,mainItem.getPhotoItems().indexOf(item));
+                    }
+                },MainItem.TYPE_VIDEO);
+                ((PhotoViewHolder)holder).photoList.setAdapter(adapter);
+                if(decoration==null){
+                    decoration = new DividerItemDecoration(context,DividerItemDecoration.VERTICAL_LIST);
+                    ((PhotoViewHolder)holder).photoList.addItemDecoration(decoration);
+                }
+
+                count = 0;
+                for(PhotoItem photoItem:item.getPhotoItems()){
+                    if(photoItem.getImagePath()!=null&&!photoItem.isDefect())
+                        count++;
+                }
+                if(count!=0) {
+                    int percent = (int)((count * 100.0f) / item.getPhotosCount());
+                    if(percent==100){
+                        ((PhotoViewHolder)holder).progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_green));
+                    }else {
+                        ((PhotoViewHolder)holder).progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_red));
+                    }
+
+                    ((PhotoViewHolder)holder).progressBar.setProgress(percent);
+                }else {
+                    ((PhotoViewHolder)holder).progressBar.setProgress(0);
+                }
+
 
 
                 break;
 
             case MainItem.TYPE_STRING:
                 ((EditTextViewHolder)holder).textInputLayout.setHint(item.getName());
+                ((EditTextViewHolder)holder).textWatcher.updatePosition(holder.getAdapterPosition());
+                ((EditTextViewHolder)holder).editText.setText(item.getValue());
                 break;
 
             case MainItem.TYPE_NUMBER:
                 ((EditTextViewHolder)holder).textInputLayout.setHint(item.getName());
+                ((EditTextViewHolder)holder).textWatcher.updatePosition(holder.getAdapterPosition());
+                ((EditTextViewHolder)holder).editText.setText(item.getValue());
                 break;
 
             case MainItem.TYPE_HEADER:
@@ -241,8 +376,39 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 break;
 
             case MainItem.TYPE_FLAG:
+                ((FlagViewHolder)holder).checkBox.setOnCheckedChangeListener(null);
                 ((FlagViewHolder)holder).checkBox.setText(item.getName());
+                ((FlagViewHolder)holder).checkBox.setChecked(item.isChecked());
+                ((FlagViewHolder)holder).checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        item.setChecked(b);
+                    }
+                });
                 break;
+
+           case MainItem.TYPE_BOTTOM_BAR:
+               switch (page){
+                   case 1:
+                       ((BottomBarViewHolder)holder).previousLayout.setVisibility(View.GONE);
+                       break;
+                   case 6:
+                       ((BottomBarViewHolder)holder).btnNext.setText(R.string.send_infoblock);
+                       break;
+               }
+               ((BottomBarViewHolder)holder).btnNext.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View view) {
+                       listener.onItemClick(item,view,2);
+                   }
+               });
+               ((BottomBarViewHolder)holder).btnPrevious.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View view) {
+                       listener.onItemClick(item,view,1);
+                   }
+               });
+               break;
 
 
 
@@ -258,5 +424,28 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public MainItem getItem(int position){
         return items.get(position);
+    }
+
+    private class InfoBlockTextWatcher implements TextWatcher {
+        private int position;
+
+        public void updatePosition(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            // no op
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            items.get(position).setValue(charSequence.toString());
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            // no op
+        }
     }
 }

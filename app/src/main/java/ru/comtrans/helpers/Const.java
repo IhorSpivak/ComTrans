@@ -45,6 +45,14 @@ public class Const {
     ////////////////Main Screen Fragment//////////////////////
     public static final String PAGE = "page";
     public static final String EXTRA_VALUES = "extra_values";
+    public static final String EXTRA_TITLE = "extra_title";
+    public static final String EXTRA_POSITION = "extra_pos"; ///POSITION OF MAIN ITEM IN ADAPTER;
+    public static final String EXTRA_IMAGE_POSITION = "extra_img_pos"; /// POSITION OF CLIKED PHOTO
+    public static final String EXTRA_VALUE = "extra_value";
+    public static final String DEFAULT_DEFECT_NAME = "default_defect_name";
+    public static final int SEARCH_VALUE_RESULT = 102;
+    public static final int CAMERA_PHOTO_RESULT = 103;
+    public static final int CAMERA_VIDEO_RESULT = 104;
 
 
 

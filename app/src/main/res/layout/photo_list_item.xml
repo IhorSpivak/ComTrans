@@ -56,7 +56,7 @@
 
         <ru.comtrans.views.VerticalTextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/title"
             android:layout_toEndOf="@id/photo_layout"
             android:layout_toRightOf="@id/photo_layout"
@@ -64,10 +64,9 @@
             android:paddingLeft="1dp"
             android:paddingRight="1dp"
             android:paddingEnd="1dp"
+            android:layout_centerInParent="true"
+            android:textSize="11sp"
             android:maxLines="1"
-            android:lines="1"
-            android:textSize="12sp"
-            android:gravity="center"
             android:textColor="@android:color/white"
            />
 

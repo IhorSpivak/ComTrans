@@ -1,6 +1,5 @@
 package ru.comtrans.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -34,19 +33,21 @@ public class SearchValueActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if(getSupportActionBar()!=null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(getIntent().getStringExtra(Const.EXTRA_TITLE));
 
         }
         items = getIntent().getParcelableArrayListExtra(Const.EXTRA_VALUES);
         if(items!=null) {
-            ListAdapter adapter = new ListAdapter(SearchValueActivity.this, items);
+            final ListAdapter adapter = new ListAdapter(SearchValueActivity.this, items);
             listView.setAdapter(adapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                     Intent intent = new Intent();
-                    setResult(Activity.RESULT_OK, intent);
+                    intent.putExtra(Const.EXTRA_POSITION,getIntent().getIntExtra(Const.EXTRA_POSITION,-1));
+                    intent.putExtra(Const.EXTRA_VALUE,adapter.getItem(position));
+                    setResult(Const.SEARCH_VALUE_RESULT, intent);
                     finish();
                 }
             });

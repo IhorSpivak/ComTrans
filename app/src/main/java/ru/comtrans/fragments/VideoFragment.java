@@ -16,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -48,7 +50,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     ImageView takeVideo, done;
     CameraPreviewFragment cameraPreviewFragment;
     ProgressBar progressBar;
-    String[] titles;
+
     private CameraActivity activity;
     VideoViewerFragment videoViewerFragment;
     MediaRecorder mediaRecorder;
@@ -59,7 +61,11 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     CountUpdateReceiver countUpdateReceiver = null;
     RePhotoReceiver rePhotoReceiver = null;
 
-
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
@@ -93,20 +99,20 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
 
         listView = (ListView)v.findViewById(android.R.id.list);
 
-        titles = getResources().getStringArray(R.array.video_main);
+        PhotoItem item = activity.getPhotoAdapter().getItem(activity.imagePosition);
 
-        toolbarTitle.setText(titles[0]);
-        setVideosCount(0);
-        setProgressCount(0);
-        currentPosition = titles.length-1;
+        toolbarTitle.setText(item.getTitle());
+        setVideosCount(activity.getPhotoAdapter().getPhotosCount());
+        setProgressCount(activity.getPhotoAdapter().getPhotosCount());
+        currentPosition = activity.imagePosition;
 
 
         listView.setAdapter(activity.getPhotoAdapter());
-
+        activity.getPhotoAdapter().setSelectedPosition(activity.imagePosition);
         listView.post(new Runnable() {
             @Override
             public void run() {
-                listView.setSelection(activity.getPhotoAdapter().getCount());
+                listView.smoothScrollToPositionFromTop(activity.getPhotoAdapter().getSelectedPosition(), 0);
             }
         });
 
@@ -174,7 +180,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
 
                 break;
             case R.id.btn_done:
-                getActivity().finish();
+                done();
                 break;
 
 
@@ -183,12 +189,12 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
 
 
     private void setVideosCount(int count){
-        videosCount.setText(String.format(getString(R.string.videos_count),count,titles.length));
+        videosCount.setText(String.format(getString(R.string.videos_count),count,activity.getPhotoAdapter().getCount()));
     }
 
     private void setProgressCount(int count){
         if(count!=0) {
-            int percent = (int)((count * 100.0f) / titles.length);
+            int percent = (int)((count * 100.0f) / activity.getPhotoAdapter().getCount());
             if(percent==100){
                 progressBar.setProgressDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.vertical_progressbar_green));
             }else {
@@ -359,6 +365,16 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    private void done(){
+        Intent i = new Intent();
+        i.putExtra(Const.EXTRA_POSITION,activity.position);
+        i.putExtra(Const.EXTRA_IMAGE_POSITION,activity.imagePosition);
+        Collections.reverse(activity.getPhotoAdapter().getItems());
+        i.putExtra(Const.EXTRA_VALUES,activity.getPhotoAdapter().getItems());
+        getActivity().setResult(Const.CAMERA_PHOTO_RESULT,i);
+        getActivity().finish();
+    }
+
     private class RePhotoReceiver extends BroadcastReceiver{
 
         @Override
@@ -378,6 +394,16 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(rePhotoReceiver);
         rePhotoReceiver = null;
         countUpdateReceiver = null;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                done();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

@@ -1,14 +1,22 @@
 package ru.comtrans.activities;
 
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import ru.comtrans.R;
 import ru.comtrans.adapters.CameraPhotoAdapter;
@@ -21,7 +29,10 @@ import ru.comtrans.items.PhotoItem;
 public class CameraActivity extends AppCompatActivity {
 
     private CameraPhotoAdapter photoAdapter;
-    String[] titles;
+    ArrayList<PhotoItem> items;
+    public int position;
+    public int imagePosition;
+
 
 
 
@@ -33,42 +44,26 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
 
         int flag = getIntent().getIntExtra(Const.CAMERA_MODE,0);
-        Fragment fragment = null;
-        final ArrayList<PhotoItem> items = getIntent().getParcelableArrayListExtra(Const.EXTRA_VALUES);
+
+        items = getIntent().getParcelableArrayListExtra(Const.EXTRA_VALUES);
+        position = getIntent().getIntExtra(Const.EXTRA_POSITION,-1);
+        imagePosition = getIntent().getIntExtra(Const.EXTRA_IMAGE_POSITION,-1);
+
         switch (flag){
             case 0:
                 finish();
                 break;
             case Const.MODE_PHOTO:
-                PhotoItem defectItem = new PhotoItem(String.format(getString(R.string.defect_n),1));
-                defectItem.setDefect(true);
-                items.add(defectItem);
-
-                photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
-                fragment = new CameraFragment();
+                checkCameraPermission(false);
                  break;
             case Const.MODE_VIDEO:
-
-                titles = getResources().getStringArray(R.array.video_main);
-
-
-                for (int i=titles.length-1; i>=0; i--) {
-                    PhotoItem item = new PhotoItem(titles[i]);
-                    if(i>=2){
-                        item.setDuration(15);
-                    }else {
-                        item.setDuration(30);
-                    }
-                    items.add(item);
-                }
-                photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
-                fragment = new VideoFragment();
+                checkCameraPermission(true);
                 break;
 
         }
 
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
+
     }
 
     public CameraPhotoAdapter getPhotoAdapter() {
@@ -77,14 +72,99 @@ public class CameraActivity extends AppCompatActivity {
 
 
 
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkCameraPermission(boolean isVideo){
+        int hasCameraPermission;
+        int hasStoragePermission;
+        int hasRecorderPermission;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            hasCameraPermission = checkSelfPermission(Manifest.permission.CAMERA);
+            hasStoragePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            hasRecorderPermission = checkSelfPermission(Manifest.permission.RECORD_AUDIO);
+            List<String> permissions = new ArrayList<>();
+            if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.CAMERA);
+            }
+            if (hasStoragePermission != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            if(isVideo){
+                if(hasRecorderPermission!= PackageManager.PERMISSION_GRANTED){
+                    permissions.add(Manifest.permission.RECORD_AUDIO);
+                }
+            }
+            if (!permissions.isEmpty()) {
+                if(isVideo){
+                    requestPermissions(permissions.toArray(new String[permissions.size()]),
+                            Const.REQUEST_PERMISSION_VIDEO);
+                }else {
+                    requestPermissions(permissions.toArray(new String[permissions.size()]),
+                            Const.REQUEST_PERMISSION_CAMERA);
+                }
+
+            } else {
+                openCameraFragment(isVideo);
+            }
+        } else {
+            openCameraFragment(isVideo);
+        }
+    }
+
+    private void openCameraFragment(boolean isVideo){
+        Fragment fragment;
+
+        if(isVideo){
+            PhotoItem item = items.get(imagePosition);
+            Collections.reverse(items);
+            imagePosition = items.indexOf(item);
+            photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
+            fragment = new VideoFragment();
+        }else {
+            PhotoItem item = items.get(imagePosition);
+            Collections.reverse(items);
+            imagePosition = items.indexOf(item);
+            photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
+            fragment = new CameraFragment();
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
+
+
+
+    }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean allow = true;
+        switch (requestCode){
+            case Const.REQUEST_PERMISSION_CAMERA:
+                for (int i = 0; i < permissions.length; i++) {
+                    if(grantResults[i] == PackageManager.PERMISSION_DENIED){
+                        allow = false;
+                    }
+                }
+                if(allow) {
+                    openCameraFragment(false);
+                }
+                else {
+                    Toast.makeText(CameraActivity.this, R.string.not_all_permissions_granted, Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+            case Const.REQUEST_PERMISSION_VIDEO:
+                for (int i = 0; i < permissions.length; i++) {
+                    if(grantResults[i] == PackageManager.PERMISSION_DENIED){
+                        allow = false;
+                    }
+                }
+                if(allow) {
+                    openCameraFragment(true);
+                }
+                else {
+                    Toast.makeText(CameraActivity.this, R.string.not_all_permissions_granted, Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
         }
-        return super.onOptionsItemSelected(item);
     }
 }

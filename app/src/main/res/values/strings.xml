@@ -53,7 +53,7 @@
 
     /////////////////Photo Activity///////////////////////////////////////
     <string name="photo_save_error">Фотография не сохранена, произошла ошибка.</string>
-    <string name="defect_n">Дефект %d</string>
+
     <string name="prefix_photo">comtrans</string>
     <string name="prefix_video">vid_comtrans</string>
     <string name="prefix_defect">defect</string>
@@ -86,6 +86,10 @@
 
     //////////////////////////SearchValueActivity////////////////////////////////
     <string name="action_search">Поиск</string>
+
+
+    ////////////////////InfoBlockAdapter////////////////////////////////////
+    <string name="send_infoblock">Отправить</string>
 
 
 </resources>
