@@ -243,6 +243,8 @@ public class PropHelper {
         return items;
     }
 
+
+
     public ArrayList<MainItem> getScreenItems(int page){
         switch (page){
             case 1:

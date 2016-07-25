@@ -24,6 +24,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     compile 'com.android.support:appcompat-v7:24.1.0'
+    compile 'com.android.support:cardview-v7:24.1.0'
     compile 'com.google.code.gson:gson:2.6.2'
     provided 'org.glassfish:javax.annotation:10.0-b28'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.1'

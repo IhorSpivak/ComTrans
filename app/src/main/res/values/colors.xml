@@ -3,7 +3,8 @@
     <color name="colorPrimary">#DD3421</color>
     <color name="colorPrimaryDark">#B62A1B</color>
     <color name="colorSecondary">#535D69</color>
-
+    <color name="green">#7F9049</color>
+    <color name="blue">#0000ff</color>
 
     <color name="black_overlay">#66000000</color>
 </resources>

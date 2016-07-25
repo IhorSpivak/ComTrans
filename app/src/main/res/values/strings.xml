@@ -91,5 +91,10 @@
     ////////////////////InfoBlockAdapter////////////////////////////////////
     <string name="send_infoblock">Отправить</string>
 
+    
+    //////////////////////MyInfoblocksFragment//////////////////////////////////
+    <string name="title_mark">Марка</string>
+    <string name="title_model">Модель</string>
+    <string name="title_year">Год выпуска</string>
 
 </resources>
