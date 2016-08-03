@@ -41,18 +41,41 @@ public class Const {
     public static final String JSON_PROP = "json_prop";
 
 
+    //////////////////////////AddInfoBlockActivity/////////////////////////
+    public static final String IS_NEW_INFO_BLOCK = "is_new_info_block";
+
+    public static final String EXTRA_INFO_BLOCK_ID = "extra_info_block_id";
+
+
+
 
     ////////////////Main Screen Fragment//////////////////////
     public static final String PAGE = "page";
+    public static final String TOTAL_PAGES = "total_pages";
     public static final String EXTRA_VALUES = "extra_values";
     public static final String EXTRA_TITLE = "extra_title";
     public static final String EXTRA_POSITION = "extra_pos"; ///POSITION OF MAIN ITEM IN ADAPTER;
     public static final String EXTRA_IMAGE_POSITION = "extra_img_pos"; /// POSITION OF CLIKED PHOTO
     public static final String EXTRA_VALUE = "extra_value";
     public static final String DEFAULT_DEFECT_NAME = "default_defect_name";
+    public static final String EXTRA_SCREEN_NUM = "extra_screen";
+    public static final String EXTRA_MARK = "extra_mark";
     public static final int SEARCH_VALUE_RESULT = 102;
     public static final int CAMERA_PHOTO_RESULT = 103;
     public static final int CAMERA_VIDEO_RESULT = 104;
+
+
+    //////////////////////InfoBlocksStorage/////////////////////
+
+
+
+    ///////////////////////MyInfoBlocksFragment/////////////////////////
+    public static final String REFRESH_INFO_BLOCKS_FILTER = "refreshInfoBlocks";
+
+    public static final String INFO_BLOCK_DATE_FORMAT = "dd.MM.yyyy";
+
+
+
 
 
 

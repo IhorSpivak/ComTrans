@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 
 import ru.comtrans.R;
 import ru.comtrans.fragments.MyInfoBlocksFragment;
@@ -33,13 +32,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         fab = (FloatingActionButton)findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this,AddInfoBlockActivity.class);
-                startActivity(i);
-            }
-        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -73,7 +66,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        fab.hide();
+
         int id = item.getItemId();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Intent i;
@@ -86,12 +79,14 @@ public class MainActivity extends AppCompatActivity
                 transaction.commit();
                 break;
             case R.id.nav_profile:
+                fab.hide();
                 getSupportActionBar().setTitle(getString(R.string.nav_profile));
                 transaction.replace(R.id.container,ProfileFragment.newInstance(false));
                 transaction.commit();
                 break;
 
             case R.id.nav_settings:
+                fab.hide();
                 getSupportActionBar().setTitle(getString(R.string.nav_settings));
                 transaction.replace(R.id.container,new SettingsFragment());
                 transaction.commit();

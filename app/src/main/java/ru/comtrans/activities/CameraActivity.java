@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -23,6 +22,7 @@ import ru.comtrans.adapters.CameraPhotoAdapter;
 import ru.comtrans.fragments.CameraFragment;
 import ru.comtrans.fragments.VideoFragment;
 import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.InfoBlockHelper;
 import ru.comtrans.items.PhotoItem;
 
 
@@ -44,10 +44,15 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
 
         int flag = getIntent().getIntExtra(Const.CAMERA_MODE,0);
-
-        items = getIntent().getParcelableArrayListExtra(Const.EXTRA_VALUES);
+        int screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
         position = getIntent().getIntExtra(Const.EXTRA_POSITION,-1);
         imagePosition = getIntent().getIntExtra(Const.EXTRA_IMAGE_POSITION,-1);
+
+        InfoBlockHelper helper = InfoBlockHelper.getInstance();
+        items = helper.getItems().get(screenNum).get(position).getPhotoItems();
+
+
+
 
         switch (flag){
             case 0:

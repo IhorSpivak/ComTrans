@@ -82,6 +82,7 @@
     <string name="btn_previous">Назад</string>
     <string name="btn_next">Далее</string>
     <string name="btn_done">Отправить</string>
+    <string name="no_mark_toast">Выберите марку!</string>
 
 
     //////////////////////////SearchValueActivity////////////////////////////////
@@ -90,11 +91,19 @@
 
     ////////////////////InfoBlockAdapter////////////////////////////////////
     <string name="send_infoblock">Отправить</string>
-
+    <string name="warning_title">Внимание</string>
+    <string name="bad_warning_message">Поля тип, марка, модель, гос.номер и год выпуска являются обязательными для заполнения</string>
+    <string name="warning_message">Вы заполнили не все поля. Если все верно - жмите "Далее", если вы забыли заполнить какие-либо поля - заполните и жмите "Далее"</string>
+    <string name="btn_stay">Остаться</string>
     
     //////////////////////MyInfoblocksFragment//////////////////////////////////
     <string name="title_mark">Марка</string>
     <string name="title_model">Модель</string>
     <string name="title_year">Год выпуска</string>
+    <string name="empty_text">Вы еще не добавляли инфоблоки ТС. Для добавления инфоблока, нажмите плюс в правом нижнем углу</string>
+    <string name="status_draft">Черновик</string>
+    <string name="status_sending">%1$s отправлено</string>
+    <string name="status_sent">Принято</string>
+
 
 </resources>

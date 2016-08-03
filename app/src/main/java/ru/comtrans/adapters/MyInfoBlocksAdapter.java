@@ -1,6 +1,7 @@
 package ru.comtrans.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,6 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 
 import ru.comtrans.R;
-import ru.comtrans.items.MainItem;
 import ru.comtrans.items.MyInfoBlockItem;
 
 /**
@@ -35,6 +35,11 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.listener = listener;
     }
 
+    public void setItems(ArrayList<MyInfoBlockItem> items) {
+        this.items = items;
+        notifyDataSetChanged();
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
@@ -46,11 +51,23 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         MyInfoBlockItem item = getItem(position);
         ((MyInfoBlockViewHolder)holder).date.setText(item.getDate());
+        if(item.getStatus()!=null&&item.getStatus().equals(context.getString(R.string.status_draft))){
+            ((MyInfoBlockViewHolder)holder).status.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary));
+        }
         ((MyInfoBlockViewHolder)holder).status.setText(item.getStatus());
         ((MyInfoBlockViewHolder)holder).mark.setText(item.getMark());
         ((MyInfoBlockViewHolder)holder).model.setText(item.getModel());
         ((MyInfoBlockViewHolder)holder).year.setText(item.getYear());
-        Ion.with(((MyInfoBlockViewHolder)holder).photo).load(item.getPhotoPath());
+        if(item.getPhotoPath()!=null){
+            Ion.with(((MyInfoBlockViewHolder)holder).photo).load(item.getPhotoPath());
+            ((MyInfoBlockViewHolder)holder).photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        }else {
+            ((MyInfoBlockViewHolder)holder).photo.setScaleType(ImageView.ScaleType.CENTER);
+            ((MyInfoBlockViewHolder)holder).photo.setImageResource(R.drawable.ic_placeholder);
+        }
+
+
+
         ((MyInfoBlockViewHolder)holder).bind(item,listener);
 
     }

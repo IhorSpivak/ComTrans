@@ -15,7 +15,7 @@ import ru.comtrans.interfaces.ApiInterface;
 public class AppController extends Application {
     private static AppController instance;
     public static ApiInterface apiInterface;
-    public static final String BASE_URL = "http://rc.100fur.ru/ru/api/";
+    public static final String BASE_URL = "http://www.rc.100fur.ru/ru/api/";
 
     public AppController() {
         instance = this;

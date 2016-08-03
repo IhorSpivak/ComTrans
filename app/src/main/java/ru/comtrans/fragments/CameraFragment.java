@@ -98,7 +98,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
 
 
-
+        if(!activity.getPhotoAdapter().isPositionDefect(0)){
+            defectsCount.setVisibility(View.GONE);
+            takeDefect.setVisibility(View.INVISIBLE);
+        }
         setDefectsCount(activity.getPhotoAdapter().getFactDefectCount());
         setPhotosCount(activity.getPhotoAdapter().getPhotosCount());
         setProgressCount(activity.getPhotoAdapter().getPhotosCount());
@@ -112,12 +115,14 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
         listView.setAdapter(activity.getPhotoAdapter());
         activity.getPhotoAdapter().setSelectedPosition(activity.imagePosition);
-        Log.d("TAG","img pos"+activity.imagePosition);
-
+        Log.d("TAG","img pos "+activity.imagePosition+" count "+activity.getPhotoAdapter().getCount());
         listView.post(new Runnable() {
             @Override
             public void run() {
-                listView.smoothScrollToPositionFromTop(activity.getPhotoAdapter().getSelectedPosition(), 0);
+                if(activity.imagePosition!=activity.getPhotoAdapter().getCount()-1)
+                    listView.smoothScrollToPositionFromTop(activity.getPhotoAdapter().getSelectedPosition(), 0);
+                else
+                    listView.smoothScrollToPosition(activity.getPhotoAdapter().getSelectedPosition());
             }
         });
 

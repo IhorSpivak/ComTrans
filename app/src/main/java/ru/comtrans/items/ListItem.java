@@ -8,9 +8,22 @@ import android.os.Parcelable;
  */
 public class ListItem implements Parcelable {
 
+    public static final String JSON_VALUE_ID = "value_id";
+    public static final String JSON_VALUE_NAME = "value_name";
+    public static final String JSON_VALUE_MARK = "value_mark";
+
 
     long id;
     String name;
+    int mark;
+
+    public int getMark() {
+        return mark;
+    }
+
+    public void setMark(int mark) {
+        this.mark = mark;
+    }
 
 
     public long getId() {
@@ -40,6 +53,11 @@ public class ListItem implements Parcelable {
 
 
     @Override
+    public String toString() {
+        return id+" "+name+" "+mark;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -48,19 +66,16 @@ public class ListItem implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(this.id);
         dest.writeString(this.name);
+        dest.writeInt(this.mark);
     }
 
     protected ListItem(Parcel in) {
         this.id = in.readLong();
         this.name = in.readString();
+        this.mark = in.readInt();
     }
 
-    @Override
-    public String toString() {
-        return name;
-    }
-
-    public static final Parcelable.Creator<ListItem> CREATOR = new Parcelable.Creator<ListItem>() {
+    public static final Creator<ListItem> CREATOR = new Creator<ListItem>() {
         @Override
         public ListItem createFromParcel(Parcel source) {
             return new ListItem(source);

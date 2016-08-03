@@ -29,7 +29,7 @@ public interface ApiInterface {
     @GET("profile/")
     Call<User> getUser(@Header("token") String token);
 
-    @GET("prop/")
+    @GET("prop/22")
     Call<JsonObject> getProp();
 
     @POST("forgot-password/")

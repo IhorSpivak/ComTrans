@@ -9,6 +9,19 @@ import java.util.ArrayList;
  * Created by Artco on 07.07.2016.
  */
 public class MainItem implements Parcelable {
+
+    public static final String JSON_TYPE = "type";
+    public static final String JSON_CODE = "code";
+    public static final String JSON_VALUE = "value";
+    public static final String JSON_IS_CHECKED = "is_checked";
+    public static final String JSON_LIST_VALUE = "list_value";
+    public static final String JSON_LIST_VALUES = "list_values";
+    public static final String JSON_PHOTO_VALUES = "photo_values";
+    public static final String JSON_NAME = "name";
+    public static final String JSON_ID = "id";
+
+
+
     public static final int TYPE_LIST = 0;
     public static final int TYPE_STRING = 1;
     public static final int TYPE_NUMBER = 2;
@@ -20,7 +33,7 @@ public class MainItem implements Parcelable {
     public static final int TYPE_TIRE_SCHEME = 8;
 
 
-    long id;
+    String id;
     String name;
     String code;
     String value;
@@ -110,11 +123,11 @@ public class MainItem implements Parcelable {
     }
 
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -133,7 +146,7 @@ public class MainItem implements Parcelable {
         this.type = type;
     }
 
-    public MainItem(long id, String name, int type) {
+    public MainItem(String id, String name, int type) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -146,7 +159,7 @@ public class MainItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this.id);
+        dest.writeString(this.id);
         dest.writeString(this.name);
         dest.writeString(this.code);
         dest.writeString(this.value);
@@ -158,7 +171,7 @@ public class MainItem implements Parcelable {
     }
 
     protected MainItem(Parcel in) {
-        this.id = in.readLong();
+        this.id = in.readString();
         this.name = in.readString();
         this.code = in.readString();
         this.value = in.readString();

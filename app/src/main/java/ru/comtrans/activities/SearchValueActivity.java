@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import ru.comtrans.R;
 import ru.comtrans.adapters.ListAdapter;
 import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.InfoBlockHelper;
 import ru.comtrans.items.ListItem;
 
 public class SearchValueActivity extends AppCompatActivity {
@@ -23,11 +25,14 @@ public class SearchValueActivity extends AppCompatActivity {
     ListView listView;
     ArrayList<ListItem> items;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_value);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+
 
         listView = (ListView)findViewById(android.R.id.list);
         setSupportActionBar(toolbar);
@@ -36,7 +41,27 @@ public class SearchValueActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(getIntent().getStringExtra(Const.EXTRA_TITLE));
 
         }
-        items = getIntent().getParcelableArrayListExtra(Const.EXTRA_VALUES);
+
+        int screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
+        int position = getIntent().getIntExtra(Const.EXTRA_POSITION,-1);
+        long mark = getIntent().getLongExtra(Const.EXTRA_MARK,-1);
+
+        InfoBlockHelper helper = InfoBlockHelper.getInstance();
+
+        items = helper.getItems().get(screenNum).get(position).getListValues();
+
+
+        if(mark!=-1){
+            ArrayList<ListItem> values = new ArrayList<>();
+            for (ListItem value :
+                    items) {
+                if(value.getMark()==mark){
+                    values.add(value);
+                }
+            }
+            items = values;
+        }
+
         if(items!=null) {
             final ListAdapter adapter = new ListAdapter(SearchValueActivity.this, items);
             listView.setAdapter(adapter);
@@ -44,10 +69,10 @@ public class SearchValueActivity extends AppCompatActivity {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent();
-                    intent.putExtra(Const.EXTRA_POSITION,getIntent().getIntExtra(Const.EXTRA_POSITION,-1));
-                    intent.putExtra(Const.EXTRA_VALUE,adapter.getItem(position));
-                    setResult(Const.SEARCH_VALUE_RESULT, intent);
+                    Intent result = new Intent();
+                    result.putExtra(Const.EXTRA_POSITION,getIntent().getIntExtra(Const.EXTRA_POSITION,-1));
+                    result.putExtra(Const.EXTRA_VALUE,adapter.getItem(position));
+                    setResult(Const.SEARCH_VALUE_RESULT, result);
                     finish();
                 }
             });

@@ -19,7 +19,7 @@
         </android.support.design.widget.AppBarLayout>
 
         <include
-            layout="@layout/content_add_or_edit_infoblock"
+            layout="@layout/content_add_infoblock"
             android:layout_below="@id/mainAppBar"
             android:layout_height="match_parent"
             android:layout_width="match_parent"

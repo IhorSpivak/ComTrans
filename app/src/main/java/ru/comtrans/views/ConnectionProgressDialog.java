@@ -16,4 +16,11 @@ public class ConnectionProgressDialog extends ProgressDialog {
         setMessage(context.getString(R.string.loading));
         setCancelable(false);
     }
+
+    public ConnectionProgressDialog(Context context,String message) {
+        super(context);
+        setIndeterminate(true);
+        setMessage(message);
+        setCancelable(false);
+    }
 }

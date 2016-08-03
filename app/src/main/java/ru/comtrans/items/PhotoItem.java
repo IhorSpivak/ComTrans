@@ -7,6 +7,19 @@ import android.os.Parcelable;
  * Created by Artco on 24.05.2016.
  */
 public class PhotoItem implements Parcelable {
+
+    public static final String JSON_IS_DEFECT = "is_defect";
+    public static final String JSON_TITLE = "title";
+    public static final String JSON_IMAGE_PATH = "image_path";
+    public static final String JSON_ID = "id";
+    public static final String JSON_DURATION = "duration";
+    public static final String JSON_IS_VIDEO = "is_video";
+
+
+
+
+
+
     private boolean isDefect;
     private String title;
     private String imagePath;

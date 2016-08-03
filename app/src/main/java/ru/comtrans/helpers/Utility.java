@@ -11,6 +11,8 @@ import android.text.Spanned;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.Set;
+
 import ru.comtrans.singlets.AppController;
 
 
@@ -36,7 +38,7 @@ public class Utility {
     public static boolean getBoolean(String key) {
         final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
                 Const.PREFERENCES_NAME, 0);
-        return appData.getBoolean(key, false);
+                return appData.getBoolean(key, false);
     }
 
     public static String getSavedData(String key) {
@@ -44,6 +46,29 @@ public class Utility {
                 Const.PREFERENCES_NAME, 0);
         return appData.getString(key, "").trim();
 
+    }
+
+    public static boolean containsData(String key) {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        return appData.contains(key);
+
+    }
+
+    public static Set<String> getStringSet(String key) {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        return appData.getStringSet(key,null);
+
+    }
+
+    public static void saveStringSet(String key,
+                                Set<String> set) {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        SharedPreferences.Editor editor = appData.edit();
+        editor.putStringSet(key, set);
+        editor.apply();
     }
 
     public static void saveData(String key,
