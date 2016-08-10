@@ -1,5 +1,6 @@
 package ru.comtrans.fragments;
 
+import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -25,8 +27,9 @@ import ru.comtrans.R;
 import ru.comtrans.activities.AddInfoBlockActivity;
 import ru.comtrans.adapters.MyInfoBlocksAdapter;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.InfoBlocksStorage;
 import ru.comtrans.items.MyInfoBlockItem;
+import ru.comtrans.singlets.InfoBlocksStorage;
+import ru.comtrans.tasks.SendingService;
 
 /**
  * Created by Artco on 06.07.2016.
@@ -36,6 +39,7 @@ public class MyInfoBlocksFragment extends Fragment {
     private InfoBlocksStorage storage;
     private MyInfoBlocksAdapter adapter;
     private InfoBlocksRefreshReceiver refreshReceiver;
+    private InfoBlocksUpdateProgressReceiver updateProgressReceiver;
     private TextView tvEmpty;
     private ProgressBar emptyBar;
     private ArrayList<MyInfoBlockItem> items;
@@ -60,7 +64,9 @@ public class MyInfoBlocksFragment extends Fragment {
         });
 
         refreshReceiver = new InfoBlocksRefreshReceiver();
+        updateProgressReceiver = new InfoBlocksUpdateProgressReceiver();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(refreshReceiver,new IntentFilter(Const.REFRESH_INFO_BLOCKS_FILTER));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(updateProgressReceiver,new IntentFilter(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER));
 
         new AsyncTaskForMyInfoBlocks().execute();
 
@@ -74,16 +80,26 @@ public class MyInfoBlocksFragment extends Fragment {
         adapter = new MyInfoBlocksAdapter(getContext(),items, new MyInfoBlocksAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MyInfoBlockItem item, int position) {
-                Log.d("TAG","extra id"+item.getId());
-                Intent i = new Intent(getContext(),AddInfoBlockActivity.class);
-                i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
-                startActivity(i);
+                switch (storage.getInfoBlockStatus(item.getId())){
+                    case MyInfoBlockItem.STATUS_DRAFT:
+                        Intent i = new Intent(getContext(),AddInfoBlockActivity.class);
+                        i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
+                        startActivity(i);
+                        break;
+                    case MyInfoBlockItem.STATUS_SENDING:
+                        Toast.makeText(getContext(),R.string.click_on_sending,Toast.LENGTH_SHORT).show();
+                        break;
+                    case MyInfoBlockItem.STATUS_SENT:
+                        break;
+                }
+
             }
         });
         LinearLayoutManager manager = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(manager);
+
     }
 
     private class AsyncTaskForMyInfoBlocks extends AsyncTask<Void,Void,Void>{
@@ -117,6 +133,7 @@ public class MyInfoBlocksFragment extends Fragment {
     @Override
     public void onDestroy() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(refreshReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(updateProgressReceiver);
         super.onDestroy();
     }
 
@@ -125,6 +142,16 @@ public class MyInfoBlocksFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             new AsyncTaskForMyInfoBlocks().execute();
+        }
+    }
+
+    private class InfoBlocksUpdateProgressReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
+            String progress = intent.getStringExtra(Const.EXTRA_PROGRESS);
+            adapter.updateProgress(id,progress);
         }
     }
 }

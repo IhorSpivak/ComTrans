@@ -1,10 +1,11 @@
-package ru.comtrans.helpers;
+package ru.comtrans.singlets;
+
+import android.util.Log;
 
 import java.util.ArrayList;
 
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
-import ru.comtrans.items.MyInfoBlockItem;
 
 /**
  * Created by Artco on 27.07.2016.
@@ -48,12 +49,20 @@ public class InfoBlockHelper {
     public void saveScreen(ArrayList<MainItem> screen,int position){
         items.set(position,screen);
     }
-    public void saveAllAndClear(){
+    public void saveAll(final boolean removeItems){
+
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                storage.saveInfoBlock(id,items);
-                items.clear();
+                try {
+                    storage.saveInfoBlock(id, items);
+                    if (removeItems) {
+                        items.clear();
+                    }
+                }catch (Exception e){
+                    Log.e("TAG","error",e);
+                }
+
             }
         });
         t.start();

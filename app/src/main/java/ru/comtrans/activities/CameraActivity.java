@@ -22,8 +22,8 @@ import ru.comtrans.adapters.CameraPhotoAdapter;
 import ru.comtrans.fragments.CameraFragment;
 import ru.comtrans.fragments.VideoFragment;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.InfoBlockHelper;
 import ru.comtrans.items.PhotoItem;
+import ru.comtrans.singlets.InfoBlockHelper;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -32,6 +32,7 @@ public class CameraActivity extends AppCompatActivity {
     ArrayList<PhotoItem> items;
     public int position;
     public int imagePosition;
+    public  int screenNum;
 
 
 
@@ -43,8 +44,8 @@ public class CameraActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_camera);
 
-        int flag = getIntent().getIntExtra(Const.CAMERA_MODE,0);
-        int screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
+        int flag = getIntent().getIntExtra(Const.CAMERA_MODE,-1);
+        screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
         position = getIntent().getIntExtra(Const.EXTRA_POSITION,-1);
         imagePosition = getIntent().getIntExtra(Const.EXTRA_IMAGE_POSITION,-1);
 
@@ -117,16 +118,13 @@ public class CameraActivity extends AppCompatActivity {
 
     private void openCameraFragment(boolean isVideo){
         Fragment fragment;
-
+        PhotoItem item = items.get(imagePosition);
+        Collections.reverse(items);
         if(isVideo){
-            PhotoItem item = items.get(imagePosition);
-            Collections.reverse(items);
             imagePosition = items.indexOf(item);
             photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
             fragment = new VideoFragment();
         }else {
-            PhotoItem item = items.get(imagePosition);
-            Collections.reverse(items);
             imagePosition = items.indexOf(item);
             photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
             fragment = new CameraFragment();
@@ -155,6 +153,7 @@ public class CameraActivity extends AppCompatActivity {
                     Toast.makeText(CameraActivity.this, R.string.not_all_permissions_granted, Toast.LENGTH_SHORT).show();
                     finish();
                 }
+                break;
 
             case Const.REQUEST_PERMISSION_VIDEO:
                 for (int i = 0; i < permissions.length; i++) {

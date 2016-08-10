@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,11 +20,15 @@ import ru.comtrans.activities.SearchValueActivity;
 import ru.comtrans.adapters.InfoBlockAdapter;
 import ru.comtrans.fragments.BaseFragment;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.InfoBlockHelper;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
+import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.items.PhotoItem;
+import ru.comtrans.singlets.InfoBlockHelper;
+import ru.comtrans.singlets.InfoBlocksStorage;
+import ru.comtrans.tasks.SaveInfoBlockTask;
+import ru.comtrans.tasks.SendingService;
 import ru.comtrans.views.DividerItemDecoration;
 
 /**
@@ -33,15 +36,16 @@ import ru.comtrans.views.DividerItemDecoration;
  */
 public class PropertiesListFragment extends BaseFragment {
 
-    RecyclerView recyclerView;
-    LinearLayoutManager layoutManager;
-    InfoBlockAdapter adapter;
-    InfoBlockHelper infoBlockHelper;
-    AddInfoBlockActivity activity;
-    ArrayList<MainItem> items;
-    int page;
-    int totalPages;
-    String infoBlockId;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
+    private InfoBlockAdapter adapter;
+    private InfoBlocksStorage storage;
+    private InfoBlockHelper infoBlockHelper;
+    private AddInfoBlockActivity activity;
+    private ArrayList<MainItem> items;
+    private int page;
+    private int totalPages;
+    private String infoBlockId;
 
 
 
@@ -82,6 +86,7 @@ public class PropertiesListFragment extends BaseFragment {
         recyclerView = (RecyclerView)v.findViewById(android.R.id.list);
         layoutManager = new LinearLayoutManager(getActivity());
         infoBlockHelper = InfoBlockHelper.getInstance();
+        storage = InfoBlocksStorage.getInstance();
 
     }
 
@@ -95,10 +100,10 @@ public class PropertiesListFragment extends BaseFragment {
         items = infoBlockHelper.getScreen(page);
 
 
-        adapter = new InfoBlockAdapter(getContext(), items,page,totalPages,infoBlockId, new InfoBlockAdapter.OnItemClickListener() {
+        adapter = new InfoBlockAdapter(getContext(), items,page,totalPages, new InfoBlockAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MainItem item,View view,int position) {
-                Intent i;
+                final Intent i;
                 switch (item.getType()){
                     case MainItem.TYPE_LIST:
                         if(!item.getCode().equals("general_model")){
@@ -144,7 +149,20 @@ public class PropertiesListFragment extends BaseFragment {
                                 activity.viewPager.setCurrentItem(page-1);
                                 break;
                             case 2:
-                                activity.viewPager.setCurrentItem(page+1);
+                                if(page+1==totalPages){
+                                    new SaveInfoBlockTask(getContext(), true, new SaveInfoBlockTask.OnPostExecuteListener() {
+                                        @Override
+                                        public void onPostExecute() {
+                                            storage.setInfoBlockStatus(infoBlockId, MyInfoBlockItem.STATUS_SENDING);
+                                            getActivity().finish();
+                                            Intent intentMyIntentService = new Intent(getContext(), SendingService.class);
+                                            intentMyIntentService.putExtra(Const.EXTRA_INFO_BLOCK_ID,infoBlockId);
+                                            getActivity().startService(intentMyIntentService);
+                                        }
+                                    });
+                                }else {
+                                    activity.viewPager.setCurrentItem(page+1);
+                                }
                                 break;
                         }
                         break;
@@ -172,8 +190,8 @@ public class PropertiesListFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        int position;
-        ArrayList<PhotoItem> items;
+        int position,screenNum;
+
         switch (resultCode){
             case Const.SEARCH_VALUE_RESULT:
                 ListItem item = data.getParcelableExtra(Const.EXTRA_VALUE);
@@ -186,15 +204,15 @@ public class PropertiesListFragment extends BaseFragment {
                 break;
             case Const.CAMERA_PHOTO_RESULT:
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
-                items = data.getParcelableArrayListExtra(Const.EXTRA_VALUES);
-                adapter.getItem(position).setPhotoItems(items);
+                screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
+                adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
                 adapter.notifyDataSetChanged();
 
                 break;
             case Const.CAMERA_VIDEO_RESULT:
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
-                items = data.getParcelableArrayListExtra(Const.EXTRA_VALUES);
-                adapter.getItem(position).setPhotoItems(items);
+                screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
+                adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
                 adapter.notifyDataSetChanged();
 
                 break;

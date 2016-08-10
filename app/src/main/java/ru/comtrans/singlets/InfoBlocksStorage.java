@@ -1,4 +1,4 @@
-package ru.comtrans.helpers;
+package ru.comtrans.singlets;
 
 import android.util.Log;
 
@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,7 +16,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-
+import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.MyInfoBlockItem;
@@ -53,11 +53,13 @@ public class InfoBlocksStorage {
         return id;
     }
 
-    public void clear(){
-        instance = null;
-        infoBlockIds.clear();
-        infoBlockIds = null;
+    public void setInfoBlockStatus(String id,int status){
+        Utility.saveInt("status"+id,status);
     }
+    public int getInfoBlockStatus(String id){
+        return Utility.getSavedInt("status"+id);
+    }
+
 
     public ArrayList<MyInfoBlockItem> getPreviewItems(){
         ArrayList<MyInfoBlockItem> items = new ArrayList<>();
@@ -90,8 +92,7 @@ public class InfoBlocksStorage {
                 if(object.has(MyInfoBlockItem.JSON_DATE)&&!object.get(MyInfoBlockItem.JSON_DATE).isJsonNull())
                     item.setDate(object.get(MyInfoBlockItem.JSON_DATE).getAsString());
 
-                if(object.has(MyInfoBlockItem.JSON_STATUS)&&!object.get(MyInfoBlockItem.JSON_STATUS).isJsonNull())
-                    item.setStatus(object.get(MyInfoBlockItem.JSON_STATUS).getAsString());
+
 
                 items.add(item);
             }
@@ -103,27 +104,37 @@ public class InfoBlocksStorage {
             Collections.sort(items, new Comparator<MyInfoBlockItem>() {
                 @Override
                 public int compare(MyInfoBlockItem i1, MyInfoBlockItem i2) {
-                    SimpleDateFormat sdf = new SimpleDateFormat(Const.INFO_BLOCK_DATE_FORMAT, Locale.getDefault());
-                    Date date1 = null;
-                    Date date2 = null;
-                    try {
-                        date1 = sdf.parse(i1.getDate());
-                        date2 = sdf.parse(i2.getDate());
+
+                    if (i1.getStatus() == 12 && i2.getStatus() != 12) {
+                        return Integer.MIN_VALUE;
+                    } else if (i2.getStatus() == 12 && i1.getStatus() != 12) {
+                        return Integer.MAX_VALUE;
+                    } else if (i1.getStatus() == i2.getStatus()) {
+
+                        SimpleDateFormat sdf = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
+                        Date date1 = null;
+                        Date date2 = null;
+                        try {
+                            date1 = sdf.parse(i1.getDate());
+                            date2 = sdf.parse(i2.getDate());
 
 
-                        if (date1 != null) {
-                            if (date1.after(date2)) {
-                                return Integer.MIN_VALUE;
-                            } else {
-                                return Integer.MAX_VALUE;
+                            if (date1 != null) {
+                                if (date1.after(date2)) {
+                                    return Integer.MIN_VALUE;
+                                } else {
+                                    return Integer.MAX_VALUE;
+                                }
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        return Integer.MAX_VALUE;
                     }
                     return Integer.MAX_VALUE;
                 }
             });
+
 
 
         return items;
@@ -172,10 +183,9 @@ public class InfoBlocksStorage {
 
                     }
                 }
-                SimpleDateFormat df = new SimpleDateFormat(Const.INFO_BLOCK_DATE_FORMAT, Locale.getDefault());
+                SimpleDateFormat df = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
                 String formattedDate = df.format(c.getTime());
                 previewObject.addProperty(MyInfoBlockItem.JSON_DATE,formattedDate);
-                previewObject.addProperty(MyInfoBlockItem.JSON_STATUS,"Черновик");
                 previewObject.addProperty(MyInfoBlockItem.JSON_ID,id);
             }
         }
@@ -229,8 +239,12 @@ public class InfoBlocksStorage {
                         JsonObject photoObject = new JsonObject();
                         PhotoItem photoItem = item.getPhotoItems().get(k);
                         photoObject.addProperty(PhotoItem.JSON_DURATION,photoItem.getDuration());
+                        
+                        if(photoItem.getId()!=0)
                         photoObject.addProperty(PhotoItem.JSON_ID,photoItem.getId());
+
                         photoObject.addProperty(PhotoItem.JSON_IMAGE_PATH,photoItem.getImagePath());
+                        photoObject.addProperty(PhotoItem.JSON_CODE,photoItem.getCode());
                         photoObject.addProperty(PhotoItem.JSON_IS_DEFECT,photoItem.isDefect());
                         photoObject.addProperty(PhotoItem.JSON_IS_VIDEO,photoItem.isVideo());
                         photoObject.addProperty(PhotoItem.JSON_TITLE,photoItem.getTitle());
@@ -245,6 +259,11 @@ public class InfoBlocksStorage {
         saveInfoBlock(id,array);
 
         return id;
+    }
+
+    public JsonArray getInfoBlockArray(String id){
+        Gson gson = new Gson();
+        return gson.fromJson(Utility.getSavedData(id),JsonArray.class);
     }
 
     public ArrayList<ArrayList<MainItem>> getInfoBlock(String id){
@@ -290,6 +309,7 @@ public class InfoBlocksStorage {
                         ListItem listItem = new ListItem(valueObject.get(ListItem.JSON_VALUE_ID).getAsLong()
                                 ,valueObject.get(ListItem.JSON_VALUE_NAME).getAsString());
 
+
                         if(valueObject.has(ListItem.JSON_VALUE_MARK)&&!valueObject.get(ListItem.JSON_VALUE_MARK).isJsonNull()){
                             listItem.setMark(valueObject.get(ListItem.JSON_VALUE_MARK).getAsInt());
                         }
@@ -314,13 +334,18 @@ public class InfoBlocksStorage {
                             photoItem.setTitle(valueObject.get(PhotoItem.JSON_TITLE).getAsString());
 
                         if(valueObject.has(PhotoItem.JSON_DURATION)&&!valueObject.get(PhotoItem.JSON_DURATION).isJsonNull())
-                        photoItem.setDuration(valueObject.get(PhotoItem.JSON_DURATION).getAsInt());
+                            photoItem.setDuration(valueObject.get(PhotoItem.JSON_DURATION).getAsInt());
 
                         if(valueObject.has(PhotoItem.JSON_IMAGE_PATH)&&!valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull())
-                        photoItem.setImagePath(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+                            photoItem.setImagePath(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
 
-                        if(valueObject.has(PhotoItem.JSON_ID)&&!valueObject.get(PhotoItem.JSON_ID).isJsonNull())
-                        photoItem.setId(valueObject.get(PhotoItem.JSON_ID).getAsString());
+                        if(valueObject.has(PhotoItem.JSON_ID)&&!valueObject.get(PhotoItem.JSON_ID).isJsonNull()){
+                            photoItem.setId(valueObject.get(PhotoItem.JSON_ID).getAsLong());
+                        }
+
+                        if(valueObject.has(PhotoItem.JSON_CODE)&&!valueObject.get(PhotoItem.JSON_CODE).isJsonNull())
+                            photoItem.setCode(valueObject.get(PhotoItem.JSON_CODE).getAsString());
+
                     photoItems.add(photoItem);
 
                     }

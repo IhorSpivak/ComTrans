@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,6 @@ import android.widget.ProgressBar;
 
 import com.google.gson.JsonObject;
 
-import java.util.UUID;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -24,11 +23,12 @@ import ru.comtrans.activities.AddInfoBlockActivity;
 import ru.comtrans.adapters.SectionsPagerAdapter;
 import ru.comtrans.fragments.BaseFragment;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.InfoBlockHelper;
-import ru.comtrans.helpers.InfoBlocksStorage;
-import ru.comtrans.helpers.PropHelper;
+import ru.comtrans.items.MyInfoBlockItem;
+import ru.comtrans.singlets.PropHelper;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.singlets.AppController;
+import ru.comtrans.singlets.InfoBlockHelper;
+import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.views.ConnectionProgressDialog;
 import ru.comtrans.views.NonSwipeableViewPager;
 
@@ -64,6 +64,9 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main,container,false);
         activity = (AddInfoBlockActivity) getActivity();
+
+        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+        toolbar.setVisibility(View.VISIBLE);
 
         pager_indicator = (LinearLayout) v.findViewById(R.id.viewPagerCountDots);
         emptyBar = (ProgressBar)v.findViewById(R.id.empty_bar);
@@ -137,6 +140,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
             if(isNew) {
                 propHelper = PropHelper.getInstance();
                 storage.saveInfoBlock(infoBlockId, propHelper.getScreens());
+                storage.setInfoBlockStatus(infoBlockId, MyInfoBlockItem.STATUS_DRAFT);
             }
             infoBlockHelper.getAllItems(infoBlockId);
             return null;

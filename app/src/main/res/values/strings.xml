@@ -95,7 +95,7 @@
     <string name="bad_warning_message">Поля тип, марка, модель, гос.номер и год выпуска являются обязательными для заполнения</string>
     <string name="warning_message">Вы заполнили не все поля. Если все верно - жмите "Далее", если вы забыли заполнить какие-либо поля - заполните и жмите "Далее"</string>
     <string name="btn_stay">Остаться</string>
-    
+
     //////////////////////MyInfoblocksFragment//////////////////////////////////
     <string name="title_mark">Марка</string>
     <string name="title_model">Модель</string>
@@ -104,6 +104,19 @@
     <string name="status_draft">Черновик</string>
     <string name="status_sending">%1$s отправлено</string>
     <string name="status_sent">Принято</string>
+    <string name="click_on_sending">Инфоблок отправляется. Пожалуйста, подождите</string>
 
+
+    //////////////////////InfoBlockTutorialFragment//////////////////////////////
+    <string name="tutorial_title">Порядок добавления\nнового инфоблока</string>
+    <string name="tutorial_text">1.Выберите из списка или введите соответствующее значение в каждое поле\n\n2.Добавьте необходимые фотографии\n\n3.Нажмите "Далее"</string>
+    <string name="tutorial_confirm">Понятно</string>
+
+
+    ////////////SendingService//////////////////////////////
+    <string name="sending_notification_title">Отправка инфоблока</string>
+    <string name="sending_notification_text">Отправка…</string>
+    <string name="sending_notification_done">Отправка завершена</string>
+    <string name="sending_notification_failed">Отправка не удалась</string>
 
 </resources>

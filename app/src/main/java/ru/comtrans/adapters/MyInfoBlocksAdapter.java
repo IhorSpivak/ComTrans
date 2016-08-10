@@ -11,10 +11,17 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import ru.comtrans.R;
+import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.MyInfoBlockItem;
+import ru.comtrans.singlets.InfoBlocksStorage;
 
 /**
  * Created by Artco on 25.07.2016.
@@ -26,13 +33,15 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private ArrayList<MyInfoBlockItem> items;
-    Context context;
+    private Context context;
     private final OnItemClickListener listener;
+    private InfoBlocksStorage storage;
 
     public MyInfoBlocksAdapter(Context context, ArrayList<MyInfoBlockItem> items, MyInfoBlocksAdapter.OnItemClickListener listener){
         this.items = items;
         this.context = context;
         this.listener = listener;
+        storage = InfoBlocksStorage.getInstance();
     }
 
     public void setItems(ArrayList<MyInfoBlockItem> items) {
@@ -50,25 +59,64 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         MyInfoBlockItem item = getItem(position);
-        ((MyInfoBlockViewHolder)holder).date.setText(item.getDate());
-        if(item.getStatus()!=null&&item.getStatus().equals(context.getString(R.string.status_draft))){
-            ((MyInfoBlockViewHolder)holder).status.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary));
+        MyInfoBlockViewHolder myHolder = ((MyInfoBlockViewHolder)holder);
+        myHolder.date.setText(item.getDate());
+        SimpleDateFormat df = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
+        SimpleDateFormat expectedFormat = new SimpleDateFormat(Const.INFO_BLOCK_DATE_FORMAT, Locale.getDefault());
+        try {
+            Date date = df.parse(item.getDate());
+            String formattedDate = expectedFormat.format(date);
+            myHolder.date.setText(formattedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        ((MyInfoBlockViewHolder)holder).status.setText(item.getStatus());
-        ((MyInfoBlockViewHolder)holder).mark.setText(item.getMark());
-        ((MyInfoBlockViewHolder)holder).model.setText(item.getModel());
-        ((MyInfoBlockViewHolder)holder).year.setText(item.getYear());
+
+
+        switch (storage.getInfoBlockStatus(item.getId())){
+                case MyInfoBlockItem.STATUS_DRAFT:
+                    myHolder.status.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary));
+                    myHolder.status.setText(R.string.status_draft);
+                    break;
+                case MyInfoBlockItem.STATUS_SENDING:
+                    myHolder.status.setTextColor(ContextCompat.getColor(context,android.R.color.holo_blue_dark));
+                    myHolder.status.setText(String.format(context.getString(R.string.status_sending),item.getProgress()));
+                    break;
+                case MyInfoBlockItem.STATUS_SENT:
+                    myHolder.status.setTextColor(ContextCompat.getColor(context,android.R.color.holo_green_dark));
+                    myHolder.status.setText(R.string.status_sent);
+                    break;
+            }
+
+
+
+        myHolder.mark.setText(item.getMark());
+        myHolder.model.setText(item.getModel());
+        myHolder.year.setText(item.getYear());
         if(item.getPhotoPath()!=null){
-            Ion.with(((MyInfoBlockViewHolder)holder).photo).load(item.getPhotoPath());
-            ((MyInfoBlockViewHolder)holder).photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            Ion.with(myHolder.photo).load(item.getPhotoPath());
+            myHolder.photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }else {
-            ((MyInfoBlockViewHolder)holder).photo.setScaleType(ImageView.ScaleType.CENTER);
-            ((MyInfoBlockViewHolder)holder).photo.setImageResource(R.drawable.ic_placeholder);
+            myHolder.photo.setScaleType(ImageView.ScaleType.CENTER);
+            myHolder.photo.setImageResource(R.drawable.ic_placeholder);
         }
 
 
 
         ((MyInfoBlockViewHolder)holder).bind(item,listener);
+
+    }
+
+    public void updateProgress(String id,String progress){
+        for (int i = 0; i < items.size(); i++) {
+            MyInfoBlockItem item = items.get(i);
+            if (item.getId().equals(id)){
+                item.setStatus(storage.getInfoBlockStatus(item.getId()));
+                item.setProgress(progress);
+                items.set(i,item);
+                notifyDataSetChanged();
+            }
+        }
+
 
     }
 

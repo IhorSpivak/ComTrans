@@ -5,6 +5,10 @@ package ru.comtrans.items;
  */
 public class MyInfoBlockItem {
 
+    public static final int STATUS_DRAFT = 11;
+    public static final int STATUS_SENDING = 12;
+    public static final int STATUS_SENT = 13;
+
     public static final String JSON_ID = "id";
     public static final String JSON_DATE = "date";
     public static final String JSON_STATUS = "status";
@@ -13,18 +17,16 @@ public class MyInfoBlockItem {
     public static final String JSON_YEAR = "year";
     public static final String JSON_PHOTO_PATH = "photo_path";
 
+    private int status;
 
-    private String id;
-    private String date,status,mark,model,year,photoPath;
+    private String id,date,mark,model,year,photoPath,progress;
 
-    public MyInfoBlockItem(String id,String date, String status, String mark, String model, String year, String photoPath) {
-        this.date = date;
-        this.status = status;
-        this.mark = mark;
-        this.model = model;
-        this.year = year;
-        this.photoPath = photoPath;
-        this.id = id;
+    public String getProgress() {
+        return progress;
+    }
+
+    public void setProgress(String progress) {
+        this.progress = progress;
     }
 
     public String getId() {
@@ -35,7 +37,9 @@ public class MyInfoBlockItem {
         this.id = id;
     }
 
-    public MyInfoBlockItem(){}
+    public MyInfoBlockItem(){
+        progress = "0%";
+    }
 
     public String getDate() {
         return date;
@@ -45,11 +49,11 @@ public class MyInfoBlockItem {
         this.date = date;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

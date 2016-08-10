@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +16,8 @@ import java.util.ArrayList;
 import ru.comtrans.R;
 import ru.comtrans.adapters.ListAdapter;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.InfoBlockHelper;
 import ru.comtrans.items.ListItem;
+import ru.comtrans.singlets.InfoBlockHelper;
 
 public class SearchValueActivity extends AppCompatActivity {
 

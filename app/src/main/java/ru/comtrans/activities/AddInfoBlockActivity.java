@@ -1,10 +1,6 @@
 package ru.comtrans.activities;
 
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -12,10 +8,12 @@ import android.view.MenuItem;
 import java.util.UUID;
 
 import ru.comtrans.R;
+import ru.comtrans.fragments.infoblock.InfoBlockTutorialFragment;
 import ru.comtrans.fragments.infoblock.MainFragment;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.InfoBlockHelper;
-import ru.comtrans.views.ConnectionProgressDialog;
+import ru.comtrans.helpers.Utility;
+import ru.comtrans.singlets.InfoBlockHelper;
+import ru.comtrans.tasks.SaveInfoBlockTask;
 import ru.comtrans.views.NonSwipeableViewPager;
 
 public class AddInfoBlockActivity extends AppCompatActivity {
@@ -42,7 +40,11 @@ public class AddInfoBlockActivity extends AppCompatActivity {
             infoBlockId = UUID.randomUUID().toString();
         }
         helper = InfoBlockHelper.getInstance();
-        openMainFragment(isNew);
+
+        if(Utility.getBoolean(Const.IS_FIRST_ADD_INFOBLOCK_LAUNCH))
+            openMainFragment(isNew);
+        else
+            openTutorialFragment(isNew);
 
 
     }
@@ -50,6 +52,10 @@ public class AddInfoBlockActivity extends AppCompatActivity {
 
     private void openMainFragment(boolean isNew){
         getSupportFragmentManager().beginTransaction().replace(R.id.container, MainFragment.newInstance(infoBlockId,isNew)).commit();
+    }
+
+    private void openTutorialFragment(boolean isNew){
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, InfoBlockTutorialFragment.newInstance(infoBlockId,isNew)).commit();
     }
 
     @Override
@@ -71,36 +77,14 @@ public class AddInfoBlockActivity extends AppCompatActivity {
 
 
     private void saveAndExit(){
-        new AsyncTaskForSaveAndExit().execute();
+        new SaveInfoBlockTask(AddInfoBlockActivity.this, true, new SaveInfoBlockTask.OnPostExecuteListener() {
+            @Override
+            public void onPostExecute() {
+                finish();
+            }
+        });
     }
 
 
-    private class AsyncTaskForSaveAndExit extends AsyncTask<Void,Void,Void>{
-        ConnectionProgressDialog dialog;
 
-        @Override
-        protected void onPreExecute() {
-            dialog = new ConnectionProgressDialog(AddInfoBlockActivity.this,"Сохранение инфоблока");
-            dialog.show();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            helper.saveAllAndClear();
-            SystemClock.sleep(900);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            try{
-                dialog.dismiss();
-            }catch (Exception ignored){}
-
-            LocalBroadcastManager.getInstance(AddInfoBlockActivity.this).sendBroadcast(new Intent(Const.REFRESH_INFO_BLOCKS_FILTER));
-            finish();
-        }
-    }
 }

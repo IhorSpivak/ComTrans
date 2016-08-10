@@ -37,6 +37,7 @@ import ru.comtrans.R;
 import ru.comtrans.activities.CameraActivity;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.items.PhotoItem;
+import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.views.VerticalChronometer;
 
 /**
@@ -75,7 +76,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         toolbarTitle  = (TextView) toolbar.findViewById(R.id.toolbarTitle);
         toolbarTitle.setSelected(true);
 
-
+        Log.d("TAG","video fragment");
 
 
         activity = (CameraActivity) getActivity();
@@ -369,8 +370,10 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         Intent i = new Intent();
         i.putExtra(Const.EXTRA_POSITION,activity.position);
         i.putExtra(Const.EXTRA_IMAGE_POSITION,activity.imagePosition);
+        i.putExtra(Const.EXTRA_SCREEN_NUM,activity.screenNum);
         Collections.reverse(activity.getPhotoAdapter().getItems());
-        i.putExtra(Const.EXTRA_VALUES,activity.getPhotoAdapter().getItems());
+        InfoBlockHelper helper = InfoBlockHelper.getInstance();
+        helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(activity.getPhotoAdapter().getItems());
         getActivity().setResult(Const.CAMERA_PHOTO_RESULT,i);
         getActivity().finish();
     }

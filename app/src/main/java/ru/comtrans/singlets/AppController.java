@@ -28,6 +28,7 @@ public class AppController extends Application {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
+
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
 

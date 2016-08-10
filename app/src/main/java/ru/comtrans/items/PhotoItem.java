@@ -10,6 +10,7 @@ public class PhotoItem implements Parcelable {
 
     public static final String JSON_IS_DEFECT = "is_defect";
     public static final String JSON_TITLE = "title";
+    public static final String JSON_CODE = "code";
     public static final String JSON_IMAGE_PATH = "image_path";
     public static final String JSON_ID = "id";
     public static final String JSON_DURATION = "duration";
@@ -23,9 +24,18 @@ public class PhotoItem implements Parcelable {
     private boolean isDefect;
     private String title;
     private String imagePath;
-    private String id;
+    private long id;
+    private String code;
     private int duration;
     private boolean isVideo;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public int getDuration() {
         return duration;
@@ -78,11 +88,11 @@ public class PhotoItem implements Parcelable {
         this.imagePath = imagePath;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -97,7 +107,8 @@ public class PhotoItem implements Parcelable {
         dest.writeByte(this.isDefect ? (byte) 1 : (byte) 0);
         dest.writeString(this.title);
         dest.writeString(this.imagePath);
-        dest.writeString(this.id);
+        dest.writeLong(this.id);
+        dest.writeString(this.code);
         dest.writeInt(this.duration);
         dest.writeByte(this.isVideo ? (byte) 1 : (byte) 0);
     }
@@ -106,7 +117,8 @@ public class PhotoItem implements Parcelable {
         this.isDefect = in.readByte() != 0;
         this.title = in.readString();
         this.imagePath = in.readString();
-        this.id = in.readString();
+        this.id = in.readLong();
+        this.code = in.readString();
         this.duration = in.readInt();
         this.isVideo = in.readByte() != 0;
     }

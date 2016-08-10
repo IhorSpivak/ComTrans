@@ -1,4 +1,4 @@
-package ru.comtrans.helpers;
+package ru.comtrans.singlets;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 
 import java.util.Map;
 
+import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.PhotoItem;
@@ -16,9 +18,9 @@ import ru.comtrans.items.PhotoItem;
  */
 public class PropHelper {
     private static PropHelper instance;
-    Gson gson;
-    JsonArray prop;
-    JsonArray screens;
+    private Gson gson;
+    private JsonArray prop;
+    private JsonArray screens;
 
 
     public static PropHelper getInstance() {
@@ -75,63 +77,65 @@ public class PropHelper {
     private static JsonArray getItems(JsonArray array){
         JsonArray newArray = new JsonArray();
         for (int i = 0; i < array.size(); i++) {
-
-            JsonObject object = array.get(i).getAsJsonObject();
-
-
-            if(i==0){
-                JsonObject newObject = new JsonObject();
-                newObject.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_HEADER);
-                newObject.addProperty(MainItem.JSON_NAME,object.get("group").getAsString());
-                newArray.add(newObject);
-            }
-
-            JsonObject newObject = new JsonObject();
+            try {
 
 
-
-            switch (object.get("prop_type").getAsString()){
-                case "S":
-                    newObject.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_STRING);
-                    break;
-                case "N":
-                    newObject.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_NUMBER);
-                    break;
-                case "L":
-                    newObject.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_FLAG);
-                    break;
-                case "DR":
-                    newObject.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_LIST);
-                    break;
-
-            }
-            newObject.addProperty(MainItem.JSON_NAME,object.get("name").getAsString());
-            newObject.addProperty(MainItem.JSON_CODE,object.get("code").getAsString());
+                JsonObject object = array.get(i).getAsJsonObject();
 
 
-            if(object.has("val")&&!object.get("val").isJsonNull()){
-                JsonArray newVal = new JsonArray();
-                JsonArray val = object.get("val").getAsJsonArray();
-                for (int j = 0; j < val.size(); j++) {
-
-                    JsonObject valueObject = val.get(j).getAsJsonObject();
-                    JsonObject newValueObject = new JsonObject();
-                    newValueObject.addProperty(ListItem.JSON_VALUE_ID,valueObject.get("id").getAsLong());
-                    newValueObject.addProperty(ListItem.JSON_VALUE_NAME,valueObject.get("name").getAsString());
-                    if(valueObject.has("mark")){
-                        newValueObject.addProperty(ListItem.JSON_VALUE_MARK,valueObject.get("mark").getAsInt());
-                    }
-                    newVal.add(newValueObject);
-
-                    if(j==0){
-                        newObject.add(MainItem.JSON_LIST_VALUE,newValueObject);
-                    }
+                if (i == 0) {
+                    JsonObject newObject = new JsonObject();
+                    newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_HEADER);
+                    newObject.addProperty(MainItem.JSON_NAME, object.get("group").getAsString());
+                    newArray.add(newObject);
                 }
-                newObject.add(MainItem.JSON_LIST_VALUES,newVal);
+
+                JsonObject newObject = new JsonObject();
 
 
-            }
-        newArray.add(newObject);
+                switch (object.get("prop_type").getAsString()) {
+                    case "S":
+                        newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_STRING);
+                        break;
+                    case "N":
+                        newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_NUMBER);
+                        break;
+                    case "L":
+                        newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_FLAG);
+                        break;
+                    case "DR":
+                        newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_LIST);
+                        break;
+
+                }
+                newObject.addProperty(MainItem.JSON_NAME, object.get("name").getAsString());
+                newObject.addProperty(MainItem.JSON_CODE, object.get("code").getAsString());
+
+
+                if (object.has("val") && !object.get("val").isJsonNull()) {
+                    JsonArray newVal = new JsonArray();
+                    JsonArray val = object.get("val").getAsJsonArray();
+                    for (int j = 0; j < val.size(); j++) {
+
+                        JsonObject valueObject = val.get(j).getAsJsonObject();
+                        JsonObject newValueObject = new JsonObject();
+                        newValueObject.addProperty(ListItem.JSON_VALUE_ID, valueObject.get("id").getAsLong());
+                        newValueObject.addProperty(ListItem.JSON_VALUE_NAME, valueObject.get("name").getAsString());
+                        if (valueObject.has("mark")) {
+                            newValueObject.addProperty(ListItem.JSON_VALUE_MARK, valueObject.get("mark").getAsInt());
+                        }
+                        newVal.add(newValueObject);
+
+                        if (j == 0) {
+                            newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+                        }
+                    }
+                    newObject.add(MainItem.JSON_LIST_VALUES, newVal);
+
+
+                }
+                newArray.add(newObject);
+            }catch (Exception ignored){}
         }
 
         return newArray;
@@ -151,6 +155,7 @@ public class PropHelper {
             JsonObject object = array.get(i).getAsJsonObject();
             JsonObject newObject = new JsonObject();
             newObject.addProperty(PhotoItem.JSON_TITLE,object.get("name").getAsString());
+            newObject.addProperty(PhotoItem.JSON_CODE,object.get("code").getAsString());
 
             if(i == array.size()-1){
                 if(object.has("is_defect")&&!object.get("is_defect").isJsonNull()&&object.get("is_defect").getAsBoolean()){
@@ -166,7 +171,9 @@ public class PropHelper {
                 newObject.addProperty(PhotoItem.JSON_IS_DEFECT,false);
             }
             if(isVideo){
-                newObject.addProperty(PhotoItem.JSON_DURATION,15);
+                if(object.has("duration")&&!object.get("duration").isJsonNull()) {
+                    newObject.addProperty(PhotoItem.JSON_DURATION, object.get("duration").getAsInt());
+                }
             }
             photoArray.add(newObject);
 

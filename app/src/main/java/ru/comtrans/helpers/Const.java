@@ -71,10 +71,15 @@ public class Const {
 
     ///////////////////////MyInfoBlocksFragment/////////////////////////
     public static final String REFRESH_INFO_BLOCKS_FILTER = "refreshInfoBlocks";
+    public static final String UPDATE_PROGRESS_INFO_BLOCKS_FILTER = "update_progress_info_block";
 
+    public static final String INFO_BLOCK_FULL_DATE_FORMAT = "dd.MM.yyyy, HH:mm:ss";
     public static final String INFO_BLOCK_DATE_FORMAT = "dd.MM.yyyy";
 
+    public static final String IS_FIRST_ADD_INFOBLOCK_LAUNCH = "info_block_launch";
 
+    public static final String EXTRA_PROGRESS = "extra_progress";
+    public static final String EXTRA_STATUS = "extra_status";
 
 
 

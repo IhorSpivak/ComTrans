@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -29,37 +27,37 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import ru.comtrans.R;
-import ru.comtrans.helpers.InfoBlockHelper;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.PhotoItem;
+import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.views.DividerItemDecoration;
 
-/**
- * Created by Artco on 12.07.2016.
- */
+
 public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<MainItem> items;
-    Context context;
+    private Context context;
     private final OnItemClickListener listener;
     int page;
     int totalPages;
-    String infoBlockId;
-    DividerItemDecoration decoration;
-    InfoBlockHelper infoBlockHelper;
+    private DividerItemDecoration decoration;
+    private InfoBlockHelper infoBlockHelper;
 
+
+    /**
+     * Interface, that allows us to have OnItemClickListener for recyclerView
+     */
     public interface OnItemClickListener {
         void onItemClick(MainItem item, View view,int position);
     }
 
-    public InfoBlockAdapter(Context context, ArrayList<MainItem> items, int page, int totalPages,String infoBlockId, OnItemClickListener listener){
+    public InfoBlockAdapter(Context context, ArrayList<MainItem> items, int page, int totalPages, OnItemClickListener listener){
         this.context = context;
         this.items = items;
         this.listener = listener;
         this.page = page;
         this.totalPages = totalPages;
-        this.infoBlockId = infoBlockId;
         infoBlockHelper = InfoBlockHelper.getInstance();
     }
 
@@ -69,10 +67,8 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private static class CustomViewHolder extends RecyclerView.ViewHolder{
 
-
         public CustomViewHolder(View itemView) {
             super(itemView);
-
         }
 
         public void bind(final MainItem item, final OnItemClickListener listener) {
@@ -203,8 +199,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case MainItem.TYPE_NUMBER:
                 v = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.edit_text_item, parent, false);
-                EditText editText = (EditText) v.findViewById(R.id.edit_text);
-                editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
                 return new EditTextViewHolder(v,new InfoBlockTextWatcher());
             case MainItem.TYPE_HEADER:
                 v = LayoutInflater.from(parent.getContext())
@@ -254,7 +249,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         final MainItem item = getItem(position);
         PhotoContainerAdapter adapter;
         PhotoContainerAdapter defectsAdapter;
@@ -263,14 +258,15 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         switch (getItemViewType(position)){
             case MainItem.TYPE_LIST:
-                ((ListViewHolder)holder).title.setText(item.getName());
+                ListViewHolder listViewHolder = ((ListViewHolder)viewHolder);
+                listViewHolder.title.setText(item.getName());
                 if(item.getListValue()!=null)
-                ((ListViewHolder)holder).tvList.setText(item.getListValue().getName());
-
+                    listViewHolder.tvList.setText(item.getListValue().getName());
                 break;
 
 
             case MainItem.TYPE_PHOTO:
+                PhotoViewHolder photoViewHolder = ((PhotoViewHolder) viewHolder);
                 ArrayList<PhotoItem> photoItems = new ArrayList<>();
                 ArrayList<PhotoItem> defects = new ArrayList<>();
 
@@ -281,15 +277,16 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
 
                 LinearLayoutManager manager = new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
-                ((PhotoViewHolder)holder).photoList.setLayoutManager(manager);
+                manager.setAutoMeasureEnabled(true);
+                photoViewHolder.photoList.setLayoutManager(manager);
                  adapter = new PhotoContainerAdapter(context, photoItems, new PhotoContainerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(PhotoItem item, View view) {
-                        MainItem mainItem = getItem(holder.getAdapterPosition());
+                        MainItem mainItem = getItem(viewHolder.getAdapterPosition());
                        listener.onItemClick(mainItem,view,mainItem.getPhotoItems().indexOf(item));
                     }
                 },MainItem.TYPE_PHOTO);
-                ((PhotoViewHolder)holder).photoList.setAdapter(adapter);
+                photoViewHolder.photoList.setAdapter(adapter);
 
                 count = 0;
                 for(PhotoItem photoItem:item.getPhotoItems()){
@@ -299,17 +296,15 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 if(count!=0) {
                     int percent = (int)((count * 100.0f) / item.getPhotosCount());
                     if(percent==100){
-                        ((PhotoViewHolder)holder).progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_green));
+                        photoViewHolder.progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_green));
                     }else {
-                        ((PhotoViewHolder)holder).progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_red));
+                        photoViewHolder.progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_red));
                     }
 
-                    ((PhotoViewHolder)holder).progressBar.setProgress(percent);
+                    photoViewHolder.progressBar.setProgress(percent);
                 }else {
-                    ((PhotoViewHolder)holder).progressBar.setProgress(0);
+                    photoViewHolder.progressBar.setProgress(0);
                 }
-
-
 
                 for(PhotoItem photoItem:item.getPhotoItems()){
                     if(photoItem.isDefect()){
@@ -319,36 +314,34 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 if(defects.size()>0){
                     LinearLayoutManager defectsManager = new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
-                    ((PhotoViewHolder)holder).defectsList.setLayoutManager(defectsManager);
+                    photoViewHolder.defectsList.setLayoutManager(defectsManager);
                     defectsAdapter = new PhotoContainerAdapter(context, defects, new PhotoContainerAdapter.OnItemClickListener() {
                         @Override
                         public void onItemClick(PhotoItem item, View view) {
-                            MainItem mainItem = getItem(holder.getAdapterPosition());
+                            MainItem mainItem = getItem(viewHolder.getAdapterPosition());
                             listener.onItemClick(mainItem,view,mainItem.getPhotoItems().indexOf(item));
                         }
                     },MainItem.TYPE_PHOTO);
-                    ((PhotoViewHolder)holder).defectsList.setAdapter(defectsAdapter);
+                    photoViewHolder.defectsList.setAdapter(defectsAdapter);
                 }
-
-
-
 
                 break;
 
             case MainItem.TYPE_VIDEO:
+                PhotoViewHolder videoViewHolder = ((PhotoViewHolder) viewHolder);
                 GridLayoutManager gridLayoutManager = new GridLayoutManager(context,2);
-                ((PhotoViewHolder)holder).photoList.setLayoutManager(gridLayoutManager);
+                videoViewHolder.photoList.setLayoutManager(gridLayoutManager);
                 adapter = new PhotoContainerAdapter(context, item.getPhotoItems(), new PhotoContainerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(PhotoItem item, View view) {
-                        MainItem mainItem = getItem(holder.getAdapterPosition());
+                        MainItem mainItem = getItem(viewHolder.getAdapterPosition());
                         listener.onItemClick(mainItem,view,mainItem.getPhotoItems().indexOf(item));
                     }
                 },MainItem.TYPE_VIDEO);
-                ((PhotoViewHolder)holder).photoList.setAdapter(adapter);
+                videoViewHolder.photoList.setAdapter(adapter);
                 if(decoration==null){
                     decoration = new DividerItemDecoration(context,DividerItemDecoration.VERTICAL_LIST);
-                    ((PhotoViewHolder)holder).photoList.addItemDecoration(decoration);
+                    videoViewHolder.photoList.addItemDecoration(decoration);
                 }
 
                 count = 0;
@@ -359,41 +352,44 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 if(count!=0) {
                     int percent = (int)((count * 100.0f) / item.getPhotosCount());
                     if(percent==100){
-                        ((PhotoViewHolder)holder).progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_green));
+                        videoViewHolder.progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_green));
                     }else {
-                        ((PhotoViewHolder)holder).progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_red));
+                        videoViewHolder.progressBar.setProgressDrawable(ContextCompat.getDrawable(context,R.drawable.progressbar_red));
                     }
 
-                    ((PhotoViewHolder)holder).progressBar.setProgress(percent);
+                    videoViewHolder.progressBar.setProgress(percent);
                 }else {
-                    ((PhotoViewHolder)holder).progressBar.setProgress(0);
+                    videoViewHolder.progressBar.setProgress(0);
                 }
-
-
-
                 break;
 
             case MainItem.TYPE_STRING:
-                ((EditTextViewHolder)holder).textInputLayout.setHint(item.getName());
-                ((EditTextViewHolder)holder).textWatcher.updatePosition(holder.getAdapterPosition());
-                ((EditTextViewHolder)holder).editText.setText(item.getValue());
+                EditTextViewHolder stringEditTextViewHolder = ((EditTextViewHolder) viewHolder);
+                stringEditTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
+                stringEditTextViewHolder.textInputLayout.setHint(item.getName());
+                stringEditTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
+                stringEditTextViewHolder.editText.setText(item.getValue());
                 break;
 
             case MainItem.TYPE_NUMBER:
-                ((EditTextViewHolder)holder).textInputLayout.setHint(item.getName());
-                ((EditTextViewHolder)holder).textWatcher.updatePosition(holder.getAdapterPosition());
-                ((EditTextViewHolder)holder).editText.setText(item.getValue());
+                EditTextViewHolder numberEditTextViewHolder = ((EditTextViewHolder) viewHolder);
+                numberEditTextViewHolder.editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                numberEditTextViewHolder.textInputLayout.setHint(item.getName());
+                numberEditTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
+                numberEditTextViewHolder.editText.setText(item.getValue());
                 break;
 
             case MainItem.TYPE_HEADER:
-                ((HeaderViewHolder)holder).tvHeader.setText(item.getName());
+                HeaderViewHolder headerViewHolder = ((HeaderViewHolder) viewHolder);
+                headerViewHolder.tvHeader.setText(item.getName());
                 break;
 
             case MainItem.TYPE_FLAG:
-                ((FlagViewHolder)holder).checkBox.setOnCheckedChangeListener(null);
-                ((FlagViewHolder)holder).checkBox.setText(item.getName());
-                ((FlagViewHolder)holder).checkBox.setChecked(item.isChecked());
-                ((FlagViewHolder)holder).checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                FlagViewHolder flagViewHolder = ((FlagViewHolder) viewHolder);
+                flagViewHolder.checkBox.setOnCheckedChangeListener(null);
+                flagViewHolder.checkBox.setText(item.getName());
+                flagViewHolder.checkBox.setChecked(item.isChecked());
+                flagViewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                         item.setChecked(b);
@@ -402,13 +398,14 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 break;
 
            case MainItem.TYPE_BOTTOM_BAR:
+               BottomBarViewHolder bottomBarViewHolder = ((BottomBarViewHolder) viewHolder);
                if(page==0){
-                   ((BottomBarViewHolder)holder).previousLayout.setVisibility(View.GONE);
+                   bottomBarViewHolder.previousLayout.setVisibility(View.GONE);
                }else if(page+1==totalPages){
-                   ((BottomBarViewHolder)holder).btnNext.setText(R.string.send_infoblock);
+                   bottomBarViewHolder.btnNext.setText(R.string.send_infoblock);
                }
 
-               ((BottomBarViewHolder)holder).btnNext.setOnClickListener(new View.OnClickListener() {
+               bottomBarViewHolder.btnNext.setOnClickListener(new View.OnClickListener() {
                    @Override
                    public void onClick(final View v) {
                        boolean isAllEntered = true;
@@ -445,27 +442,23 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                case MainItem.TYPE_NUMBER:
                                    if(item.getValue()==null||item.getValue().equals("")){
                                        isAllEntered = false;
-                                       break;
-                                   }
-                                   break;
-                               case MainItem.TYPE_LIST:
-                                   if(item.getListValue().getId()==-1){
-                                       isAllEntered = false;
-                                       break;
                                    }
                                    break;
                                case MainItem.TYPE_STRING:
                                    if(item.getValue()==null||item.getValue().equals("")){
                                        isAllEntered = false;
-                                       break;
+                                   }
+                                   break;
+                               case MainItem.TYPE_LIST:
+                                   if(item.getListValue().getId()==-1){
+                                       isAllEntered = false;
                                    }
                                    break;
                                case MainItem.TYPE_PHOTO:
                                    for (PhotoItem photoItem :
                                            item.getPhotoItems()) {
-                                       if (photoItem.getImagePath()==null){
+                                       if (photoItem.getImagePath()==null&&!photoItem.isDefect()){
                                            isAllEntered = false;
-                                           break;
                                        }
                                    }
                                    break;
@@ -474,7 +467,6 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                            item.getPhotoItems()) {
                                        if (photoItem.getImagePath()==null){
                                            isAllEntered = false;
-                                           break;
                                        }
                                    }
                                    break;
@@ -506,7 +498,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                    }
                });
-               ((BottomBarViewHolder)holder).btnPrevious.setOnClickListener(new View.OnClickListener() {
+               bottomBarViewHolder.btnPrevious.setOnClickListener(new View.OnClickListener() {
                    @Override
                    public void onClick(View view) {
                        infoBlockHelper.saveScreen(items,page);
@@ -516,18 +508,19 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                break;
 
            case MainItem.TYPE_TIRE_SCHEME:
+               TireSchemeViewHolder tireSchemeViewHolder = ((TireSchemeViewHolder) viewHolder);
                ListItem listItem = infoBlockHelper.getTireSchemeValue();
                if(listItem==null||listItem.getId()==-1) {
-                   ((TireSchemeViewHolder) holder).imageLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+                   tireSchemeViewHolder.imageLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
                }else {
-                   ((TireSchemeViewHolder) holder).imageLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                   ((TireSchemeViewHolder) holder).schemeImage.setImageResource(R.drawable.s4x4);
+                   tireSchemeViewHolder.imageLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                   tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s4x4);
                }
                break;
 
 
         }
-        ((CustomViewHolder)holder).bind(item,listener);
+        ((CustomViewHolder)viewHolder).bind(item,listener);
 
     }
 
