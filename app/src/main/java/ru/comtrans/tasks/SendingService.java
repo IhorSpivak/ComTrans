@@ -27,6 +27,7 @@ import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.items.PhotoItem;
+import ru.comtrans.items.ProtectorItem;
 import ru.comtrans.singlets.AppController;
 import ru.comtrans.singlets.InfoBlocksStorage;
 
@@ -53,7 +54,7 @@ public class SendingService extends IntentService {
                 .setAutoCancel(false);
 
         id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
-        try {
+
             JsonArray array = storage.getInfoBlockArray(id);
             JsonObject sendObject = new JsonObject();
             sendObject.addProperty("method", "add");
@@ -92,6 +93,34 @@ public class SendingService extends IntentService {
                                 listObject.addProperty(MainItem.JSON_CODE, object.get(MainItem.JSON_CODE).getAsString());
                                 listObject.addProperty(MainItem.JSON_VALUE, value);
                                 fields.add(listObject);
+                            }
+
+                        }
+                    }
+
+                    if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && (object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PROTECTOR)){
+
+
+                        if (object.has(MainItem.JSON_PROTECTOR_VALUES) && !object.get(MainItem.JSON_PROTECTOR_VALUES).isJsonNull()) {
+                            Log.d("TAG","not null");
+                            JsonArray protectorArray = object.getAsJsonArray(MainItem.JSON_PROTECTOR_VALUES);
+
+                            for (int k = 0; k < protectorArray.size(); k++) {
+                                JsonObject protectorObject = protectorArray.get(k).getAsJsonObject();
+                                if(protectorObject.has(ProtectorItem.JSON_TYPE)&&protectorObject.get(ProtectorItem.JSON_TYPE).getAsInt()==ProtectorItem.TYPE_PROTECTOR){
+                                    if(protectorObject.has(ProtectorItem.JSON_VALUE)&&!protectorObject.get(ProtectorItem.JSON_VALUE).isJsonNull()){
+                                        String protectorValue = protectorObject.get(ProtectorItem.JSON_VALUE).getAsString();
+                                        Log.d("TAG","protector value");
+                                        if(!protectorValue.equals("")){
+                                            JsonObject newProtectorObject = new JsonObject();
+                                            newProtectorObject.addProperty(MainItem.JSON_CODE,protectorObject.get(ProtectorItem.JSON_CODE).getAsString());
+                                            newProtectorObject.addProperty(MainItem.JSON_VALUE,protectorValue);
+                                            fields.add(newProtectorObject);
+                                        }
+                                    }
+
+
+                                }
                             }
 
                         }
@@ -253,12 +282,44 @@ public class SendingService extends IntentService {
                     mNotifyManager.notify(notificationId, mBuilder.build());
                 }
             });
-        }catch (Exception e){
-            storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_DRAFT);
-            Intent i = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
-            i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
-            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
-            Log.e("TAG","not sent error",e);
-        }
+
+
+//            Call<JsonObject> call = AppController.apiInterface.sendAuto(Utility.getToken(), sendObject);
+//            call.enqueue(new Callback<JsonObject>() {
+//                @Override
+//                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+//                    Log.d("TAG", "data sent");
+//
+//                    mBuilder.setContentText(getString(R.string.sending_notification_done))
+//                            .setProgress(0, 0, false);
+//                    mBuilder.setAutoCancel(true);
+//                    mNotifyManager.notify(notificationId, mBuilder.build());
+//
+//                    storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_SENT);
+//                    Intent i = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
+//                    i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
+//                    i.putExtra(Const.EXTRA_PROGRESS, "100%");
+//                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
+//                }
+//
+//                @Override
+//                public void onFailure(Call<JsonObject> call, Throwable t) {
+//                    storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_DRAFT);
+//                    Intent i = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
+//                    i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
+//                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
+//                    mBuilder.setContentText(getString(R.string.sending_notification_failed))
+//                            .setProgress(0, 0, false);
+//                    mBuilder.setAutoCancel(true);
+//                    mNotifyManager.notify(notificationId, mBuilder.build());
+//                }
+//            });
+//        }catch (Exception e){
+//            storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_DRAFT);
+//            Intent i = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
+//            i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
+//            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
+//            Log.e("TAG","not sent error",e);
+//        }
     }
 }

@@ -129,7 +129,7 @@ public class CameraActivity extends AppCompatActivity {
             photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
             fragment = new CameraFragment();
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commitAllowingStateLoss();
 
 
 

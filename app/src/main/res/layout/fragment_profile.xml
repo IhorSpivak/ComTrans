@@ -25,6 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
+                android:singleLine="true"
                 android:drawableEnd="@drawable/ic_pen"
                 android:drawableRight="@drawable/ic_pen"
                 android:hint="@string/hint_name"
@@ -40,6 +41,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:textColor="@android:color/black"
                 android:drawableEnd="@drawable/ic_pen"
                 android:drawableRight="@drawable/ic_pen"
@@ -56,6 +58,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:textColor="@android:color/black"
                 android:drawableEnd="@drawable/ic_pen"
                 android:drawableRight="@drawable/ic_pen"
@@ -72,6 +75,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:textColor="@android:color/black"
                 android:drawableEnd="@drawable/ic_pen"
                 android:drawableRight="@drawable/ic_pen"
@@ -88,6 +92,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:hint="@string/hint_telephone"
                 android:textColor="@android:color/black"
                 android:drawableEnd="@drawable/ic_pen"
@@ -105,6 +110,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:hint="@string/email_hint"
                 android:textColor="@android:color/black"
                 android:drawableEnd="@drawable/ic_pen"

@@ -1,11 +1,14 @@
 package ru.comtrans.singlets;
 
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,12 +19,17 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.items.PhotoItem;
+import ru.comtrans.items.ProtectorItem;
 
 /**
  * Created by Artco on 27.07.2016.
@@ -48,6 +56,7 @@ public class InfoBlocksStorage {
             infoBlockIds.add(id);
             Utility.saveStringSet(INFO_BLOCK_IDS, infoBlockIds);
         }
+       // createSendObject(id,block);
         Utility.saveData(id,block.toString());
         saveInfoBlockPreview(id,block);
         return id;
@@ -105,33 +114,49 @@ public class InfoBlocksStorage {
                 @Override
                 public int compare(MyInfoBlockItem i1, MyInfoBlockItem i2) {
 
-                    if (i1.getStatus() == 12 && i2.getStatus() != 12) {
-                        return Integer.MIN_VALUE;
-                    } else if (i2.getStatus() == 12 && i1.getStatus() != 12) {
-                        return Integer.MAX_VALUE;
-                    } else if (i1.getStatus() == i2.getStatus()) {
+                    int returnValue = Integer.MAX_VALUE;
 
-                        SimpleDateFormat sdf = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
-                        Date date1 = null;
-                        Date date2 = null;
-                        try {
-                            date1 = sdf.parse(i1.getDate());
-                            date2 = sdf.parse(i2.getDate());
+                    SimpleDateFormat sdf = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
+                    Date date1 = null;
+                    Date date2 = null;
+                    try {
+                        date1 = sdf.parse(i1.getDate());
+                        date2 = sdf.parse(i2.getDate());
 
 
-                            if (date1 != null) {
-                                if (date1.after(date2)) {
-                                    return Integer.MIN_VALUE;
-                                } else {
-                                    return Integer.MAX_VALUE;
-                                }
+                        if (date1 != null) {
+                            if (date1.after(date2)) {
+                                returnValue = Integer.MIN_VALUE;
+                            } else {
+                                returnValue = Integer.MAX_VALUE;
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if(i1.getStatus() == i2.getStatus()&&i1.getStatus()==MyInfoBlockItem.STATUS_DRAFT){
+                        return returnValue;
+                    }else if(i1.getStatus() ==MyInfoBlockItem.STATUS_DRAFT){
+                        return Integer.MIN_VALUE;
+                    }else if(i2.getStatus()==MyInfoBlockItem.STATUS_DRAFT){
+                        return Integer.MAX_VALUE;
+                    }else if(i1.getStatus() == i2.getStatus()&&i1.getStatus()==MyInfoBlockItem.STATUS_SENDING){
+                       return returnValue;
+                    }else if(i1.getStatus() ==MyInfoBlockItem.STATUS_SENDING){
+                        return Integer.MIN_VALUE;
+                    }else if(i2.getStatus()==MyInfoBlockItem.STATUS_SENDING){
+                        return Integer.MAX_VALUE;
+                    }else if(i1.getStatus() == i2.getStatus()&&i1.getStatus()==MyInfoBlockItem.STATUS_SENT){
+                      return returnValue;
+                    }else if(i1.getStatus() ==MyInfoBlockItem.STATUS_SENT){
+                        return Integer.MIN_VALUE;
+                    }else if(i2.getStatus()==MyInfoBlockItem.STATUS_SENT){
+                        return Integer.MAX_VALUE;
+                    }else {
                         return Integer.MAX_VALUE;
                     }
-                    return Integer.MAX_VALUE;
+
                 }
             });
 
@@ -168,7 +193,7 @@ public class InfoBlocksStorage {
                 }
 
                 if(!isFindPhoto) {
-                    if (object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PHOTO) {
+                    if (object.has(MainItem.JSON_TYPE)&&!object.get(MainItem.JSON_TYPE).isJsonNull()&&object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PHOTO) {
                         if (object.has(MainItem.JSON_PHOTO_VALUES) && !object.get(MainItem.JSON_PHOTO_VALUES).isJsonNull()) {
                             JsonArray photoArray = object.get(MainItem.JSON_PHOTO_VALUES).getAsJsonArray();
                             for (int k = 0; k < photoArray.size(); k++) {
@@ -217,6 +242,15 @@ public class InfoBlocksStorage {
                     listObject.addProperty(ListItem.JSON_VALUE_ID,listItem.getId());
                     listObject.addProperty(ListItem.JSON_VALUE_NAME,listItem.getName());
                     listObject.addProperty(ListItem.JSON_VALUE_MARK,listItem.getMark());
+                    if(listItem.getProtectorValues()!=null&&listItem.getProtectorValues().size()>0){
+                        JsonArray protectorValues = new JsonArray();
+                        for (String s :
+                                listItem.getProtectorValues()) {
+                            protectorValues.add(s);
+                        }
+                        listObject.add(ListItem.JSON_PROTECTOR_VALUES,protectorValues);
+                    }
+                    listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID,listItem.getTireSchemeId());
                     object.add(MainItem.JSON_LIST_VALUE,listObject);
                 }
 
@@ -228,9 +262,34 @@ public class InfoBlocksStorage {
                         listObject.addProperty(ListItem.JSON_VALUE_ID,listItem.getId());
                         listObject.addProperty(ListItem.JSON_VALUE_NAME,listItem.getName());
                         listObject.addProperty(ListItem.JSON_VALUE_MARK,listItem.getMark());
+                        if(listItem.getProtectorValues()!=null&&listItem.getProtectorValues().size()>0){
+                            JsonArray protectorValues = new JsonArray();
+                            for (String s :
+                                    listItem.getProtectorValues()) {
+                                protectorValues.add(s);
+                            }
+                            listObject.add(ListItem.JSON_PROTECTOR_VALUES,protectorValues);
+                        }
+                        listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID,listItem.getTireSchemeId());
                         listArray.add(listObject);
                     }
                     object.add(MainItem.JSON_LIST_VALUES,listArray);
+                }
+
+                if(item.getProtectorItems()!=null&&item.getProtectorItems().size()>0){
+                    JsonArray protectorArray = new JsonArray();
+                    for (int k = 0; k < item.getProtectorItems().size(); k++) {
+                        JsonObject protectorObject = new JsonObject();
+                        ProtectorItem protectorItem = item.getProtectorItems().get(k);
+                        protectorObject.addProperty(ProtectorItem.JSON_TITLE,protectorItem.getTitle());
+                        protectorObject.addProperty(ProtectorItem.JSON_CODE,protectorItem.getCode());
+                        protectorObject.addProperty(ProtectorItem.JSON_GROUP_NAME,protectorItem.getGroupName());
+                        protectorObject.addProperty(ProtectorItem.JSON_VALUE,protectorItem.getValue());
+                        protectorObject.addProperty(ProtectorItem.JSON_TYPE,protectorItem.getType());
+
+                        protectorArray.add(protectorObject);
+                    }
+                    object.add(MainItem.JSON_PROTECTOR_VALUES,protectorArray);
                 }
 
                 if(item.getPhotoItems()!=null&&item.getPhotoItems().size()>0){
@@ -256,10 +315,13 @@ public class InfoBlocksStorage {
             }
           array.add(screenArray);
         }
+
         saveInfoBlock(id,array);
 
         return id;
     }
+
+
 
     public JsonArray getInfoBlockArray(String id){
         Gson gson = new Gson();
@@ -293,11 +355,24 @@ public class InfoBlocksStorage {
                 item.setValue(object.get(MainItem.JSON_VALUE).getAsString());
 
                 if(object.has(MainItem.JSON_LIST_VALUE)&&!object.get(MainItem.JSON_LIST_VALUE).isJsonNull()){
-                    JsonObject listValueObject = object.getAsJsonObject(MainItem.JSON_LIST_VALUE);
-                    ListItem listItem = new ListItem(listValueObject.get(ListItem.JSON_VALUE_ID).getAsLong(),listValueObject.get(ListItem.JSON_VALUE_NAME).getAsString());
-                    if(listValueObject.has(ListItem.JSON_VALUE_MARK)&&!listValueObject.get(ListItem.JSON_VALUE_MARK).isJsonNull()){
-                        listItem.setMark(listValueObject.get(ListItem.JSON_VALUE_MARK).getAsInt());
+                    JsonObject valueObject = object.getAsJsonObject(MainItem.JSON_LIST_VALUE);
+                    ListItem listItem = new ListItem(valueObject.get(ListItem.JSON_VALUE_ID).getAsLong(),valueObject.get(ListItem.JSON_VALUE_NAME).getAsString());
+                    if(valueObject.has(ListItem.JSON_VALUE_MARK)&&!valueObject.get(ListItem.JSON_VALUE_MARK).isJsonNull()){
+                        listItem.setMark(valueObject.get(ListItem.JSON_VALUE_MARK).getAsInt());
                     }
+
+                    if(valueObject.has(ListItem.JSON_TIRE_SCHEME_ID)&&!valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()){
+                        listItem.setTireSchemeId(valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).getAsInt());
+                    }
+                    if(valueObject.has(ListItem.JSON_PROTECTOR_VALUES)&&!valueObject.get(ListItem.JSON_PROTECTOR_VALUES).isJsonNull()){
+                        ArrayList<String> protectorValues = new ArrayList<>();
+                        JsonArray protectorArray = valueObject.getAsJsonArray(ListItem.JSON_PROTECTOR_VALUES);
+                        for (int k = 0; k < protectorArray.size(); k++) {
+                            protectorValues.add(protectorArray.get(k).getAsString());
+                        }
+                        listItem.setProtectorValues(protectorValues);
+                    }
+
                     item.setListValue(listItem);
 
                 }
@@ -314,9 +389,57 @@ public class InfoBlocksStorage {
                             listItem.setMark(valueObject.get(ListItem.JSON_VALUE_MARK).getAsInt());
                         }
 
+                        if(valueObject.has(ListItem.JSON_TIRE_SCHEME_ID)&&!valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()){
+                            listItem.setTireSchemeId(valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).getAsInt());
+                        }
+                        if(valueObject.has(ListItem.JSON_PROTECTOR_VALUES)&&!valueObject.get(ListItem.JSON_PROTECTOR_VALUES).isJsonNull()){
+                            ArrayList<String> protectorValues = new ArrayList<>();
+                            JsonArray protectorArray = valueObject.getAsJsonArray(ListItem.JSON_PROTECTOR_VALUES);
+                            for (int l = 0; l < protectorArray.size(); l++) {
+                                protectorValues.add(protectorArray.get(l).getAsString());
+                            }
+                            listItem.setProtectorValues(protectorValues);
+                        }
+
                         listItems.add(listItem);
                     }
                     item.setListValues(listItems);
+                }
+
+                if(object.has(MainItem.JSON_PROTECTOR_VALUES)){
+                    JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_PROTECTOR_VALUES);
+                    ArrayList<ProtectorItem> protectorItems = new ArrayList<>();
+                    for (int k = 0; k < valuesArray.size(); k++) {
+                        JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
+                        ProtectorItem protectorItem = new ProtectorItem();
+
+                        if(valueObject.has(ProtectorItem.JSON_GROUP_NAME)&&!valueObject.get(ProtectorItem.JSON_GROUP_NAME).isJsonNull()){
+                            protectorItem.setGroupName(valueObject.get(ProtectorItem.JSON_GROUP_NAME).getAsString());
+                        }
+
+                        if(valueObject.has(ProtectorItem.JSON_CODE)&&!valueObject.get(ProtectorItem.JSON_CODE).isJsonNull()){
+                            protectorItem.setCode(valueObject.get(ProtectorItem.JSON_CODE).getAsString());
+                        }
+
+                        if(valueObject.has(ProtectorItem.JSON_TITLE)&&!valueObject.get(ProtectorItem.JSON_TITLE).isJsonNull()){
+                            protectorItem.setTitle(valueObject.get(ProtectorItem.JSON_TITLE).getAsString());
+                        }
+
+                        if(valueObject.has(ProtectorItem.JSON_TYPE)&&!valueObject.get(ProtectorItem.JSON_TYPE).isJsonNull()){
+                            protectorItem.setType(valueObject.get(ProtectorItem.JSON_TYPE).getAsInt());
+                        }
+
+                        if(valueObject.has(ProtectorItem.JSON_VALUE)&&!valueObject.get(ProtectorItem.JSON_VALUE).isJsonNull()){
+                            protectorItem.setValue(valueObject.get(ProtectorItem.JSON_VALUE).getAsString());
+                        }
+
+
+
+
+
+                        protectorItems.add(protectorItem);
+                    }
+                    item.setProtectorItems(protectorItems);
                 }
 
 
@@ -359,6 +482,88 @@ public class InfoBlocksStorage {
 
 
         return arrayOfItems;
+    }
+
+    public void createSendObject(String id,JsonArray array){
+        JsonObject sendObject = new JsonObject();
+        sendObject.addProperty("method", "add");
+        final JsonArray fields = new JsonArray();
+        for (int i = 0; i < array.size(); i++) {
+
+            for (int j = 0; j < array.get(i).getAsJsonArray().size(); j++) {
+                JsonObject object = array.get(i).getAsJsonArray().get(j).getAsJsonObject();
+
+                if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_FLAG) {
+                    JsonObject checkedObject = new JsonObject();
+                    checkedObject.addProperty(MainItem.JSON_CODE, object.get(MainItem.JSON_CODE).getAsString());
+                    if(object.has(MainItem.JSON_IS_CHECKED)&&!object.get(MainItem.JSON_IS_CHECKED).isJsonNull()) {
+                        int val = object.get(MainItem.JSON_IS_CHECKED).getAsBoolean() ? 1 : 0;
+                        checkedObject.addProperty(MainItem.JSON_VALUE, val);
+                        fields.add(checkedObject);
+                    }
+                }
+
+                if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_LIST) {
+
+                    if (object.has(MainItem.JSON_LIST_VALUE) && !object.get(MainItem.JSON_LIST_VALUE).isJsonNull()) {
+                        JsonObject listObject = new JsonObject();
+                        listObject.addProperty(MainItem.JSON_CODE, object.get(MainItem.JSON_CODE).getAsString());
+                        listObject.addProperty(MainItem.JSON_VALUE, object.get(MainItem.JSON_LIST_VALUE)
+                                .getAsJsonObject().get(ListItem.JSON_VALUE_ID).getAsLong());
+                        fields.add(listObject);
+                    }
+                }
+
+                if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && (object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_NUMBER
+                        || object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_STRING)) {
+
+                    if (object.has(MainItem.JSON_VALUE) && !object.get(MainItem.JSON_VALUE).isJsonNull()) {
+                        String value = object.get(MainItem.JSON_VALUE).getAsString();
+                        if (!value.equals("")) {
+                            JsonObject listObject = new JsonObject();
+                            listObject.addProperty(MainItem.JSON_CODE, object.get(MainItem.JSON_CODE).getAsString());
+                            listObject.addProperty(MainItem.JSON_VALUE, value);
+                            fields.add(listObject);
+                        }
+
+                    }
+                }
+
+                if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && (object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PROTECTOR)){
+
+
+                    if (object.has(MainItem.JSON_PROTECTOR_VALUES) && !object.get(MainItem.JSON_PROTECTOR_VALUES).isJsonNull()) {
+                        JsonArray protectorArray = object.getAsJsonArray(MainItem.JSON_PROTECTOR_VALUES);
+                        for (int k = 0; k < protectorArray.size(); k++) {
+                            JsonObject protectorObject = protectorArray.get(k).getAsJsonObject();
+                            if(protectorObject.has(ProtectorItem.JSON_TYPE)&&protectorObject.get(ProtectorItem.JSON_TYPE).getAsInt()==ProtectorItem.TYPE_PROTECTOR){
+                                if(protectorObject.has(ProtectorItem.JSON_VALUE)&&!protectorObject.get(ProtectorItem.JSON_VALUE).isJsonNull()){
+                                    String protectorValue = protectorObject.get(ProtectorItem.JSON_VALUE).getAsString();
+                                    if(!protectorValue.equals("")){
+                                        JsonObject newProtectorObject = new JsonObject();
+                                        newProtectorObject.addProperty(MainItem.JSON_CODE,protectorObject.get(ProtectorItem.JSON_CODE).getAsString());
+                                        newProtectorObject.addProperty(MainItem.JSON_VALUE,protectorValue);
+                                        fields.add(newProtectorObject);
+                                    }
+                                }
+
+
+                            }
+                        }
+
+                    }
+                }
+
+
+
+                array.get(i).getAsJsonArray().set(j, object);
+            }
+
+
+        }
+        sendObject.add("fields",fields);
+
+        Utility.saveData("send"+id,sendObject.toString());
     }
 
 

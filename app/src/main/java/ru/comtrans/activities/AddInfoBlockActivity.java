@@ -8,8 +8,8 @@ import android.view.MenuItem;
 import java.util.UUID;
 
 import ru.comtrans.R;
-import ru.comtrans.fragments.infoblock.InfoBlockTutorialFragment;
-import ru.comtrans.fragments.infoblock.MainFragment;
+import ru.comtrans.fragments.infoblock.add.InfoBlockTutorialFragment;
+import ru.comtrans.fragments.infoblock.add.AddInfoBlockFragment;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.singlets.InfoBlockHelper;
@@ -19,8 +19,8 @@ import ru.comtrans.views.NonSwipeableViewPager;
 public class AddInfoBlockActivity extends AppCompatActivity {
 
     public NonSwipeableViewPager viewPager;
-    String infoBlockId;
-    InfoBlockHelper helper;
+    private String infoBlockId;
+    private InfoBlockHelper helper;
 
 
     @Override
@@ -51,7 +51,7 @@ public class AddInfoBlockActivity extends AppCompatActivity {
 
 
     private void openMainFragment(boolean isNew){
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, MainFragment.newInstance(infoBlockId,isNew)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId,isNew)).commit();
     }
 
     private void openTutorialFragment(boolean isNew){
@@ -77,7 +77,7 @@ public class AddInfoBlockActivity extends AppCompatActivity {
 
 
     private void saveAndExit(){
-        new SaveInfoBlockTask(AddInfoBlockActivity.this, true, new SaveInfoBlockTask.OnPostExecuteListener() {
+        new SaveInfoBlockTask(infoBlockId,AddInfoBlockActivity.this, new SaveInfoBlockTask.OnPostExecuteListener() {
             @Override
             public void onPostExecute() {
                 finish();

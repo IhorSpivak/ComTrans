@@ -1,14 +1,11 @@
 package ru.comtrans.items;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.ArrayList;
 
 /**
  * Created by Artco on 07.07.2016.
  */
-public class MainItem implements Parcelable {
+public class MainItem {
 
     public static final String JSON_TYPE = "type";
     public static final String JSON_CODE = "code";
@@ -17,6 +14,7 @@ public class MainItem implements Parcelable {
     public static final String JSON_LIST_VALUE = "list_value";
     public static final String JSON_LIST_VALUES = "list_values";
     public static final String JSON_PHOTO_VALUES = "photo_values";
+    public static final String JSON_PROTECTOR_VALUES = "protector_values";
     public static final String JSON_NAME = "name";
     public static final String JSON_ID = "id";
 
@@ -31,19 +29,45 @@ public class MainItem implements Parcelable {
     public static final int TYPE_VIDEO = 6;
     public static final int TYPE_BOTTOM_BAR = 7;
     public static final int TYPE_TIRE_SCHEME = 8;
+    public static final int TYPE_PROTECTOR = 9;
+    public static final int TYPE_CALENDAR = 10;
+    public static final int TYPE_EMAIL = 11;
+    public static final int TYPE_PHONE = 12;
 
 
-    String id;
-    String name;
-    String code;
-    String value;
+    private String id;
+    private String name;
+    private String code;
+    private String value;
     int type;
     boolean isChecked;
-    ListItem listValue;
-    ArrayList<ListItem> listValues;
-    ArrayList<PhotoItem> photoItems;
+    private ListItem listValue;
+    private ArrayList<ListItem> listValues;
+    private ArrayList<PhotoItem> photoItems;
+    private ArrayList<ProtectorItem> protectorItems;
 
 
+    public MainItem() {
+    }
+
+    public MainItem(int type) {
+        this.type = type;
+    }
+
+    public MainItem(String id, String name, int type) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+    }
+
+
+    public ArrayList<ProtectorItem> getProtectorItems() {
+        return protectorItems;
+    }
+
+    public void setProtectorItems(ArrayList<ProtectorItem> protectorItems) {
+        this.protectorItems = protectorItems;
+    }
 
     public boolean isChecked() {
         return isChecked;
@@ -139,58 +163,7 @@ public class MainItem implements Parcelable {
         this.name = name;
     }
 
-    public MainItem() {
-    }
 
-    public MainItem(int type) {
-        this.type = type;
-    }
 
-    public MainItem(String id, String name, int type) {
-        this.id = id;
-        this.name = name;
-        this.type = type;
-    }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
-        dest.writeString(this.name);
-        dest.writeString(this.code);
-        dest.writeString(this.value);
-        dest.writeInt(this.type);
-        dest.writeByte(this.isChecked ? (byte) 1 : (byte) 0);
-        dest.writeParcelable(this.listValue, flags);
-        dest.writeTypedList(this.listValues);
-        dest.writeTypedList(this.photoItems);
-    }
-
-    protected MainItem(Parcel in) {
-        this.id = in.readString();
-        this.name = in.readString();
-        this.code = in.readString();
-        this.value = in.readString();
-        this.type = in.readInt();
-        this.isChecked = in.readByte() != 0;
-        this.listValue = in.readParcelable(ListItem.class.getClassLoader());
-        this.listValues = in.createTypedArrayList(ListItem.CREATOR);
-        this.photoItems = in.createTypedArrayList(PhotoItem.CREATOR);
-    }
-
-    public static final Creator<MainItem> CREATOR = new Creator<MainItem>() {
-        @Override
-        public MainItem createFromParcel(Parcel source) {
-            return new MainItem(source);
-        }
-
-        @Override
-        public MainItem[] newArray(int size) {
-            return new MainItem[size];
-        }
-    };
 }

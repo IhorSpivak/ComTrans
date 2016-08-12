@@ -19,7 +19,6 @@ import java.util.Locale;
 
 import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.singlets.InfoBlocksStorage;
 

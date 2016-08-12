@@ -37,7 +37,6 @@ import java.util.Locale;
 import ru.comtrans.R;
 import ru.comtrans.activities.CameraActivity;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.ImageHelper;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.singlets.InfoBlockHelper;
@@ -284,7 +283,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 @Override
                 public void onPictureTaken(byte[] data, Camera camera) {
 
-                    switchButtons(true);
+
 
                         if(isDefect){
                             activity.getPhotoAdapter().setSelectedPosition(0);
@@ -319,14 +318,14 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                         }
 
 
-
-
                 }
             });
         }catch (Exception e){
             switchButtons(true);
             e.printStackTrace();
         }
+
+        switchButtons(true);
     }
 
     /**
@@ -336,9 +335,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
      *             or false to disable.
      */
     private void switchButtons(boolean disableOrEnable){
-        takeDefect.setEnabled(disableOrEnable);
-        takePhoto.setEnabled(disableOrEnable);
-        done.setEnabled(disableOrEnable);
+        takeDefect.setClickable(disableOrEnable);
+        takePhoto.setClickable(disableOrEnable);
+        done.setClickable(disableOrEnable);
     }
 
     private void done(){

@@ -1,6 +1,5 @@
 package ru.comtrans.fragments;
 
-import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +23,11 @@ import java.util.ArrayList;
 
 import ru.comtrans.R;
 import ru.comtrans.activities.AddInfoBlockActivity;
+import ru.comtrans.activities.ShowInfoBlockActivity;
 import ru.comtrans.adapters.MyInfoBlocksAdapter;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.singlets.InfoBlocksStorage;
-import ru.comtrans.tasks.SendingService;
 
 /**
  * Created by Artco on 06.07.2016.
@@ -80,9 +78,10 @@ public class MyInfoBlocksFragment extends Fragment {
         adapter = new MyInfoBlocksAdapter(getContext(),items, new MyInfoBlocksAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MyInfoBlockItem item, int position) {
+                Intent i;
                 switch (storage.getInfoBlockStatus(item.getId())){
                     case MyInfoBlockItem.STATUS_DRAFT:
-                        Intent i = new Intent(getContext(),AddInfoBlockActivity.class);
+                         i = new Intent(getContext(),AddInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
                         startActivity(i);
                         break;
@@ -90,6 +89,9 @@ public class MyInfoBlocksFragment extends Fragment {
                         Toast.makeText(getContext(),R.string.click_on_sending,Toast.LENGTH_SHORT).show();
                         break;
                     case MyInfoBlockItem.STATUS_SENT:
+                        i = new Intent(getContext(),ShowInfoBlockActivity.class);
+                        i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
+                        startActivity(i);
                         break;
                 }
 

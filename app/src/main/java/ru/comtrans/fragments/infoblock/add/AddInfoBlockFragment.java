@@ -1,4 +1,4 @@
-package ru.comtrans.fragments.infoblock;
+package ru.comtrans.fragments.infoblock.add;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,41 +20,41 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.comtrans.R;
 import ru.comtrans.activities.AddInfoBlockActivity;
-import ru.comtrans.adapters.SectionsPagerAdapter;
+import ru.comtrans.adapters.AddInfoBlockPagerAdapter;
 import ru.comtrans.fragments.BaseFragment;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.items.MyInfoBlockItem;
-import ru.comtrans.singlets.PropHelper;
 import ru.comtrans.helpers.Utility;
+import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.singlets.AppController;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
+import ru.comtrans.singlets.PropHelper;
 import ru.comtrans.views.ConnectionProgressDialog;
 import ru.comtrans.views.NonSwipeableViewPager;
 
 /**
  * Created by Artco on 14.07.2016.
  */
-public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener{
+public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPageChangeListener{
 
-    ConnectionProgressDialog progressDialog;
+    private ConnectionProgressDialog progressDialog;
     private LinearLayout pager_indicator;
-    InfoBlocksStorage storage;
-    InfoBlockHelper infoBlockHelper;
+    private InfoBlocksStorage storage;
+    private InfoBlockHelper infoBlockHelper;
     private int dotsCount;
     private ImageView[] dots;
-    private SectionsPagerAdapter adapter;
-    PropHelper propHelper;
-    AddInfoBlockActivity activity;
-    ProgressBar emptyBar;
-    String infoBlockId;
+    private AddInfoBlockPagerAdapter adapter;
+    private PropHelper propHelper;
+    private AddInfoBlockActivity activity;
+    private ProgressBar emptyBar;
+    private String infoBlockId;
     boolean isNew;
 
-    public static MainFragment newInstance(String id, boolean isNew) {
+    public static AddInfoBlockFragment newInstance(String id, boolean isNew) {
         Bundle args = new Bundle();
         args.putString(Const.EXTRA_INFO_BLOCK_ID,id);
         args.putBoolean(Const.IS_NEW_INFO_BLOCK,isNew);
-        MainFragment fragment = new MainFragment();
+        AddInfoBlockFragment fragment = new AddInfoBlockFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,7 +62,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_main,container,false);
+        View v = inflater.inflate(R.layout.fragment_add_infoblock,container,false);
         activity = (AddInfoBlockActivity) getActivity();
 
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
@@ -157,10 +157,10 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     private void setAdapter(){
 
-        adapter = new SectionsPagerAdapter(getFragmentManager(),getContext(),infoBlockId,infoBlockHelper.getItemsSize());
+        adapter = new AddInfoBlockPagerAdapter(getFragmentManager(),getContext(),infoBlockId,infoBlockHelper.getItemsSize());
         activity.viewPager.setAdapter(adapter);
         activity.viewPager.setCurrentItem(0);
-        activity.viewPager.setOffscreenPageLimit(2);
+        activity.viewPager.setOffscreenPageLimit(1);
         activity.viewPager.addOnPageChangeListener(this);
         setUiPageViewController();
     }

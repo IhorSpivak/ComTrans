@@ -1,4 +1,4 @@
-package ru.comtrans.fragments.infoblock;
+package ru.comtrans.fragments.infoblock.add;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -51,6 +51,6 @@ public class InfoBlockTutorialFragment extends Fragment implements View.OnClickL
     @Override
     public void onClick(View view) {
         Utility.saveBoolean(Const.IS_FIRST_ADD_INFOBLOCK_LAUNCH,true);
-        getFragmentManager().beginTransaction().replace(R.id.container,MainFragment.newInstance(infoBlockId,isNew)).commit();
+        getFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId,isNew)).commit();
     }
 }

@@ -64,7 +64,10 @@
 
         <service android:name=".tasks.SendingService" />
 
-        <activity android:name=".activities.ShowInfoBlockActivity"></activity>
+        <activity
+            android:name=".activities.ShowInfoBlockActivity"
+            android:label="@string/show_info_block_title"
+            />
     </application>
 
 </manifest>

@@ -12,6 +12,7 @@ import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.PhotoItem;
+import ru.comtrans.items.ProtectorItem;
 
 /**
  * Created by Artco on 06.07.2016.
@@ -55,10 +56,7 @@ public class PropHelper {
                 }else if(entry.getKey().startsWith("video")){
                         screen.addAll(getPhotoItems(entry.getValue().getAsJsonArray(),true));
                 }else if(entry.getKey().startsWith("protector")){
-                        JsonObject image = new JsonObject();
-                        image.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_TIRE_SCHEME);
-                        screen.add(image);
-                        screen.addAll(getItems(entry.getValue().getAsJsonArray()));
+                        screen.addAll(getProtectorItems(entry.getValue().getAsJsonArray()));
                 }else {
                         screen.addAll(getItems(entry.getValue().getAsJsonArray()));
                     }
@@ -106,6 +104,15 @@ public class PropHelper {
                     case "DR":
                         newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_LIST);
                         break;
+                    case "CAL":
+                        newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_CALENDAR);
+                        break;
+                    case "EMAIL":
+                        newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_EMAIL);
+                        break;
+                    case "PHONE":
+                        newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_PHONE);
+                        break;
 
                 }
                 newObject.addProperty(MainItem.JSON_NAME, object.get("name").getAsString());
@@ -124,6 +131,13 @@ public class PropHelper {
                         if (valueObject.has("mark")) {
                             newValueObject.addProperty(ListItem.JSON_VALUE_MARK, valueObject.get("mark").getAsInt());
                         }
+
+                        if (valueObject.has("axis_code")) {
+                            newValueObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, valueObject.get("axis_code").getAsInt());
+                        }
+                        if (valueObject.has("axis")&&!valueObject.get("axis").isJsonNull()) {
+                            newValueObject.add(ListItem.JSON_PROTECTOR_VALUES, valueObject.get("axis").getAsJsonArray());
+                        }
                         newVal.add(newValueObject);
 
                         if (j == 0) {
@@ -137,6 +151,48 @@ public class PropHelper {
                 newArray.add(newObject);
             }catch (Exception ignored){}
         }
+
+        return newArray;
+    }
+
+    private static JsonArray getProtectorItems(JsonArray array){
+        JsonArray newArray = new JsonArray();
+        JsonArray protectorArray = new JsonArray();
+
+        JsonObject image = new JsonObject();
+        image.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_TIRE_SCHEME);
+
+        newArray.add(image);
+
+        for (int i = 0; i < array.size(); i++) {
+            JsonObject object = array.get(i).getAsJsonObject();
+            String name = object.get("name").getAsString();
+
+
+//            if(i==0){
+//                JsonObject headerObject = new JsonObject();
+//                headerObject.addProperty(ProtectorItem.JSON_TYPE,ProtectorItem.TYPE_HEADER);
+//                headerObject.addProperty(ProtectorItem.JSON_TITLE,object.get("group").getAsString());
+//                protectorArray.add(headerObject);
+//            }
+
+
+
+            JsonObject newObject = new JsonObject();
+
+            newObject.addProperty(ProtectorItem.JSON_TITLE,name);
+            newObject.addProperty(ProtectorItem.JSON_CODE,object.get("code").getAsString());
+            newObject.addProperty(ProtectorItem.JSON_GROUP_NAME,object.get("group").getAsString());
+            newObject.addProperty(ProtectorItem.JSON_TYPE,ProtectorItem.TYPE_PROTECTOR);
+            protectorArray.add(newObject);
+        }
+
+        JsonObject protectorObject = new JsonObject();
+
+        protectorObject.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_PROTECTOR);
+        protectorObject.add(MainItem.JSON_PROTECTOR_VALUES,protectorArray);
+
+        newArray.add(protectorObject);
 
         return newArray;
     }

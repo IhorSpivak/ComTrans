@@ -11,6 +11,7 @@ public class Const {
     public static final String IS_FROM_REGISTRATION = "is_from_registration";
     public static final String EXTRA_USER_OBJECT = "extra_user_object";
 
+    public static final String EXTRA_SENT_INFOBLOCK = "extra_sent_infoblock";
 
     public static final String EXTRA_PHOTO_ITEM = "extra_photo_item";
     public static final String EXTRA_SELECTED_POSITION = "extra_selected_position";
@@ -49,7 +50,7 @@ public class Const {
 
 
 
-    ////////////////Main Screen Fragment//////////////////////
+    ////////////////Add info block Fragment//////////////////////
     public static final String PAGE = "page";
     public static final String TOTAL_PAGES = "total_pages";
     public static final String EXTRA_VALUES = "extra_values";
@@ -60,9 +61,11 @@ public class Const {
     public static final String DEFAULT_DEFECT_NAME = "default_defect_name";
     public static final String EXTRA_SCREEN_NUM = "extra_screen";
     public static final String EXTRA_MARK = "extra_mark";
+    public static final String EXTRA_DATE = "extra_date";
     public static final int SEARCH_VALUE_RESULT = 102;
     public static final int CAMERA_PHOTO_RESULT = 103;
     public static final int CAMERA_VIDEO_RESULT = 104;
+    public static final String phone_regex = "[0-9,\\+]7\\([0-9]{3}[0-9,\\)][0-9]{3}[0-9,-][0-9]{2}[0-9,-][0-9]{2}";
 
 
     //////////////////////InfoBlocksStorage/////////////////////

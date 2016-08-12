@@ -6,8 +6,11 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.google.gson.JsonObject;
+
 import ru.comtrans.helpers.Const;
 import ru.comtrans.singlets.InfoBlockHelper;
+import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.views.ConnectionProgressDialog;
 
 /**
@@ -16,7 +19,8 @@ import ru.comtrans.views.ConnectionProgressDialog;
 public class SaveInfoBlockTask {
     private Context context;
     private InfoBlockHelper helper;
-    private boolean removeItems;
+    private InfoBlocksStorage storage;
+    private String id;
     private OnPostExecuteListener listener;
 
     public interface OnPostExecuteListener {
@@ -24,11 +28,12 @@ public class SaveInfoBlockTask {
     }
 
 
-    public SaveInfoBlockTask(Context context,boolean removeItems, OnPostExecuteListener listener){
+    public SaveInfoBlockTask(String id,Context context, OnPostExecuteListener listener){
         this.context = context;
-        this.removeItems = removeItems;
         this.listener = listener;
+        this.id = id;
         helper = InfoBlockHelper.getInstance();
+        storage = InfoBlocksStorage.getInstance();
         new AsyncTaskForSaveAndExit().execute();
     }
 
@@ -47,8 +52,8 @@ public class SaveInfoBlockTask {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            helper.saveAll(removeItems);
-            SystemClock.sleep(900);
+            helper.saveAll();
+            SystemClock.sleep(800);
             return null;
         }
 
