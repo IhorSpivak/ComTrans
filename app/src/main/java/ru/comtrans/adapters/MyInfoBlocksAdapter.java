@@ -78,7 +78,8 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     break;
                 case MyInfoBlockItem.STATUS_SENDING:
                     myHolder.status.setTextColor(ContextCompat.getColor(context,android.R.color.holo_blue_dark));
-                    myHolder.status.setText(String.format(context.getString(R.string.status_sending),item.getProgress()));
+//                    myHolder.status.setText(String.format(context.getString(R.string.status_sending),item.getProgress()));
+                    myHolder.status.setText(item.getProgress());
                     break;
                 case MyInfoBlockItem.STATUS_SENT:
                     myHolder.status.setTextColor(ContextCompat.getColor(context,android.R.color.holo_green_dark));

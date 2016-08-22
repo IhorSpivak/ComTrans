@@ -33,7 +33,7 @@ public class CameraActivity extends AppCompatActivity {
     public int position;
     public int imagePosition;
     public  int screenNum;
-
+    int isVideoFlag;
 
 
 
@@ -44,7 +44,7 @@ public class CameraActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_camera);
 
-        int flag = getIntent().getIntExtra(Const.CAMERA_MODE,-1);
+        isVideoFlag = getIntent().getIntExtra(Const.CAMERA_MODE,-1);
         screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
         position = getIntent().getIntExtra(Const.EXTRA_POSITION,-1);
         imagePosition = getIntent().getIntExtra(Const.EXTRA_IMAGE_POSITION,-1);
@@ -55,7 +55,7 @@ public class CameraActivity extends AppCompatActivity {
 
 
 
-        switch (flag){
+        switch (isVideoFlag){
             case 0:
                 finish();
                 break;
@@ -116,8 +116,8 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    Fragment fragment;
     private void openCameraFragment(boolean isVideo){
-        Fragment fragment;
         PhotoItem item = items.get(imagePosition);
         Collections.reverse(items);
         if(isVideo){
@@ -170,5 +170,23 @@ public class CameraActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+
+    @Override
+    public void onBackPressed(){
+        if(fragment!=null)
+            switch (isVideoFlag){
+                case 0:
+                    super.onBackPressed();
+                    break;
+                case Const.MODE_PHOTO:
+                    ((CameraFragment)fragment).done();
+                    break;
+                case Const.MODE_VIDEO:
+                    ((VideoFragment)fragment).done();
+                    break;
+
+            }
     }
 }

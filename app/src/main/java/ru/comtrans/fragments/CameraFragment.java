@@ -175,7 +175,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_LAUNCH))
-            getFragmentManager().beginTransaction().add(R.id.container,new ViewPagerPhotoDemoFragment()).addToBackStack(null).commit();
+            getFragmentManager().beginTransaction().add(R.id.container,new ViewPagerPhotoDemoFragment()).addToBackStack(null).commitAllowingStateLoss();
     }
 
     private void replaceWithCamera(){
@@ -183,14 +183,18 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
         cameraPreviewFragment = new CameraPreviewFragment();
         photoViewerFragment = null;
-        getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
+        getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commitAllowingStateLoss();
     }
     private void replaceWithPhotoViewer(int position){
         photoViewerFragment = PhotoViewerFragment.newInstance(activity.getPhotoAdapter().getItem(position),position);
-        getFragmentManager().beginTransaction().replace(R.id.cameraContainer, photoViewerFragment,Const.PHOTO_VIEWER).commit();
+        getFragmentManager().beginTransaction().replace(R.id.cameraContainer, photoViewerFragment,Const.PHOTO_VIEWER).commitAllowingStateLoss();
     }
 
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onClick(View v) {
@@ -263,7 +267,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
     private void setProgressCount(int count){
         if(count!=0) {
-            int percent = (int)((count * 100.0f) / activity.getPhotoAdapter().getCount());
+            int percent = (int)((count * 100.0f) / activity.getPhotoAdapter().getNonDefectPhotosCount());
             if(percent==100){
                 progressBar.setProgressDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.vertical_progressbar_green));
             }else {
@@ -340,7 +344,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         done.setClickable(disableOrEnable);
     }
 
-    private void done(){
+    public void done(){
         Intent i = new Intent();
         i.putExtra(Const.EXTRA_POSITION,activity.position);
         i.putExtra(Const.EXTRA_IMAGE_POSITION,activity.imagePosition);
@@ -348,7 +352,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         Collections.reverse(activity.getPhotoAdapter().getItems());
         InfoBlockHelper helper = InfoBlockHelper.getInstance();
         helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(activity.getPhotoAdapter().getItems());
-        getActivity().setResult(Const.CAMERA_PHOTO_RESULT,i);
+//        getActivity().setResult(Const.CAMERA_PHOTO_RESULT,i);
+        if (getActivity().getParent() == null) {
+            getActivity().setResult(Const.CAMERA_PHOTO_RESULT,i);
+        }
+        else {
+            getActivity().getParent().setResult(Const.CAMERA_PHOTO_RESULT,i);
+        }
         getActivity().finish();
     }
 

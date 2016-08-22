@@ -55,7 +55,6 @@ public class CameraPreviewFragment extends BaseFragment {
         return v;
     }
 
-
     @Override
     public void onPause() {
         super.onPause();

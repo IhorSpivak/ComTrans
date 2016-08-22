@@ -3,6 +3,7 @@ package ru.comtrans.fragments.infoblock.add;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -96,11 +97,6 @@ public class AddPropertiesListFragment extends BaseFragment {
 
     }
 
-
-
-
-
-
     private void initPage(){
         items = infoBlockHelper.getScreen(page);
 
@@ -142,6 +138,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                             dialogFragment.setListener(new DatePickerDialogFragment.DateListener() {
                                 @Override
                                 public void setDate(Calendar date) {
+                                    saveData();
                                     SimpleDateFormat sdf = new SimpleDateFormat(Const.INFO_BLOCK_DATE_FORMAT,Locale.getDefault());
                                     String formattedDate = sdf.format(date.getTime());
                                     infoBlockHelper.getItems().get(page).get(position).setValue(formattedDate);
@@ -197,6 +194,12 @@ public class AddPropertiesListFragment extends BaseFragment {
                 }
 
             }
+
+            @Override
+            public void saveState() {
+                saveData();
+            }
+
         });
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -212,17 +215,24 @@ public class AddPropertiesListFragment extends BaseFragment {
 
     }
 
-
-
+    private void saveData(){
+        new SaveInfoBlockTask(infoBlockId, getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
+            @Override
+            public void onPostExecute() {
+            }
+        },false);
+    }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.e("WTF","onActivityResult addPropertiesListFragment requestCode="+requestCode+" resultCode="+resultCode);
         int position,screenNum;
 
         switch (resultCode){
             case Const.SEARCH_VALUE_RESULT:
+                saveData();
                 ListItem item = data.getParcelableExtra(Const.EXTRA_VALUE);
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
                 infoBlockHelper.getItems().get(page).get(position).setListValue(item);
@@ -230,21 +240,24 @@ public class AddPropertiesListFragment extends BaseFragment {
                   adapter.getItem(position+1).setListValue(adapter.getItem(position+1).getListValues().get(0));
                 }
                 adapter.getItem(position).setListValue(item);
-                adapter.notifyDataSetChanged();
+                adapter.notifyItemChanged(position);
+//                adapter.notifyDataSetChanged();
                 break;
             case Const.CAMERA_PHOTO_RESULT:
+                Log.e("WTF","CAMERA_PHOTO_RESULT");
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
                 screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
                 adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
-                adapter.notifyDataSetChanged();
-
+                adapter.notifyItemChanged(position);
+//                adapter.notifyDataSetChanged();
+                initPage();
                 break;
             case Const.CAMERA_VIDEO_RESULT:
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
                 screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
                 adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
-                adapter.notifyDataSetChanged();
-
+                adapter.notifyItemChanged(position);
+//                adapter.notifyDataSetChanged();
                 break;
         }
     }

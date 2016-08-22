@@ -1,5 +1,7 @@
 package ru.comtrans.singlets;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -117,6 +119,8 @@ public class PropHelper {
                 }
                 newObject.addProperty(MainItem.JSON_NAME, object.get("name").getAsString());
                 newObject.addProperty(MainItem.JSON_CODE, object.get("code").getAsString());
+//                if(object.get("code").getAsString().equals("shas_wheel_formula"))
+//                    Log.e("WTF","PROP_HELPER code="+object.get("code").getAsString());
 
 
                 if (object.has("val") && !object.get("val").isJsonNull()) {
@@ -128,13 +132,14 @@ public class PropHelper {
                         JsonObject newValueObject = new JsonObject();
                         newValueObject.addProperty(ListItem.JSON_VALUE_ID, valueObject.get("id").getAsLong());
                         newValueObject.addProperty(ListItem.JSON_VALUE_NAME, valueObject.get("name").getAsString());
-                        if (valueObject.has("mark")) {
+                        if (valueObject.has("mark")&&!valueObject.get("mark").isJsonNull()) {
                             newValueObject.addProperty(ListItem.JSON_VALUE_MARK, valueObject.get("mark").getAsInt());
                         }
 
-                        if (valueObject.has("axis_code")) {
+                        if (valueObject.has("axis_code")&&!valueObject.get("axis_code").isJsonNull()) {
                             newValueObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, valueObject.get("axis_code").getAsInt());
                         }
+
                         if (valueObject.has("axis")&&!valueObject.get("axis").isJsonNull()) {
                             newValueObject.add(ListItem.JSON_PROTECTOR_VALUES, valueObject.get("axis").getAsJsonArray());
                         }
@@ -212,7 +217,6 @@ public class PropHelper {
             JsonObject newObject = new JsonObject();
             newObject.addProperty(PhotoItem.JSON_TITLE,object.get("name").getAsString());
             newObject.addProperty(PhotoItem.JSON_CODE,object.get("code").getAsString());
-
             if(i == array.size()-1){
                 if(object.has("is_defect")&&!object.get("is_defect").isJsonNull()&&object.get("is_defect").getAsBoolean()){
                     newObject.addProperty(PhotoItem.JSON_IS_DEFECT,true);

@@ -366,7 +366,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private void done(){
+    public void done(){
         Intent i = new Intent();
         i.putExtra(Const.EXTRA_POSITION,activity.position);
         i.putExtra(Const.EXTRA_IMAGE_POSITION,activity.imagePosition);

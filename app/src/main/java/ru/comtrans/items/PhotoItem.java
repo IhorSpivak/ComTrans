@@ -15,6 +15,7 @@ public class PhotoItem implements Parcelable {
     public static final String JSON_ID = "id";
     public static final String JSON_DURATION = "duration";
     public static final String JSON_IS_VIDEO = "is_video";
+    public static final String JSON_IS_SEND = "is_send";
 
 
 
@@ -28,6 +29,7 @@ public class PhotoItem implements Parcelable {
     private String code;
     private int duration;
     private boolean isVideo;
+    private boolean isSend = false;
 
     public String getCode() {
         return code;
@@ -96,6 +98,13 @@ public class PhotoItem implements Parcelable {
         this.id = id;
     }
 
+    public boolean isSend() {
+        return isSend;
+    }
+
+    public void setSend(boolean send) {
+        isSend = send;
+    }
 
     @Override
     public int describeContents() {
@@ -111,6 +120,7 @@ public class PhotoItem implements Parcelable {
         dest.writeString(this.code);
         dest.writeInt(this.duration);
         dest.writeByte(this.isVideo ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isSend ? (byte) 1 : (byte) 0);
     }
 
     protected PhotoItem(Parcel in) {
@@ -121,6 +131,7 @@ public class PhotoItem implements Parcelable {
         this.code = in.readString();
         this.duration = in.readInt();
         this.isVideo = in.readByte() != 0;
+        this.isSend = in.readByte() != 0;
     }
 
     public static final Creator<PhotoItem> CREATOR = new Creator<PhotoItem>() {

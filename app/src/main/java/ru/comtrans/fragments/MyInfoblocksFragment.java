@@ -32,6 +32,7 @@ import ru.comtrans.singlets.InfoBlocksStorage;
 /**
  * Created by Artco on 06.07.2016.
  */
+
 public class MyInfoBlocksFragment extends Fragment {
     private RecyclerView recyclerView;
     private InfoBlocksStorage storage;
@@ -89,6 +90,7 @@ public class MyInfoBlocksFragment extends Fragment {
                         Toast.makeText(getContext(),R.string.click_on_sending,Toast.LENGTH_SHORT).show();
                         break;
                     case MyInfoBlockItem.STATUS_SENT:
+//                        storage.setInfoBlockStatus(item.getId(),MyInfoBlockItem.STATUS_DRAFT);
                         i = new Intent(getContext(),ShowInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
                         startActivity(i);

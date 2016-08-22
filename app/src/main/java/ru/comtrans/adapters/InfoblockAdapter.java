@@ -41,6 +41,7 @@ import ru.comtrans.items.MainItem;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.items.ProtectorItem;
 import ru.comtrans.singlets.InfoBlockHelper;
+import ru.comtrans.tasks.SaveInfoBlockTask;
 import ru.comtrans.views.DividerItemDecoration;
 
 
@@ -61,9 +62,10 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     public interface OnItemClickListener {
         void onItemClick(MainItem item, View view,int position);
+        void saveState();
     }
 
-    public InfoBlockAdapter(Context context, ArrayList<MainItem> items, int page, int totalPages,boolean isEditable, OnItemClickListener listener){
+    public InfoBlockAdapter(Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable, OnItemClickListener listener){
         this.context = context;
         this.items = items;
         this.listener = listener;
@@ -197,6 +199,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         int count;
 
 
+//        Log.e("WTF","code="+item.getCode()+" name="+item.getName());
         switch (getItemViewType(position)){
             case MainItem.TYPE_LIST:
                 if(isEditable) {
@@ -242,11 +245,11 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 LinearLayoutManager manager = new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
                 manager.setAutoMeasureEnabled(true);
                 photoViewHolder.photoList.setLayoutManager(manager);
-                 adapter = new PhotoContainerAdapter(context, photoItems, new PhotoContainerAdapter.OnItemClickListener() {
+                adapter = new PhotoContainerAdapter(context, photoItems, new PhotoContainerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(PhotoItem item, View view) {
                         MainItem mainItem = getItem(viewHolder.getAdapterPosition());
-                       listener.onItemClick(mainItem,view,mainItem.getPhotoItems().indexOf(item));
+                        listener.onItemClick(mainItem,view,mainItem.getPhotoItems().indexOf(item));
                     }
                 },MainItem.TYPE_PHOTO);
                 photoViewHolder.photoList.setAdapter(adapter);
@@ -333,6 +336,13 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     editTextViewHolder.textInputLayout.setHint(item.getName());
                     editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
                     editTextViewHolder.editText.setText(item.getValue());
+                    editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                        public void onFocusChange(View v, boolean hasFocus) {
+                            if(!hasFocus){
+                                listener.saveState();
+                            }
+                        }
+                    });
                 }else {
                     NonEditableViewHolder nonEditableViewHolder = ((NonEditableViewHolder) viewHolder);
                     nonEditableViewHolder.title.setText(item.getName());
@@ -348,6 +358,13 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     editTextViewHolder.textInputLayout.setHint(item.getName());
                     editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
                     editTextViewHolder.editText.setText(item.getValue());
+                    editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                        public void onFocusChange(View v, boolean hasFocus) {
+                            if(!hasFocus){
+                                listener.saveState();
+                            }
+                        }
+                    });
                 }else {
                     NonEditableViewHolder nonEditableViewHolder = ((NonEditableViewHolder) viewHolder);
                     nonEditableViewHolder.title.setText(item.getName());
@@ -362,7 +379,13 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                     editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
                     editTextViewHolder.editText.setText(item.getValue());
-
+                    editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                        public void onFocusChange(View v, boolean hasFocus) {
+                            if(!hasFocus){
+                                listener.saveState();
+                            }
+                        }
+                    });
                     editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -406,6 +429,9 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     editTextViewHolder.editText.setFilters(new InputFilter[]{new PartialRegexInputFilter(Const.phone_regex)});
                     editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         public void onFocusChange(View v, boolean hasFocus) {
+                            if(!hasFocus){
+                                listener.saveState();
+                            }
                             if (hasFocus && editTextViewHolder.editText.getText().toString().length() == 0) {
                                 editTextViewHolder.editText.setText(context.getString(R.string.phone_prefix_bracket));
                                 editTextViewHolder.editText.setSelection(editTextViewHolder.editText.getText().length());
@@ -438,6 +464,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     flagViewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                            listener.saveState();
                             item.setChecked(b);
                         }
                     });
@@ -459,6 +486,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                    @Override
                    public void onClick(final View v) {
                        if(isEditable) {
+                           listener.saveState();
                            boolean isAllEntered = true;
                            boolean isMainEntered = true;
 

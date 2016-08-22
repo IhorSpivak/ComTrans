@@ -22,6 +22,7 @@ public class SaveInfoBlockTask {
     private InfoBlocksStorage storage;
     private String id;
     private OnPostExecuteListener listener;
+    private boolean withDialog;
 
     public interface OnPostExecuteListener {
         void onPostExecute();
@@ -29,12 +30,25 @@ public class SaveInfoBlockTask {
 
 
     public SaveInfoBlockTask(String id,Context context, OnPostExecuteListener listener){
+        init(id,context,listener,true);
+    }
+
+    public SaveInfoBlockTask(String id,Context context, OnPostExecuteListener listener, boolean withDialog){
+        init(id,context,listener,withDialog);
+    }
+
+    private void init(String id,Context context, OnPostExecuteListener listener, boolean withDialog){
         this.context = context;
         this.listener = listener;
         this.id = id;
+        this.withDialog = withDialog;
         helper = InfoBlockHelper.getInstance();
         storage = InfoBlocksStorage.getInstance();
-        new AsyncTaskForSaveAndExit().execute();
+        if(withDialog) {
+            new AsyncTaskForSaveAndExit().execute();
+        }else{
+            new AsyncTaskForSave().execute();
+        }
     }
 
     private class AsyncTaskForSaveAndExit extends AsyncTask<Void,Void,Void> {
@@ -42,11 +56,13 @@ public class SaveInfoBlockTask {
 
         @Override
         protected void onPreExecute() {
-            try {
-                dialog = new ConnectionProgressDialog(context,"Сохранение инфоблока");
-                dialog.show();
-            }catch (Exception ignored){}
-
+            if(withDialog) {
+                try {
+                    dialog = new ConnectionProgressDialog(context, "Сохранение инфоблока");
+                    dialog.show();
+                } catch (Exception ignored) {
+                }
+            }
             super.onPreExecute();
         }
 
@@ -60,13 +76,38 @@ public class SaveInfoBlockTask {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            try{
-                dialog.dismiss();
-            }catch (Exception ignored){}
-
+            if(withDialog) {
+                try {
+                    dialog.dismiss();
+                } catch (Exception ignored) {
+                }
+            }
             LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Const.REFRESH_INFO_BLOCKS_FILTER));
             listener.onPostExecute();
 
         }
     }
+
+    private class AsyncTaskForSave extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            helper.saveAll();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Const.REFRESH_INFO_BLOCKS_FILTER));
+            listener.onPostExecute();
+
+        }
+    }
+
 }

@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity
 
         getSupportActionBar().setTitle(getString(R.string.nav_infoblocks));
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.container, new MyInfoBlocksFragment());
+        transaction.replace(R.id.container, new MyInfoBlocksFragment());
         transaction.commit();
     }
 

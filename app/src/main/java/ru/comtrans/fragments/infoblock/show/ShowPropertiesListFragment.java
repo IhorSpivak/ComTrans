@@ -124,6 +124,11 @@ public class ShowPropertiesListFragment extends BaseFragment {
                 }
 
             }
+
+            @Override
+            public void saveState() {
+                //stub
+            }
         });
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override

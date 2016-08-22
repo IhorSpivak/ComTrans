@@ -307,6 +307,7 @@ public class InfoBlocksStorage {
                         photoObject.addProperty(PhotoItem.JSON_IS_DEFECT,photoItem.isDefect());
                         photoObject.addProperty(PhotoItem.JSON_IS_VIDEO,photoItem.isVideo());
                         photoObject.addProperty(PhotoItem.JSON_TITLE,photoItem.getTitle());
+                        photoObject.addProperty(PhotoItem.JSON_IS_SEND,photoItem.isSend());
                         photoArray.add(photoObject);
                     }
                     object.add(MainItem.JSON_PHOTO_VALUES,photoArray);
@@ -348,8 +349,11 @@ public class InfoBlocksStorage {
                 if(object.has(MainItem.JSON_ID)&&!object.get(MainItem.JSON_ID).isJsonNull())
                 item.setId(object.get(MainItem.JSON_ID).getAsString());
 
-                if(object.has(MainItem.JSON_CODE)&&!object.get(MainItem.JSON_CODE).isJsonNull())
-                item.setCode(object.get(MainItem.JSON_CODE).getAsString());
+                if(object.has(MainItem.JSON_CODE)&&!object.get(MainItem.JSON_CODE).isJsonNull()) {
+//                    if(object.get(MainItem.JSON_CODE).getAsString().equals("shas_wheel_formula"))
+//                        Log.e("WTF","INFO_BLOCK_STORAGE code="+object.get(MainItem.JSON_CODE).getAsString());
+                    item.setCode(object.get(MainItem.JSON_CODE).getAsString());
+                }
 
                 if(object.has(MainItem.JSON_VALUE)&&!object.get(MainItem.JSON_VALUE).isJsonNull())
                 item.setValue(object.get(MainItem.JSON_VALUE).getAsString());
@@ -468,6 +472,9 @@ public class InfoBlocksStorage {
 
                         if(valueObject.has(PhotoItem.JSON_CODE)&&!valueObject.get(PhotoItem.JSON_CODE).isJsonNull())
                             photoItem.setCode(valueObject.get(PhotoItem.JSON_CODE).getAsString());
+
+                        if(valueObject.has(PhotoItem.JSON_IS_SEND)&&!valueObject.get(PhotoItem.JSON_IS_SEND).isJsonNull())
+                            photoItem.setSend(valueObject.get(PhotoItem.JSON_IS_SEND).getAsBoolean());
 
                     photoItems.add(photoItem);
 
