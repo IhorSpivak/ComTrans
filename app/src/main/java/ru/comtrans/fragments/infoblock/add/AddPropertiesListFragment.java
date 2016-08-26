@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -72,6 +73,7 @@ public class AddPropertiesListFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_list,container,false);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         initUi(v);
         return v;
     }
@@ -170,6 +172,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                     case MainItem.TYPE_BOTTOM_BAR:
                         switch (position){
                             case 1:
+                                storage.updateInfoBlockPage(infoBlockId, page-1);
                                 activity.viewPager.setCurrentItem(page-1);
                                 break;
                             case 2:
@@ -185,6 +188,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                                         }
                                     });
                                 }else {
+                                    storage.updateInfoBlockPage(infoBlockId, page+1);
                                     activity.viewPager.setCurrentItem(page+1);
                                 }
                                 break;

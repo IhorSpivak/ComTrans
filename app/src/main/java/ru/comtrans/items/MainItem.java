@@ -11,6 +11,7 @@ public class MainItem {
     public static final String JSON_CODE = "code";
     public static final String JSON_VALUE = "value";
     public static final String JSON_IS_CHECKED = "is_checked";
+    public static final String JSON_IS_REQUIRED = "is_required";
     public static final String JSON_LIST_VALUE = "list_value";
     public static final String JSON_LIST_VALUES = "list_values";
     public static final String JSON_PHOTO_VALUES = "photo_values";
@@ -41,6 +42,7 @@ public class MainItem {
     private String value;
     int type;
     boolean isChecked;
+    boolean isRequired = false;
     private ListItem listValue;
     private ArrayList<ListItem> listValues;
     private ArrayList<PhotoItem> photoItems;
@@ -93,6 +95,13 @@ public class MainItem {
         this.value = value;
     }
 
+    public boolean isRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(boolean required) {
+        isRequired = required;
+    }
 
     public String getCode() {
         return code;

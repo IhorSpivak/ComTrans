@@ -28,6 +28,7 @@ public class ShowInfoBlockFragment extends BaseFragment implements ViewPager.OnP
 
     private ProgressBar emptyBar;
     private String infoBlockId;
+    private int page;
     private LinearLayout pager_indicator;
     private InfoBlocksStorage storage;
     private InfoBlockHelper infoBlockHelper;
@@ -36,10 +37,11 @@ public class ShowInfoBlockFragment extends BaseFragment implements ViewPager.OnP
     private ShowInfoBlockPagerAdapter adapter;
     private ShowInfoBlockActivity activity;
 
-    public static ShowInfoBlockFragment newInstance(String id) {
+    public static ShowInfoBlockFragment newInstance(String id,int page) {
 
         Bundle args = new Bundle();
         args.putString(Const.EXTRA_INFO_BLOCK_ID,id);
+        args.putInt(Const.EXTRA_INFO_BLOCK_PAGE,page);
         ShowInfoBlockFragment fragment = new ShowInfoBlockFragment();
         fragment.setArguments(args);
         return fragment;
@@ -56,6 +58,7 @@ public class ShowInfoBlockFragment extends BaseFragment implements ViewPager.OnP
         pager_indicator = (LinearLayout) v.findViewById(R.id.viewPagerCountDots);
         emptyBar = (ProgressBar)v.findViewById(R.id.empty_bar);
         infoBlockId = getArguments().getString(Const.EXTRA_INFO_BLOCK_ID);
+        page = getArguments().getInt(Const.EXTRA_INFO_BLOCK_PAGE);
 
         new AsyncTaskForShowInfoBlock().execute();
 
@@ -90,11 +93,11 @@ public class ShowInfoBlockFragment extends BaseFragment implements ViewPager.OnP
     private void setAdapter(){
 
         adapter = new ShowInfoBlockPagerAdapter(getFragmentManager(),getContext(),infoBlockId,infoBlockHelper.getItemsSize());
+        setUiPageViewController();
         activity.viewPager.setAdapter(adapter);
-        activity.viewPager.setCurrentItem(0);
         activity.viewPager.setOffscreenPageLimit(1);
         activity.viewPager.addOnPageChangeListener(this);
-        setUiPageViewController();
+        activity.viewPager.setCurrentItem(page);
     }
 
     private void setUiPageViewController() {

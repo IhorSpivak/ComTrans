@@ -91,8 +91,16 @@ public class PropHelper {
                 }
 
                 JsonObject newObject = new JsonObject();
-
-
+                if (object.has("is_required") && !object.get("is_required").isJsonNull()) {
+                    switch (object.get("is_required").getAsString()) {
+                        case "Y":
+                            newObject.addProperty(MainItem.JSON_IS_REQUIRED, true);
+                            break;
+                        case "N":
+                            newObject.addProperty(MainItem.JSON_IS_REQUIRED, false);
+                            break;
+                    }
+                }
                 switch (object.get("prop_type").getAsString()) {
                     case "S":
                         newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_STRING);

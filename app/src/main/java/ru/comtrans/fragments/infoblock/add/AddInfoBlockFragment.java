@@ -43,6 +43,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
     private ConnectionProgressDialog progressDialog;
     private LinearLayout pager_indicator;
     private InfoBlocksStorage storage;
+    private int page;
     private InfoBlockHelper infoBlockHelper;
     private int dotsCount;
     private ImageView[] dots;
@@ -53,9 +54,10 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
     private String infoBlockId;
     boolean isNew;
 
-    public static AddInfoBlockFragment newInstance(String id, boolean isNew) {
+    public static AddInfoBlockFragment newInstance(String id, int page, boolean isNew) {
         Bundle args = new Bundle();
         args.putString(Const.EXTRA_INFO_BLOCK_ID,id);
+        args.putInt(Const.EXTRA_INFO_BLOCK_PAGE,page);
         args.putBoolean(Const.IS_NEW_INFO_BLOCK,isNew);
         AddInfoBlockFragment fragment = new AddInfoBlockFragment();
         fragment.setArguments(args);
@@ -74,6 +76,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
         pager_indicator = (LinearLayout) v.findViewById(R.id.viewPagerCountDots);
         emptyBar = (ProgressBar)v.findViewById(R.id.empty_bar);
         infoBlockId = getArguments().getString(Const.EXTRA_INFO_BLOCK_ID);
+        page = getArguments().getInt(Const.EXTRA_INFO_BLOCK_PAGE);
         isNew = getArguments().getBoolean(Const.IS_NEW_INFO_BLOCK);
 
         progressDialog = new ConnectionProgressDialog(getContext());
@@ -145,6 +148,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
                 storage.saveInfoBlock(infoBlockId, propHelper.getScreens());
                 storage.setInfoBlockStatus(infoBlockId, MyInfoBlockItem.STATUS_DRAFT);
             }
+
             infoBlockHelper.getAllItems(infoBlockId);
             return null;
         }
@@ -160,11 +164,11 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
 
     private void setAdapter(){
         adapter = new AddInfoBlockPagerAdapter(getFragmentManager(),getContext(),infoBlockId,infoBlockHelper.getItemsSize());
+        setUiPageViewController();
         activity.viewPager.setAdapter(adapter);
-        activity.viewPager.setCurrentItem(0);
         activity.viewPager.setOffscreenPageLimit(1);
         activity.viewPager.addOnPageChangeListener(this);
-        setUiPageViewController();
+        activity.viewPager.setCurrentItem(page);
     }
 
     private void setUiPageViewController() {

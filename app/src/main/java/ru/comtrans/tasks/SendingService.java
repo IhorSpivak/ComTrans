@@ -124,7 +124,9 @@ public class SendingService extends IntentService {
                     }
 
                     if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && (object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_NUMBER
-                            || object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_STRING)) {
+                            || object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_STRING
+                            || object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_EMAIL
+                            || object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PHONE)) {
 
                         if (object.has(MainItem.JSON_VALUE) && !object.get(MainItem.JSON_VALUE).isJsonNull()) {
                             String value = object.get(MainItem.JSON_VALUE).getAsString();

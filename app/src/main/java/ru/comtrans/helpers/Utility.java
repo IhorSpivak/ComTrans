@@ -8,10 +8,12 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import ru.comtrans.singlets.AppController;
 
@@ -184,6 +186,11 @@ public class Utility {
 
     public static boolean isEmailValid(CharSequence email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    public static boolean isFieldValid(String mask, CharSequence src) {
+        Pattern mPattern = Pattern.compile(mask);
+        return mPattern.matcher(src).matches();
     }
 
     public static InputFilter EMOJI_FILTER = new InputFilter() {

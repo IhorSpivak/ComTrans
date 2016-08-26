@@ -22,11 +22,13 @@ public class InfoBlockTutorialFragment extends Fragment implements View.OnClickL
     private ImageView close;
     private Button confirm;
     private String infoBlockId;
+    private int page;
     private boolean isNew;
 
-    public static InfoBlockTutorialFragment newInstance(String id, boolean isNew) {
+    public static InfoBlockTutorialFragment newInstance(String id, int page, boolean isNew) {
         Bundle args = new Bundle();
         args.putString(Const.EXTRA_INFO_BLOCK_ID,id);
+        args.putInt(Const.EXTRA_INFO_BLOCK_PAGE,page);
         args.putBoolean(Const.IS_NEW_INFO_BLOCK,isNew);
         InfoBlockTutorialFragment fragment = new InfoBlockTutorialFragment();
         fragment.setArguments(args);
@@ -44,6 +46,7 @@ public class InfoBlockTutorialFragment extends Fragment implements View.OnClickL
         close.setOnClickListener(this);
         confirm.setOnClickListener(this);
         infoBlockId = getArguments().getString(Const.EXTRA_INFO_BLOCK_ID);
+        page = getArguments().getInt(Const.EXTRA_INFO_BLOCK_PAGE,0);
         isNew = getArguments().getBoolean(Const.IS_NEW_INFO_BLOCK);
         return v;
     }
@@ -51,6 +54,6 @@ public class InfoBlockTutorialFragment extends Fragment implements View.OnClickL
     @Override
     public void onClick(View view) {
         Utility.saveBoolean(Const.IS_FIRST_ADD_INFOBLOCK_LAUNCH,true);
-        getFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId,isNew)).commit();
+        getFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId, page, isNew)).commit();
     }
 }

@@ -23,6 +23,7 @@ public class AddInfoBlockActivity extends AppCompatActivity {
 
     public NonSwipeableViewPager viewPager;
     private String infoBlockId;
+    private int page;
     private InfoBlockHelper helper;
 
 
@@ -37,6 +38,7 @@ public class AddInfoBlockActivity extends AppCompatActivity {
 
 
         infoBlockId = getIntent().getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
+        page = getIntent().getIntExtra(Const.EXTRA_INFO_BLOCK_PAGE,0);
         boolean isNew = false;
         if(infoBlockId==null){
             isNew = true;
@@ -57,11 +59,11 @@ public class AddInfoBlockActivity extends AppCompatActivity {
     }
 
     private void openMainFragment(boolean isNew){
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId,isNew)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId, page, isNew)).commit();
     }
 
     private void openTutorialFragment(boolean isNew){
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, InfoBlockTutorialFragment.newInstance(infoBlockId,isNew)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, InfoBlockTutorialFragment.newInstance(infoBlockId, page, isNew)).commit();
     }
 
     @Override

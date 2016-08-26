@@ -46,6 +46,7 @@ public class Const {
     public static final String IS_NEW_INFO_BLOCK = "is_new_info_block";
 
     public static final String EXTRA_INFO_BLOCK_ID = "extra_info_block_id";
+    public static final String EXTRA_INFO_BLOCK_PAGE = "extra_info_block_page";
 
 
 

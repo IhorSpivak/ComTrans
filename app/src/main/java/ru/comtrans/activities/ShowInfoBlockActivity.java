@@ -13,6 +13,7 @@ import ru.comtrans.helpers.Const;
 
 public class ShowInfoBlockActivity extends AppCompatActivity {
     String infoBlockId;
+    int page;
     public ViewPager viewPager;
 
     @Override
@@ -24,10 +25,11 @@ public class ShowInfoBlockActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         infoBlockId = getIntent().getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
+        page = getIntent().getIntExtra(Const.EXTRA_INFO_BLOCK_PAGE,0);
         openMainFragment();
     }
     private void openMainFragment(){
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, ShowInfoBlockFragment.newInstance(infoBlockId)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, ShowInfoBlockFragment.newInstance(infoBlockId, page)).commit();
     }
 
 

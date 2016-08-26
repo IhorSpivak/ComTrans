@@ -16,8 +16,11 @@ public class MyInfoBlockItem {
     public static final String JSON_MODEL = "model";
     public static final String JSON_YEAR = "year";
     public static final String JSON_PHOTO_PATH = "photo_path";
+    public static final String JSON_LAST_POSITION = "last_position";
 
     private int status;
+
+    private int lastPosition;
 
     private String id,date,mark,model,year,photoPath,progress;
 
@@ -87,5 +90,13 @@ public class MyInfoBlockItem {
 
     public void setPhotoPath(String photoPath) {
         this.photoPath = photoPath;
+    }
+
+    public int getLastPosition() {
+        return lastPosition;
+    }
+
+    public void setLastPosition(int lastPosition) {
+        this.lastPosition = lastPosition;
     }
 }

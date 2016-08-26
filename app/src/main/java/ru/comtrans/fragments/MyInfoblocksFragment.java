@@ -84,6 +84,7 @@ public class MyInfoBlocksFragment extends Fragment {
                     case MyInfoBlockItem.STATUS_DRAFT:
                          i = new Intent(getContext(),AddInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
+                        i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE,item.getLastPosition());
                         startActivity(i);
                         break;
                     case MyInfoBlockItem.STATUS_SENDING:
@@ -93,6 +94,7 @@ public class MyInfoBlocksFragment extends Fragment {
 //                        storage.setInfoBlockStatus(item.getId(),MyInfoBlockItem.STATUS_DRAFT);
                         i = new Intent(getContext(),ShowInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
+                        i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE,item.getLastPosition());
                         startActivity(i);
                         break;
                 }

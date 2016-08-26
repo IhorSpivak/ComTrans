@@ -31,7 +31,7 @@ public class AppController extends Application {
         super.onCreate();
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        interceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
 
 
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
