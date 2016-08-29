@@ -22,8 +22,15 @@ public class LaunchActivity extends AppCompatActivity {
         }else {
             i = new Intent(LaunchActivity.this, MainActivity.class);
         }
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
 
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
     }
 }

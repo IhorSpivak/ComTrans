@@ -106,6 +106,8 @@ public class InfoBlocksStorage {
                 if (object.has(MyInfoBlockItem.JSON_LAST_POSITION) && !object.get(MyInfoBlockItem.JSON_LAST_POSITION).isJsonNull())
                     item.setLastPosition(object.get(MyInfoBlockItem.JSON_LAST_POSITION).getAsInt());
 
+                if (object.has(MyInfoBlockItem.JSON_PROGRESS) && !object.get(MyInfoBlockItem.JSON_PROGRESS).isJsonNull())
+                    item.setProgress(object.get(MyInfoBlockItem.JSON_PROGRESS).getAsString());
 
                 items.add(item);
             }
@@ -173,6 +175,16 @@ public class InfoBlocksStorage {
 
         if (object != null) {
             object.addProperty(MyInfoBlockItem.JSON_LAST_POSITION, page);
+            Utility.saveData("preview" + id, object.toString());
+        }
+    }
+
+    public void updateInfoBlockProgress(String id, String progress) {
+        Gson gson = new Gson();
+        JsonObject object = gson.fromJson(Utility.getSavedData("preview" + id), JsonObject.class);
+
+        if (object != null) {
+            object.addProperty(MyInfoBlockItem.JSON_PROGRESS, progress);
             Utility.saveData("preview" + id, object.toString());
         }
     }

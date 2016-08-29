@@ -17,6 +17,7 @@ public class MyInfoBlockItem {
     public static final String JSON_YEAR = "year";
     public static final String JSON_PHOTO_PATH = "photo_path";
     public static final String JSON_LAST_POSITION = "last_position";
+    public static final String JSON_PROGRESS = "progress";
 
     private int status;
 

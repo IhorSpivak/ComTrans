@@ -365,11 +365,11 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case MainItem.TYPE_NUMBER:
                 if (isEditable) {
                     EditTextViewHolder editTextViewHolder = ((EditTextViewHolder) viewHolder);
-                    editTextViewHolder.editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (item.isRequired())
                         editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
                     else
                         editTextViewHolder.textInputLayout.setHint(item.getName());
+                    editTextViewHolder.editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
                     editTextViewHolder.editText.setText(item.getValue());
                     editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -419,8 +419,11 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             if (!Utility.isEmailValid(editable) && !editable.toString().trim().equals("")) {
                                 editTextViewHolder.textInputLayout.setErrorEnabled(true);
                                 editTextViewHolder.textInputLayout.setError("Некорректный e-mail");
+                                // Для проверки на валидность
+                                item.setChecked(false);
                             } else {
                                 editTextViewHolder.textInputLayout.setErrorEnabled(false);
+                                item.setChecked(true);
                             }
 
                         }
@@ -474,8 +477,11 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             if (!Utility.isFieldValid(Const.phone_regex, editable) && !editable.toString().trim().equals(context.getString(R.string.phone_prefix_bracket))) {
                                 editTextViewHolder.textInputLayout.setErrorEnabled(true);
                                 editTextViewHolder.textInputLayout.setError("Некорректный телефон");
+                                // Для проверки на валидность
+                                item.setChecked(false);
                             } else {
                                 editTextViewHolder.textInputLayout.setErrorEnabled(false);
+                                item.setChecked(true);
                             }
 
                         }
@@ -557,11 +563,14 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                             break;
                                         case MainItem.TYPE_NUMBER:
                                         case MainItem.TYPE_STRING:
-                                        case MainItem.TYPE_PHONE:
-                                        case MainItem.TYPE_EMAIL:
                                             if (item.getValue() == null || item.getValue().equals("")) {
                                                 isMainEntered = false;
-                                                break;
+                                            }
+                                            break;
+                                        case MainItem.TYPE_PHONE:
+                                        case MainItem.TYPE_EMAIL:
+                                            if (item.getValue() == null || !item.isChecked()) {
+                                                isMainEntered = false;
                                             }
                                             break;
 
@@ -577,9 +586,13 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                         break;
                                     case MainItem.TYPE_NUMBER:
                                     case MainItem.TYPE_STRING:
+                                        if (item.getValue() == null || item.getValue().equals("")) {
+                                            isAllEntered = false;
+                                        }
+                                        break;
                                     case MainItem.TYPE_PHONE:
                                     case MainItem.TYPE_EMAIL:
-                                        if (item.getValue() == null || item.getValue().equals("")) {
+                                        if (item.getValue() == null || !item.isChecked()) {
                                             isAllEntered = false;
                                         }
                                         break;

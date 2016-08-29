@@ -47,25 +47,25 @@ public class MyInfoBlocksFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_my_infoblocks,container,false);
+        View v = inflater.inflate(R.layout.fragment_my_infoblocks, container, false);
 
         recyclerView = (RecyclerView) v.findViewById(android.R.id.list);
-        tvEmpty = (TextView)v.findViewById(R.id.tv_empty);
-        emptyBar = (ProgressBar)v.findViewById(R.id.empty_bar);
+        tvEmpty = (TextView) v.findViewById(R.id.tv_empty);
+        emptyBar = (ProgressBar) v.findViewById(R.id.empty_bar);
         storage = InfoBlocksStorage.getInstance();
-        FloatingActionButton fab = (FloatingActionButton)getActivity().findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getContext(),AddInfoBlockActivity.class);
+                Intent i = new Intent(getContext(), AddInfoBlockActivity.class);
                 startActivity(i);
             }
         });
 
         refreshReceiver = new InfoBlocksRefreshReceiver();
         updateProgressReceiver = new InfoBlocksUpdateProgressReceiver();
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(refreshReceiver,new IntentFilter(Const.REFRESH_INFO_BLOCKS_FILTER));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(updateProgressReceiver,new IntentFilter(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(refreshReceiver, new IntentFilter(Const.REFRESH_INFO_BLOCKS_FILTER));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(updateProgressReceiver, new IntentFilter(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER));
 
         new AsyncTaskForMyInfoBlocks().execute();
 
@@ -74,24 +74,23 @@ public class MyInfoBlocksFragment extends Fragment {
     }
 
 
-
-    private void setupList(){
-        adapter = new MyInfoBlocksAdapter(getContext(),items, new MyInfoBlocksAdapter.OnItemClickListener() {
+    private void setupList() {
+        adapter = new MyInfoBlocksAdapter(getContext(), items, new MyInfoBlocksAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MyInfoBlockItem item, int position) {
                 Intent i;
-                switch (storage.getInfoBlockStatus(item.getId())){
+                switch (storage.getInfoBlockStatus(item.getId())) {
                     case MyInfoBlockItem.STATUS_DRAFT:
-                         i = new Intent(getContext(),AddInfoBlockActivity.class);
-                        i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
-                        i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE,item.getLastPosition());
+                        i = new Intent(getContext(), AddInfoBlockActivity.class);
+                        i.putExtra(Const.EXTRA_INFO_BLOCK_ID, item.getId());
+                        i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE, item.getLastPosition());
                         startActivity(i);
                         break;
                     case MyInfoBlockItem.STATUS_SENDING:
-                        Toast.makeText(getContext(),R.string.click_on_sending,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.click_on_sending, Toast.LENGTH_SHORT).show();
                         break;
                     case MyInfoBlockItem.STATUS_SENT:
-//                        storage.setInfoBlockStatus(item.getId(),MyInfoBlockItem.STATUS_DRAFT);
+//                        storage.setInfoBlockStatus(item.getId(), MyInfoBlockItem.STATUS_DRAFT);
                         i = new Intent(getContext(),ShowInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
                         i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE,item.getLastPosition());
@@ -101,14 +100,14 @@ public class MyInfoBlocksFragment extends Fragment {
 
             }
         });
-        LinearLayoutManager manager = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(manager);
 
     }
 
-    private class AsyncTaskForMyInfoBlocks extends AsyncTask<Void,Void,Void>{
+    private class AsyncTaskForMyInfoBlocks extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -126,10 +125,10 @@ public class MyInfoBlocksFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if(items.size()>0){
+            if (items.size() > 0) {
                 tvEmpty.setVisibility(View.GONE);
                 setupList();
-            }else {
+            } else {
                 tvEmpty.setVisibility(View.VISIBLE);
             }
             emptyBar.setVisibility(View.GONE);
@@ -138,12 +137,14 @@ public class MyInfoBlocksFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        if (adapter != null)
+            adapter.saveProgress();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(refreshReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(updateProgressReceiver);
         super.onDestroy();
     }
 
-    private class InfoBlocksRefreshReceiver extends BroadcastReceiver{
+    private class InfoBlocksRefreshReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -151,13 +152,13 @@ public class MyInfoBlocksFragment extends Fragment {
         }
     }
 
-    private class InfoBlocksUpdateProgressReceiver extends BroadcastReceiver{
+    private class InfoBlocksUpdateProgressReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             String id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
             String progress = intent.getStringExtra(Const.EXTRA_PROGRESS);
-            adapter.updateProgress(id,progress);
+            adapter.updateProgress(id, progress);
         }
     }
 }

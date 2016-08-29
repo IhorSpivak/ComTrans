@@ -1,6 +1,7 @@
 package ru.comtrans.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.singlets.InfoBlocksStorage;
+import ru.comtrans.tasks.SendingService;
 
 /**
  * Created by Artco on 25.07.2016.
@@ -118,6 +120,14 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
 
+    }
+
+    public void saveProgress(){
+        for (int i = 0; i < items.size(); i++) {
+            if (storage.getInfoBlockStatus(items.get(i).getId()) == MyInfoBlockItem.STATUS_SENDING) {
+                storage.updateInfoBlockProgress(storage.getPreviewItems().get(i).getId(), items.get(i).getProgress());
+            }
+        }
     }
 
     @Override

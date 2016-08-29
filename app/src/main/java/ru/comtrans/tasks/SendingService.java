@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -12,6 +13,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -191,7 +193,7 @@ public class SendingService extends IntentService {
 
 
                                 if (photo.has(PhotoItem.JSON_IMAGE_PATH) && !photo.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()) {
-                                    if (!photo.has(PhotoItem.JSON_ID) || photo.get(PhotoItem.JSON_ID).isJsonNull()) {
+//                                    if (!photo.has(PhotoItem.JSON_ID) || photo.get(PhotoItem.JSON_ID).isJsonNull()) {
                                         Log.d("TAG", "code " + photo.get(PhotoItem.JSON_CODE));
                                         if (photo.has(PhotoItem.JSON_IS_DEFECT) && !photo.get(PhotoItem.JSON_IS_DEFECT).isJsonNull()) {
                                             if (photo.get(PhotoItem.JSON_IS_DEFECT).getAsBoolean()) {
@@ -204,7 +206,7 @@ public class SendingService extends IntentService {
                                             }
                                         }
 //                                    factImages++;
-                                    }
+//                                    }
                                 }
                             }
 
@@ -243,18 +245,24 @@ public class SendingService extends IntentService {
                                                                 .get(k).getAsJsonObject().addProperty(PhotoItem.JSON_IS_SEND, true);
                                                         Log.e("TAG", "sent=" + photo.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
                                                         storage.saveInfoBlock(id, array);
-                                                        if (hasNotUploadedDefects) {
+//                                                        if (hasNotUploadedDefects) {
                                                             if (photo.has(PhotoItem.JSON_IS_DEFECT) && !photo.get(PhotoItem.JSON_IS_DEFECT).isJsonNull()) {
                                                                 if (photo.get(PhotoItem.JSON_IS_DEFECT).getAsBoolean()) {
                                                                     defectArray.add(result.get("result").getAsJsonObject().get("id").getAsLong());
                                                                 }
                                                             }
-                                                        }
+//                                                        }
 
                                                         photo.addProperty(PhotoItem.JSON_ID, result.get("result").getAsJsonObject().get("id").getAsLong());
                                                         photoValues.set(k, photo);
                                                     }
                                                 } else {
+                                                    // For test only
+//                                                    try {
+//                                                        Thread.sleep(2000);
+//                                                    } catch (InterruptedException e) {
+//                                                        e.printStackTrace();
+//                                                    }
                                                     Log.e("TAG", "sent earlier=" + photo.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
                                                 }
 
@@ -302,6 +310,16 @@ public class SendingService extends IntentService {
 
             Log.d("TAG", fields.toString());
             sendObject.add("fields", fields);
+
+//            FileWriter file=null;
+//            try {
+//                file = new FileWriter(Environment.getExternalStorageDirectory()+"/Comtrans/file.txt");
+//                file.write(sendObject.toString());
+//                file.flush();
+//                file.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
             Call<JsonObject> call = AppController.apiInterface.sendAuto(Utility.getToken(), sendObject);
             call.enqueue(new Callback<JsonObject>() {
