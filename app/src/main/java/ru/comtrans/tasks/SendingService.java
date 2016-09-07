@@ -274,7 +274,7 @@ public class SendingService extends IntentService {
                                 }
 
 
-                                if (hasDefects) {
+                                if (hasDefects||hasNotUploadedDefects) {
                                     JsonObject defectObject = new JsonObject();
                                     defectObject.addProperty(MainItem.JSON_CODE, defectCode);
                                     defectObject.add(MainItem.JSON_VALUE, defectArray);
