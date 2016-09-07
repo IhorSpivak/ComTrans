@@ -190,22 +190,26 @@ public class SendingService extends IntentService {
                                         }
                                     }
                                 }
-//
-//
-//                                if (photo.has(PhotoItem.JSON_IMAGE_PATH) && !photo.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()) {
-////                                    if (!photo.has(PhotoItem.JSON_ID) || photo.get(PhotoItem.JSON_ID).isJsonNull()) {
-//                                        Log.d("TAG", "code " + photo.get(PhotoItem.JSON_CODE));
-//                                        if (photo.has(PhotoItem.JSON_IS_DEFECT) && !photo.get(PhotoItem.JSON_IS_DEFECT).isJsonNull()) {
-//                                            if (photo.get(PhotoItem.JSON_IS_DEFECT).getAsBoolean()) {
-//                                                defectArray.add(photo.get(PhotoItem.JSON_ID).getAsLong());
-//                                                hasDefects = true;
-//                                                Log.d("TAG","defect array "+defectArray.toString());
-//                                            }
-//                                        }
-////                                    factImages++;
-////                                    }
-//                                }
+
+
+                                if (photo.has(PhotoItem.JSON_IMAGE_PATH) && !photo.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()) {
+//                                    if (!photo.has(PhotoItem.JSON_ID) || photo.get(PhotoItem.JSON_ID).isJsonNull()) {
+                                        Log.d("TAG", "code " + photo.get(PhotoItem.JSON_CODE));
+                                        if (photo.has(PhotoItem.JSON_IS_DEFECT) && !photo.get(PhotoItem.JSON_IS_DEFECT).isJsonNull()) {
+                                            if (photo.get(PhotoItem.JSON_IS_DEFECT).getAsBoolean()) {
+                                                if (photo.has(PhotoItem.JSON_ID) && !photo.get(PhotoItem.JSON_ID).isJsonNull()) {
+                                                    defectArray.add(photo.get(PhotoItem.JSON_ID).getAsLong());
+                                                    hasDefects = true;
+                                                } else {
+                                                    hasNotUploadedDefects = true;
+                                                }
+                                            }
+                                        }
+//                                    factImages++;
+//                                    }
+                                }
                             }
+
 
                             if (factImages != 0) {
 //                            int progress = 0;
@@ -244,7 +248,6 @@ public class SendingService extends IntentService {
 //                                                        if (hasNotUploadedDefects) {
                                                             if (photo.has(PhotoItem.JSON_IS_DEFECT) && !photo.get(PhotoItem.JSON_IS_DEFECT).isJsonNull()) {
                                                                 if (photo.get(PhotoItem.JSON_IS_DEFECT).getAsBoolean()) {
-                                                                    hasDefects = true;
                                                                     defectArray.add(result.get("result").getAsJsonObject().get("id").getAsLong());
                                                                 }
                                                             }
@@ -276,7 +279,6 @@ public class SendingService extends IntentService {
                                     defectObject.addProperty(MainItem.JSON_CODE, defectCode);
                                     defectObject.add(MainItem.JSON_VALUE, defectArray);
                                     fields.add(defectObject);
-                                    Log.d("TAG","defect obj "+defectObject.toString());
                                 }
                                 for (int k = 0; k < photoValues.size(); k++) {
                                     JsonObject photo = photoValues.get(k).getAsJsonObject();
