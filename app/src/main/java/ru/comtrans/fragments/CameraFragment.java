@@ -15,6 +15,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +58,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     PhotoViewerFragment photoViewerFragment;
     CountUpdateReceiver countUpdateReceiver = null;
     RePhotoReceiver rePhotoReceiver = null;
+    private TakePhotoReceiver takePhotoReceiver = null;
     ProgressBar progressBar;
     private CameraActivity activity;
 
@@ -110,6 +113,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
         countUpdateReceiver = new CountUpdateReceiver();
         rePhotoReceiver = new RePhotoReceiver();
+        takePhotoReceiver = new TakePhotoReceiver();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(takePhotoReceiver,new IntentFilter(Const.TAKE_PHOTO_BROADCAST));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(countUpdateReceiver,new IntentFilter(Const.RECEIVE_UPDATE_COUNT));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(rePhotoReceiver,new IntentFilter(Const.RE_PHOTO));
 
@@ -168,8 +173,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
 
 
+
+
         return v;
     }
+
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -178,12 +187,19 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
             getFragmentManager().beginTransaction().add(R.id.container,new ViewPagerPhotoDemoFragment()).addToBackStack(null).commitAllowingStateLoss();
     }
 
-    private void replaceWithCamera(){
+    
 
+
+
+
+
+
+    private void replaceWithCamera(){
         toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
         cameraPreviewFragment = new CameraPreviewFragment();
         photoViewerFragment = null;
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commitAllowingStateLoss();
+        cameraPreviewFragment.enableFlashLight(false,Utility.getBoolean(Const.IS_FLASH_ENABLED));
     }
     private void replaceWithPhotoViewer(int position){
         photoViewerFragment = PhotoViewerFragment.newInstance(activity.getPhotoAdapter().getItem(position),position);
@@ -339,6 +355,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
      *             or false to disable.
      */
     private void switchButtons(boolean disableOrEnable){
+        if(disableOrEnable){
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(takePhotoReceiver,new IntentFilter(Const.TAKE_PHOTO_BROADCAST));
+        }else {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(takePhotoReceiver);
+        }
+
         takeDefect.setClickable(disableOrEnable);
         takePhoto.setClickable(disableOrEnable);
         done.setClickable(disableOrEnable);
@@ -420,14 +442,46 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
         }
     }
+    private class TakePhotoReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(photoViewerFragment!=null){
+                Toast.makeText(getActivity(),R.string.photo_blocked,Toast.LENGTH_SHORT).show();
+            }else {
+                try{
+                    LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(takePhotoReceiver);
+                    takePicture(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).isDefect());
+
+                }catch (Exception e){}
+            }
+
+
+        }
+    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(countUpdateReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(takePhotoReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(rePhotoReceiver);
         rePhotoReceiver = null;
         countUpdateReceiver = null;
+        takePhotoReceiver = null;
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_camera,menu);
+        MenuItem item = menu.findItem(R.id.action_flash);
+        if(Utility.getBoolean(Const.IS_FLASH_ENABLED)){
+            item.setIcon(R.drawable.ic_action_flash_on);
+        }else {
+            item.setIcon(R.drawable.ic_action_flash_off);
+        }
     }
 
     @Override
@@ -436,6 +490,17 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
             case android.R.id.home:
                 done();
                 return true;
+            case R.id.action_flash:
+                if(Utility.getBoolean(Const.IS_FLASH_ENABLED)){
+                    cameraPreviewFragment.enableFlashLight(false,false);
+                    Utility.saveBoolean(Const.IS_FLASH_ENABLED,false);
+                    item.setIcon(R.drawable.ic_action_flash_off);
+                }else {
+                    cameraPreviewFragment.enableFlashLight(false,true);
+                    Utility.saveBoolean(Const.IS_FLASH_ENABLED,true);
+                    item.setIcon(R.drawable.ic_action_flash_on);
+                }
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

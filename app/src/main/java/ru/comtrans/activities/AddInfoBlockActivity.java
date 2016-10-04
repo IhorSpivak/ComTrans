@@ -27,6 +27,8 @@ public class AddInfoBlockActivity extends AppCompatActivity {
     private InfoBlockHelper helper;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

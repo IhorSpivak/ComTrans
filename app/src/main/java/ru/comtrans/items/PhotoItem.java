@@ -10,6 +10,7 @@ public class PhotoItem implements Parcelable {
 
     public static final String JSON_IS_DEFECT = "is_defect";
     public static final String JSON_TITLE = "title";
+    public static final String JSON_SIZE = "size";
     public static final String JSON_CODE = "code";
     public static final String JSON_IMAGE_PATH = "image_path";
     public static final String JSON_ID = "id";
@@ -21,7 +22,7 @@ public class PhotoItem implements Parcelable {
 
 
 
-
+    private long size;
     private boolean isDefect;
     private String title;
     private String imagePath;
@@ -30,6 +31,14 @@ public class PhotoItem implements Parcelable {
     private int duration;
     private boolean isVideo;
     private boolean isSend = false;
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
 
     public String getCode() {
         return code;
@@ -113,6 +122,7 @@ public class PhotoItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeFloat(this.size);
         dest.writeByte(this.isDefect ? (byte) 1 : (byte) 0);
         dest.writeString(this.title);
         dest.writeString(this.imagePath);
@@ -124,6 +134,7 @@ public class PhotoItem implements Parcelable {
     }
 
     protected PhotoItem(Parcel in) {
+        this.size = in.readLong();
         this.isDefect = in.readByte() != 0;
         this.title = in.readString();
         this.imagePath = in.readString();

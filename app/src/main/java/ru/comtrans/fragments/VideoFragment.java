@@ -16,6 +16,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +38,7 @@ import java.util.Locale;
 import ru.comtrans.R;
 import ru.comtrans.activities.CameraActivity;
 import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.views.VerticalChronometer;
@@ -67,6 +70,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
 
     @Nullable
     @Override
@@ -149,6 +153,8 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
 
         replaceWithCamera();
 
+
+
 //        if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_LAUNCH))
 //            getFragmentManager().beginTransaction().add(R.id.container,new ViewPagerPhotoDemoFragment()).addToBackStack(null).commit();
 
@@ -161,6 +167,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         videoViewerFragment = null;
         toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
+        cameraPreviewFragment.enableFlashLight(true,Utility.getBoolean(Const.IS_FLASH_ENABLED));
     }
     private void replaceWithVideoViewer(PhotoItem item, int position){
         videoViewerFragment = VideoViewerFragment.newInstance(item,position);
@@ -399,12 +406,36 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         countUpdateReceiver = null;
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_camera,menu);
+        MenuItem item = menu.findItem(R.id.action_flash);
+        if(Utility.getBoolean(Const.IS_FLASH_ENABLED)){
+            item.setIcon(R.drawable.ic_action_flash_on);
+        }else {
+            item.setIcon(R.drawable.ic_action_flash_off);
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
                 done();
                 return true;
+            case R.id.action_flash:
+                if(Utility.getBoolean(Const.IS_FLASH_ENABLED)){
+                    cameraPreviewFragment.enableFlashLight(true,false);
+                    Utility.saveBoolean(Const.IS_FLASH_ENABLED,false);
+                    item.setIcon(R.drawable.ic_action_flash_off);
+                }else {
+                    cameraPreviewFragment.enableFlashLight(true,true);
+                    Utility.saveBoolean(Const.IS_FLASH_ENABLED,true);
+                    item.setIcon(R.drawable.ic_action_flash_on);
+                }
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

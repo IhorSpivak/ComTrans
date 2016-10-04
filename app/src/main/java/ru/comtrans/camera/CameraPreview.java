@@ -1,35 +1,62 @@
 package ru.comtrans.camera;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
+import static android.hardware.Camera.Parameters.FLASH_MODE_AUTO;
+import static android.hardware.Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
+import static android.hardware.Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO;
+
+public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback,Camera.AutoFocusCallback {
     private SurfaceHolder mHolder;
     private Camera camera;
     int screenWidth, screenHeight;
     Camera.Size optimalPreviewSize;
+    private boolean meteringAreaSupported;
+    private Paint paint;
 
 
     public CameraPreview(Context context) {
         super(context);
-        mHolder = getHolder();
-        mHolder.addCallback(this);
+        init();
     }
+
+
 
     public CameraPreview(Context context, AttributeSet attrs) {
         super(context,attrs);
+        init();
+    }
+
+    private void init(){
+        paint = new Paint();
+        setWillNotDraw(false);
         mHolder = getHolder();
         mHolder.addCallback(this);
+        setFocusable(true);
+        setFocusableInTouchMode(true);
     }
 
     public Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
@@ -99,6 +126,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
      //   setCameraDisplayOrientation(0);
         try {
             setCamera(camera);
+
             setScreenSize();
             this.camera.setPreviewDisplay(mHolder);
             this.camera.startPreview();
@@ -127,6 +155,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
 
         try{
+
 
 
             RectF rectDisplay = new RectF();
@@ -230,6 +259,111 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             try{
                 camera.setDisplayOrientation(result);
             }catch (Exception ignored){}
+
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas)
+    {
+
+            //  Find Screen size first
+            DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+            int screenWidth = metrics.widthPixels+100;
+            int screenHeight = metrics.heightPixels;
+
+            //  Set paint options
+            paint.setAntiAlias(true);
+            paint.setStrokeWidth(3);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(Color.argb(255, 255, 255, 255));
+
+            canvas.drawLine((screenWidth/3)*2,0,(screenWidth/3)*2,screenHeight,paint);
+            canvas.drawLine((screenWidth/3),0,(screenWidth/3),screenHeight,paint);
+            canvas.drawLine(0,(screenHeight/3)*2,screenWidth,(screenHeight/3)*2,paint);
+            canvas.drawLine(0,(screenHeight/3),screenWidth,(screenHeight/3),paint);
+
+    }
+
+
+    public void focusOnTouch(MotionEvent event) {
+        try {
+            if (camera != null) {
+                camera.cancelAutoFocus();
+
+                Rect focusRect = calculateTapArea(event.getX(), event.getY(), 1f);
+
+                Camera.Parameters parameters = camera.getParameters();
+                if (parameters.getFocusMode() != Camera.Parameters.FOCUS_MODE_MACRO) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
+                }
+                if (parameters.getMaxNumFocusAreas() > 0) {
+                    List<Camera.Area> mylist = new ArrayList<>();
+                    mylist.add(new Camera.Area(focusRect, 1000));
+                    parameters.setFocusAreas(mylist);
+                }
+
+                if (parameters.getMaxNumMeteringAreas() > 0){ // check that metering areas are supported
+                    List<Camera.Area> meteringAreas = new ArrayList<>();
+                    meteringAreas.add(new Camera.Area(focusRect,1000));
+                    parameters.setMeteringAreas(meteringAreas);
+                }
+
+
+
+                try {
+                    camera.cancelAutoFocus();
+                    camera.startPreview();
+                    camera.autoFocus(new Camera.AutoFocusCallback() {
+                        @Override
+                        public void onAutoFocus(boolean success, Camera camera) {
+                            if (camera.getParameters().getFocusMode().equals(Camera.Parameters.FOCUS_MODE_MACRO)) {
+                                Camera.Parameters parameters = camera.getParameters();
+                                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                                if (parameters.getMaxNumFocusAreas() > 0) {
+                                    parameters.setFocusAreas(null);
+                                }
+                                camera.setParameters(parameters);
+                                camera.startPreview();
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.e("TAG","e",e);
+                }
+            }
+        }catch (Exception e){
+            Log.e("TAG","e",e);
+        }
+
+    }
+
+
+    private Rect calculateTapArea(float x, float y, float coefficient) {
+        Matrix matrix = new Matrix();
+        float dp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,90,getResources().getDisplayMetrics());
+        int areaSize = Float.valueOf(dp * coefficient).intValue();
+        int left = clamp((int) x - areaSize / 2, 0, getLayoutParams().width - areaSize);
+        int top = clamp((int) y - areaSize / 2, 0, getLayoutParams().height - areaSize);
+
+        RectF rectF = new RectF(left, top, left + areaSize, top + areaSize);
+        matrix.mapRect(rectF);
+
+        return new Rect(Math.round(rectF.left), Math.round(rectF.top), Math.round(rectF.right), Math.round(rectF.bottom));
+    }
+
+    private int clamp(int x, int min, int max) {
+        if (x > max) {
+            return max;
+        }
+        if (x < min) {
+            return min;
+        }
+        return x;
+    }
+
+
+    @Override
+    public void onAutoFocus(boolean success, Camera camera) {
 
     }
 }

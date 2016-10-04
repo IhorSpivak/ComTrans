@@ -23,4 +23,11 @@ public class ConnectionProgressDialog extends ProgressDialog {
         setMessage(message);
         setCancelable(false);
     }
+
+    public ConnectionProgressDialog(Context context,int messageResId) {
+        super(context);
+        setIndeterminate(true);
+        setMessage(context.getString(messageResId));
+        setCancelable(false);
+    }
 }

@@ -63,6 +63,49 @@ public class InfoBlocksStorage {
         return id;
     }
 
+    public void removeInfoBlock(String id){
+        if (infoBlockIds.contains(id)) {
+            infoBlockIds.remove(id);
+            Utility.saveStringSet(INFO_BLOCK_IDS, infoBlockIds);
+        }
+        Gson gson = new Gson();
+        JsonArray array = gson.fromJson(Utility.getSavedData(id), JsonArray.class);
+        ArrayList<ArrayList<MainItem>> arrayOfItems = new ArrayList<>();
+        for (int i = 0; i < array.size(); i++) {
+            JsonArray screenArray = array.get(i).getAsJsonArray();
+            ArrayList<MainItem> mainItems = new ArrayList<>();
+            for (int j = 0; j < screenArray.size(); j++) {
+                JsonObject object = screenArray.get(j).getAsJsonObject();
+                if (object.has(MainItem.JSON_PHOTO_VALUES)) {
+                    JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_PHOTO_VALUES);
+                    ArrayList<PhotoItem> photoItems = new ArrayList<>();
+                    for (int k = 0; k < valuesArray.size(); k++) {
+                        JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
+
+
+                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()){
+                            try{
+                                File file = new File(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+                                file.delete();
+                            }catch (Exception ignored){}
+                        }
+
+
+
+
+                    }
+                }
+
+            }
+
+
+        }
+
+        Utility.saveData(id, null);
+
+
+    }
+
     public void setInfoBlockStatus(String id, int status) {
         Utility.saveInt("status" + id, status);
     }
@@ -109,6 +152,11 @@ public class InfoBlocksStorage {
                 if (object.has(MyInfoBlockItem.JSON_PROGRESS) && !object.get(MyInfoBlockItem.JSON_PROGRESS).isJsonNull())
                     item.setProgress(object.get(MyInfoBlockItem.JSON_PROGRESS).getAsString());
 
+                if (object.has(MyInfoBlockItem.JSON_SIZE) && !object.get(MyInfoBlockItem.JSON_SIZE).isJsonNull())
+                    item.setSize(object.get(MyInfoBlockItem.JSON_SIZE).getAsLong());
+
+                item.setStatus(getInfoBlockStatus(item.getId()));
+
                 items.add(item);
             }
 
@@ -119,48 +167,64 @@ public class InfoBlocksStorage {
             @Override
             public int compare(MyInfoBlockItem i1, MyInfoBlockItem i2) {
 
-                int returnValue = Integer.MAX_VALUE;
+
+                int returnValue = 0;
+
 
                 SimpleDateFormat sdf = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
-                Date date1 = null;
-                Date date2 = null;
+                Date date1;
+                Date date2;
                 try {
                     date1 = sdf.parse(i1.getDate());
                     date2 = sdf.parse(i2.getDate());
 
-
-                    if (date1 != null) {
-                        if (date1.after(date2)) {
-                            returnValue = Integer.MIN_VALUE;
+                    if (date1 != null&&date2!=null) {
+                        if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoBlockItem.STATUS_DRAFT) {
+                            if(date1.after(date2)){
+                                returnValue =  -1;
+                            }else if(date2.after(date1)){
+                                returnValue =  1;
+                            }else {
+                                returnValue =  0;
+                            }
+                        } else if (i1.getStatus() == MyInfoBlockItem.STATUS_DRAFT) {
+                            returnValue =  -1;
+                        } else if (i2.getStatus() == MyInfoBlockItem.STATUS_DRAFT) {
+                            returnValue =  1;
+                        } else if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoBlockItem.STATUS_SENDING) {
+                            if(date1.after(date2)){
+                                returnValue =  -1;
+                            }else if(date2.after(date1)){
+                                returnValue =  1;
+                            }else {
+                                returnValue =  0;
+                            }
+                        } else if (i1.getStatus() == MyInfoBlockItem.STATUS_SENDING) {
+                            returnValue =  -1;
+                        } else if (i2.getStatus() == MyInfoBlockItem.STATUS_SENDING) {
+                            returnValue =  1;
+                        } else if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoBlockItem.STATUS_SENT) {
+                            if(date1.after(date2)){
+                                returnValue =  -1;
+                            }else if(date2.after(date1)){
+                                returnValue =  1;
+                            }else {
+                                returnValue =  0;
+                            }
+                        } else if (i1.getStatus() == MyInfoBlockItem.STATUS_SENT) {
+                            returnValue =  -1;
+                        } else if (i2.getStatus() == MyInfoBlockItem.STATUS_SENT) {
+                            returnValue =  1;
                         } else {
-                            returnValue = Integer.MAX_VALUE;
+                            returnValue =  0;
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                return returnValue;
 
-                if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoBlockItem.STATUS_DRAFT) {
-                    return returnValue;
-                } else if (i1.getStatus() == MyInfoBlockItem.STATUS_DRAFT) {
-                    return Integer.MIN_VALUE;
-                } else if (i2.getStatus() == MyInfoBlockItem.STATUS_DRAFT) {
-                    return Integer.MAX_VALUE;
-                } else if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoBlockItem.STATUS_SENDING) {
-                    return returnValue;
-                } else if (i1.getStatus() == MyInfoBlockItem.STATUS_SENDING) {
-                    return Integer.MIN_VALUE;
-                } else if (i2.getStatus() == MyInfoBlockItem.STATUS_SENDING) {
-                    return Integer.MAX_VALUE;
-                } else if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoBlockItem.STATUS_SENT) {
-                    return returnValue;
-                } else if (i1.getStatus() == MyInfoBlockItem.STATUS_SENT) {
-                    return Integer.MIN_VALUE;
-                } else if (i2.getStatus() == MyInfoBlockItem.STATUS_SENT) {
-                    return Integer.MAX_VALUE;
-                } else {
-                    return Integer.MAX_VALUE;
-                }
+
 
             }
         });
@@ -197,6 +261,7 @@ public class InfoBlocksStorage {
         }
         Calendar c = Calendar.getInstance();
         boolean isFindPhoto = false;
+        long size = 0;
         for (int i = 0; i < block.size(); i++) {
             for (int j = 0; j < block.get(i).getAsJsonArray().size(); j++) {
                 JsonObject object = block.get(i).getAsJsonArray().get(j).getAsJsonObject();
@@ -226,12 +291,19 @@ public class InfoBlocksStorage {
                             JsonArray photoArray = object.get(MainItem.JSON_PHOTO_VALUES).getAsJsonArray();
                             for (int k = 0; k < photoArray.size(); k++) {
                                 JsonObject photoObject = photoArray.get(k).getAsJsonObject();
+
+                                if (photoObject.has(PhotoItem.JSON_SIZE) && !photoObject.get(PhotoItem.JSON_SIZE).isJsonNull()) {
+                                    size+=photoObject.get(PhotoItem.JSON_SIZE).getAsLong();
+
+                                }
+
                                 if (photoObject.has(PhotoItem.JSON_IMAGE_PATH) && !photoObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()) {
                                     previewObject.addProperty(MyInfoBlockItem.JSON_PHOTO_PATH, photoObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
                                     isFindPhoto = true;
-                                    break;
+
                                 }
                             }
+                            previewObject.addProperty(MyInfoBlockItem.JSON_SIZE,size);
                         }
 
                     }
@@ -332,6 +404,14 @@ public class InfoBlocksStorage {
 
                         if (photoItem.getId() != 0)
                             photoObject.addProperty(PhotoItem.JSON_ID, photoItem.getId());
+
+                        if(photoItem.getImagePath()!=null&&!photoItem.getImagePath().equals("")) {
+                            File file = new File(photoItem.getImagePath());
+                            long file_size = Long.parseLong(String.valueOf(file.length() / 1024 / 1024));
+                            photoObject.addProperty(PhotoItem.JSON_SIZE,file_size);
+                        }
+
+
 
                         photoObject.addProperty(PhotoItem.JSON_IMAGE_PATH, photoItem.getImagePath());
                         photoObject.addProperty(PhotoItem.JSON_CODE, photoItem.getCode());
@@ -487,11 +567,17 @@ public class InfoBlocksStorage {
                         if (valueObject.has(PhotoItem.JSON_IS_DEFECT) && !valueObject.get(PhotoItem.JSON_IS_DEFECT).isJsonNull())
                             photoItem.setDefect(valueObject.get(PhotoItem.JSON_IS_DEFECT).getAsBoolean());
 
+                        if (valueObject.has(PhotoItem.JSON_SIZE) && !valueObject.get(PhotoItem.JSON_SIZE).isJsonNull())
+                            photoItem.setSize(valueObject.get(PhotoItem.JSON_SIZE).getAsLong());
+
                         if (valueObject.has(PhotoItem.JSON_TITLE) && !valueObject.get(PhotoItem.JSON_TITLE).isJsonNull())
                             photoItem.setTitle(valueObject.get(PhotoItem.JSON_TITLE).getAsString());
 
                         if (valueObject.has(PhotoItem.JSON_DURATION) && !valueObject.get(PhotoItem.JSON_DURATION).isJsonNull())
                             photoItem.setDuration(valueObject.get(PhotoItem.JSON_DURATION).getAsInt());
+
+                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull())
+                            photoItem.setImagePath(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
 
                         if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull())
                             photoItem.setImagePath(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
@@ -505,6 +591,9 @@ public class InfoBlocksStorage {
 
                         if (valueObject.has(PhotoItem.JSON_IS_SEND) && !valueObject.get(PhotoItem.JSON_IS_SEND).isJsonNull())
                             photoItem.setSend(valueObject.get(PhotoItem.JSON_IS_SEND).getAsBoolean());
+
+                        if (valueObject.has(PhotoItem.JSON_IS_VIDEO) && !valueObject.get(PhotoItem.JSON_IS_VIDEO).isJsonNull())
+                            photoItem.setVideo(valueObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean());
 
                         photoItems.add(photoItem);
 

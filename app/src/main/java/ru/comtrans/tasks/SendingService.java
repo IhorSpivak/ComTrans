@@ -125,10 +125,12 @@ public class SendingService extends IntentService {
                         }
                     }
 
+
                     if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && (object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_NUMBER
                             || object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_STRING
                             || object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_EMAIL
-                            || object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PHONE)) {
+                            || object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PHONE
+                            || object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_CALENDAR)) {
 
                         if (object.has(MainItem.JSON_VALUE) && !object.get(MainItem.JSON_VALUE).isJsonNull()) {
                             String value = object.get(MainItem.JSON_VALUE).getAsString();
@@ -229,11 +231,15 @@ public class SendingService extends IntentService {
 
 
                                             File file = new File(photo.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
-                                            RequestBody requestFile =
-                                                    RequestBody.create(MediaType.parse("image/jpg"), file);
+                                            RequestBody requestFile;
+                                        if (photo.has(PhotoItem.JSON_IS_VIDEO) && !photo.get(PhotoItem.JSON_IS_VIDEO).isJsonNull()&&photo.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean()) {
+                                            requestFile = RequestBody.create(MediaType.parse("video/mp4"), file);
+                                        }else {
+                                            requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
+                                        }
 
-                                            MultipartBody.Part body =
-                                                    MultipartBody.Part.createFormData("multipart/form-data", file.getName(), requestFile);
+
+                                            MultipartBody.Part body = MultipartBody.Part.createFormData("multipart/form-data", file.getName(), requestFile);
 
                                             Call<JsonObject> call = AppController.apiInterface.postFile(Utility.getToken(), body);
                                             try {

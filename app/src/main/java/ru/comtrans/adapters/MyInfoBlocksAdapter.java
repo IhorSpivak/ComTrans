@@ -90,7 +90,9 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
 
 
-
+        if(item.getSize()!=0){
+            myHolder.size.setText(String.valueOf(item.getSize())+"M");
+        }
         myHolder.mark.setText(item.getMark());
         myHolder.model.setText(item.getModel());
         myHolder.year.setText(item.getYear());
@@ -140,7 +142,7 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private static class MyInfoBlockViewHolder extends RecyclerView.ViewHolder{
-        public TextView date,status,mark,model,year;
+        public TextView date,status,mark,model,year,size;
         public ImageView photo;
 
         public MyInfoBlockViewHolder(View itemView) {
@@ -151,6 +153,7 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             model = (TextView)itemView.findViewById(R.id.info_block_model);
             year = (TextView)itemView.findViewById(R.id.info_block_year);
             photo = (ImageView)itemView.findViewById(R.id.info_block_image);
+            size = (TextView)itemView.findViewById(R.id.info_block_size);
 
         }
 

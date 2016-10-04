@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -33,6 +36,7 @@ public class PhotoViewerFragment extends Fragment implements View.OnClickListene
     int selectedPosition;
     File imgFile;
 
+
     public static PhotoViewerFragment newInstance(PhotoItem item, int selectedPosition) {
         Bundle args = new Bundle();
         args.putParcelable(Const.EXTRA_PHOTO_ITEM,item);
@@ -45,6 +49,8 @@ public class PhotoViewerFragment extends Fragment implements View.OnClickListene
     public PhotoItem getItem() {
         return item;
     }
+
+
 
     @Nullable
     @Override

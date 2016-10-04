@@ -12,6 +12,7 @@ public class Const {
     public static final String EXTRA_USER_OBJECT = "extra_user_object";
 
     public static final String EXTRA_SENT_INFOBLOCK = "extra_sent_infoblock";
+    public static final String TAKE_PHOTO_BROADCAST = "takePhotoBroadcast";
 
     public static final String EXTRA_PHOTO_ITEM = "extra_photo_item";
     public static final String EXTRA_SELECTED_POSITION = "extra_selected_position";
@@ -86,6 +87,8 @@ public class Const {
     public static final String EXTRA_STATUS = "extra_status";
 
 
+
+    public static final String IS_FLASH_ENABLED = "is_flash_enabled";
 
 
 

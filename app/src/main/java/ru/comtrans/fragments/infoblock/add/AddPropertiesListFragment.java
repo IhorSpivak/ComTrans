@@ -180,11 +180,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                                     new SaveInfoBlockTask(infoBlockId,getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
                                         @Override
                                         public void onPostExecute() {
-                                            storage.setInfoBlockStatus(infoBlockId, MyInfoBlockItem.STATUS_SENDING);
-                                            getActivity().finish();
-                                            Intent intentMyIntentService = new Intent(getContext(), SendingService.class);
-                                            intentMyIntentService.putExtra(Const.EXTRA_INFO_BLOCK_ID,infoBlockId);
-                                            getActivity().startService(intentMyIntentService);
+                                           getActivity().finish();
                                         }
                                     });
                                 }else {
@@ -254,7 +250,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                 adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
                 adapter.notifyItemChanged(position);
 //                adapter.notifyDataSetChanged();
-                initPage();
+                //initPage();
                 break;
             case Const.CAMERA_VIDEO_RESULT:
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);

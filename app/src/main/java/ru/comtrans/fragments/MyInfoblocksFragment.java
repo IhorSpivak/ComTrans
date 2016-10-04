@@ -28,6 +28,9 @@ import ru.comtrans.adapters.MyInfoBlocksAdapter;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.singlets.InfoBlocksStorage;
+import ru.comtrans.tasks.DeleteInfoBlockTask;
+import ru.comtrans.tasks.SaveInfoBlockTask;
+import ru.comtrans.tasks.SendingService;
 
 /**
  * Created by Artco on 06.07.2016.
@@ -91,10 +94,16 @@ public class MyInfoBlocksFragment extends Fragment {
                         break;
                     case MyInfoBlockItem.STATUS_SENT:
 //                        storage.setInfoBlockStatus(item.getId(), MyInfoBlockItem.STATUS_DRAFT);
-                        i = new Intent(getContext(),ShowInfoBlockActivity.class);
-                        i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
-                        i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE,item.getLastPosition());
-                        startActivity(i);
+//                        i = new Intent(getContext(),ShowInfoBlockActivity.class);
+//                        i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
+//                        i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE,item.getLastPosition());
+//                        startActivity(i);
+                        new DeleteInfoBlockTask(item.getId(), getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
+                            @Override
+                            public void onPostExecute() {
+
+                            }
+                        });
                         break;
                 }
 
@@ -104,6 +113,17 @@ public class MyInfoBlocksFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(manager);
+
+    }
+
+    private void sendInfoBlock(String infoBlockId){
+        storage.setInfoBlockStatus(infoBlockId, MyInfoBlockItem.STATUS_SENDING);
+        Intent intentMyIntentService = new Intent(getContext(), SendingService.class);
+        intentMyIntentService.putExtra(Const.EXTRA_INFO_BLOCK_ID,infoBlockId);
+        getActivity().startService(intentMyIntentService);
+    }
+
+    private void deleteInfoBlock(String infoBlockId){
 
     }
 
@@ -142,6 +162,7 @@ public class MyInfoBlocksFragment extends Fragment {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(refreshReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(updateProgressReceiver);
         super.onDestroy();
+
     }
 
     private class InfoBlocksRefreshReceiver extends BroadcastReceiver {

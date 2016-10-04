@@ -529,7 +529,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 if (page == 0) {
                     bottomBarViewHolder.previousLayout.setVisibility(View.GONE);
                 } else if (page + 1 == totalPages) {
-                    bottomBarViewHolder.btnNext.setText(R.string.send_infoblock);
+                    bottomBarViewHolder.btnNext.setText(R.string.save_infoblock);
                 }
 
                 bottomBarViewHolder.btnNext.setOnClickListener(new View.OnClickListener() {

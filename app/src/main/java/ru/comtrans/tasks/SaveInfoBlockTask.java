@@ -8,6 +8,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.gson.JsonObject;
 
+import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
@@ -58,7 +59,7 @@ public class SaveInfoBlockTask {
         protected void onPreExecute() {
             if(withDialog) {
                 try {
-                    dialog = new ConnectionProgressDialog(context, "Сохранение инфоблока");
+                    dialog = new ConnectionProgressDialog(context, R.string.infoblock_saving);
                     dialog.show();
                 } catch (Exception ignored) {
                 }

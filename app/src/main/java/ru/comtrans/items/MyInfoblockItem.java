@@ -11,6 +11,7 @@ public class MyInfoBlockItem {
 
     public static final String JSON_ID = "id";
     public static final String JSON_DATE = "date";
+    public static final String JSON_SIZE = "size";
     public static final String JSON_STATUS = "status";
     public static final String JSON_MARK = "mark";
     public static final String JSON_MODEL = "model";
@@ -20,10 +21,18 @@ public class MyInfoBlockItem {
     public static final String JSON_PROGRESS = "progress";
 
     private int status;
-
+    private long size;
     private int lastPosition;
 
     private String id,date,mark,model,year,photoPath,progress;
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
 
     public String getProgress() {
         return progress;
