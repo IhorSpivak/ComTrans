@@ -89,6 +89,7 @@ public class Const {
 
 
     public static final String IS_FLASH_ENABLED = "is_flash_enabled";
+    public static final String IS_VIDEO = "is_video";
 
 
 

@@ -7,7 +7,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import ru.comtrans.R;
-import ru.comtrans.fragments.infoblock.add.AddInfoBlockFragment;
 import ru.comtrans.fragments.infoblock.show.ShowInfoBlockFragment;
 import ru.comtrans.helpers.Const;
 

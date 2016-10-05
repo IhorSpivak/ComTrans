@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import ru.comtrans.R;
-import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 
 

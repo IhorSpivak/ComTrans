@@ -8,6 +8,8 @@ import android.os.Parcelable;
  */
 public class PhotoItem implements Parcelable {
 
+
+
     public static final String JSON_IS_DEFECT = "is_defect";
     public static final String JSON_TITLE = "title";
     public static final String JSON_SIZE = "size";
@@ -122,7 +124,7 @@ public class PhotoItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeFloat(this.size);
+        dest.writeLong(this.size);
         dest.writeByte(this.isDefect ? (byte) 1 : (byte) 0);
         dest.writeString(this.title);
         dest.writeString(this.imagePath);
@@ -145,7 +147,7 @@ public class PhotoItem implements Parcelable {
         this.isSend = in.readByte() != 0;
     }
 
-    public static final Creator<PhotoItem> CREATOR = new Creator<PhotoItem>() {
+    public static final Parcelable.Creator<PhotoItem> CREATOR = new Parcelable.Creator<PhotoItem>() {
         @Override
         public PhotoItem createFromParcel(Parcel source) {
             return new PhotoItem(source);

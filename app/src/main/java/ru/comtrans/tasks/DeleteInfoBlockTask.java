@@ -1,14 +1,10 @@
 package ru.comtrans.tasks;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.SystemClock;
-import android.support.v4.content.LocalBroadcastManager;
 
 import ru.comtrans.R;
-import ru.comtrans.helpers.Const;
-import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.views.ConnectionProgressDialog;
 
@@ -21,7 +17,7 @@ public class DeleteInfoBlockTask {
 
     private InfoBlocksStorage storage;
     private String id;
-    private SaveInfoBlockTask.OnPostExecuteListener listener;
+    private OnPostExecuteListener listener;
 
 
     public interface OnPostExecuteListener {
@@ -29,12 +25,12 @@ public class DeleteInfoBlockTask {
     }
 
 
-    public DeleteInfoBlockTask(String id,Context context, SaveInfoBlockTask.OnPostExecuteListener listener){
+    public DeleteInfoBlockTask(String id,Context context, OnPostExecuteListener listener){
         init(id,context,listener);
     }
 
 
-    private void init(String id, Context context, SaveInfoBlockTask.OnPostExecuteListener listener){
+    private void init(String id, Context context, OnPostExecuteListener listener){
         this.context = context;
         this.listener = listener;
         this.id = id;
@@ -73,7 +69,6 @@ public class DeleteInfoBlockTask {
                 } catch (Exception ignored) {
                 }
 
-            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Const.REFRESH_INFO_BLOCKS_FILTER));
             listener.onPostExecute();
 
         }

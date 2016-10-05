@@ -3,7 +3,6 @@ package ru.comtrans.fragments.infoblock.add;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +17,6 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import ru.comtrans.R;
@@ -32,11 +30,9 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
-import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.tasks.SaveInfoBlockTask;
-import ru.comtrans.tasks.SendingService;
 import ru.comtrans.views.DividerItemDecoration;
 
 /**

@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -13,11 +12,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -34,7 +30,6 @@ import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.items.ProtectorItem;
 import ru.comtrans.singlets.AppController;
-import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
 
 /**

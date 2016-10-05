@@ -14,7 +14,6 @@ import android.widget.ProgressBar;
 
 import ru.comtrans.R;
 import ru.comtrans.activities.ShowInfoBlockActivity;
-import ru.comtrans.adapters.AddInfoBlockPagerAdapter;
 import ru.comtrans.adapters.ShowInfoBlockPagerAdapter;
 import ru.comtrans.fragments.BaseFragment;
 import ru.comtrans.helpers.Const;

@@ -6,8 +6,6 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.google.gson.JsonObject;
-
 import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.singlets.InfoBlockHelper;

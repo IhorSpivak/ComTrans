@@ -19,15 +19,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
-import static android.hardware.Camera.Parameters.FLASH_MODE_AUTO;
-import static android.hardware.Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
-import static android.hardware.Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback,Camera.AutoFocusCallback {
     private SurfaceHolder mHolder;

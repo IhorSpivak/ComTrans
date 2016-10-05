@@ -109,17 +109,11 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         deletePhoto.setOnClickListener(this);
 
 
-        item =  getIntent().getParcelableExtra(Const.EXTRA_PHOTO_ITEM);
+
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        TextView toolbarTitle = (TextView)findViewById(R.id.toolbarTitle);
-        toolbarTitle.setText(item.getTitle());
 
-        imgFile = new File(item.getImagePath());
-        if(imgFile.exists()){
-            imgPhoto.setImageBitmap(BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
-        }
 
         photoViewAttacher = new PhotoViewAttacher(imgPhoto);
         photoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
@@ -132,13 +126,21 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
+
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
+        item =  getIntent().getParcelableExtra(Const.EXTRA_PHOTO_ITEM);
+        TextView toolbarTitle = (TextView)findViewById(R.id.toolbarTitle);
+        toolbarTitle.setText(item.getTitle());
+
+        imgFile = new File(item.getImagePath());
+        if(imgFile.exists()){
+            imgPhoto.setImageBitmap(BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
+        }
+
         delayedHide(100);
     }
 

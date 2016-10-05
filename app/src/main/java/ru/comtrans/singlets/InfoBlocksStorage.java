@@ -1,7 +1,9 @@
 package ru.comtrans.singlets;
 
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+import android.content.Context;
+import android.net.Uri;
+import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -9,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.File;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,10 +22,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.Call;
+import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
@@ -70,15 +70,12 @@ public class InfoBlocksStorage {
         }
         Gson gson = new Gson();
         JsonArray array = gson.fromJson(Utility.getSavedData(id), JsonArray.class);
-        ArrayList<ArrayList<MainItem>> arrayOfItems = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
             JsonArray screenArray = array.get(i).getAsJsonArray();
-            ArrayList<MainItem> mainItems = new ArrayList<>();
             for (int j = 0; j < screenArray.size(); j++) {
                 JsonObject object = screenArray.get(j).getAsJsonObject();
                 if (object.has(MainItem.JSON_PHOTO_VALUES)) {
                     JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_PHOTO_VALUES);
-                    ArrayList<PhotoItem> photoItems = new ArrayList<>();
                     for (int k = 0; k < valuesArray.size(); k++) {
                         JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
 
@@ -89,9 +86,6 @@ public class InfoBlocksStorage {
                                 file.delete();
                             }catch (Exception ignored){}
                         }
-
-
-
 
                     }
                 }
@@ -437,6 +431,47 @@ public class InfoBlocksStorage {
     public JsonArray getInfoBlockArray(String id) {
         Gson gson = new Gson();
         return gson.fromJson(Utility.getSavedData(id), JsonArray.class);
+    }
+
+    public ArrayList<Uri> getPhotoAndVideo(String id, Context context){
+        ArrayList<Uri> uris = new ArrayList<>();
+        Gson gson = new Gson();
+        JsonArray array = gson.fromJson(Utility.getSavedData(id), JsonArray.class);
+        for (int i = 0; i < array.size(); i++) {
+            JsonArray screenArray = array.get(i).getAsJsonArray();
+            for (int j = 0; j < screenArray.size(); j++) {
+                JsonObject object = screenArray.get(j).getAsJsonObject();
+                if (object.has(MainItem.JSON_PHOTO_VALUES)) {
+                    JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_PHOTO_VALUES);
+
+                    for (int k = 0; k < valuesArray.size(); k++) {
+                        JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
+
+                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()&&
+                                valueObject.has(PhotoItem.JSON_IS_VIDEO) && !valueObject.get(PhotoItem.JSON_IS_VIDEO).isJsonNull()&&
+                                !valueObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean()&&uris.size()==0){
+                            Log.d("TAG",valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+                            File file = new File(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+                            uris.add(FileProvider.getUriForFile(context,context.getString(R.string.provider_authority),file));
+                        }
+
+
+                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()&&
+                                valueObject.has(PhotoItem.JSON_IS_VIDEO) && !valueObject.get(PhotoItem.JSON_IS_VIDEO).isJsonNull()&&
+                                valueObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean()&&uris.size()==1){
+                            Log.d("TAG",valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+                            File file = new File(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+                            uris.add(FileProvider.getUriForFile(context,context.getString(R.string.provider_authority),file));
+
+                        }
+
+                    }
+
+                }
+            }
+        }
+        return uris;
+
     }
 
     public ArrayList<ArrayList<MainItem>> getInfoBlock(String id) {

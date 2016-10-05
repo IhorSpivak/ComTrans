@@ -8,8 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -85,12 +83,12 @@ public class PhotoViewerFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         Intent i;
         switch (v.getId()){
-
             case R.id.re_photo:
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Const.RE_PHOTO));
                 break;
             case R.id.photo_full_screen:
                 i = new Intent(getActivity(), GalleryActivity.class);
+                Log.d("TAG","photo to fullscreen "+item.getImagePath());
                 i.putExtra(Const.EXTRA_PHOTO_ITEM,item);
                 startActivityForResult(i,Const.GALLERY_RESULT);
                 break;

@@ -20,7 +20,7 @@ import java.io.InputStream;
 public class ImageHelper {
 
 
-    private static final int REQUIRED_SIZE = 600;
+    private static final int REQUIRED_SIZE = 1200;
 
 
 
@@ -34,6 +34,17 @@ public class ImageHelper {
             stream.flush();
             stream.close();
             return bitmap;
+    }
+
+    public static Bitmap scaleDown(Bitmap realImage) {
+        float ratio = Math.min(
+                (float) REQUIRED_SIZE / realImage.getWidth(),
+                (float) REQUIRED_SIZE / realImage.getHeight());
+        int width = Math.round((float) ratio * realImage.getWidth());
+        int height = Math.round((float) ratio * realImage.getHeight());
+
+        return Bitmap.createScaledBitmap(realImage, width,
+                height, true);
     }
 
 

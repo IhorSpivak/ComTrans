@@ -1,0 +1,4 @@
+<paths>
+    <external-path name="my_images" path="Android/data/ru.comtrans/files/Pictures" />
+    <external-path name="my_videos" path="Android/data/ru.comtrans/files/Videos" />
+</paths>

@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -22,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -41,7 +39,6 @@ import ru.comtrans.items.MainItem;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.items.ProtectorItem;
 import ru.comtrans.singlets.InfoBlockHelper;
-import ru.comtrans.tasks.SaveInfoBlockTask;
 import ru.comtrans.views.DividerItemDecoration;
 
 

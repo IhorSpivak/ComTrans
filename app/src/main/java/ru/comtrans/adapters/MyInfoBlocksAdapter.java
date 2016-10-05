@@ -1,12 +1,14 @@
 package ru.comtrans.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +24,6 @@ import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.singlets.InfoBlocksStorage;
-import ru.comtrans.tasks.SendingService;
 
 /**
  * Created by Artco on 25.07.2016.
@@ -31,6 +32,8 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public interface OnItemClickListener {
         void onItemClick(MyInfoBlockItem item, int position);
+
+        void onEllipsisClick(MyInfoBlockItem item, int position);
     }
 
     private ArrayList<MyInfoBlockItem> items;
@@ -48,6 +51,16 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void setItems(ArrayList<MyInfoBlockItem> items) {
         this.items = items;
         notifyDataSetChanged();
+    }
+
+    public void removeItem(String id){
+        for (MyInfoBlockItem item :
+                items) {
+            if (item.getId().equals(id)){
+                items.remove(item);
+                notifyDataSetChanged();
+            }
+        }
     }
 
     @Override
@@ -106,6 +119,7 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
 
+
         ((MyInfoBlockViewHolder)holder).bind(item,listener);
 
     }
@@ -144,6 +158,7 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static class MyInfoBlockViewHolder extends RecyclerView.ViewHolder{
         public TextView date,status,mark,model,year,size;
         public ImageView photo;
+        public FrameLayout ellipsis;
 
         public MyInfoBlockViewHolder(View itemView) {
             super(itemView);
@@ -154,6 +169,7 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             year = (TextView)itemView.findViewById(R.id.info_block_year);
             photo = (ImageView)itemView.findViewById(R.id.info_block_image);
             size = (TextView)itemView.findViewById(R.id.info_block_size);
+            ellipsis = (FrameLayout) itemView.findViewById(R.id.fl_ellipsis);
 
         }
 
@@ -162,6 +178,12 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     listener.onItemClick(item,getAdapterPosition());
+                }
+            });
+            ellipsis.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onEllipsisClick(item,getAdapterPosition());
                 }
             });
         }

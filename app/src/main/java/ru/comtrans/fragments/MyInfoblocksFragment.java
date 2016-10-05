@@ -2,30 +2,38 @@ package ru.comtrans.fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import ru.comtrans.R;
 import ru.comtrans.activities.AddInfoBlockActivity;
-import ru.comtrans.activities.ShowInfoBlockActivity;
+import ru.comtrans.adapters.DialogArrayAdapter;
 import ru.comtrans.adapters.MyInfoBlocksAdapter;
 import ru.comtrans.helpers.Const;
+import ru.comtrans.items.DialogItem;
 import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.tasks.DeleteInfoBlockTask;
@@ -98,16 +106,61 @@ public class MyInfoBlocksFragment extends Fragment {
 //                        i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
 //                        i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE,item.getLastPosition());
 //                        startActivity(i);
-                        new DeleteInfoBlockTask(item.getId(), getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
-                            @Override
-                            public void onPostExecute() {
 
-                            }
-                        });
                         break;
                 }
 
             }
+
+            @Override
+            public void onEllipsisClick(final MyInfoBlockItem item, int position) {
+                ArrayList<DialogItem> items = new ArrayList<>();
+                DialogItem dialogItem1 = new DialogItem(R.string.dialog_delete,getContext());
+                DialogItem dialogItem3 = new DialogItem(R.string.dialog_neutral,getContext());
+                DialogItem dialogItem4 = new DialogItem(R.string.dialog_send_email,getContext());
+
+
+                if(storage.getInfoBlockStatus(item.getId())!=MyInfoBlockItem.STATUS_SENT) {
+                    DialogItem dialogItem2 = new DialogItem(R.string.dialog_send,getContext());
+
+                    items.add(dialogItem2); items.add(dialogItem1);  items.add(dialogItem4); items.add(dialogItem3);
+                }else {
+                   items.add(dialogItem1);  items.add(dialogItem4); items.add(dialogItem3);
+                }
+
+
+                final DialogArrayAdapter adapter = new DialogArrayAdapter(getContext(),0,items);
+
+
+
+
+                    new AlertDialog.Builder(getContext()).setTitle(R.string.dialog_ellipsis)
+                            .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (adapter.getItem(which).getResId()) {
+                                        case R.string.dialog_send:
+                                            sendInfoBlock(item.getId());
+                                            break;
+                                        case R.string.dialog_delete:
+                                            deleteInfoBlock(item.getId());
+                                            break;
+                                        case R.string.dialog_send_email:
+                                            Intent i = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                                            i.setType("text/plain");
+                                            i.putExtra(Intent.EXTRA_EMAIL, "extra@email.com");
+                                            i.putExtra(Intent.EXTRA_SUBJECT,"android - email with attachment");
+                                            i.putParcelableArrayListExtra(Intent.EXTRA_STREAM, storage.getPhotoAndVideo(item.getId(),getContext()));
+                                            startActivity(Intent.createChooser(i, "Select application"));
+                                            break;
+                                        case R.string.dialog_neutral:
+                                            dialog.dismiss();
+                                            break;
+                                    }
+                                }
+                            }).show();
+                }
+
         });
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setAdapter(adapter);
@@ -123,8 +176,13 @@ public class MyInfoBlocksFragment extends Fragment {
         getActivity().startService(intentMyIntentService);
     }
 
-    private void deleteInfoBlock(String infoBlockId){
-
+    private void deleteInfoBlock(final String infoBlockId){
+        new DeleteInfoBlockTask(infoBlockId, getContext(), new DeleteInfoBlockTask.OnPostExecuteListener() {
+            @Override
+            public void onPostExecute() {
+                adapter.removeItem(infoBlockId);
+            }
+        });
     }
 
     private class AsyncTaskForMyInfoBlocks extends AsyncTask<Void, Void, Void> {

@@ -1,6 +1,5 @@
 package ru.comtrans.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,14 +8,12 @@ import android.view.MenuItem;
 import java.util.UUID;
 
 import ru.comtrans.R;
-import ru.comtrans.fragments.infoblock.add.InfoBlockTutorialFragment;
 import ru.comtrans.fragments.infoblock.add.AddInfoBlockFragment;
+import ru.comtrans.fragments.infoblock.add.InfoBlockTutorialFragment;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
-import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.tasks.SaveInfoBlockTask;
-import ru.comtrans.tasks.SendingService;
 import ru.comtrans.views.NonSwipeableViewPager;
 
 public class AddInfoBlockActivity extends AppCompatActivity {

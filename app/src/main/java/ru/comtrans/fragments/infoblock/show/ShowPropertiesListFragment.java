@@ -9,14 +9,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import ru.comtrans.R;
-import ru.comtrans.activities.AddInfoBlockActivity;
-import ru.comtrans.activities.CameraActivity;
-import ru.comtrans.activities.SearchValueActivity;
 import ru.comtrans.activities.ShowInfoBlockActivity;
 import ru.comtrans.adapters.InfoBlockAdapter;
 import ru.comtrans.fragments.BaseFragment;
@@ -24,11 +20,9 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
-import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.tasks.SaveInfoBlockTask;
-import ru.comtrans.tasks.SendingService;
 import ru.comtrans.views.DividerItemDecoration;
 
 /**

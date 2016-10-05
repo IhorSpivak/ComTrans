@@ -3,7 +3,6 @@ package ru.comtrans.activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;

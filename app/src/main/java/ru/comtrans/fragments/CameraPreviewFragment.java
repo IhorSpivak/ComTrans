@@ -2,7 +2,6 @@ package ru.comtrans.fragments;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,17 +15,17 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.comtrans.R;
 import ru.comtrans.camera.CameraPreview;
+import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.Utility;
 
 
 public class CameraPreviewFragment extends BaseFragment {
     private static Camera camera;
     private CameraPreview mPreview;
     private FrameLayout mainLayout;
+    private boolean isVideo;
 
 
 
@@ -39,7 +38,9 @@ public class CameraPreviewFragment extends BaseFragment {
         return mPreview;
     }
 
-    public void enableFlashLight(boolean isVideo,boolean enable){
+    public void enableFlashLight(){
+        boolean enable = Utility.getBoolean(Const.IS_FLASH_ENABLED);
+        Log.d("TAG","is flash enabled "+enable);
         try {
             Camera.Parameters p = camera.getParameters();
             if(!enable){
@@ -57,23 +58,22 @@ public class CameraPreviewFragment extends BaseFragment {
         }catch (Exception ignored){}
     }
 
+    public static CameraPreviewFragment newInstance(boolean isVideo) {
+        Bundle args = new Bundle();
+        args.putBoolean(Const.IS_VIDEO,isVideo);
+        CameraPreviewFragment fragment = new CameraPreviewFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_camera_preview,container,false);
 
         mainLayout = (FrameLayout)v.findViewById(R.id.main_layout);
-//        mPreview = new CameraPreview(getActivity());
-//        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//        params.gravity = Gravity.CENTER;
-//        mPreview.setLayoutParams(params);
-//
-//        mainLayout.addView(mPreview);
-
         mPreview = (CameraPreview) v.findViewById(R.id.camera_preview);
-
-
-
+        isVideo = getArguments().getBoolean(Const.IS_VIDEO);
 
         return v;
     }
@@ -98,6 +98,7 @@ public class CameraPreviewFragment extends BaseFragment {
         }
         if (camera == null) {
             camera = Camera.open(0);
+            enableFlashLight();
 
             mPreview.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -109,6 +110,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 }
             });
 
+
             getView().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -118,6 +120,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
                         mPreview.setScreenSize(width,height);
                         mPreview.refreshCamera(camera);
+
                         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                             getView().getViewTreeObserver().removeGlobalOnLayoutListener(this);
                         } else {

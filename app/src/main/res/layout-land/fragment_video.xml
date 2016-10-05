@@ -7,6 +7,12 @@
     android:background="@android:color/black"
     >
 
+    <FrameLayout
+        android:id="@+id/cameraContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"/>
+
 
 
     <RelativeLayout
@@ -14,8 +20,13 @@
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:background="#33000000"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingStart="5dp"
+        android:paddingLeft="5dp"
+        android:paddingEnd="5dp"
+        android:paddingRight="5dp"
         android:id="@+id/bottomBar">
 
         <RelativeLayout
@@ -93,13 +104,7 @@
     </RelativeLayout>
 
 
-    <FrameLayout
-        android:id="@+id/cameraContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toStartOf="@id/bottomBar"
-        android:layout_toLeftOf="@id/bottomBar"
-        android:orientation="vertical"/>
+
 
     <ru.comtrans.views.VerticalChronometer
         android:layout_width="match_parent"
@@ -120,7 +125,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:minHeight="?attr/actionBarSize"
-        android:background="#80000000"
+        android:background="#33000000"
         app:contentInsetLeft="0dp"
         android:layout_toStartOf="@id/bottomBar"
         android:layout_toLeftOf="@id/bottomBar"
@@ -137,14 +142,14 @@
                 android:layout_height="match_parent"
                 android:id="@+id/defect_name"
                 android:visibility="invisible"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:textColor="@android:color/black"
                 android:background="@android:color/white"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:ellipsize="marquee"
                 android:shadowColor="@android:color/black"
                 android:textAppearance="?android:attr/textAppearanceMedium"

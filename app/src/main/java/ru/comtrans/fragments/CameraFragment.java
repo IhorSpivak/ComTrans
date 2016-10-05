@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
@@ -39,6 +41,7 @@ import java.util.Locale;
 import ru.comtrans.R;
 import ru.comtrans.activities.CameraActivity;
 import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.ImageHelper;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.singlets.InfoBlockHelper;
@@ -61,6 +64,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     private TakePhotoReceiver takePhotoReceiver = null;
     ProgressBar progressBar;
     private CameraActivity activity;
+    private MenuItem menuItem;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -196,14 +200,18 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
     private void replaceWithCamera(){
         toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
-        cameraPreviewFragment = new CameraPreviewFragment();
+        cameraPreviewFragment = CameraPreviewFragment.newInstance(false);
         photoViewerFragment = null;
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commitAllowingStateLoss();
-        cameraPreviewFragment.enableFlashLight(false,Utility.getBoolean(Const.IS_FLASH_ENABLED));
+
+        if(menuItem!=null)
+        menuItem.setVisible(true);
     }
     private void replaceWithPhotoViewer(int position){
         photoViewerFragment = PhotoViewerFragment.newInstance(activity.getPhotoAdapter().getItem(position),position);
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer, photoViewerFragment,Const.PHOTO_VIEWER).commitAllowingStateLoss();
+        if(menuItem!=null)
+        menuItem.setVisible(false);
     }
 
     @Override
@@ -386,14 +394,22 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
     private void createFileFromData(byte[] data,boolean isDefect){
         try {
-            File directory = new File(Environment.getExternalStorageDirectory(),"/Comtrans/photos/");
+            File directory = new File(Environment.getExternalStorageDirectory(),"Android/data/ru.comtrans/files/Pictures");
             if(directory.mkdirs()||directory.exists()){
+                Bitmap original = BitmapFactory.decodeByteArray(data , 0, data.length);
+                Bitmap resized = ImageHelper.scaleDown(original);
+                original.recycle();
+
+
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
                 String prefix = isDefect? getString(R.string.prefix_defect) : getString(R.string.prefix_photo);
                 File photoFile = new File(directory, prefix + timeStamp + ".jpg");
                 FileOutputStream fos = new FileOutputStream(photoFile);
-                fos.write(data);
+                resized.compress(Bitmap.CompressFormat.JPEG,100,fos);
+                fos.flush();
                 fos.close();
+
+                ImageHelper.compressBitmap(photoFile.getAbsolutePath());
 
 
                 PhotoItem item = activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition());
@@ -476,11 +492,11 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_camera,menu);
-        MenuItem item = menu.findItem(R.id.action_flash);
+       menuItem = menu.findItem(R.id.action_flash);
         if(Utility.getBoolean(Const.IS_FLASH_ENABLED)){
-            item.setIcon(R.drawable.ic_action_flash_on);
+            menuItem.setIcon(R.drawable.ic_action_flash_on);
         }else {
-            item.setIcon(R.drawable.ic_action_flash_off);
+            menuItem.setIcon(R.drawable.ic_action_flash_off);
         }
     }
 
@@ -492,12 +508,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 return true;
             case R.id.action_flash:
                 if(Utility.getBoolean(Const.IS_FLASH_ENABLED)){
-                    cameraPreviewFragment.enableFlashLight(false,false);
                     Utility.saveBoolean(Const.IS_FLASH_ENABLED,false);
+                    cameraPreviewFragment.enableFlashLight();
                     item.setIcon(R.drawable.ic_action_flash_off);
                 }else {
-                    cameraPreviewFragment.enableFlashLight(false,true);
                     Utility.saveBoolean(Const.IS_FLASH_ENABLED,true);
+                    cameraPreviewFragment.enableFlashLight();
                     item.setIcon(R.drawable.ic_action_flash_on);
                 }
                 break;

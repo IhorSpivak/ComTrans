@@ -64,6 +64,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     File videoFile;
     CountUpdateReceiver countUpdateReceiver = null;
     RePhotoReceiver rePhotoReceiver = null;
+    private MenuItem menuItem;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -133,9 +134,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 PhotoItem photoItem = activity.getPhotoAdapter().getItem(position);
                 currentPosition = position;
 
-                Log.d("TAG","imagepath "+photoItem.getImagePath());
-                Log.d("TAG","camera preview "+getFragmentManager().findFragmentByTag(Const.CAMERA_PREVIEW));
-                Log.d("TAG","photo preview "+getFragmentManager().findFragmentByTag(Const.PHOTO_VIEWER));
+
 
                 toolbarTitle.setText(photoItem.getTitle());
                 if(photoItem.getImagePath()==null){
@@ -163,15 +162,18 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     }
 
     private void replaceWithCamera(){
-        cameraPreviewFragment = new CameraPreviewFragment();
+        cameraPreviewFragment = CameraPreviewFragment.newInstance(true);
         videoViewerFragment = null;
         toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
-        cameraPreviewFragment.enableFlashLight(true,Utility.getBoolean(Const.IS_FLASH_ENABLED));
+        if(menuItem!=null)
+            menuItem.setVisible(true);
     }
     private void replaceWithVideoViewer(PhotoItem item, int position){
         videoViewerFragment = VideoViewerFragment.newInstance(item,position);
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer, videoViewerFragment,Const.PHOTO_VIEWER).commit();
+        if(menuItem!=null)
+            menuItem.setVisible(false);
     }
 
 
@@ -308,7 +310,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
 
     private boolean prepareVideoRecorder() {
         try {
-            File directory = new File(Environment.getExternalStorageDirectory(), "/Comtrans/videos/");
+            File directory = new File(Environment.getExternalStorageDirectory(), "Android/data/ru.comtrans/files/Videos");
             if (directory.mkdirs() || directory.exists()) {
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
                 String prefix = getString(R.string.prefix_video);
@@ -323,7 +325,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
                 mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
                 mediaRecorder.setProfile(CamcorderProfile
-                        .get(CamcorderProfile.QUALITY_HIGH));
+                        .get(CamcorderProfile.QUALITY_480P));
                 mediaRecorder.setOutputFile(file.getAbsolutePath());
                 mediaRecorder.setPreviewDisplay(cameraPreviewFragment.getPreview().getHolder().getSurface());
 
@@ -411,11 +413,11 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_camera,menu);
-        MenuItem item = menu.findItem(R.id.action_flash);
+        menuItem = menu.findItem(R.id.action_flash);
         if(Utility.getBoolean(Const.IS_FLASH_ENABLED)){
-            item.setIcon(R.drawable.ic_action_flash_on);
+            menuItem.setIcon(R.drawable.ic_action_flash_on);
         }else {
-            item.setIcon(R.drawable.ic_action_flash_off);
+            menuItem.setIcon(R.drawable.ic_action_flash_off);
         }
     }
 
@@ -427,12 +429,12 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 return true;
             case R.id.action_flash:
                 if(Utility.getBoolean(Const.IS_FLASH_ENABLED)){
-                    cameraPreviewFragment.enableFlashLight(true,false);
                     Utility.saveBoolean(Const.IS_FLASH_ENABLED,false);
+                    cameraPreviewFragment.enableFlashLight();
                     item.setIcon(R.drawable.ic_action_flash_off);
                 }else {
-                    cameraPreviewFragment.enableFlashLight(true,true);
                     Utility.saveBoolean(Const.IS_FLASH_ENABLED,true);
+                    cameraPreviewFragment.enableFlashLight();
                     item.setIcon(R.drawable.ic_action_flash_on);
                 }
                 break;

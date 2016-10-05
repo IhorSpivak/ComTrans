@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import ru.comtrans.fragments.infoblock.add.AddPropertiesListFragment;
 import ru.comtrans.fragments.infoblock.show.ShowPropertiesListFragment;
 
 /**

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">ComTrans</string>
     <string name="loading">Пожалуйста, подождите</string>
+    <string name="provider_authority">ru.comtrans.fileprovider</string>
 
     //////////////Drawer Items//////////////////////////////////////////////////
     <string name="nav_infoblocks">Мои инфоблоки</string>
@@ -114,6 +115,15 @@
     <string name="status_sending">%1$s отправлено</string>
     <string name="status_sent">Принято</string>
     <string name="click_on_sending">Инфоблок отправляется. Пожалуйста, подождите</string>
+    <string name="dialog_ellipsis">Выберите действие</string>
+    <string name="dialog_neutral_label">Отмена</string>
+
+    <string name="dialog_send">Отправить</string>
+    <string name="dialog_delete">Удалить</string>
+    <string name="dialog_neutral">Отмена</string>
+    <string name="dialog_send_email">Отправить e-mail</string>
+
+
 
 
     //////////////////////InfoBlockTutorialFragment//////////////////////////////
