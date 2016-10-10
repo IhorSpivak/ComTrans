@@ -1,4 +1,4 @@
-package ru.comtrans.tasks;
+package ru.comtrans.services;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -19,8 +19,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
@@ -57,12 +55,7 @@ public class SendingService extends IntentService {
                 .setAutoCancel(false);
 
         final String id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
-//        for(int i=0;i<ids.size();i++){
-//            if(ids.get(i)==Integer.parseInt(id)){
-//                isRunning=true;
-//                break;
-//            }
-//        }
+        storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_SENDING);
         if (!ids.containsKey(id)) {
             ids.put(id, false);
             JsonArray array = storage.getInfoBlockArray(id);
@@ -221,7 +214,8 @@ public class SendingService extends IntentService {
                                             mNotifyManager.notify(notificationId, mBuilder.build());
                                             Intent broadcast = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
                                             broadcast.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
-                                            broadcast.putExtra(Const.EXTRA_PROGRESS, String.valueOf((int) ((progress * 100.0f) / factImages)) + " %");
+                                            storage.setInfoBlockProgress(id,(int) ((progress * 100.0f) / factImages));
+
                                             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcast);
 
 
@@ -236,39 +230,39 @@ public class SendingService extends IntentService {
 
                                             MultipartBody.Part body = MultipartBody.Part.createFormData("multipart/form-data", file.getName(), requestFile);
 
-                                            Call<JsonObject> call = AppController.apiInterface.postFile(Utility.getToken(), body);
+
                                             try {
                                                 if (!photo.get(PhotoItem.JSON_IS_SEND).getAsBoolean()) {
+                                                    Call<JsonObject> call = AppController.apiInterface.postFile(Utility.getToken(), body);
                                                     JsonObject result = call.execute().body();
                                                     if (result.has("result") && !result.get("result").isJsonNull()) {
+                                                        long photoId = result.get("result").getAsJsonObject().get("id").getAsLong();
 
                                                         array.get(i).getAsJsonArray().get(j).getAsJsonObject().getAsJsonArray(MainItem.JSON_PHOTO_VALUES)
                                                                 .get(k).getAsJsonObject().addProperty(PhotoItem.JSON_IS_SEND, true);
+                                                        array.get(i).getAsJsonArray().get(j).getAsJsonObject().getAsJsonArray(MainItem.JSON_PHOTO_VALUES)
+                                                                .get(k).getAsJsonObject().addProperty(PhotoItem.JSON_ID, photoId);
+
+                                                        photo.addProperty(PhotoItem.JSON_ID,photoId);
+                                                        photoValues.set(k, photo);
                                                         Log.e("TAG", "sent=" + photo.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
                                                         storage.saveInfoBlock(id, array);
-//                                                        if (hasNotUploadedDefects) {
+
                                                             if (photo.has(PhotoItem.JSON_IS_DEFECT) && !photo.get(PhotoItem.JSON_IS_DEFECT).isJsonNull()) {
                                                                 if (photo.get(PhotoItem.JSON_IS_DEFECT).getAsBoolean()) {
-                                                                    defectArray.add(result.get("result").getAsJsonObject().get("id").getAsLong());
+                                                                    defectArray.add(photoId);
                                                                 }
                                                             }
-//                                                        }
 
-                                                        photo.addProperty(PhotoItem.JSON_ID, result.get("result").getAsJsonObject().get("id").getAsLong());
-                                                        photoValues.set(k, photo);
+
+
                                                     }
                                                 } else {
-                                                    // For test only
-//                                                    try {
-//                                                        Thread.sleep(2000);
-//                                                    } catch (InterruptedException e) {
-//                                                        e.printStackTrace();
-//                                                    }
                                                     Log.e("TAG", "sent earlier=" + photo.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
                                                 }
 
                                             } catch (IOException e) {
-                                                e.printStackTrace();
+                                                Log.d("TAG","error sending photo",e);
                                             }
 //                                        }
                                     }
@@ -323,10 +317,11 @@ public class SendingService extends IntentService {
 //            }
 
             Call<JsonObject> call = AppController.apiInterface.sendAuto(Utility.getToken(), sendObject);
-            call.enqueue(new Callback<JsonObject>() {
-                @Override
-                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+            try {
+                JsonObject result = call.execute().body();
+                if(result.get("status").getAsInt()==1){
                     Log.d("TAG", "data sent");
+
 
                     mBuilder.setContentText(getString(R.string.sending_notification_done))
                             .setProgress(0, 0, false);
@@ -334,65 +329,50 @@ public class SendingService extends IntentService {
                     mNotifyManager.notify(notificationId, mBuilder.build());
 
                     storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_SENT);
-                    Intent i = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
+                    Intent i = new Intent(Const.UPDATE_STATUS_INFO_BLOCKS_FILTER);
                     i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
-                    i.putExtra(Const.EXTRA_PROGRESS, "100%");
                     LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
                     ids.remove(id);
-                }
+                }else {
+                    Log.d("TAG", "info block not sent");
 
-                @Override
-                public void onFailure(Call<JsonObject> call, Throwable t) {
-                    storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_DRAFT);
-                    Intent i = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
+                    storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_STOPPED);
+                    Intent i = new Intent(Const.UPDATE_STATUS_INFO_BLOCKS_FILTER);
                     i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
                     LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
+
                     mBuilder.setContentText(getString(R.string.sending_notification_failed))
                             .setProgress(0, 0, false);
                     mBuilder.setAutoCancel(true);
                     mNotifyManager.notify(notificationId, mBuilder.build());
                     ids.remove(id);
+
+                    Intent service = new Intent(SendingService.this, PingService.class);
+                    service.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
+                    startService(service);
                 }
-            });
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d("TAG", "info block not sent");
+
+                storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_STOPPED);
+                Intent i = new Intent(Const.UPDATE_STATUS_INFO_BLOCKS_FILTER);
+                i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
+
+                mBuilder.setContentText(getString(R.string.sending_notification_failed))
+                        .setProgress(0, 0, false);
+                mBuilder.setAutoCancel(true);
+                mNotifyManager.notify(notificationId, mBuilder.build());
+                ids.remove(id);
+
+                Intent service = new Intent(SendingService.this, PingService.class);
+                service.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
+                startService(service);
+            }
 
 
-//            Call<JsonObject> call = AppController.apiInterface.sendAuto(Utility.getToken(), sendObject);
-//            call.enqueue(new Callback<JsonObject>() {
-//                @Override
-//                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-//                    Log.d("TAG", "data sent");
-//
-//                    mBuilder.setContentText(getString(R.string.sending_notification_done))
-//                            .setProgress(0, 0, false);
-//                    mBuilder.setAutoCancel(true);
-//                    mNotifyManager.notify(notificationId, mBuilder.build());
-//
-//                    storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_SENT);
-//                    Intent i = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
-//                    i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
-//                    i.putExtra(Const.EXTRA_PROGRESS, "100%");
-//                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
-//                }
-//
-//                @Override
-//                public void onFailure(Call<JsonObject> call, Throwable t) {
-//                    storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_DRAFT);
-//                    Intent i = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
-//                    i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
-//                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
-//                    mBuilder.setContentText(getString(R.string.sending_notification_failed))
-//                            .setProgress(0, 0, false);
-//                    mBuilder.setAutoCancel(true);
-//                    mNotifyManager.notify(notificationId, mBuilder.build());
-//                }
-//            });
-//        }catch (Exception e){
-//            storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_DRAFT);
-//            Intent i = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
-//            i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
-//            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
-//            Log.e("TAG","not sent error",e);
-//        }
+
         }
     }
 }

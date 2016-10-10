@@ -8,6 +8,7 @@ public class MyInfoBlockItem {
     public static final int STATUS_DRAFT = 11;
     public static final int STATUS_SENDING = 12;
     public static final int STATUS_SENT = 13;
+    public static final int STATUS_STOPPED = 14;
 
     public static final String JSON_ID = "id";
     public static final String JSON_DATE = "date";
@@ -22,9 +23,9 @@ public class MyInfoBlockItem {
 
     private int status;
     private long size;
-    private int lastPosition;
+    private int lastPosition,progress;
 
-    private String id,date,mark,model,year,photoPath,progress;
+    private String id,date,mark,model,year,photoPath;
 
     public long getSize() {
         return size;
@@ -34,11 +35,11 @@ public class MyInfoBlockItem {
         this.size = size;
     }
 
-    public String getProgress() {
+    public int getProgress() {
         return progress;
     }
 
-    public void setProgress(String progress) {
+    public void setProgress(int progress) {
         this.progress = progress;
     }
 
@@ -51,7 +52,7 @@ public class MyInfoBlockItem {
     }
 
     public MyInfoBlockItem(){
-        progress = "0%";
+
     }
 
     public String getDate() {

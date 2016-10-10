@@ -113,6 +113,7 @@
     <string name="empty_text">Вы еще не добавляли инфоблоки ТС. Для добавления инфоблока, нажмите плюс в правом нижнем углу</string>
     <string name="status_draft">Черновик</string>
     <string name="status_sending">%1$s отправлено</string>
+    <string name="status_stopped">Остановлено</string>
     <string name="status_sent">Принято</string>
     <string name="click_on_sending">Инфоблок отправляется. Пожалуйста, подождите</string>
     <string name="dialog_ellipsis">Выберите действие</string>
@@ -121,7 +122,13 @@
     <string name="dialog_send">Отправить</string>
     <string name="dialog_delete">Удалить</string>
     <string name="dialog_neutral">Отмена</string>
+    <string name="dialog_restore">Возобновить</string>
     <string name="dialog_send_email">Отправить e-mail</string>
+
+    <string name="toast_settings_data_not_enabled">Для отправки инфоблока размером больше 100мб нужно выставить разрешение в настройках</string>
+    <string name="toast_settings_wifi_not_enabled">Для отправки инфоблока через мобильные сети нужно выставить разрешение в настройках</string>
+    <string name="toast_weak_internet">Ваше подключение неустойчиво</string>
+    <string name="toast_not_connected_to_internet">Отсутствует интернет подключение</string>
 
 
 

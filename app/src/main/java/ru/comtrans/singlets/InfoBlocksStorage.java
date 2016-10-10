@@ -2,7 +2,6 @@ package ru.comtrans.singlets;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 
@@ -11,7 +10,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.File;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -104,6 +102,14 @@ public class InfoBlocksStorage {
         Utility.saveInt("status" + id, status);
     }
 
+    public void setInfoBlockProgress(String id, int progress) {
+        Utility.saveInt("progress" + id, progress);
+    }
+
+    public int getInfoBlockProgress(String id) {
+        return Utility.getSavedInt("progress" + id);
+    }
+
     public int getInfoBlockStatus(String id) {
         return Utility.getSavedInt("status" + id);
     }
@@ -143,13 +149,11 @@ public class InfoBlocksStorage {
                 if (object.has(MyInfoBlockItem.JSON_LAST_POSITION) && !object.get(MyInfoBlockItem.JSON_LAST_POSITION).isJsonNull())
                     item.setLastPosition(object.get(MyInfoBlockItem.JSON_LAST_POSITION).getAsInt());
 
-                if (object.has(MyInfoBlockItem.JSON_PROGRESS) && !object.get(MyInfoBlockItem.JSON_PROGRESS).isJsonNull())
-                    item.setProgress(object.get(MyInfoBlockItem.JSON_PROGRESS).getAsString());
-
                 if (object.has(MyInfoBlockItem.JSON_SIZE) && !object.get(MyInfoBlockItem.JSON_SIZE).isJsonNull())
                     item.setSize(object.get(MyInfoBlockItem.JSON_SIZE).getAsLong());
 
                 item.setStatus(getInfoBlockStatus(item.getId()));
+                item.setProgress(getInfoBlockProgress(item.getId()));
 
                 items.add(item);
             }
@@ -237,15 +241,7 @@ public class InfoBlocksStorage {
         }
     }
 
-    public void updateInfoBlockProgress(String id, String progress) {
-        Gson gson = new Gson();
-        JsonObject object = gson.fromJson(Utility.getSavedData("preview" + id), JsonObject.class);
 
-        if (object != null) {
-            object.addProperty(MyInfoBlockItem.JSON_PROGRESS, progress);
-            Utility.saveData("preview" + id, object.toString());
-        }
-    }
 
     public void saveInfoBlockPreview(String id, JsonArray block) {
         Gson gson = new Gson();

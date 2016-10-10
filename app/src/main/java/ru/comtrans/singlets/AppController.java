@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.interfaces.ApiInterface;
 import ru.comtrans.items.MyInfoBlockItem;
-import ru.comtrans.tasks.SendingService;
+import ru.comtrans.services.SendingService;
 
 
 /**

@@ -1,13 +1,13 @@
 package ru.comtrans.adapters;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -54,13 +54,18 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void removeItem(String id){
+        MyInfoBlockItem deleteItem = null;
         for (MyInfoBlockItem item :
                 items) {
             if (item.getId().equals(id)){
-                items.remove(item);
-                notifyDataSetChanged();
+                deleteItem = item;
             }
         }
+        if(deleteItem!=null){
+            items.remove(deleteItem);
+            notifyDataSetChanged();
+        }
+
     }
 
     @Override
@@ -94,11 +99,15 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case MyInfoBlockItem.STATUS_SENDING:
                     myHolder.status.setTextColor(ContextCompat.getColor(context,android.R.color.holo_blue_dark));
 //                    myHolder.status.setText(String.format(context.getString(R.string.status_sending),item.getProgress()));
-                    myHolder.status.setText(item.getProgress());
+                    myHolder.status.setText(item.getProgress()+" %");
                     break;
                 case MyInfoBlockItem.STATUS_SENT:
                     myHolder.status.setTextColor(ContextCompat.getColor(context,android.R.color.holo_green_dark));
                     myHolder.status.setText(R.string.status_sent);
+                    break;
+                case MyInfoBlockItem.STATUS_STOPPED:
+                    myHolder.status.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary));
+                    myHolder.status.setText(R.string.status_stopped);
                     break;
             }
 
@@ -124,12 +133,12 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
-    public void updateProgress(String id,String progress){
+    public void updateProgress(String id){
         for (int i = 0; i < items.size(); i++) {
             MyInfoBlockItem item = items.get(i);
             if (item.getId().equals(id)){
                 item.setStatus(storage.getInfoBlockStatus(item.getId()));
-                item.setProgress(progress);
+                item.setProgress(storage.getInfoBlockProgress(id));
                 items.set(i,item);
                 notifyDataSetChanged();
             }
@@ -138,13 +147,19 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
-    public void saveProgress(){
+    public void updateStatus(String id){
         for (int i = 0; i < items.size(); i++) {
-            if (storage.getInfoBlockStatus(items.get(i).getId()) == MyInfoBlockItem.STATUS_SENDING) {
-                storage.updateInfoBlockProgress(storage.getPreviewItems().get(i).getId(), items.get(i).getProgress());
+            MyInfoBlockItem item = items.get(i);
+            if (item.getId().equals(id)){
+                item.setStatus(storage.getInfoBlockStatus(item.getId()));
+                items.set(i,item);
+                notifyDataSetChanged();
             }
         }
+
+
     }
+
 
     @Override
     public int getItemCount() {
@@ -158,9 +173,9 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static class MyInfoBlockViewHolder extends RecyclerView.ViewHolder{
         public TextView date,status,mark,model,year,size;
         public ImageView photo;
-        public FrameLayout ellipsis;
+        public ImageButton ellipsis;
 
-        public MyInfoBlockViewHolder(View itemView) {
+        public MyInfoBlockViewHolder(final View itemView) {
             super(itemView);
             date = (TextView)itemView.findViewById(R.id.info_block_date);
             status = (TextView)itemView.findViewById(R.id.info_block_status);
@@ -169,7 +184,19 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             year = (TextView)itemView.findViewById(R.id.info_block_year);
             photo = (ImageView)itemView.findViewById(R.id.info_block_image);
             size = (TextView)itemView.findViewById(R.id.info_block_size);
-            ellipsis = (FrameLayout) itemView.findViewById(R.id.fl_ellipsis);
+            ellipsis = (ImageButton) itemView.findViewById(R.id.ib_ellipsis);
+
+            itemView.post( new Runnable() {
+                public void run() {
+                    final Rect rect = new Rect();
+                    ellipsis.getHitRect(rect);
+                    rect.top -= 200;    // increase top hit area
+                    rect.left -= 200;   // increase left hit area
+                    rect.bottom += 200; // increase bottom hit area
+                    rect.right += 200;  // increase right hit area
+                    itemView.setTouchDelegate( new TouchDelegate( rect , ellipsis));
+                }
+            });
 
         }
 
