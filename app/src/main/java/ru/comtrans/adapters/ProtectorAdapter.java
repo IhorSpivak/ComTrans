@@ -24,16 +24,12 @@ import ru.comtrans.singlets.InfoBlockHelper;
 public class ProtectorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<ProtectorItem> items;
-    private Context context;
     private InfoBlockHelper helper;
-    private int page,adapterPosition;
+
     private boolean isEditable;
 
-    public ProtectorAdapter(ArrayList<ProtectorItem> items, Context context, int page, int position,boolean isEditable){
+    public ProtectorAdapter(ArrayList<ProtectorItem> items,boolean isEditable){
         this.items = items;
-        this.context = context;
-        this.page = page;
-        this.adapterPosition = position;
         this.isEditable = isEditable;
         helper = InfoBlockHelper.getInstance();
     }

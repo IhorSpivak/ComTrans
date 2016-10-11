@@ -30,7 +30,6 @@ public class MainItem {
     public static final int TYPE_VIDEO = 6;
     public static final int TYPE_BOTTOM_BAR = 7;
     public static final int TYPE_TIRE_SCHEME = 8;
-    public static final int TYPE_PROTECTOR = 9;
     public static final int TYPE_CALENDAR = 10;
     public static final int TYPE_EMAIL = 11;
     public static final int TYPE_PHONE = 12;

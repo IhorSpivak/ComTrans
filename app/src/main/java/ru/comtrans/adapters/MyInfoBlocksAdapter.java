@@ -190,10 +190,10 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 public void run() {
                     final Rect rect = new Rect();
                     ellipsis.getHitRect(rect);
-                    rect.top -= 200;    // increase top hit area
-                    rect.left -= 200;   // increase left hit area
-                    rect.bottom += 200; // increase bottom hit area
-                    rect.right += 200;  // increase right hit area
+                    rect.top -= 50;    // increase top hit area
+                    rect.left -= 50;   // increase left hit area
+                    rect.bottom += 50; // increase bottom hit area
+                    rect.right += 50;  // increase right hit area
                     itemView.setTouchDelegate( new TouchDelegate( rect , ellipsis));
                 }
             });

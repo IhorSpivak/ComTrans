@@ -9,4 +9,11 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="ProtectorView">
+        <attr name="pvResId" format="integer" />
+
+    </declare-styleable>
+
+
+
 </resources>

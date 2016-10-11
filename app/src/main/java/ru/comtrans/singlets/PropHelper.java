@@ -173,20 +173,11 @@ public class PropHelper {
         JsonObject image = new JsonObject();
         image.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_TIRE_SCHEME);
 
-        newArray.add(image);
+
 
         for (int i = 0; i < array.size(); i++) {
             JsonObject object = array.get(i).getAsJsonObject();
             String name = object.get("name").getAsString();
-
-
-//            if(i==0){
-//                JsonObject headerObject = new JsonObject();
-//                headerObject.addProperty(ProtectorItem.JSON_TYPE,ProtectorItem.TYPE_HEADER);
-//                headerObject.addProperty(ProtectorItem.JSON_TITLE,object.get("group").getAsString());
-//                protectorArray.add(headerObject);
-//            }
-
 
 
             JsonObject newObject = new JsonObject();
@@ -198,12 +189,10 @@ public class PropHelper {
             protectorArray.add(newObject);
         }
 
-        JsonObject protectorObject = new JsonObject();
 
-        protectorObject.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_PROTECTOR);
-        protectorObject.add(MainItem.JSON_PROTECTOR_VALUES,protectorArray);
+        image.add(MainItem.JSON_PROTECTOR_VALUES,protectorArray);
 
-        newArray.add(protectorObject);
+        newArray.add(image);
 
         return newArray;
     }

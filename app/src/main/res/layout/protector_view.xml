@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:id="@+id/image_layout"
+    android:paddingTop="30dp"
+    android:paddingBottom="30dp"
+    android:paddingStart="5dp"
+    android:paddingRight="5dp"
+    android:paddingEnd="5dp"
+    android:paddingLeft="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+
+    <ImageView
+        android:id="@+id/tire_scheme_image"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:scaleType="fitCenter"
+        android:layout_height="wrap_content"
+       />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/left_layout"
+        android:layout_toLeftOf="@id/tire_scheme_image"
+        android:layout_toStartOf="@id/tire_scheme_image"
+        android:layout_height="match_parent"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_toEndOf="@id/tire_scheme_image"
+        android:layout_toRightOf="@id/tire_scheme_image"
+        android:id="@+id/right_layout"
+        android:layout_height="match_parent"/>
+
+
+
+
+
+
+</RelativeLayout>

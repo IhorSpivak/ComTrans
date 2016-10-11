@@ -40,6 +40,7 @@ import ru.comtrans.items.PhotoItem;
 import ru.comtrans.items.ProtectorItem;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.views.DividerItemDecoration;
+import ru.comtrans.views.ProtectorView;
 
 
 public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -143,11 +144,6 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 return new FlagViewHolder(v);
 
-            case MainItem.TYPE_PROTECTOR:
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.protector_container_recycler_view, parent, false);
-
-                return new ProtectorViewHolder(v);
 
             case MainItem.TYPE_PHOTO:
                 v = LayoutInflater.from(parent.getContext())
@@ -641,83 +637,35 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             case MainItem.TYPE_TIRE_SCHEME:
                 TireSchemeViewHolder tireSchemeViewHolder = ((TireSchemeViewHolder) viewHolder);
-                ListItem listItem = infoBlockHelper.getTireSchemeValue();
-                if (listItem == null || listItem.getId() == -1) {
-                    tireSchemeViewHolder.imageLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
-                } else {
-                    tireSchemeViewHolder.imageLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                    switch (listItem.getTireSchemeId()) {
-                        case 1:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s4x2);
-                            break;
-                        case 2:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s4x4);
-                            break;
-                        case 3:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s6x2);
-                            break;
-                        case 4:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s6x4);
-                            break;
-                        case 5:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s6x6);
-                            break;
-                        case 6:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s8x2);
-                            break;
-                        case 7:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s8x2x4);
-                            break;
-                        case 8:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s8x2x6);
-                            break;
-                        case 9:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s8x4);
-                            break;
-                        case 10:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s8x4x4);
-                            break;
-                        case 11:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s6x6);
-                            break;
-                        case 12:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s8x8);
-                            break;
-                        case 13:
-                            tireSchemeViewHolder.schemeImage.setImageResource(R.drawable.s10x4x6);
-                            break;
-                        default:
-                            tireSchemeViewHolder.imageLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
-                            break;
-
-                    }
-                }
+                Log.d("TAG","is null"+item.getProtectorItems());
+                tireSchemeViewHolder.protectorView.setEditable(isEditable);
+                tireSchemeViewHolder.protectorView.setItems(item.getProtectorItems());
                 break;
-            case MainItem.TYPE_PROTECTOR:
-                ListItem tireSchemeItem = infoBlockHelper.getTireSchemeValue();
-                ProtectorViewHolder protectorViewHolder = ((ProtectorViewHolder) (viewHolder));
-                if (tireSchemeItem != null && tireSchemeItem.getId() != -1) {
-                    LinearLayoutManager protectorLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
-                    protectorLayoutManager.setAutoMeasureEnabled(true);
-                    protectorViewHolder.protectorList.setLayoutManager(protectorLayoutManager);
-                    ArrayList<ProtectorItem> items = new ArrayList<>();
-                    Log.d("TAG", " size " + item.getProtectorItems().size());
-                    for (int i = 0; i < item.getProtectorItems().size(); i++) {
-
-                        for (int j = 0; j < tireSchemeItem.getProtectorValues().size(); j++) {
-                            if ((item.getProtectorItems().get(i).getCode() != null && item.getProtectorItems().get(i).getCode().equals(tireSchemeItem.getProtectorValues().get(j)))
-                                    ) {
-                                items.add(item.getProtectorItems().get(i));
-                            }
-                        }
-                    }
-                    protectorAdapter = new ProtectorAdapter(items, context, page, protectorViewHolder.getAdapterPosition(), isEditable);
-                    protectorViewHolder.protectorList.setAdapter(protectorAdapter);
-                } else {
-                    protectorViewHolder.protectorList.setAdapter(null);
-                }
-
-                break;
+//            case MainItem.TYPE_PROTECTOR:
+//                ListItem tireSchemeItem = infoBlockHelper.getTireSchemeValue();
+//                ProtectorViewHolder protectorViewHolder = ((ProtectorViewHolder) (viewHolder));
+//                if (tireSchemeItem != null && tireSchemeItem.getId() != -1) {
+//                    LinearLayoutManager protectorLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
+//                    protectorLayoutManager.setAutoMeasureEnabled(true);
+//                    protectorViewHolder.protectorList.setLayoutManager(protectorLayoutManager);
+//                    ArrayList<ProtectorItem> items = new ArrayList<>();
+//
+//                    for (int i = 0; i < item.getProtectorItems().size(); i++) {
+//
+//                        for (int j = 0; j < tireSchemeItem.getProtectorValues().size(); j++) {
+//                            if ((item.getProtectorItems().get(i).getCode() != null && item.getProtectorItems().get(i).getCode().equals(tireSchemeItem.getProtectorValues().get(j)))
+//                                    ) {
+//                                items.add(item.getProtectorItems().get(i));
+//                            }
+//                        }
+//                    }
+//                    protectorAdapter = new ProtectorAdapter(items, isEditable);
+//                    protectorViewHolder.protectorList.setAdapter(protectorAdapter);
+//                } else {
+//                    protectorViewHolder.protectorList.setAdapter(null);
+//                }
+//
+//                break;
 
 
         }
@@ -772,13 +720,13 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     private static class TireSchemeViewHolder extends CustomViewHolder {
-        public ImageView schemeImage;
-        public LinearLayout imageLayout;
+        public ProtectorView protectorView;
+
 
         public TireSchemeViewHolder(View itemView) {
             super(itemView);
-            schemeImage = (ImageView) itemView.findViewById(R.id.tire_scheme_image);
-            imageLayout = (LinearLayout) itemView.findViewById(R.id.image_layout);
+            protectorView = (ProtectorView) itemView;
+
 
         }
 
@@ -837,15 +785,6 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    private static class ProtectorViewHolder extends CustomViewHolder {
-        public RecyclerView protectorList;
-
-        public ProtectorViewHolder(View itemView) {
-            super(itemView);
-            protectorList = (RecyclerView) itemView.findViewById(R.id.list_protector);
-        }
-
-    }
 
     private static class NonEditableViewHolder extends CustomViewHolder {
         public TextView title;

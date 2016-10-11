@@ -686,7 +686,7 @@ public class InfoBlocksStorage {
                     }
                 }
 
-                if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && (object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PROTECTOR)) {
+                if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && (object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_TIRE_SCHEME)) {
 
 
                     if (object.has(MainItem.JSON_PROTECTOR_VALUES) && !object.get(MainItem.JSON_PROTECTOR_VALUES).isJsonNull()) {

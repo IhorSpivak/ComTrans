@@ -59,12 +59,11 @@ public class InfoBlockHelper {
         for (int k = 0; k < items.size(); k++) {
             for(int l=0; l<items.get(k).size(); l++){
                 MainItem item = items.get(k).get(l);
-                if(item.getType()==MainItem.TYPE_PROTECTOR){
+                if(item.getType()==MainItem.TYPE_TIRE_SCHEME){
                     for(int i=0;i<item.getProtectorItems().size(); i++){
                         for(int j=0; j<protectorItems.size(); j++){
                             if(item.getProtectorItems().get(i).getCode()!=null&&item.getProtectorItems().get(i).getCode().equals(protectorItems.get(j).getCode())){
-                                Log.d("TAG","ja tut" +items.get(k).get(l).getProtectorItems().get(i).getCode());
-                                Log.d("TAG","ja tut lal " +protectorItems.get(j).getValue());
+
                                 items.get(k).get(l).getProtectorItems().get(i).setValue(protectorItems.get(j).getValue());
                             }
                         }
