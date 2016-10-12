@@ -21,15 +21,19 @@ import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback,Camera.AutoFocusCallback {
     private SurfaceHolder mHolder;
     private Camera camera;
-    int screenWidth, screenHeight;
-    Camera.Size optimalPreviewSize;
-    private boolean meteringAreaSupported;
+    private int screenWidth, screenHeight;
+    private Camera.Size optimalPreviewSize;
     private Paint paint;
+    private boolean isVideo;
 
+    public void setVideo(boolean video) {
+        isVideo = video;
+    }
 
     public CameraPreview(Context context) {
         super(context);
@@ -192,6 +196,25 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         try {
             optimalPreviewSize = //getOptimalPreviewSize(camera.getParameters().getSupportedPreviewSizes(),screenWidth,screenHeight);
             camera.getParameters().getPreviewSize();
+
+            List<Camera.Size> sizes = camera.getParameters().getSupportedPictureSizes();
+            for (int i = 0; i < sizes.size(); i++) {
+                Camera.Size size = sizes.get(i);
+                Log.d("TAG","size "+size.width+" "+size.height);
+
+                if(!isVideo&&size.width<=1920&&size.height<=1440){
+                    Camera.Parameters parameters = camera.getParameters();
+                    parameters.setPictureSize(size.width,size.height);
+                    camera.setParameters(parameters);
+                    break;
+                }else if(isVideo&&size.width<=640&&size.height<=480){
+                    Camera.Parameters parameters = camera.getParameters();
+                    parameters.setPictureSize(size.width,size.height);
+                    camera.setParameters(parameters);
+                    break;
+                }
+
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -286,7 +309,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 Rect focusRect = calculateTapArea(event.getX(), event.getY(), 1f);
 
                 Camera.Parameters parameters = camera.getParameters();
-                if (parameters.getFocusMode() != Camera.Parameters.FOCUS_MODE_MACRO) {
+                if (!Objects.equals(parameters.getFocusMode(), Camera.Parameters.FOCUS_MODE_MACRO)) {
                     parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
                 }
                 if (parameters.getMaxNumFocusAreas() > 0) {

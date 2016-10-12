@@ -324,8 +324,14 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 mediaRecorder.setCamera(cameraPreviewFragment.getCamera());
                 mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
                 mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-                mediaRecorder.setProfile(CamcorderProfile
-                        .get(CamcorderProfile.QUALITY_480P));
+                mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+
+                mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
+                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+                mediaRecorder.setVideoSize(640, 480);
+
+//                mediaRecorder.setProfile(CamcorderProfile
+//                        .get(CamcorderProfile.QUALITY_480P));
                 mediaRecorder.setOutputFile(file.getAbsolutePath());
                 mediaRecorder.setPreviewDisplay(cameraPreviewFragment.getPreview().getHolder().getSurface());
 

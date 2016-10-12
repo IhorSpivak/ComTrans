@@ -74,6 +74,7 @@ public class CameraPreviewFragment extends BaseFragment {
         mainLayout = (FrameLayout)v.findViewById(R.id.main_layout);
         mPreview = (CameraPreview) v.findViewById(R.id.camera_preview);
         isVideo = getArguments().getBoolean(Const.IS_VIDEO);
+        mPreview.setVideo(isVideo);
 
         return v;
     }

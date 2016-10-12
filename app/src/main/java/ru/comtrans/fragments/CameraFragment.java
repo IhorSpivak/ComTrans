@@ -398,14 +398,14 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
             if(directory.mkdirs()||directory.exists()){
                 Bitmap original = BitmapFactory.decodeByteArray(data , 0, data.length);
                 Bitmap resized = ImageHelper.scaleDown(original);
-                original.recycle();
+              //  original.recycle();
 
 
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
                 String prefix = isDefect? getString(R.string.prefix_defect) : getString(R.string.prefix_photo);
                 File photoFile = new File(directory, prefix + timeStamp + ".jpg");
                 FileOutputStream fos = new FileOutputStream(photoFile);
-                resized.compress(Bitmap.CompressFormat.JPEG,100,fos);
+                resized.compress(Bitmap.CompressFormat.JPEG,90,fos);
                 fos.flush();
                 fos.close();
 

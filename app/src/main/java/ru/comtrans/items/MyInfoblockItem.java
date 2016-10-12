@@ -22,16 +22,16 @@ public class MyInfoBlockItem {
     public static final String JSON_PROGRESS = "progress";
 
     private int status;
-    private long size;
+    private double size;
     private int lastPosition,progress;
 
     private String id,date,mark,model,year,photoPath;
 
-    public long getSize() {
+    public double getSize() {
         return size;
     }
 
-    public void setSize(long size) {
+    public void setSize(double size) {
         this.size = size;
     }
 

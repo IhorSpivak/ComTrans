@@ -100,7 +100,6 @@ public class MyInfoBlocksFragment extends Fragment {
                         Toast.makeText(getContext(), R.string.click_on_sending, Toast.LENGTH_SHORT).show();
                         break;
                     case MyInfoBlockItem.STATUS_SENT:
-                        storage.setInfoBlockStatus(item.getId(), MyInfoBlockItem.STATUS_DRAFT);
                         i = new Intent(getContext(),ShowInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID,item.getId());
                         i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE,item.getLastPosition());

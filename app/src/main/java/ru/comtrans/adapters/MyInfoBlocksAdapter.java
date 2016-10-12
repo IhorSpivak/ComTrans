@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TouchDelegate;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -111,9 +113,10 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     break;
             }
 
-
+        Log.d("TAG","size "+item.getSize());
         if(item.getSize()!=0){
-            myHolder.size.setText(String.valueOf(item.getSize())+"M");
+
+            myHolder.size.setText( String.format( "%.2f", item.getSize() )+"M");
         }
         myHolder.mark.setText(item.getMark());
         myHolder.model.setText(item.getModel());

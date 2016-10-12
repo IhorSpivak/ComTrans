@@ -39,9 +39,9 @@ public class MainItem {
     private String name;
     private String code;
     private String value;
-    int type;
-    boolean isChecked;
-    boolean isRequired = false;
+    private int type;
+    private boolean isChecked = false;
+    private boolean isRequired = false;
     private ListItem listValue;
     private ArrayList<ListItem> listValues;
     private ArrayList<PhotoItem> photoItems;

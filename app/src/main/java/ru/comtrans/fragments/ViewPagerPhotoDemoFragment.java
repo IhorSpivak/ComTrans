@@ -46,7 +46,7 @@ public class ViewPagerPhotoDemoFragment extends Fragment implements ViewPager.On
 
 
 
-        mAdapter = new ViewPagerAdapter(getActivity(), mImageResources,viewPager);
+        mAdapter = new ViewPagerAdapter(this, mImageResources,viewPager);
         viewPager.setAdapter(mAdapter);
         viewPager.setCurrentItem(0);
         viewPager.addOnPageChangeListener(this);

@@ -4,9 +4,11 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -35,6 +37,7 @@ import ru.comtrans.singlets.InfoBlocksStorage;
  */
 public class SendingService extends IntentService {
 //    String id;
+    Handler handler;
     int notificationId = 101;
     InfoBlocksStorage storage;
     HashMap<String,Boolean> ids = new HashMap<String,Boolean>();
@@ -42,6 +45,12 @@ public class SendingService extends IntentService {
     public SendingService() {
         super("upload service");
         storage = InfoBlocksStorage.getInstance();
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        handler = new Handler();
     }
 
     @Override
@@ -54,8 +63,14 @@ public class SendingService extends IntentService {
                 .setSmallIcon(android.R.drawable.stat_notify_sync)
                 .setAutoCancel(false);
 
+
+
         final String id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
         storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_SENDING);
+        Intent broadcast = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
+        broadcast.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
+
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcast);
         if (!ids.containsKey(id)) {
             ids.put(id, false);
             JsonArray array = storage.getInfoBlockArray(id);
@@ -123,10 +138,15 @@ public class SendingService extends IntentService {
                         if (object.has(MainItem.JSON_VALUE) && !object.get(MainItem.JSON_VALUE).isJsonNull()) {
                             String value = object.get(MainItem.JSON_VALUE).getAsString();
                             if (!value.equals("")) {
-                                JsonObject listObject = new JsonObject();
-                                listObject.addProperty(MainItem.JSON_CODE, object.get(MainItem.JSON_CODE).getAsString());
-                                listObject.addProperty(MainItem.JSON_VALUE, value);
-                                fields.add(listObject);
+                                if(object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PHONE&&value.equals("+7(")){
+
+                                }{
+                                    JsonObject listObject = new JsonObject();
+                                    listObject.addProperty(MainItem.JSON_CODE, object.get(MainItem.JSON_CODE).getAsString());
+                                    listObject.addProperty(MainItem.JSON_VALUE, value);
+                                    fields.add(listObject);
+                                }
+
                             }
 
                         }
@@ -212,7 +232,7 @@ public class SendingService extends IntentService {
 
                                             mBuilder.setProgress(factImages, progress++, false);
                                             mNotifyManager.notify(notificationId, mBuilder.build());
-                                            Intent broadcast = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
+                                            broadcast = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
                                             broadcast.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
                                             storage.setInfoBlockProgress(id,(int) ((progress * 100.0f) / factImages));
 
@@ -303,7 +323,9 @@ public class SendingService extends IntentService {
 
             }
 
-            Log.d("TAG", fields.toString());
+            for (int i = 0; i < fields.size(); i++) {
+                Log.d("TAG",fields.get(i).toString());
+            }
             sendObject.add("fields", fields);
 
 //            FileWriter file=null;
@@ -318,9 +340,11 @@ public class SendingService extends IntentService {
 
             Call<JsonObject> call = AppController.apiInterface.sendAuto(Utility.getToken(), sendObject);
             try {
-                JsonObject result = call.execute().body();
-                if(result.get("status").getAsInt()==1){
-                    Log.d("TAG", "data sent");
+                final JsonObject result = call.execute().body();
+
+
+                if(result.has("status")&&result.get("status").getAsInt()==1){
+                    Log.d("TAG", "data sent"+" "+result.toString());
 
 
                     mBuilder.setContentText(getString(R.string.sending_notification_done))
@@ -336,20 +360,24 @@ public class SendingService extends IntentService {
                 }else {
                     Log.d("TAG", "info block not sent");
 
-                    storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_STOPPED);
-                    Intent i = new Intent(Const.UPDATE_STATUS_INFO_BLOCKS_FILTER);
-                    i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
-                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
+                    if(result.has("message")){
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SendingService.this, result.get("message").getAsString(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        mBuilder.setContentText(getString(R.string.sending_notification_failed))
+                                .setProgress(0, 0, false);
+                        mBuilder.setAutoCancel(true);
+                        mNotifyManager.notify(notificationId, mBuilder.build());
+                        storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_DRAFT);
+                        Intent i = new Intent(Const.UPDATE_STATUS_INFO_BLOCKS_FILTER);
+                        i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
+                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
+                        ids.remove(id);
+                    }
 
-                    mBuilder.setContentText(getString(R.string.sending_notification_failed))
-                            .setProgress(0, 0, false);
-                    mBuilder.setAutoCancel(true);
-                    mNotifyManager.notify(notificationId, mBuilder.build());
-                    ids.remove(id);
-
-                    Intent service = new Intent(SendingService.this, PingService.class);
-                    service.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
-                    startService(service);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

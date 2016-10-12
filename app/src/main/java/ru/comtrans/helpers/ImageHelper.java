@@ -4,6 +4,8 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.provider.MediaStore;
 
 import java.io.ByteArrayInputStream;
@@ -20,7 +22,9 @@ import java.io.InputStream;
 public class ImageHelper {
 
 
-    private static final int REQUIRED_SIZE = 1200;
+    private static final int REQUIRED_SIZE_WIDTH = 1200;
+
+    private static final int REQUIRED_SIZE_HEIGHT = 900;
 
 
 
@@ -37,15 +41,60 @@ public class ImageHelper {
     }
 
     public static Bitmap scaleDown(Bitmap realImage) {
-        float ratio = Math.min(
-                (float) REQUIRED_SIZE / realImage.getWidth(),
-                (float) REQUIRED_SIZE / realImage.getHeight());
-        int width = Math.round((float) ratio * realImage.getWidth());
-        int height = Math.round((float) ratio * realImage.getHeight());
+//        Rect screenRect = new Rect(0, 0, 1200, 900);
+//
+//        float hfactor = realImage.getWidth() / screenRect.width();
+//        float vfactor = realImage.getHeight() / screenRect.height();
+//
+//        float factor = Math.min(hfactor, vfactor);
+//
+//        // Divide the size by the greater of the vertical or horizontal shrinkage factor
+//        float newWidth =realImage.getWidth() / factor;
+//        float newHeight =realImage.getHeight() / factor;
+//
+//        // Then figure out if you need to offset it to center vertically or horizontally
+//        float leftOffset = (screenRect.width() - newWidth) / 2;
+//        float topOffset = (screenRect.height() - newHeight) / 2;
+//
+//        Rect aspectRatioRect = new Rect((int)leftOffset, topOffset, newWidth, newHeight);
+//        float ratio = Math.min(
+//                (float) REQUIRED_SIZE_WIDTH / realImage.getWidth(),
+//                (float) REQUIRED_SIZE_HEIGHT / realImage.getHeight());
+//        int width = Math.round((float) ratio * realImage.getWidth());
+//        int height = Math.round((float) ratio * realImage.getHeight());
+//
+//        return Bitmap.createScaledBitmap(realImage, width,
+//                height, true);
+        int width = realImage.getWidth();
+        int height = realImage.getHeight();
+        float scaleWidth = ((float) REQUIRED_SIZE_WIDTH) / width;
+        float scaleHeight = ((float) REQUIRED_SIZE_HEIGHT) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
 
-        return Bitmap.createScaledBitmap(realImage, width,
-                height, true);
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                realImage, 0, 0, width, height, matrix, false);
+        realImage.recycle();
+        return resizedBitmap;
     }
+
+
+
+//    public static Bitmap scaleDown(Bitmap realImage) {
+//        float ratio = Math.min(
+//                (float) REQUIRED_SIZE_WIDTH / realImage.getWidth(),
+//                (float) REQUIRED_SIZE_WIDTH / realImage.getHeight());
+//        if(realImage.getWidth()>1200&&realImage.getHeight()>900){
+//            return Bitmap.createScaledBitmap(realImage, 1200,
+//                    900, true);
+//        }
+//
+//
+//        return realImage;
+//    }
 
 
     public static Bitmap decodeUri(String selectedImage) throws FileNotFoundException {
@@ -63,8 +112,8 @@ public class ImageHelper {
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
         int scale = 1;
         while (true) {
-            if (width_tmp / 2 < REQUIRED_SIZE
-                    || height_tmp / 2 < REQUIRED_SIZE) {
+            if (width_tmp / 2 < REQUIRED_SIZE_WIDTH
+                    || height_tmp / 2 < REQUIRED_SIZE_WIDTH) {
                 break;
             }
             width_tmp /= 2;

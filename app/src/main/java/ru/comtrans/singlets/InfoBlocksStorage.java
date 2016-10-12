@@ -149,8 +149,11 @@ public class InfoBlocksStorage {
                 if (object.has(MyInfoBlockItem.JSON_LAST_POSITION) && !object.get(MyInfoBlockItem.JSON_LAST_POSITION).isJsonNull())
                     item.setLastPosition(object.get(MyInfoBlockItem.JSON_LAST_POSITION).getAsInt());
 
-                if (object.has(MyInfoBlockItem.JSON_SIZE) && !object.get(MyInfoBlockItem.JSON_SIZE).isJsonNull())
-                    item.setSize(object.get(MyInfoBlockItem.JSON_SIZE).getAsLong());
+
+                if (object.has(MyInfoBlockItem.JSON_SIZE) && !object.get(MyInfoBlockItem.JSON_SIZE).isJsonNull()){
+                    item.setSize(object.get(MyInfoBlockItem.JSON_SIZE).getAsDouble());
+                }
+
 
                 item.setStatus(getInfoBlockStatus(item.getId()));
                 item.setProgress(getInfoBlockProgress(item.getId()));
@@ -251,7 +254,7 @@ public class InfoBlocksStorage {
         }
         Calendar c = Calendar.getInstance();
         boolean isFindPhoto = false;
-        long size = 0;
+        double size = 0;
         for (int i = 0; i < block.size(); i++) {
             for (int j = 0; j < block.get(i).getAsJsonArray().size(); j++) {
                 JsonObject object = block.get(i).getAsJsonArray().get(j).getAsJsonObject();
@@ -283,7 +286,8 @@ public class InfoBlocksStorage {
                                 JsonObject photoObject = photoArray.get(k).getAsJsonObject();
 
                                 if (photoObject.has(PhotoItem.JSON_SIZE) && !photoObject.get(PhotoItem.JSON_SIZE).isJsonNull()) {
-                                    size+=photoObject.get(PhotoItem.JSON_SIZE).getAsLong();
+                                    size+=photoObject.get(PhotoItem.JSON_SIZE).getAsDouble();
+
 
                                 }
 
@@ -397,7 +401,11 @@ public class InfoBlocksStorage {
 
                         if(photoItem.getImagePath()!=null&&!photoItem.getImagePath().equals("")) {
                             File file = new File(photoItem.getImagePath());
-                            long file_size = Long.parseLong(String.valueOf(file.length() / 1024 / 1024));
+
+                           // long file_size = Long.parseLong(String.valueOf(file.length() / 1024 / 1024));
+                            double mb = 1024;
+                            double file_size = file.length()/mb/mb;
+
                             photoObject.addProperty(PhotoItem.JSON_SIZE,file_size);
                         }
 

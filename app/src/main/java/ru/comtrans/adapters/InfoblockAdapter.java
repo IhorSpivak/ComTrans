@@ -190,11 +190,9 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final MainItem item = getItem(position);
         final PhotoContainerAdapter adapter;
         PhotoContainerAdapter defectsAdapter;
-        ProtectorAdapter protectorAdapter;
+
         int count;
 
-
-//        Log.e("WTF","code="+item.getCode()+" name="+item.getName());
         switch (getItemViewType(position)) {
             case MainItem.TYPE_LIST:
                 if (isEditable) {
@@ -641,31 +639,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 tireSchemeViewHolder.protectorView.setEditable(isEditable);
                 tireSchemeViewHolder.protectorView.setItems(item.getProtectorItems());
                 break;
-//            case MainItem.TYPE_PROTECTOR:
-//                ListItem tireSchemeItem = infoBlockHelper.getTireSchemeValue();
-//                ProtectorViewHolder protectorViewHolder = ((ProtectorViewHolder) (viewHolder));
-//                if (tireSchemeItem != null && tireSchemeItem.getId() != -1) {
-//                    LinearLayoutManager protectorLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
-//                    protectorLayoutManager.setAutoMeasureEnabled(true);
-//                    protectorViewHolder.protectorList.setLayoutManager(protectorLayoutManager);
-//                    ArrayList<ProtectorItem> items = new ArrayList<>();
-//
-//                    for (int i = 0; i < item.getProtectorItems().size(); i++) {
-//
-//                        for (int j = 0; j < tireSchemeItem.getProtectorValues().size(); j++) {
-//                            if ((item.getProtectorItems().get(i).getCode() != null && item.getProtectorItems().get(i).getCode().equals(tireSchemeItem.getProtectorValues().get(j)))
-//                                    ) {
-//                                items.add(item.getProtectorItems().get(i));
-//                            }
-//                        }
-//                    }
-//                    protectorAdapter = new ProtectorAdapter(items, isEditable);
-//                    protectorViewHolder.protectorList.setAdapter(protectorAdapter);
-//                } else {
-//                    protectorViewHolder.protectorList.setAdapter(null);
-//                }
-//
-//                break;
+
 
 
         }

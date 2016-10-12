@@ -2,6 +2,7 @@ package ru.comtrans.adapters;
 
 
 import android.app.Activity;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -21,12 +22,12 @@ import ru.comtrans.helpers.Utility;
  */
 public class ViewPagerAdapter extends PagerAdapter {
 
-    private Activity activity;
+    private Fragment fragment;
     private int[] mResources;
     private ViewPager viewPager;
 
-    public ViewPagerAdapter(Activity activity, int[] mResources,ViewPager viewPager) {
-        this.activity = activity;
+    public ViewPagerAdapter(Fragment fragment, int[] mResources, ViewPager viewPager) {
+        this.fragment = fragment;
         this.mResources = mResources;
         this.viewPager = viewPager;
     }
@@ -43,7 +44,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        View itemView = LayoutInflater.from(activity).inflate(R.layout.pager_image_item, container, false);
+        View itemView = LayoutInflater.from(fragment.getContext()).inflate(R.layout.pager_image_item, container, false);
 
         ImageView imageView = (ImageView) itemView.findViewById(R.id.img_pager_item);
         imageView.setImageResource(mResources[position]);
@@ -54,7 +55,7 @@ public class ViewPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 Utility.saveBoolean(Const.IS_FIRST_CAMERA_LAUNCH,true);
-                activity.onBackPressed();
+               fragment.getFragmentManager().beginTransaction().remove(fragment).commit();
             }
         });
 
