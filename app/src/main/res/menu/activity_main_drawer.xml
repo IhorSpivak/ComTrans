@@ -5,23 +5,23 @@
 
         <item
             android:id="@+id/nav_infoblocks"
-            android:icon="@drawable/ic_menu_manage"
+
             android:title="@string/nav_infoblocks" />
 
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_menu_manage"
+
             android:title="@string/nav_profile" />
 
 
         <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_manage"
+
             android:title="@string/nav_settings" />
 
         <item
             android:id="@+id/nav_logout"
-            android:icon="@drawable/ic_menu_manage"
+
             android:title="@string/nav_logout" />
     </group>
 
