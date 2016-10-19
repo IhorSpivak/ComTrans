@@ -117,7 +117,7 @@ public class InfoBlocksStorage {
 
     public ArrayList<MyInfoBlockItem> getPreviewItems() {
         ArrayList<MyInfoBlockItem> items = new ArrayList<>();
-        Log.d("TAG", infoBlockIds.toString());
+
 
         for (String s :
                 infoBlockIds) {
@@ -125,7 +125,7 @@ public class InfoBlocksStorage {
             JsonObject object = gson.fromJson(Utility.getSavedData("preview" + s), JsonObject.class);
 
             if (object != null) {
-                Log.d("TAG", " " + object.toString());
+
                 MyInfoBlockItem item = new MyInfoBlockItem();
 
                 if (object.has(MyInfoBlockItem.JSON_MARK) && !object.get(MyInfoBlockItem.JSON_MARK).isJsonNull())
@@ -253,8 +253,9 @@ public class InfoBlocksStorage {
             previewObject = new JsonObject();
         }
         Calendar c = Calendar.getInstance();
-        boolean isFindPhoto = false;
-        double size = 0;
+
+        float size = 0;
+
         for (int i = 0; i < block.size(); i++) {
             for (int j = 0; j < block.get(i).getAsJsonArray().size(); j++) {
                 JsonObject object = block.get(i).getAsJsonArray().get(j).getAsJsonObject();
@@ -278,37 +279,41 @@ public class InfoBlocksStorage {
 
                 }
 
-                if (!isFindPhoto) {
+
                     if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && (object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PHOTO||
                     object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_VIDEO)) {
                         if (object.has(MainItem.JSON_PHOTO_VALUES) && !object.get(MainItem.JSON_PHOTO_VALUES).isJsonNull()) {
                             JsonArray photoArray = object.get(MainItem.JSON_PHOTO_VALUES).getAsJsonArray();
+
                             for (int k = 0; k < photoArray.size(); k++) {
                                 JsonObject photoObject = photoArray.get(k).getAsJsonObject();
 
                                 if (photoObject.has(PhotoItem.JSON_SIZE) && !photoObject.get(PhotoItem.JSON_SIZE).isJsonNull()) {
-                                    size+=photoObject.get(PhotoItem.JSON_SIZE).getAsDouble();
-
+                                    if(photoObject.get(PhotoItem.JSON_SIZE).getAsDouble()!=0.0) {
+                                        size = size+photoObject.get(PhotoItem.JSON_SIZE).getAsFloat();
+                                        Log.d("TAG", "file size " + photoObject.get(PhotoItem.JSON_SIZE).getAsFloat());
+                                        Log.d("TAG","total size "+size);
+                                    }
 
                                 }
 
                                 if (photoObject.has(PhotoItem.JSON_IMAGE_PATH) && !photoObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()
                                         &&photoObject.has(PhotoItem.JSON_IS_VIDEO)&&!photoObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean()) {
                                     previewObject.addProperty(MyInfoBlockItem.JSON_PHOTO_PATH, photoObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
-                                    isFindPhoto = true;
 
                                 }
                             }
-                            previewObject.addProperty(MyInfoBlockItem.JSON_SIZE,size);
+
+
                         }
 
                     }
-                }
+
+
+
                 SimpleDateFormat df = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
                 String formattedDate = df.format(c.getTime());
-//                if (!previewObject.has(MyInfoBlockItem.JSON_LAST_POSITION))
-//                    if (previewObject.get(MyInfoBlockItem.JSON_LAST_POSITION).isJsonNull())
-//                        previewObject.addProperty(MyInfoBlockItem.JSON_LAST_POSITION, 0);
+                previewObject.addProperty(MyInfoBlockItem.JSON_SIZE,size);
                 previewObject.addProperty(MyInfoBlockItem.JSON_DATE, formattedDate);
                 previewObject.addProperty(MyInfoBlockItem.JSON_ID, id);
             }
@@ -317,47 +322,27 @@ public class InfoBlocksStorage {
         Utility.saveData("preview" + id, previewObject.toString());
     }
 
-    public String saveInfoBlock(String id, ArrayList<ArrayList<MainItem>> block) {
+    public  String saveInfoBlock(String id, ArrayList<ArrayList<MainItem>> block) {
+        synchronized (this) {
+            JsonArray array = new JsonArray();
 
-        JsonArray array = new JsonArray();
+            for (int i = 0; i < block.size(); i++) {
+                JsonArray screenArray = new JsonArray();
+                for (int j = 0; j < block.get(i).size(); j++) {
+                    JsonObject object = new JsonObject();
+                    MainItem item = block.get(i).get(j);
 
-        for (int i = 0; i < block.size(); i++) {
-            JsonArray screenArray = new JsonArray();
-            for (int j = 0; j < block.get(i).size(); j++) {
-                JsonObject object = new JsonObject();
-                MainItem item = block.get(i).get(j);
+                    object.addProperty(MainItem.JSON_CODE, item.getCode());
+                    object.addProperty(MainItem.JSON_ID, item.getId());
+                    object.addProperty(MainItem.JSON_NAME, item.getName());
+                    object.addProperty(MainItem.JSON_VALUE, item.getValue());
+                    object.addProperty(MainItem.JSON_TYPE, item.getType());
+                    object.addProperty(MainItem.JSON_IS_CHECKED, item.isChecked());
+                    object.addProperty(MainItem.JSON_IS_REQUIRED, item.isRequired());
 
-                object.addProperty(MainItem.JSON_CODE, item.getCode());
-                object.addProperty(MainItem.JSON_ID, item.getId());
-                object.addProperty(MainItem.JSON_NAME, item.getName());
-                object.addProperty(MainItem.JSON_VALUE, item.getValue());
-                object.addProperty(MainItem.JSON_TYPE, item.getType());
-                object.addProperty(MainItem.JSON_IS_CHECKED, item.isChecked());
-                object.addProperty(MainItem.JSON_IS_REQUIRED, item.isRequired());
-
-                if (item.getListValue() != null) {
-                    JsonObject listObject = new JsonObject();
-                    ListItem listItem = item.getListValue();
-                    listObject.addProperty(ListItem.JSON_VALUE_ID, listItem.getId());
-                    listObject.addProperty(ListItem.JSON_VALUE_NAME, listItem.getName());
-                    listObject.addProperty(ListItem.JSON_VALUE_MARK, listItem.getMark());
-                    if (listItem.getProtectorValues() != null && listItem.getProtectorValues().size() > 0) {
-                        JsonArray protectorValues = new JsonArray();
-                        for (String s :
-                                listItem.getProtectorValues()) {
-                            protectorValues.add(s);
-                        }
-                        listObject.add(ListItem.JSON_PROTECTOR_VALUES, protectorValues);
-                    }
-                    listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
-                    object.add(MainItem.JSON_LIST_VALUE, listObject);
-                }
-
-                if (item.getListValues() != null && item.getListValues().size() > 0) {
-                    JsonArray listArray = new JsonArray();
-                    for (int k = 0; k < item.getListValues().size(); k++) {
+                    if (item.getListValue() != null) {
                         JsonObject listObject = new JsonObject();
-                        ListItem listItem = item.getListValues().get(k);
+                        ListItem listItem = item.getListValue();
                         listObject.addProperty(ListItem.JSON_VALUE_ID, listItem.getId());
                         listObject.addProperty(ListItem.JSON_VALUE_NAME, listItem.getName());
                         listObject.addProperty(ListItem.JSON_VALUE_MARK, listItem.getMark());
@@ -370,68 +355,88 @@ public class InfoBlocksStorage {
                             listObject.add(ListItem.JSON_PROTECTOR_VALUES, protectorValues);
                         }
                         listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
-                        listArray.add(listObject);
+                        object.add(MainItem.JSON_LIST_VALUE, listObject);
                     }
-                    object.add(MainItem.JSON_LIST_VALUES, listArray);
-                }
 
-                if (item.getProtectorItems() != null && item.getProtectorItems().size() > 0) {
-                    JsonArray protectorArray = new JsonArray();
-                    for (int k = 0; k < item.getProtectorItems().size(); k++) {
-                        JsonObject protectorObject = new JsonObject();
-                        ProtectorItem protectorItem = item.getProtectorItems().get(k);
-                        protectorObject.addProperty(ProtectorItem.JSON_TITLE, protectorItem.getTitle());
-                        protectorObject.addProperty(ProtectorItem.JSON_CODE, protectorItem.getCode());
-                        protectorObject.addProperty(ProtectorItem.JSON_GROUP_NAME, protectorItem.getGroupName());
-                        protectorObject.addProperty(ProtectorItem.JSON_VALUE, protectorItem.getValue());
-                        protectorObject.addProperty(ProtectorItem.JSON_TYPE, protectorItem.getType());
-
-                        protectorArray.add(protectorObject);
-                    }
-                    object.add(MainItem.JSON_PROTECTOR_VALUES, protectorArray);
-                }
-
-                if (item.getPhotoItems() != null && item.getPhotoItems().size() > 0) {
-                    JsonArray photoArray = new JsonArray();
-                    for (int k = 0; k < item.getPhotoItems().size(); k++) {
-                        JsonObject photoObject = new JsonObject();
-                        PhotoItem photoItem = item.getPhotoItems().get(k);
-                        photoObject.addProperty(PhotoItem.JSON_DURATION, photoItem.getDuration());
-
-                        if (photoItem.getId() != 0)
-                            photoObject.addProperty(PhotoItem.JSON_ID, photoItem.getId());
-
-                        if(photoItem.getImagePath()!=null&&!photoItem.getImagePath().equals("")) {
-                            File file = new File(Uri.parse(photoItem.getImagePath()).getPath());
-
-                           // long file_size = Long.parseLong(String.valueOf(file.length() / 1024 / 1024));
-                            double mb = 1024;
-                            double file_size = file.length()/mb/mb;
-                            Log.d("TAG","file size "+file_size);
-
-                            photoObject.addProperty(PhotoItem.JSON_SIZE,file_size);
+                    if (item.getListValues() != null && item.getListValues().size() > 0) {
+                        JsonArray listArray = new JsonArray();
+                        for (int k = 0; k < item.getListValues().size(); k++) {
+                            JsonObject listObject = new JsonObject();
+                            ListItem listItem = item.getListValues().get(k);
+                            listObject.addProperty(ListItem.JSON_VALUE_ID, listItem.getId());
+                            listObject.addProperty(ListItem.JSON_VALUE_NAME, listItem.getName());
+                            listObject.addProperty(ListItem.JSON_VALUE_MARK, listItem.getMark());
+                            if (listItem.getProtectorValues() != null && listItem.getProtectorValues().size() > 0) {
+                                JsonArray protectorValues = new JsonArray();
+                                for (String s :
+                                        listItem.getProtectorValues()) {
+                                    protectorValues.add(s);
+                                }
+                                listObject.add(ListItem.JSON_PROTECTOR_VALUES, protectorValues);
+                            }
+                            listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
+                            listArray.add(listObject);
                         }
-
-
-
-                        photoObject.addProperty(PhotoItem.JSON_IMAGE_PATH, photoItem.getImagePath());
-                        photoObject.addProperty(PhotoItem.JSON_CODE, photoItem.getCode());
-                        photoObject.addProperty(PhotoItem.JSON_IS_DEFECT, photoItem.isDefect());
-                        photoObject.addProperty(PhotoItem.JSON_IS_VIDEO, photoItem.isVideo());
-                        photoObject.addProperty(PhotoItem.JSON_TITLE, photoItem.getTitle());
-                        photoObject.addProperty(PhotoItem.JSON_IS_SEND, photoItem.isSend());
-                        photoArray.add(photoObject);
+                        object.add(MainItem.JSON_LIST_VALUES, listArray);
                     }
-                    object.add(MainItem.JSON_PHOTO_VALUES, photoArray);
+
+                    if (item.getProtectorItems() != null && item.getProtectorItems().size() > 0) {
+                        JsonArray protectorArray = new JsonArray();
+                        for (int k = 0; k < item.getProtectorItems().size(); k++) {
+                            JsonObject protectorObject = new JsonObject();
+                            ProtectorItem protectorItem = item.getProtectorItems().get(k);
+                            protectorObject.addProperty(ProtectorItem.JSON_TITLE, protectorItem.getTitle());
+                            protectorObject.addProperty(ProtectorItem.JSON_CODE, protectorItem.getCode());
+                            protectorObject.addProperty(ProtectorItem.JSON_GROUP_NAME, protectorItem.getGroupName());
+                            protectorObject.addProperty(ProtectorItem.JSON_VALUE, protectorItem.getValue());
+                            protectorObject.addProperty(ProtectorItem.JSON_TYPE, protectorItem.getType());
+
+                            protectorArray.add(protectorObject);
+                        }
+                        object.add(MainItem.JSON_PROTECTOR_VALUES, protectorArray);
+                    }
+
+                    if (item.getPhotoItems() != null && item.getPhotoItems().size() > 0) {
+                        JsonArray photoArray = new JsonArray();
+                        for (int k = 0; k < item.getPhotoItems().size(); k++) {
+                            JsonObject photoObject = new JsonObject();
+                            PhotoItem photoItem = item.getPhotoItems().get(k);
+                            photoObject.addProperty(PhotoItem.JSON_DURATION, photoItem.getDuration());
+
+                            if (photoItem.getId() != 0)
+                                photoObject.addProperty(PhotoItem.JSON_ID, photoItem.getId());
+
+                            if (photoItem.getImagePath() != null && !photoItem.getImagePath().equals("")) {
+                                File file = new File(Uri.parse(photoItem.getImagePath()).getPath());
+
+                                // long file_size = Long.parseLong(String.valueOf(file.length() / 1024 / 1024));
+                                double mb = 1024;
+                                double file_size = file.length() / mb / mb;
+                                Log.d("TAG", "file size " + file_size);
+
+                                photoObject.addProperty(PhotoItem.JSON_SIZE, file_size);
+                            }
+
+
+                            photoObject.addProperty(PhotoItem.JSON_IMAGE_PATH, photoItem.getImagePath());
+                            photoObject.addProperty(PhotoItem.JSON_CODE, photoItem.getCode());
+                            photoObject.addProperty(PhotoItem.JSON_IS_DEFECT, photoItem.isDefect());
+                            photoObject.addProperty(PhotoItem.JSON_IS_VIDEO, photoItem.isVideo());
+                            photoObject.addProperty(PhotoItem.JSON_TITLE, photoItem.getTitle());
+                            photoObject.addProperty(PhotoItem.JSON_IS_SEND, photoItem.isSend());
+                            photoArray.add(photoObject);
+                        }
+                        object.add(MainItem.JSON_PHOTO_VALUES, photoArray);
+                    }
+                    screenArray.add(object);
                 }
-                screenArray.add(object);
+                array.add(screenArray);
             }
-            array.add(screenArray);
+
+            saveInfoBlock(id, array);
+
+            return id;
         }
-
-        saveInfoBlock(id, array);
-
-        return id;
     }
 
 

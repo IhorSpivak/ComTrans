@@ -32,6 +32,10 @@ public class SaveInfoBlockTask {
         init(id,context,listener,true);
     }
 
+    public SaveInfoBlockTask(String id,Context context){
+        init(id,context,null,false);
+    }
+
     public SaveInfoBlockTask(String id,Context context, OnPostExecuteListener listener, boolean withDialog){
         init(id,context,listener,withDialog);
     }
@@ -68,6 +72,7 @@ public class SaveInfoBlockTask {
         @Override
         protected Void doInBackground(Void... voids) {
             helper.saveAll();
+            if(listener!=null)
             SystemClock.sleep(800);
             return null;
         }
@@ -104,6 +109,7 @@ public class SaveInfoBlockTask {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Const.REFRESH_INFO_BLOCKS_FILTER));
+            if(listener!=null)
             listener.onPostExecute();
 
         }

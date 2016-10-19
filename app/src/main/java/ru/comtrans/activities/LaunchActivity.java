@@ -15,6 +15,7 @@ public class LaunchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
 
+
         Intent i;
         if(Utility.getToken().equals("")) {
             i = new Intent(LaunchActivity.this, LoginActivity.class);

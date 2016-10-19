@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
@@ -34,6 +35,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
@@ -44,7 +46,9 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.ImageHelper;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.PhotoItem;
+import ru.comtrans.listeners.SimpleOrientationListener;
 import ru.comtrans.singlets.InfoBlockHelper;
+import ru.comtrans.tasks.SaveInfoBlockTask;
 
 /**
  * Created by Artco on 24.05.2016.
@@ -65,6 +69,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     ProgressBar progressBar;
     private CameraActivity activity;
     private MenuItem menuItem;
+    private SimpleOrientationListener mOrientationListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -173,7 +178,24 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
             replaceWithCamera();
         }
 
+        mOrientationListener = new SimpleOrientationListener(
+                getActivity()) {
 
+            @Override
+            public void onSimpleOrientationChanged(int orientation) {
+                try {
+                    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        Log.d("TAG", "landscape");
+                        switchButtons(true,true);
+                    } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        switchButtons(false,true);
+                        Toast.makeText(getContext(), R.string.camera_portrait_blocked, Toast.LENGTH_SHORT).show();
+                        Log.d("TAG", "portrait");
+                    }
+                }catch (Exception ignored){}
+            }
+        };
+        mOrientationListener.enable();
 
 
 
@@ -240,7 +262,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 }
                 break;
             case R.id.btn_done:
-                done();
+                done(true);
                 break;
             case R.id.toolbarTitle:
                 final PhotoItem item = activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition());
@@ -305,7 +327,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     }
 
     private void takePicture(final boolean isDefect){
-        switchButtons(false);
+        switchButtons(false,false);
         try {
             cameraPreviewFragment.getCamera().takePicture(null, null, new Camera.PictureCallback() {
                 @Override
@@ -349,11 +371,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 }
             });
         }catch (Exception e){
-            switchButtons(true);
+            switchButtons(true,false);
             e.printStackTrace();
         }
+        done(false);
 
-        switchButtons(true);
+        switchButtons(true,false);
     }
 
     /**
@@ -362,7 +385,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
      *             pass true if you want all buttons to be enable
      *             or false to disable.
      */
-    private void switchButtons(boolean disableOrEnable){
+    private void switchButtons(boolean disableOrEnable,boolean isFromOrientation){
         if(disableOrEnable){
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(takePhotoReceiver,new IntentFilter(Const.TAKE_PHOTO_BROADCAST));
         }else {
@@ -371,25 +394,36 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
         takeDefect.setClickable(disableOrEnable);
         takePhoto.setClickable(disableOrEnable);
+        if(!isFromOrientation)
         done.setClickable(disableOrEnable);
     }
 
-    public void done(){
-        Intent i = new Intent();
-        i.putExtra(Const.EXTRA_POSITION,activity.position);
-        i.putExtra(Const.EXTRA_IMAGE_POSITION,activity.imagePosition);
-        i.putExtra(Const.EXTRA_SCREEN_NUM,activity.screenNum);
-        Collections.reverse(activity.getPhotoAdapter().getItems());
-        InfoBlockHelper helper = InfoBlockHelper.getInstance();
-        helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(activity.getPhotoAdapter().getItems());
+
+
+    public void done(boolean isDone){
+        if(isDone) {
+            Intent i = new Intent();
+            i.putExtra(Const.EXTRA_POSITION, activity.position);
+            i.putExtra(Const.EXTRA_IMAGE_POSITION, activity.imagePosition);
+            i.putExtra(Const.EXTRA_SCREEN_NUM, activity.screenNum);
+            ArrayList<PhotoItem> items = new ArrayList<>(activity.getPhotoAdapter().getItems());
+            Collections.reverse(items);
+            InfoBlockHelper helper = InfoBlockHelper.getInstance();
+            helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(items);
 //        getActivity().setResult(Const.CAMERA_PHOTO_RESULT,i);
-        if (getActivity().getParent() == null) {
-            getActivity().setResult(Const.CAMERA_PHOTO_RESULT,i);
+            if (getActivity().getParent() == null) {
+                getActivity().setResult(Const.CAMERA_PHOTO_RESULT, i);
+            } else {
+                getActivity().getParent().setResult(Const.CAMERA_PHOTO_RESULT, i);
+            }
+            getActivity().finish();
+        }else {
+            ArrayList<PhotoItem> items = new ArrayList<>(activity.getPhotoAdapter().getItems());
+            Collections.reverse(items);
+            InfoBlockHelper helper = InfoBlockHelper.getInstance();
+            helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(items);
+            new SaveInfoBlockTask(helper.getId(),getContext());
         }
-        else {
-            getActivity().getParent().setResult(Const.CAMERA_PHOTO_RESULT,i);
-        }
-        getActivity().finish();
     }
 
     private void createFileFromData(byte[] data,boolean isDefect){
@@ -405,7 +439,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 String prefix = isDefect? getString(R.string.prefix_defect) : getString(R.string.prefix_photo);
                 File photoFile = new File(directory, prefix + timeStamp + ".jpg");
                 FileOutputStream fos = new FileOutputStream(photoFile);
-                resized.compress(Bitmap.CompressFormat.JPEG,90,fos);
+                resized.compress(Bitmap.CompressFormat.JPEG,70,fos);
                 fos.flush();
                 fos.close();
 
@@ -479,6 +513,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mOrientationListener.disable();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(countUpdateReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(takePhotoReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(rePhotoReceiver);
@@ -504,7 +539,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                done();
+                done(true);
                 return true;
             case R.id.action_flash:
                 if(Utility.getBoolean(Const.IS_FLASH_ENABLED)){

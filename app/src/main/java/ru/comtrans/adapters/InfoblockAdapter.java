@@ -15,12 +15,14 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -48,6 +50,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private ArrayList<MainItem> items;
     private Context context;
     private final OnItemClickListener listener;
+    private  LinearLayoutManager layoutManager;
     private int page;
     private int totalPages;
     private boolean isEditable;
@@ -64,8 +67,9 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         void saveState();
     }
 
-    public InfoBlockAdapter(Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable, OnItemClickListener listener) {
+    public InfoBlockAdapter(Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable, OnItemClickListener listener,LinearLayoutManager manager) {
         this.context = context;
+        this.layoutManager = manager;
         this.items = items;
         this.listener = listener;
         this.page = page;
@@ -211,6 +215,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
                 break;
 
+
             case MainItem.TYPE_CALENDAR:
                 final CalendarViewHolder calendarViewHolder = (CalendarViewHolder) viewHolder;
                 if (item.isRequired())
@@ -241,7 +246,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     }
                 }
 
-                LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                final LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
                 manager.setAutoMeasureEnabled(true);
                 photoViewHolder.photoList.setLayoutManager(manager);
                 adapter = new PhotoContainerAdapter(context, photoItems, new PhotoContainerAdapter.OnItemClickListener() {
@@ -330,8 +335,11 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             case MainItem.TYPE_STRING:
                 if (isEditable) {
-                    EditTextViewHolder editTextViewHolder = ((EditTextViewHolder) viewHolder);
+                    final EditTextViewHolder editTextViewHolder = ((EditTextViewHolder) viewHolder);
                     editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
+
+
+
                     if (item.isRequired())
                         editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
                     else
@@ -355,7 +363,9 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             case MainItem.TYPE_NUMBER:
                 if (isEditable) {
-                    EditTextViewHolder editTextViewHolder = ((EditTextViewHolder) viewHolder);
+                    final EditTextViewHolder editTextViewHolder = ((EditTextViewHolder) viewHolder);
+
+
                     if (item.isRequired())
                         editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
                     else
@@ -731,6 +741,19 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
             textInputLayout = (TextInputLayout) itemView.findViewById(R.id.text_input_layout);
             editText = (TextInputEditText) itemView.findViewById(R.id.edit_text);
+           editText.setOnKeyListener(new View.OnKeyListener() {
+                        @Override
+                        public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                            if (event.getAction()==KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                                Utility.hideKeyboard(v.getContext(),v);
+                                ((EditText)v).clearFocus();
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+            editText.setFilters( new InputFilter[] { new InputFilter.LengthFilter(itemView.getContext().getResources().getInteger(R.integer.max_length)) } );
             this.textWatcher = textWatcher;
             this.editText.addTextChangedListener(textWatcher);
         }

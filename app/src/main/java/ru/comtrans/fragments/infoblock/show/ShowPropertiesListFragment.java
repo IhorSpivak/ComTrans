@@ -123,7 +123,7 @@ public class ShowPropertiesListFragment extends BaseFragment {
             public void saveState() {
                 //stub
             }
-        });
+        },layoutManager);
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {

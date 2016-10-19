@@ -11,9 +11,12 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -71,7 +74,7 @@ public class ProtectorView extends RelativeLayout {
         isEditable = editable;
     }
 
-    private TextView createEditText(boolean isEditable,ProtectorItem item,int height,int position){
+    private TextView createEditText(boolean isEditable,ProtectorItem item,int position){
 
         TextView editText;
         if(isEditable){
@@ -88,6 +91,7 @@ public class ProtectorView extends RelativeLayout {
         editText.setHint(item.getTitle());
         editText.setText(item.getValue());
         editText.setMaxLines(1);
+        editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
         editText.setTextSize(TypedValue.COMPLEX_UNIT_SP,11);
         editText.setSingleLine();
@@ -101,12 +105,35 @@ public class ProtectorView extends RelativeLayout {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflater.inflate(R.layout.protector_view, this, true);
-        RelativeLayout leftLayout = (RelativeLayout) v.findViewById (R.id.left_layout);
-        RelativeLayout rightLayout = (RelativeLayout) v.findViewById (R.id.right_layout);
+        final RelativeLayout leftLayout = (RelativeLayout) v.findViewById (R.id.left_layout);
+        final RelativeLayout rightLayout = (RelativeLayout) v.findViewById (R.id.right_layout);
         ImageView image = (ImageView)v.findViewById(R.id.tire_scheme_image);
         ListItem tireSchemeItem = helper.getTireSchemeValue();
         int schemeId = tireSchemeItem.getTireSchemeId();
         setResourceId(schemeId);
+
+//         OnKeyListener keyListener = new OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//
+//                    if (event.getAction()==KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+//                        switch ((String)v.getTag()) {
+//                            case "shin_axis11":
+//                                for (int i = 0; i < rightLayout.getChildCount(); i++) {
+//                                    View view = rightLayout.getChildAt(i);
+//                                    if(view instanceof EditText &&view.getTag().equals("shin_axis12")){
+//                                        ((EditText)view).requestFocus();
+//                                    }
+//                                }
+//                                break;
+//                        }
+//                        return true;
+//                    }
+//
+//                return false;
+//            }
+//        };
+
 
 
 
@@ -150,6 +177,7 @@ public class ProtectorView extends RelativeLayout {
 
                         if(schemeId==1||schemeId==2) {
                             LinearLayout secondAxisLeftLayout = new LinearLayout(context);
+                            secondAxisLeftLayout.setTag("2Left");
                             secondAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
                             RelativeLayout.LayoutParams secondAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                             secondAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -157,6 +185,7 @@ public class ProtectorView extends RelativeLayout {
                             secondAxisLeftParams.setMargins(0,0,0,topMargin);
 
                             LinearLayout secondAxisRightLayout = new LinearLayout(context);
+                            secondAxisRightLayout.setTag("2Right");
                             secondAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
                             RelativeLayout.LayoutParams secondAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                             secondAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -165,7 +194,7 @@ public class ProtectorView extends RelativeLayout {
 
                             for(int i=0; i<protectorItems.size(); i++) {
                                 ProtectorItem item = protectorItems.get(i);
-                                TextView editText = createEditText(isEditable,item,etHeight,i);
+                                TextView editText = createEditText(isEditable,item,i);
                                 RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                                 LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                                 linearParams.weight = 1;
@@ -174,21 +203,38 @@ public class ProtectorView extends RelativeLayout {
                                     case "shin_axis11":
                                         relativeParams.setMargins(margin, topMargin, margin, 0);
                                         editText.setLayoutParams(relativeParams);
+                                        editText.setTag("shin_axis11");
                                         leftLayout.addView(editText);
+
+
                                         break;
                                     case "shin_axis12":
                                         relativeParams.setMargins(margin, topMargin, margin, 0);
                                         editText.setLayoutParams(relativeParams);
+                                        editText.setTag("shin_axis12");
                                         rightLayout.addView(editText);
                                         break;
                                     case "shin_axis21":
-                                    case "shin_axis22":
+                                        editText.setTag("shin_axis21");
                                         linearParams.setMargins(margin, 0, margin,0);
                                         editText.setLayoutParams(linearParams);
                                         secondAxisLeftLayout.addView(editText);
                                         break;
+                                    case "shin_axis22":
+                                        editText.setTag("shin_axis22");
+                                        linearParams.setMargins(margin, 0, margin,0);
+                                        editText.setLayoutParams(linearParams);
+                                        secondAxisLeftLayout.addView(editText);
+
+                                        break;
                                     case "shin_axis23":
+                                        editText.setTag("shin_axis23");
+                                        linearParams.setMargins(margin, 0, margin,0);
+                                        editText.setLayoutParams(linearParams);
+                                        secondAxisRightLayout.addView(editText);
+                                        break;
                                     case "shin_axis24":
+                                        editText.setTag("shin_axis24");
                                         linearParams.setMargins(margin, 0, margin,0);
                                         editText.setLayoutParams(linearParams);
                                         secondAxisRightLayout.addView(editText);
@@ -233,7 +279,7 @@ public class ProtectorView extends RelativeLayout {
 
                         for(int i=0; i<protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,etHeight,i);
+                            TextView editText = createEditText(isEditable,item,i);
                             RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                             LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                             linearParams.weight = 1;
@@ -318,7 +364,7 @@ public class ProtectorView extends RelativeLayout {
 
                         for(int i=0; i<protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,etHeight,i);
+                            TextView editText = createEditText(isEditable,item,i);
                             RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                             LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                             linearParams.weight = 1;
@@ -413,7 +459,7 @@ public class ProtectorView extends RelativeLayout {
 
                         for(int i=0; i<protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,etHeight,i);
+                            TextView editText = createEditText(isEditable,item,i);
                             RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                             LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                             linearParams.weight = 1;
@@ -508,7 +554,7 @@ public class ProtectorView extends RelativeLayout {
 
                         for(int i=0; i<protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,etHeight,i);
+                            TextView editText = createEditText(isEditable,item,i);
                             RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                             LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                             linearParams.weight = 1;
@@ -619,7 +665,7 @@ public class ProtectorView extends RelativeLayout {
 
                         for(int i=0; i<protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,etHeight,i);
+                            TextView editText = createEditText(isEditable,item,i);
                             RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                             LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                             linearParams.weight = 1;
@@ -721,7 +767,7 @@ public class ProtectorView extends RelativeLayout {
 
                         for(int i=0; i<protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,etHeight,i);
+                            TextView editText = createEditText(isEditable,item,i);
                             RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                             LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                             linearParams.weight = 1;
@@ -837,6 +883,8 @@ public class ProtectorView extends RelativeLayout {
 
         }
     }
+
+
 
     public void setResourceId(int tireSchemeId){
         switch (tireSchemeId) {

@@ -113,9 +113,8 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     break;
             }
 
-        Log.d("TAG","size "+item.getSize());
-        if(item.getSize()!=0){
 
+        if(item.getSize()!=0){
             myHolder.size.setText( String.format( "%.2f", item.getSize() )+"M");
         }
         myHolder.mark.setText(item.getMark());

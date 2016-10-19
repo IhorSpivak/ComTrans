@@ -90,6 +90,7 @@ public class AddPropertiesListFragment extends BaseFragment {
         activity = (AddInfoBlockActivity) getActivity();
         recyclerView = (RecyclerView)v.findViewById(android.R.id.list);
         layoutManager = new LinearLayoutManager(getActivity());
+
         infoBlockHelper = InfoBlockHelper.getInstance();
         storage = InfoBlocksStorage.getInstance();
 
@@ -150,6 +151,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                         }
                         break;
                     case MainItem.TYPE_VIDEO:
+                    //    new SaveInfoBlockTask(infoBlockId,getContext());
                         i = new Intent(getActivity(), CameraActivity.class);
                         i.putExtra(Const.CAMERA_MODE,Const.MODE_VIDEO);
                         i.putExtra(Const.EXTRA_POSITION,adapter.getItems().indexOf(item));
@@ -158,6 +160,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                         startActivityForResult(i,Const.CAMERA_VIDEO_RESULT);
                         break;
                     case MainItem.TYPE_PHOTO:
+                    //
                         i = new Intent(getActivity(), CameraActivity.class);
                         i.putExtra(Const.CAMERA_MODE,Const.MODE_PHOTO);
                         i.putExtra(Const.EXTRA_POSITION,adapter.getItems().indexOf(item));
@@ -168,6 +171,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                     case MainItem.TYPE_BOTTOM_BAR:
                         switch (position){
                             case 1:
+                                new SaveInfoBlockTask(infoBlockId,getContext());
                                 storage.updateInfoBlockPage(infoBlockId, page-1);
                                 activity.viewPager.setCurrentItem(page-1);
                                 break;
@@ -180,6 +184,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                                         }
                                     });
                                 }else {
+                                    new SaveInfoBlockTask(infoBlockId,getContext());
                                     storage.updateInfoBlockPage(infoBlockId, page+1);
                                     activity.viewPager.setCurrentItem(page+1);
                                 }
@@ -196,7 +201,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                 saveData();
             }
 
-        });
+        },layoutManager);
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {

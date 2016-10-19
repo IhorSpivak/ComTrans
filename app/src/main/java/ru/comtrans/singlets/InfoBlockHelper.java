@@ -17,6 +17,14 @@ public class InfoBlockHelper {
     private ArrayList<ArrayList<MainItem>> items;
     private String id;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public static InfoBlockHelper getInstance() {
         if(instance==null)
             instance = new InfoBlockHelper();
@@ -52,7 +60,9 @@ public class InfoBlockHelper {
         items.set(position,screen);
     }
     public void saveAll(){
-        storage.saveInfoBlock(id, items);
+
+            storage.saveInfoBlock(id, items);
+
      }
 
     public void saveProtector(ArrayList<ProtectorItem> protectorItems){

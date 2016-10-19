@@ -27,6 +27,7 @@ import ru.comtrans.fragments.VideoFragment;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.singlets.InfoBlockHelper;
+import ru.comtrans.tasks.SaveInfoBlockTask;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -53,7 +54,8 @@ public class CameraActivity extends AppCompatActivity {
         imagePosition = getIntent().getIntExtra(Const.EXTRA_IMAGE_POSITION,-1);
 
         InfoBlockHelper helper = InfoBlockHelper.getInstance();
-        items = helper.getItems().get(screenNum).get(position).getPhotoItems();
+        items = new ArrayList<>(helper.getItems().get(screenNum).get(position).getPhotoItems());
+        new SaveInfoBlockTask(helper.getId(),CameraActivity.this);
 
 
 
@@ -204,10 +206,10 @@ public class CameraActivity extends AppCompatActivity {
                     super.onBackPressed();
                     break;
                 case Const.MODE_PHOTO:
-                    ((CameraFragment)fragment).done();
+                    ((CameraFragment)fragment).done(true);
                     break;
                 case Const.MODE_VIDEO:
-                    ((VideoFragment)fragment).done();
+                    ((VideoFragment)fragment).done(true);
                     break;
 
             }

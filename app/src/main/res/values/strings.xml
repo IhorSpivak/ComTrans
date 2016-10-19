@@ -72,6 +72,7 @@
 
 
     <string name="title_activity_gallery">Галерея</string>
+    <string name="camera_portrait_blocked">Съемка разрешена только в горизонтальном положении устройства</string>
 
 
     /////////////////////////////Settings Fragment/////////////////////////
@@ -144,6 +145,7 @@
     <string name="sending_notification_text">Отправка…</string>
     <string name="sending_notification_done">Отправка завершена</string>
     <string name="sending_notification_failed">Отправка не удалась</string>
+
 
 
     ////////////////ShowInfoBlockActivity/////////////////////////////

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
@@ -40,7 +42,9 @@ import ru.comtrans.activities.CameraActivity;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.PhotoItem;
+import ru.comtrans.listeners.SimpleOrientationListener;
 import ru.comtrans.singlets.InfoBlockHelper;
+import ru.comtrans.tasks.SaveInfoBlockTask;
 import ru.comtrans.views.VerticalChronometer;
 
 /**
@@ -54,6 +58,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     ImageView takeVideo, done;
     CameraPreviewFragment cameraPreviewFragment;
     ProgressBar progressBar;
+    private TakePhotoReceiver takePhotoReceiver = null;
 
     private CameraActivity activity;
     VideoViewerFragment videoViewerFragment;
@@ -65,6 +70,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     CountUpdateReceiver countUpdateReceiver = null;
     RePhotoReceiver rePhotoReceiver = null;
     private MenuItem menuItem;
+    private SimpleOrientationListener mOrientationListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,6 +130,8 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
 
         countUpdateReceiver = new CountUpdateReceiver();
         rePhotoReceiver = new RePhotoReceiver();
+        takePhotoReceiver = new TakePhotoReceiver();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(takePhotoReceiver,new IntentFilter(Const.TAKE_PHOTO_BROADCAST));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(countUpdateReceiver,new IntentFilter(Const.RECEIVE_UPDATE_COUNT));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(rePhotoReceiver,new IntentFilter(Const.RE_PHOTO));
 
@@ -151,6 +159,25 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         });
 
         replaceWithCamera();
+
+        mOrientationListener = new SimpleOrientationListener(
+                getActivity()) {
+
+            @Override
+            public void onSimpleOrientationChanged(int orientation) {
+                try {
+                    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        Log.d("TAG", "landscape");
+                        switchButtons(true,true);
+                    } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        switchButtons(false,true);
+                        Toast.makeText(getContext(), R.string.camera_portrait_blocked, Toast.LENGTH_SHORT).show();
+                        Log.d("TAG", "portrait");
+                    }
+                }catch (Exception ignored){}
+            }
+        };
+        mOrientationListener.enable();
 
 
 
@@ -190,7 +217,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
 
                 break;
             case R.id.btn_done:
-                done();
+                done(true);
                 break;
 
 
@@ -223,7 +250,12 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 chronometer.setOnChronometerTickListener(null);
                 isVideoRecording = false;
                 takeVideo.setImageResource(R.drawable.ic_take_photo);
-                mediaRecorder.stop();
+                try{
+                    mediaRecorder.stop();
+                }catch (Exception e){
+                    Log.e("TAG","err",e);
+                }
+
                 releaseMediaRecorder();
                 chronometer.stop();
                 chronometer.setBase(SystemClock.elapsedRealtime());
@@ -257,7 +289,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 }catch (Exception ignored){}
 
 
-
+                done(false);
               //  replaceWithVideoViewer(item,currentPosition);
             }
         }else {
@@ -325,21 +357,18 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
                 mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
                 mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                mediaRecorder.setVideoFrameRate(15);
-                mediaRecorder.setVideoEncodingBitRate(30);
-                mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
+                mediaRecorder.setVideoFrameRate(24); //might be auto-determined due to lighting
+                mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);// MPEG_4_SP
+                mediaRecorder.setVideoEncodingBitRate(3000000);
                 mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
                 mediaRecorder.setVideoSize(640, 480);
-
-                mediaRecorder.setProfile(CamcorderProfile
-                        .get(CamcorderProfile.QUALITY_480P));
                 mediaRecorder.setOutputFile(file.getAbsolutePath());
                 mediaRecorder.setPreviewDisplay(cameraPreviewFragment.getPreview().getHolder().getSurface());
 
                 try {
                     mediaRecorder.prepare();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("TAG","err",e);
                     releaseMediaRecorder();
                     return false;
                 }
@@ -350,7 +379,9 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 Toast.makeText(getActivity(), R.string.photo_save_error, Toast.LENGTH_SHORT).show();
                 return false;
             }
-        }catch (Exception ignored){}
+        }catch (Exception e){
+            Log.e("TAG","err",e);
+        }
         return false;
     }
 
@@ -360,6 +391,36 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
             mediaRecorder.release();
             mediaRecorder = null;
             cameraPreviewFragment.getCamera().lock();
+        }
+    }
+
+    private void switchButtons(boolean disableOrEnable,boolean isFromOrientation){
+        if(disableOrEnable){
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(takePhotoReceiver,new IntentFilter(Const.TAKE_PHOTO_BROADCAST));
+        }else {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(takePhotoReceiver);
+        }
+
+        takeVideo.setClickable(disableOrEnable);
+        if(!isFromOrientation)
+        done.setClickable(disableOrEnable);
+    }
+
+    private class TakePhotoReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(videoViewerFragment!=null){
+                Toast.makeText(getActivity(),R.string.video_blocked,Toast.LENGTH_SHORT).show();
+            }else {
+                try{
+                    LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(takePhotoReceiver);
+                    takeVideo();
+
+                }catch (Exception e){}
+            }
+
+
         }
     }
 
@@ -382,16 +443,25 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    public void done(){
-        Intent i = new Intent();
-        i.putExtra(Const.EXTRA_POSITION,activity.position);
-        i.putExtra(Const.EXTRA_IMAGE_POSITION,activity.imagePosition);
-        i.putExtra(Const.EXTRA_SCREEN_NUM,activity.screenNum);
-        Collections.reverse(activity.getPhotoAdapter().getItems());
-        InfoBlockHelper helper = InfoBlockHelper.getInstance();
-        helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(activity.getPhotoAdapter().getItems());
-        getActivity().setResult(Const.CAMERA_PHOTO_RESULT,i);
-        getActivity().finish();
+    public void done(boolean isDone){
+        if(isDone) {
+            Intent i = new Intent();
+            i.putExtra(Const.EXTRA_POSITION, activity.position);
+            i.putExtra(Const.EXTRA_IMAGE_POSITION, activity.imagePosition);
+            i.putExtra(Const.EXTRA_SCREEN_NUM, activity.screenNum);
+            ArrayList<PhotoItem> items = new ArrayList<>(activity.getPhotoAdapter().getItems());
+            Collections.reverse(items);
+            InfoBlockHelper helper = InfoBlockHelper.getInstance();
+            helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(activity.getPhotoAdapter().getItems());
+            getActivity().setResult(Const.CAMERA_PHOTO_RESULT, i);
+            getActivity().finish();
+        }else {
+            ArrayList<PhotoItem> items = new ArrayList<>(activity.getPhotoAdapter().getItems());
+            Collections.reverse(items);
+            InfoBlockHelper helper = InfoBlockHelper.getInstance();
+            helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(items);
+            new SaveInfoBlockTask(helper.getId(),getContext());
+        }
     }
 
     private class RePhotoReceiver extends BroadcastReceiver{
@@ -409,6 +479,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mOrientationListener.disable();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(countUpdateReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(rePhotoReceiver);
         rePhotoReceiver = null;
@@ -432,7 +503,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                done();
+                done(true);
                 return true;
             case R.id.action_flash:
                 if(Utility.getBoolean(Const.IS_FLASH_ENABLED)){

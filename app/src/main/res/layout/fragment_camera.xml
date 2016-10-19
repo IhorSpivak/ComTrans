@@ -1,14 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@android:color/black"
-    android:layout_height="match_parent">
+    >
+
+
+
+
+
+
+    <FrameLayout
+        android:id="@+id/cameraContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"/>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/previewContainer">
-    </FrameLayout>
+        android:background="@drawable/grid"/>
+
+
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="#33000000"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingStart="5dp"
+        android:paddingLeft="5dp"
+        android:paddingEnd="5dp"
+        android:paddingRight="5dp"
+        android:id="@+id/bottomBar">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:id="@+id/progressLayout">
+
+            <ru.comtrans.views.VerticalTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/photos_count"
+                android:textColor="@android:color/white"
+                android:paddingEnd="3dp"
+                android:paddingRight="3dp"
+                android:layout_alignParentBottom="true"
+                />
+
+            <ru.comtrans.views.VerticalTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/defects_count"
+                android:textColor="@android:color/white"
+                android:paddingLeft="3dp"
+                android:paddingStart="3dp"
+                />
+
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="5dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_above="@id/photos_count"
+                android:layout_below="@id/defects_count"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:progressDrawable="@drawable/vertical_progressbar_red"
+                android:progress="40"
+                />
+
+        </RelativeLayout>
+
+        <ListView
+            android:layout_width="@dimen/photo_list_width"
+            android:layout_height="match_parent"
+            android:stackFromBottom="false"
+            android:id="@android:id/list"
+            android:scrollbars="none"
+            android:layout_toEndOf="@id/progressLayout"
+            android:layout_toRightOf="@id/progressLayout"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:dividerHeight="2dp"
+            android:divider="@null"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@android:id/list"
+            android:layout_toEndOf="@android:id/list">
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:id="@+id/take_photo"
+                android:src="@drawable/ic_take_photo"
+                android:layout_centerInParent="true"/>
+
+            <ImageView
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:id="@+id/take_defect"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_photo_defect"
+                android:layout_marginTop="15dp"
+                />
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:id="@+id/btn_done"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_photo_done"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="15dp"
+                />
+
+
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+    <!--android:background="#80000000"-->
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#33000000"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_toStartOf="@id/bottomBar"
+        android:layout_toLeftOf="@id/bottomBar"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:popupTheme="@style/Theme.AppCompat.Light"
+        app:theme="@style/Theme.AppCompat">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/defect_name"
+                android:visibility="invisible"
+                android:maxLines="1"
+                android:textColor="@android:color/black"
+                android:background="@android:color/white"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:freezesText="true"
+                android:shadowColor="@android:color/black"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/white"
+                android:layout_centerInParent="true"
+                android:id="@+id/toolbarTitle" />
+
+        </RelativeLayout>
+
+
+
+
+
+    </android.support.v7.widget.Toolbar>
 
 
 

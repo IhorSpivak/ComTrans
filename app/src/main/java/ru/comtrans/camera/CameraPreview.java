@@ -102,6 +102,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             setCamera(camera);
 
             setScreenSize();
+            setCameraDisplayOrientation();
             this.camera.setPreviewDisplay(mHolder);
             this.camera.startPreview();
         } catch (Exception e) {
@@ -162,6 +163,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mHolder.setFixedSize((int)rectPreview.right,(int)rectPreview.bottom);
 
 
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -191,18 +194,19 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 Camera.Size size = sizes.get(i);
                 Log.d("TAG","size "+size.width+" "+size.height);
 
-                if(size.width<=1920&&size.height<=1080) {
+                if(!isVideo&&size.width<=1920&&size.height<=1080) {
                     Camera.Parameters parameters = camera.getParameters();
                     parameters.setPictureSize(size.width, size.height);
+                    parameters.setPreviewSize(size.width,size.height);
+                    camera.setParameters(parameters);
+                    break;
+
+                }else if(isVideo&&size.width<=640&&size.height<=480){
+                    Camera.Parameters parameters = camera.getParameters();
+                    parameters.setPreviewSize(size.width,size.height);
                     camera.setParameters(parameters);
                     break;
                 }
-//                }else if(isVideo&&size.width<=640&&size.height<=480){
-//                    Camera.Parameters parameters = camera.getParameters();
-//                    parameters.setPictureSize(size.width,size.height);
-//                    camera.setParameters(parameters);
-//                    break;
-//                }
 
             }
         }catch (Exception e){
@@ -224,58 +228,33 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
-//    @Override
-//    protected void onDraw(Canvas canvas)
-//    {
-//        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-//        Display display = wm.getDefaultDisplay();
-//
-//
-//        int realWidth;
-//        int realHeight;
-//
-//        if (Build.VERSION.SDK_INT >= 17){
-//            //new pleasant way to get real metrics
-//
-//            display.getRealMetrics(realMetrics);
-//            realWidth = realMetrics.widthPixels;
-//            realHeight = realMetrics.heightPixels;
-//
-//        } else if (Build.VERSION.SDK_INT >= 14) {
-//            //reflection for this weird in-between time
-//            try {
-//                Method mGetRawH = Display.class.getMethod("getRawHeight");
-//                Method mGetRawW = Display.class.getMethod("getRawWidth");
-//                realWidth = (Integer) mGetRawW.invoke(display);
-//                realHeight = (Integer) mGetRawH.invoke(display);
-//            } catch (Exception e) {
-//                //this may not be 100% accurate, but it's all we've got
-//                realWidth = display.getWidth();
-//                realHeight = display.getHeight();
-//                Log.e("Display Info", "Couldn't use reflection to get the real display metrics.");
-//            }
-//
-//        } else {
-//            //This should be close, as lower API devices should not have window navigation bars
-//            realWidth = display.getWidth();
-//            realHeight = display.getHeight();
-//        }
-//
-//
-//        Log.d("TAG","screen height "+screenHeight);
-//
-//            //  Set paint options
-//            paint.setAntiAlias(true);
-//            paint.setStrokeWidth(3);
-//            paint.setStyle(Paint.Style.STROKE);
-//            paint.setColor(Color.argb(255, 255, 255, 255));
-//
-//            canvas.drawLine((realWidth/3)*2,0,(realWidth/3)*2,realHeight+300,paint);
-//            canvas.drawLine((realWidth/3),0,(realWidth/3),realHeight+300,paint);
-//            canvas.drawLine(0,(realHeight/3)*2,realWidth+300,(realHeight/3)*2,paint);
-//            canvas.drawLine(0,(realHeight/3),realWidth+300,(realHeight/3),paint);
-//
-//    }
+    private   void setCameraDisplayOrientation() {
+        android.hardware.Camera.CameraInfo info =
+                new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(0, info);
+        WindowManager windowManager = (WindowManager) getContext()
+                .getSystemService(Context.WINDOW_SERVICE);
+        int rotation = windowManager.getDefaultDisplay()
+                .getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0: degrees = 90; break;
+            case Surface.ROTATION_90: degrees = 90; break;
+            case Surface.ROTATION_180: degrees = 270; break;
+            case Surface.ROTATION_270: degrees = 270; break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        camera.setDisplayOrientation(result);
+    }
+
+
 
 
     public void focusOnTouch(MotionEvent event) {

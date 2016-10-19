@@ -230,13 +230,7 @@ public class SendingService extends IntentService {
 //                                        if (!photo.has(PhotoItem.JSON_ID) || !(photo.get(PhotoItem.JSON_ID)).isJsonNull()) {
 
 
-                                            mBuilder.setProgress(factImages, progress++, false);
-                                            mNotifyManager.notify(notificationId, mBuilder.build());
-                                            broadcast = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
-                                            broadcast.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
-                                            storage.setInfoBlockProgress(id,(int) ((progress * 100.0f) / factImages));
 
-                                            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcast);
 
 
                                             File file = new File(photo.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
@@ -281,8 +275,17 @@ public class SendingService extends IntentService {
                                                     Log.e("TAG", "sent earlier=" + photo.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
                                                 }
 
+                                                mBuilder.setProgress(factImages, progress++, false);
+                                                mNotifyManager.notify(notificationId, mBuilder.build());
+                                                broadcast = new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
+                                                broadcast.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
+                                                storage.setInfoBlockProgress(id,(int) ((progress * 100.0f) / factImages));
+
+                                                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcast);
+
                                             } catch (IOException e) {
                                                 Log.d("TAG","error sending photo",e);
+                                                break;
                                             }
 //                                        }
                                     }

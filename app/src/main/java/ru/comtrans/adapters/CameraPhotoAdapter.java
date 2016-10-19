@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 
 import com.koushikdutta.ion.Ion;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import ru.comtrans.R;
@@ -203,26 +204,19 @@ public class CameraPhotoAdapter extends BaseAdapter {
 
 
         if(item.getImagePath()!=null) {
-            viewHolder.addPhoto.setVisibility(View.GONE);
-            viewHolder.photo.setVisibility(View.VISIBLE);
-            Log.d("TAG",item.getImagePath());
+            File file = new File(item.getImagePath());
+            if(file.exists()) {
+                viewHolder.addPhoto.setVisibility(View.GONE);
+                viewHolder.photo.setVisibility(View.VISIBLE);
+                Log.d("TAG", item.getImagePath());
 
-            Ion.with(viewHolder.photo).load(item.getImagePath());
+                Ion.with(viewHolder.photo).load(item.getImagePath());
+            }else {
+                item.setImagePath(null);
+                notifyDataSetChanged();
+            }
 
-//            try {
-//                int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, context.getResources().getDisplayMetrics());
-//                Bitmap bitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(item.getImagePath()), value, value);
-//
-//                Matrix matrix = new Matrix();
-//                matrix.postRotate(270);
-//                Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
-//                        matrix, true);
-//                bitmap.recycle();
-//                viewHolder.photo.setImageBitmap(rotatedBitmap);
-//            }catch (NullPointerException e){
-//                e.printStackTrace();
-//                //if photo has been deleted in other app
-//            }
+
         }else {
             viewHolder.addPhoto.setVisibility(View.VISIBLE);
             viewHolder.photo.setVisibility(View.INVISIBLE);
