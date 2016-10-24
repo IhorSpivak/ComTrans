@@ -20,7 +20,7 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.singlets.InfoBlockHelper;
 
-public class SearchValueActivity extends AppCompatActivity {
+public class SearchValueActivity extends BaseActivity {
 
     ListView listView;
     ArrayList<ListItem> items;

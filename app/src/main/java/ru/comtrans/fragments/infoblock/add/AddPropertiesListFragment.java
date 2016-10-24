@@ -97,122 +97,128 @@ public class AddPropertiesListFragment extends BaseFragment {
     }
 
     private void initPage(){
-        items = infoBlockHelper.getScreen(page);
+        try {
+            items = infoBlockHelper.getScreen(page);
+        }catch (Exception ignored){}
 
-        adapter = new InfoBlockAdapter(getContext(), items,page,totalPages,true, new InfoBlockAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(MainItem item, View view, final int position) {
-                final Intent i;
-                switch (item.getType()){
-                    case MainItem.TYPE_LIST:
-                        if(!item.getCode().equals("general_model")){
-                            i = new Intent(getActivity(), SearchValueActivity.class);
-                            i.putExtra(Const.EXTRA_TITLE,item.getName());
-                            i.putExtra(Const.EXTRA_POSITION,position);
-                            i.putExtra(Const.EXTRA_SCREEN_NUM,page);
-                            startActivityForResult(i,Const.SEARCH_VALUE_RESULT);
-                        }else {
-                            if(items.get(position-1).getListValue().getId()==-1){
-                                Toast.makeText(getContext(),R.string.no_mark_toast,Toast.LENGTH_SHORT).show();
-                            }else {
+        if(items!=null) {
+
+
+            adapter = new InfoBlockAdapter(getContext(), items, page, totalPages, true, new InfoBlockAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(MainItem item, View view, final int position) {
+                    final Intent i;
+                    switch (item.getType()) {
+                        case MainItem.TYPE_LIST:
+                            if (!item.getCode().equals("general_model")) {
                                 i = new Intent(getActivity(), SearchValueActivity.class);
-                                i.putExtra(Const.EXTRA_TITLE,item.getName());
-                                i.putExtra(Const.EXTRA_POSITION,position);
-                                i.putExtra(Const.EXTRA_SCREEN_NUM,page);
-                                i.putExtra(Const.EXTRA_MARK,items.get(position-1).getListValue().getId());
-                                startActivityForResult(i,Const.SEARCH_VALUE_RESULT);
+                                i.putExtra(Const.EXTRA_TITLE, item.getName());
+                                i.putExtra(Const.EXTRA_POSITION, position);
+                                i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+                                startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
+                            } else {
+                                if (items.get(position - 1).getListValue().getId() == -1) {
+                                    Toast.makeText(getContext(), R.string.no_mark_toast, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    i = new Intent(getActivity(), SearchValueActivity.class);
+                                    i.putExtra(Const.EXTRA_TITLE, item.getName());
+                                    i.putExtra(Const.EXTRA_POSITION, position);
+                                    i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+                                    i.putExtra(Const.EXTRA_MARK, items.get(position - 1).getListValue().getId());
+                                    startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
+                                }
+
                             }
+                            break;
 
-                        }
-                        break;
+                        case MainItem.TYPE_CALENDAR:
+                            try {
+                                Bundle args = new Bundle();
+                                args.putString(Const.EXTRA_DATE, item.getValue());
 
-                    case MainItem.TYPE_CALENDAR:
-                        try {
-                            Bundle args = new Bundle();
-                            args.putString(Const.EXTRA_DATE,item.getValue());
+                                FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
+                                DatePickerDialogFragment dialogFragment = new DatePickerDialogFragment();
+                                dialogFragment.setArguments(args);
+                                dialogFragment.setListener(new DatePickerDialogFragment.DateListener() {
+                                    @Override
+                                    public void setDate(Calendar date) {
+                                        saveData();
+                                        SimpleDateFormat sdf = new SimpleDateFormat(Const.INFO_BLOCK_DATE_FORMAT, Locale.getDefault());
+                                        String formattedDate = sdf.format(date.getTime());
+                                        infoBlockHelper.getItems().get(page).get(position).setValue(formattedDate);
+                                        adapter.getItem(position).setValue(formattedDate);
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
+                                dialogFragment.show(ft, "dialogFragmentDateAddOrder");
+                            } catch (Exception ex) {
+                                Log.e(TAG, Log.getStackTraceString(ex));
+                            }
+                            break;
+                        case MainItem.TYPE_VIDEO:
+                            //    new SaveInfoBlockTask(infoBlockId,getContext());
+                            i = new Intent(getActivity(), CameraActivity.class);
+                            i.putExtra(Const.CAMERA_MODE, Const.MODE_VIDEO);
+                            i.putExtra(Const.EXTRA_POSITION, adapter.getItems().indexOf(item));
+                            i.putExtra(Const.EXTRA_IMAGE_POSITION, position);
+                            i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+                            startActivityForResult(i, Const.CAMERA_VIDEO_RESULT);
+                            break;
+                        case MainItem.TYPE_PHOTO:
+                            //
+                            i = new Intent(getActivity(), CameraActivity.class);
+                            i.putExtra(Const.CAMERA_MODE, Const.MODE_PHOTO);
+                            i.putExtra(Const.EXTRA_POSITION, adapter.getItems().indexOf(item));
+                            i.putExtra(Const.EXTRA_IMAGE_POSITION, position);
+                            i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+                            startActivityForResult(i, Const.CAMERA_PHOTO_RESULT);
+                            break;
+                        case MainItem.TYPE_BOTTOM_BAR:
+                            switch (position) {
+                                case 1:
+                                    new SaveInfoBlockTask(infoBlockId, getContext());
+                                    storage.updateInfoBlockPage(infoBlockId, page - 1);
+                                    activity.viewPager.setCurrentItem(page - 1);
+                                    break;
+                                case 2:
+                                    if (page + 1 == totalPages) {
+                                        new SaveInfoBlockTask(infoBlockId, getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
+                                            @Override
+                                            public void onPostExecute() {
+                                                getActivity().finish();
+                                            }
+                                        });
+                                    } else {
+                                        new SaveInfoBlockTask(infoBlockId, getContext());
+                                        storage.updateInfoBlockPage(infoBlockId, page + 1);
+                                        activity.viewPager.setCurrentItem(page + 1);
+                                    }
+                                    break;
+                            }
+                            break;
 
-                            FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
-                            DatePickerDialogFragment dialogFragment = new DatePickerDialogFragment();
-                            dialogFragment.setArguments(args);
-                            dialogFragment.setListener(new DatePickerDialogFragment.DateListener() {
-                                @Override
-                                public void setDate(Calendar date) {
-                                    saveData();
-                                    SimpleDateFormat sdf = new SimpleDateFormat(Const.INFO_BLOCK_DATE_FORMAT,Locale.getDefault());
-                                    String formattedDate = sdf.format(date.getTime());
-                                    infoBlockHelper.getItems().get(page).get(position).setValue(formattedDate);
-                                    adapter.getItem(position).setValue(formattedDate);
-                                    adapter.notifyDataSetChanged();
-                                }
-                            });
-                            dialogFragment.show(ft, "dialogFragmentDateAddOrder");
-                        } catch (Exception ex) {
-                            Log.e(TAG, Log.getStackTraceString(ex));
-                        }
-                        break;
-                    case MainItem.TYPE_VIDEO:
-                    //    new SaveInfoBlockTask(infoBlockId,getContext());
-                        i = new Intent(getActivity(), CameraActivity.class);
-                        i.putExtra(Const.CAMERA_MODE,Const.MODE_VIDEO);
-                        i.putExtra(Const.EXTRA_POSITION,adapter.getItems().indexOf(item));
-                        i.putExtra(Const.EXTRA_IMAGE_POSITION,position);
-                        i.putExtra(Const.EXTRA_SCREEN_NUM,page);
-                        startActivityForResult(i,Const.CAMERA_VIDEO_RESULT);
-                        break;
-                    case MainItem.TYPE_PHOTO:
-                    //
-                        i = new Intent(getActivity(), CameraActivity.class);
-                        i.putExtra(Const.CAMERA_MODE,Const.MODE_PHOTO);
-                        i.putExtra(Const.EXTRA_POSITION,adapter.getItems().indexOf(item));
-                        i.putExtra(Const.EXTRA_IMAGE_POSITION,position);
-                        i.putExtra(Const.EXTRA_SCREEN_NUM,page);
-                        startActivityForResult(i,Const.CAMERA_PHOTO_RESULT);
-                        break;
-                    case MainItem.TYPE_BOTTOM_BAR:
-                        switch (position){
-                            case 1:
-                                new SaveInfoBlockTask(infoBlockId,getContext());
-                                storage.updateInfoBlockPage(infoBlockId, page-1);
-                                activity.viewPager.setCurrentItem(page-1);
-                                break;
-                            case 2:
-                                if(page+1==totalPages){
-                                    new SaveInfoBlockTask(infoBlockId,getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
-                                        @Override
-                                        public void onPostExecute() {
-                                           getActivity().finish();
-                                        }
-                                    });
-                                }else {
-                                    new SaveInfoBlockTask(infoBlockId,getContext());
-                                    storage.updateInfoBlockPage(infoBlockId, page+1);
-                                    activity.viewPager.setCurrentItem(page+1);
-                                }
-                                break;
-                        }
-                        break;
+                    }
 
                 }
 
-            }
+                @Override
+                public void saveState() {
+                    saveData();
+                }
 
-            @Override
-            public void saveState() {
-                saveData();
-            }
-
-        },layoutManager);
-        recyclerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                Utility.hideKeyboard(getActivity(),view);
-                return false;
-            }
-        });
-        recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL_LIST));
+            }, layoutManager);
+            recyclerView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    Utility.hideKeyboard(getActivity(), view);
+                    return false;
+                }
+            });
+            recyclerView.setAdapter(adapter);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
+        }
 
     }
 

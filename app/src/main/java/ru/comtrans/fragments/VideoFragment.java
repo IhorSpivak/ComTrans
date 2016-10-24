@@ -27,6 +27,7 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +72,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     RePhotoReceiver rePhotoReceiver = null;
     private MenuItem menuItem;
     private SimpleOrientationListener mOrientationListener;
+    private RelativeLayout rlPortraitBlocked;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,6 +102,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         progressBar = (ProgressBar)v.findViewById(R.id.progress_bar);
         videosCount = (TextView)v.findViewById(R.id.videos_count);
         chronometer = (VerticalChronometer)v.findViewById(R.id.chronometer);
+        rlPortraitBlocked = (RelativeLayout)v.findViewById(R.id.rlPortraitBlocked);
 
         toolbarTitle.setOnClickListener(this);
         takeVideo.setOnClickListener(this);
@@ -169,9 +172,10 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                         Log.d("TAG", "landscape");
                         switchButtons(true,true);
+                        rlPortraitBlocked.setVisibility(View.GONE);
                     } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                         switchButtons(false,true);
-                        Toast.makeText(getContext(), R.string.camera_portrait_blocked, Toast.LENGTH_SHORT).show();
+                        rlPortraitBlocked.setVisibility(View.VISIBLE);
                         Log.d("TAG", "portrait");
                     }
                 }catch (Exception ignored){}

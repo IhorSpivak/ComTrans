@@ -26,6 +26,8 @@
 
 
 
+
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -118,6 +120,7 @@
             <ImageView
                 android:layout_width="45dp"
                 android:layout_height="45dp"
+                android:clickable="true"
                 android:id="@+id/btn_done"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/ic_photo_done"
@@ -132,13 +135,33 @@
 
     </RelativeLayout>
 
-    <!--android:background="#80000000"-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="80dp"
+        android:layout_marginEnd="80dp"
+        android:id="@+id/rlPortraitBlocked"
+        android:clickable="true"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:background="#33000000"
+            android:layout_centerInParent="true"
+            android:textColor="@android:color/white"
+            android:text="@string/camera_portrait_blocked"/>
+
+    </RelativeLayout>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#33000000"
+        android:clickable="true"
         android:minHeight="?attr/actionBarSize"
         android:layout_toStartOf="@id/bottomBar"
         android:layout_toLeftOf="@id/bottomBar"
@@ -185,6 +208,10 @@
 
 
     </android.support.v7.widget.Toolbar>
+
+
+
+
 
 
 

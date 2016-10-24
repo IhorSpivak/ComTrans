@@ -123,7 +123,13 @@ public class CameraActivity extends AppCompatActivity {
 
     Fragment fragment;
     private void openCameraFragment(boolean isVideo){
-        PhotoItem item = items.get(imagePosition);
+        PhotoItem item;
+        if(imagePosition>=items.size()){
+            item = items.get(0);
+        }else {
+            item = items.get(imagePosition);
+        }
+
         Collections.reverse(items);
         if(isVideo){
             imagePosition = items.indexOf(item);

@@ -236,7 +236,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 break;
 
             case MainItem.TYPE_PHOTO:
-                PhotoViewHolder photoViewHolder = ((PhotoViewHolder) viewHolder);
+                final PhotoViewHolder photoViewHolder = ((PhotoViewHolder) viewHolder);
                 ArrayList<PhotoItem> photoItems = new ArrayList<>();
                 ArrayList<PhotoItem> defects = new ArrayList<>();
 
@@ -252,7 +252,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 adapter = new PhotoContainerAdapter(context, photoItems, new PhotoContainerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(PhotoItem item, View view) {
-                        MainItem mainItem = getItem(viewHolder.getAdapterPosition());
+                        MainItem mainItem = getItem(photoViewHolder.getAdapterPosition());
                         listener.onItemClick(mainItem, view, mainItem.getPhotoItems().indexOf(item));
                     }
                 }, MainItem.TYPE_PHOTO);
@@ -298,13 +298,13 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 break;
 
             case MainItem.TYPE_VIDEO:
-                PhotoViewHolder videoViewHolder = ((PhotoViewHolder) viewHolder);
+                final PhotoViewHolder videoViewHolder = ((PhotoViewHolder) viewHolder);
                 GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
                 videoViewHolder.photoList.setLayoutManager(gridLayoutManager);
                 adapter = new PhotoContainerAdapter(context, item.getPhotoItems(), new PhotoContainerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(PhotoItem item, View view) {
-                        MainItem mainItem = getItem(viewHolder.getAdapterPosition());
+                        MainItem mainItem = getItem(videoViewHolder.getAdapterPosition());
                         listener.onItemClick(mainItem, view, mainItem.getPhotoItems().indexOf(item));
                     }
                 }, MainItem.TYPE_VIDEO);

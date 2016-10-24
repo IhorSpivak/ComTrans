@@ -282,7 +282,15 @@ public class Utility {
     }
 
     public static boolean isEmailValid(CharSequence email) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        boolean isEnglish = true;
+        for (char c : email.toString().toCharArray()) {
+            if (Character.UnicodeBlock.of(c) != Character.UnicodeBlock.BASIC_LATIN) {
+                isEnglish = false;
+                break;
+            }
+        }
+        return isEnglish && email.toString().endsWith("@100fur.ru") && email.toString().length() > 10 || android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+
     }
 
     public static boolean isFieldValid(String mask, CharSequence src) {

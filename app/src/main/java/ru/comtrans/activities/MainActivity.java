@@ -18,7 +18,7 @@ import ru.comtrans.fragments.ProfileFragment;
 import ru.comtrans.fragments.SettingsFragment;
 
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     FloatingActionButton fab;
 

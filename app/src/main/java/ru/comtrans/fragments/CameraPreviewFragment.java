@@ -100,36 +100,21 @@ public class CameraPreviewFragment extends BaseFragment {
         if (camera == null) {
             camera = Camera.open(0);
             enableFlashLight();
-
-            mPreview.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        mPreview.focusOnTouch(event);
-                    }
-                    return true;
-                }
-            });
-
-
-            getView().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    int width = getView().getWidth();
-                    int height = getView().getHeight();
-                    if(width!=0){
-
-                        mPreview.setScreenSize(width,height);
-                        mPreview.refreshCamera(camera);
-
-                        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                            getView().getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                        } else {
-                            getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            PackageManager pm = getActivity().getPackageManager();
+            if(pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS)){
+                mPreview.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                            mPreview.focusOnTouch(event);
                         }
+                        return true;
                     }
-                }
-            });
+                });
+            }
+
+
+            mPreview.refreshCamera(camera);
         }
     }
 

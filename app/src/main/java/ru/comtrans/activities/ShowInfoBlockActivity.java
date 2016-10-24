@@ -10,7 +10,7 @@ import ru.comtrans.R;
 import ru.comtrans.fragments.infoblock.show.ShowInfoBlockFragment;
 import ru.comtrans.helpers.Const;
 
-public class ShowInfoBlockActivity extends AppCompatActivity {
+public class ShowInfoBlockActivity extends BaseActivity {
     String infoBlockId;
     int page;
     public ViewPager viewPager;

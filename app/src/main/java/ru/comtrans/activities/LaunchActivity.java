@@ -8,7 +8,7 @@ import ru.comtrans.R;
 import ru.comtrans.helpers.Utility;
 
 
-public class LaunchActivity extends AppCompatActivity {
+public class LaunchActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

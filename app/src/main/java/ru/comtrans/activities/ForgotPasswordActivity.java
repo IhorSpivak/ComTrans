@@ -9,7 +9,7 @@ import ru.comtrans.R;
 import ru.comtrans.fragments.ForgotPasswordInputFragment;
 
 
-public class ForgotPasswordActivity extends AppCompatActivity {
+public class ForgotPasswordActivity extends BaseActivity {
 
 
 

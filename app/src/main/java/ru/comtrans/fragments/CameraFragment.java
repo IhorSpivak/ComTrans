@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,6 +71,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     private CameraActivity activity;
     private MenuItem menuItem;
     private SimpleOrientationListener mOrientationListener;
+    private RelativeLayout rlPortraitBlocked;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,6 +101,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         defectsCount = (TextView)v.findViewById(R.id.defects_count);
         photosCount = (TextView)v.findViewById(R.id.photos_count);
         defectName  = (EditText)v.findViewById(R.id.defect_name);
+        rlPortraitBlocked = (RelativeLayout)v.findViewById(R.id.rlPortraitBlocked);
 
         toolbarTitle.setOnClickListener(this);
         takeDefect.setOnClickListener(this);
@@ -187,9 +190,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                         Log.d("TAG", "landscape");
                         switchButtons(true,true);
+                        rlPortraitBlocked.setVisibility(View.GONE);
                     } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                         switchButtons(false,true);
-                        Toast.makeText(getContext(), R.string.camera_portrait_blocked, Toast.LENGTH_SHORT).show();
+                        rlPortraitBlocked.setVisibility(View.VISIBLE);
                         Log.d("TAG", "portrait");
                     }
                 }catch (Exception ignored){}

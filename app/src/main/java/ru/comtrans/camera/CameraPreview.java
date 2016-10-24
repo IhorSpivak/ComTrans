@@ -38,6 +38,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private Point size = new Point();
     private DisplayMetrics realMetrics = new DisplayMetrics();
     private boolean isVideo;
+    private  WindowManager windowManager;
 
     public void setVideo(boolean video) {
         isVideo = video;
@@ -62,6 +63,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mHolder.addCallback(this);
         setFocusable(true);
         setFocusableInTouchMode(true);
+        DisplayMetrics metrics = new DisplayMetrics();
+        windowManager = (WindowManager) getContext()
+                .getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        this.screenWidth = metrics.widthPixels;
+        this.screenHeight = metrics.heightPixels;
     }
 
 
@@ -216,10 +223,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
-    public  void setScreenSize(int screenWidth, int screenHeight){
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
-    }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -232,8 +235,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         android.hardware.Camera.CameraInfo info =
                 new android.hardware.Camera.CameraInfo();
         android.hardware.Camera.getCameraInfo(0, info);
-        WindowManager windowManager = (WindowManager) getContext()
-                .getSystemService(Context.WINDOW_SERVICE);
+
         int rotation = windowManager.getDefaultDisplay()
                 .getRotation();
         int degrees = 0;

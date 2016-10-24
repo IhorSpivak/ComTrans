@@ -17,7 +17,7 @@ import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.tasks.SaveInfoBlockTask;
 import ru.comtrans.views.NonSwipeableViewPager;
 
-public class AddInfoBlockActivity extends AppCompatActivity {
+public class AddInfoBlockActivity extends BaseActivity {
 
     public NonSwipeableViewPager viewPager;
     private String infoBlockId;

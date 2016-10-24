@@ -27,7 +27,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class GalleryActivity extends AppCompatActivity implements View.OnClickListener {
+public class GalleryActivity extends BaseActivity implements View.OnClickListener {
 
     PhotoItem item;
     File imgFile;

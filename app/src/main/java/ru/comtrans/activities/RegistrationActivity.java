@@ -9,7 +9,7 @@ import ru.comtrans.R;
 import ru.comtrans.fragments.ProfileFragment;
 
 
-public class RegistrationActivity extends AppCompatActivity {
+public class RegistrationActivity extends BaseActivity {
 
 
 

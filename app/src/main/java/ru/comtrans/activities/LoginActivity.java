@@ -7,7 +7,7 @@ import ru.comtrans.R;
 import ru.comtrans.fragments.LoginFragment;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
 
 
