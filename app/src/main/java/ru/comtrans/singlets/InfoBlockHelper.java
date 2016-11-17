@@ -1,7 +1,5 @@
 package ru.comtrans.singlets;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 import ru.comtrans.items.ListItem;
@@ -55,14 +53,26 @@ public class InfoBlockHelper {
         return null;
     }
 
+    public ListItem getModelValue(){
+        for (ArrayList<MainItem> array :
+                items) {
+            for (MainItem item :
+                    array) {
+                if(item.getCode()!=null&&item.getCode().equals("general_model")){
+                    return item.getListValue();
+                }
+            }
+        }
+        return null;
+    }
+
+
 
     public void saveScreen(ArrayList<MainItem> screen,int position){
         items.set(position,screen);
     }
     public void saveAll(){
-
             storage.saveInfoBlock(id, items);
-
      }
 
     public void saveProtector(ArrayList<ProtectorItem> protectorItems){

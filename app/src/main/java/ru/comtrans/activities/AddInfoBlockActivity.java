@@ -1,7 +1,7 @@
 package ru.comtrans.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.WindowManager;
@@ -13,6 +13,7 @@ import ru.comtrans.fragments.infoblock.add.AddInfoBlockFragment;
 import ru.comtrans.fragments.infoblock.add.InfoBlockTutorialFragment;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
+import ru.comtrans.services.AudioRecordService;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.tasks.SaveInfoBlockTask;
 import ru.comtrans.views.NonSwipeableViewPager;
@@ -46,6 +47,9 @@ public class AddInfoBlockActivity extends BaseActivity {
             isNew = true;
             infoBlockId = UUID.randomUUID().toString();
         }
+        Intent i = new Intent(this, AudioRecordService.class);
+        i.putExtra(Const.EXTRA_INFO_BLOCK_ID,infoBlockId);
+        startService(i);
         helper = InfoBlockHelper.getInstance();
 
         if(Utility.getBoolean(Const.IS_FIRST_ADD_INFOBLOCK_LAUNCH))
@@ -96,5 +100,10 @@ public class AddInfoBlockActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        stopService(new Intent(this, AudioRecordService.class));
+        super.onDestroy();
 
+    }
 }

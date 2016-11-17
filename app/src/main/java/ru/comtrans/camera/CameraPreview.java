@@ -1,28 +1,22 @@
 package ru.comtrans.camera;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -267,8 +261,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 Rect focusRect = calculateTapArea(event.getX(), event.getY(), 1f);
 
                 Camera.Parameters parameters = camera.getParameters();
-                if (!Objects.equals(parameters.getFocusMode(), Camera.Parameters.FOCUS_MODE_MACRO)) {
-                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
+
+                try {
+                    if (!Objects.equals(parameters.getFocusMode(), Camera.Parameters.FOCUS_MODE_MACRO)) {
+                        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
+                    }
+                }catch (NoClassDefFoundError error){
+                    Log.e("TAG","e",error);
                 }
                 if (parameters.getMaxNumFocusAreas() > 0) {
                     List<Camera.Area> mylist = new ArrayList<>();

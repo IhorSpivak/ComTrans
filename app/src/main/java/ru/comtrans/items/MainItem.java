@@ -10,6 +10,7 @@ public class MainItem {
     public static final String JSON_TYPE = "type";
     public static final String JSON_CODE = "code";
     public static final String JSON_VALUE = "value";
+    public static final String JSON_DEFAULT_VALUE = "default_value";
     public static final String JSON_IS_CHECKED = "is_checked";
     public static final String JSON_IS_REQUIRED = "is_required";
     public static final String JSON_LIST_VALUE = "list_value";
@@ -39,6 +40,7 @@ public class MainItem {
     private String name;
     private String code;
     private String value;
+    private String defaultValue;
     private int type;
     private boolean isChecked = false;
     private boolean isRequired = false;
@@ -171,7 +173,11 @@ public class MainItem {
         this.name = name;
     }
 
+    public String getDefaultValue() {
+        return defaultValue;
+    }
 
-
-
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
 }

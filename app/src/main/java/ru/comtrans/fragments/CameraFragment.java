@@ -72,6 +72,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     private MenuItem menuItem;
     private SimpleOrientationListener mOrientationListener;
     private RelativeLayout rlPortraitBlocked;
+    private boolean isRePhoto = false;
+    private int currentRePhotoPosition = -1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -149,16 +151,31 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(currentRePhotoPosition!=position){
+                    isRePhoto = false;
+                    currentRePhotoPosition = -1;
+                }
                 activity.getPhotoAdapter().setSelectedPosition(position);
                 PhotoItem photoItem = activity.getPhotoAdapter().getItem(position);
                 defectName.setVisibility(View.INVISIBLE);
                 Utility.hideKeyboard(getActivity(),getActivity().getCurrentFocus());
-
+                boolean isDefect =photoItem.isDefect();
                 Log.d("TAG","imagepath "+photoItem.getImagePath());
                 Log.d("TAG","camera preview "+getFragmentManager().findFragmentByTag(Const.CAMERA_PREVIEW));
                 Log.d("TAG","photo preview "+getFragmentManager().findFragmentByTag(Const.PHOTO_VIEWER));
 
-                toolbarTitle.setText(photoItem.getTitle());
+                if(!isDefect) {
+                    toolbarTitle.setText(photoItem.getTitle());
+                }else{
+                    if(photoItem.getImagePath()!=null){
+                        if(photoItem.isEdited()){
+                            toolbarTitle.setText(photoItem.getTitle());
+                        }else {
+                            toolbarTitle.setText(photoItem.getTitle()+" "+getString(R.string.default_defect_name_suffix));
+                        }
+                    }
+
+                }
 
 
                 if(photoItem.getImagePath()==null){
@@ -225,6 +242,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
 
     private void replaceWithCamera(){
+        if(isRePhoto){
+            currentRePhotoPosition = activity.getPhotoAdapter().getSelectedPosition();
+        }
         toolbarTitle.setText(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getTitle());
         cameraPreviewFragment = CameraPreviewFragment.newInstance(false);
         photoViewerFragment = null;
@@ -283,6 +303,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                                     toolbarTitle.setText(defectName.getText().toString());
                                     toolbarTitle.setVisibility(View.VISIBLE);
                                     defectName.setVisibility(View.INVISIBLE);
+                                    item.setEdited(true);
                                     activity.getPhotoAdapter().setTitleForItem(item,activity.getPhotoAdapter().getSelectedPosition());
                                 }
                                 return true;
@@ -340,13 +361,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
 
                         if(isDefect){
+                            isRePhoto = false;
+                            currentRePhotoPosition = -1;
                             activity.getPhotoAdapter().setSelectedPosition(0);
                             createFileFromData(data, true);
                             int suffix = activity.getPhotoAdapter().getDefectsCount();
                             activity.getPhotoAdapter().setDefectsCount(suffix);
                             setDefectsCount(activity.getPhotoAdapter().getFactDefectCount());
                             activity.getPhotoAdapter().setSelectedPosition(0);
-                            toolbarTitle.setText(activity.getPhotoAdapter().getItem(0).getTitle());
+                            toolbarTitle.setText(activity.getPhotoAdapter().getItem(0).getTitle()+" "+getString(R.string.default_defect_name_suffix));
 
                             try {
                                     listView.smoothScrollToPositionFromTop(activity.getPhotoAdapter().getSelectedPosition() - 2, 0);
@@ -355,6 +378,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                                 replaceWithCamera();
 
                         }else {
+                            if(isRePhoto){
+                                PhotoItem item =   activity.getPhotoAdapter().getItem(currentRePhotoPosition);
+                                item.incrementRePhotoCount();
+                                activity.getPhotoAdapter().setItem(item,currentRePhotoPosition);
+                                currentRePhotoPosition = -1;
+                                isRePhoto = false;
+                            }
                             createFileFromData(data, false);
                             setPhotosCount(activity.getPhotoAdapter().getPhotosCount());
                             setProgressCount(activity.getPhotoAdapter().getPhotosCount());
@@ -405,7 +435,11 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
 
     public void done(boolean isDone){
-        if(isDone) {
+        if(isDone&&isRePhoto) {
+            replaceWithPhotoViewer(currentRePhotoPosition);
+            currentRePhotoPosition = -1;
+            isRePhoto = false;
+        }else if(isDone){
             Intent i = new Intent();
             i.putExtra(Const.EXTRA_POSITION, activity.position);
             i.putExtra(Const.EXTRA_IMAGE_POSITION, activity.imagePosition);
@@ -421,6 +455,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 getActivity().getParent().setResult(Const.CAMERA_PHOTO_RESULT, i);
             }
             getActivity().finish();
+
         }else {
             ArrayList<PhotoItem> items = new ArrayList<>(activity.getPhotoAdapter().getItems());
             Collections.reverse(items);
@@ -490,8 +525,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            Log.d("TAG","position "+listView.getSelectedItemPosition());
+            isRePhoto = true;
             replaceWithCamera();
 
         }

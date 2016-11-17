@@ -78,6 +78,31 @@ public class SendingService extends IntentService {
             sendObject.addProperty("method", "add");
             JsonArray fields = new JsonArray();
 
+            File audioFile = new File(storage.getInfoBlockAudio(id));
+            if(audioFile.exists()){
+                RequestBody requestFile;
+                requestFile = RequestBody.create(MediaType.parse("audio/mp4"), audioFile);
+                MultipartBody.Part body = MultipartBody.Part.createFormData("multipart/form-data", audioFile.getName(), requestFile);
+                Call<JsonObject> call = AppController.apiInterface.postFile(Utility.getToken(), body);
+
+                try {
+                    JsonObject result = call.execute().body();
+                    if (result.has("result") && !result.get("result").isJsonNull()) {
+                        long audioId = result.get("result").getAsJsonObject().get("id").getAsLong();
+                        JsonObject audioObject = new JsonObject();
+                        audioObject.addProperty(MainItem.JSON_CODE,"recorded_audio");
+                        audioObject.addProperty(MainItem.JSON_VALUE,audioId);
+                        fields.add(new JsonObject());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+
+
             int factImages = 0;
             int progress = 0;
             for (int i = 0; i < array.size(); i++) {

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
@@ -44,8 +43,10 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.listeners.SimpleOrientationListener;
+import ru.comtrans.services.AudioRecordService;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.tasks.SaveInfoBlockTask;
+import ru.comtrans.views.CircleProgressBar;
 import ru.comtrans.views.VerticalChronometer;
 
 /**
@@ -65,7 +66,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     VideoViewerFragment videoViewerFragment;
     MediaRecorder mediaRecorder;
     boolean isVideoRecording = false;
-    VerticalChronometer chronometer;
+    private Chronometer chronometer;
     int currentPosition;
     File videoFile;
     CountUpdateReceiver countUpdateReceiver = null;
@@ -73,11 +74,13 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     private MenuItem menuItem;
     private SimpleOrientationListener mOrientationListener;
     private RelativeLayout rlPortraitBlocked;
+    private CircleProgressBar videoProgressBar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        getActivity().stopService(new Intent(getContext(), AudioRecordService.class));
     }
 
 
@@ -101,8 +104,9 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         done = (ImageView) v.findViewById(R.id.btn_done);
         progressBar = (ProgressBar)v.findViewById(R.id.progress_bar);
         videosCount = (TextView)v.findViewById(R.id.videos_count);
-        chronometer = (VerticalChronometer)v.findViewById(R.id.chronometer);
+        chronometer = (Chronometer) v.findViewById(R.id.chronometer);
         rlPortraitBlocked = (RelativeLayout)v.findViewById(R.id.rlPortraitBlocked);
+        videoProgressBar = (CircleProgressBar)v.findViewById(R.id.videoProgressBar);
 
         toolbarTitle.setOnClickListener(this);
         takeVideo.setOnClickListener(this);
@@ -175,6 +179,11 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                         rlPortraitBlocked.setVisibility(View.GONE);
                     } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                         switchButtons(false,true);
+                        if(isVideoRecording){
+                            takeVideo();
+                            isVideoRecording = false;
+                            chronometer.setBase(SystemClock.elapsedRealtime());
+                        }
                         rlPortraitBlocked.setVisibility(View.VISIBLE);
                         Log.d("TAG", "portrait");
                     }
@@ -216,6 +225,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 if(videoViewerFragment!=null){
                     Toast.makeText(getActivity(),R.string.video_blocked,Toast.LENGTH_SHORT).show();
                 }else {
+
                     takeVideo();
                 }
 
@@ -250,10 +260,10 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     private void takeVideo(){
         Log.d("TAG","take video");
         if(isVideoRecording){
+            videoProgressBar.setProgressWithAnimation(0);
             if (mediaRecorder != null) {
                 chronometer.setOnChronometerTickListener(null);
                 isVideoRecording = false;
-                takeVideo.setImageResource(R.drawable.ic_take_photo);
                 try{
                     mediaRecorder.stop();
                 }catch (Exception e){
@@ -299,7 +309,6 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         }else {
 
             if (prepareVideoRecorder()) {
-                takeVideo.setImageResource(R.drawable.ic_stop_video);
                 isVideoRecording = true;
                 mediaRecorder.start();
                 chronometer.setVisibility(View.VISIBLE);
@@ -311,12 +320,16 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                     }
                 });
                 PhotoItem item = activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition());
-                final int duration = item.getDuration()*1000;
+                final double duration = item.getDuration()*1000;
                 chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
                     @Override
                     public void onChronometerTick(Chronometer chronometer) {
-                        long elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
+                        double elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
                         Log.d("TAG", String.valueOf(elapsedMillis));
+                        double progress = (elapsedMillis / duration)*100;
+                        Log.d("TAG", "progress "+String.valueOf(progress));
+                        videoProgressBar.setProgressWithAnimation((float) progress);
+
                         if(elapsedMillis>=duration&&chronometer.getBase()!=0){
                             takeVideo();
                         }
@@ -339,12 +352,12 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
             takeVideo();
             isVideoRecording = false;
             chronometer.setBase(SystemClock.elapsedRealtime());
-            takeVideo.setImageResource(R.drawable.ic_take_photo);
         }
 
     }
 
     private boolean prepareVideoRecorder() {
+
         try {
             File directory = new File(Environment.getExternalStorageDirectory(), "Android/data/ru.comtrans/files/Videos");
             if (directory.mkdirs() || directory.exists()) {
@@ -364,7 +377,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 mediaRecorder.setVideoFrameRate(24); //might be auto-determined due to lighting
                 mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);// MPEG_4_SP
                 mediaRecorder.setVideoEncodingBitRate(3000000);
-                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
                 mediaRecorder.setVideoSize(640, 480);
                 mediaRecorder.setOutputFile(file.getAbsolutePath());
                 mediaRecorder.setPreviewDisplay(cameraPreviewFragment.getPreview().getHolder().getSurface());
@@ -442,6 +455,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
             }else {
                 replaceWithVideoViewer(item,currentPosition);
             }
+            done(false);
 
 
         }

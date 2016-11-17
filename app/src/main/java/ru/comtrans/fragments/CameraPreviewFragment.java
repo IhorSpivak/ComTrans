@@ -3,7 +3,6 @@ package ru.comtrans.fragments;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -11,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -82,7 +80,7 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("TAG","onPause");
+        Log.d("TAG","onDestroy");
         releaseCamera();
     }
 

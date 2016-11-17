@@ -58,7 +58,7 @@ public class Const {
     public static final String EXTRA_VALUES = "extra_values";
     public static final String EXTRA_TITLE = "extra_title";
     public static final String EXTRA_POSITION = "extra_pos"; ///POSITION OF MAIN ITEM IN ADAPTER;
-    public static final String EXTRA_IMAGE_POSITION = "extra_img_pos"; /// POSITION OF CLIKED PHOTO
+    public static final String EXTRA_IMAGE_POSITION = "extra_img_pos"; /// POSITION OF CLICKED PHOTO
     public static final String EXTRA_VALUE = "extra_value";
     public static final String DEFAULT_DEFECT_NAME = "default_defect_name";
     public static final String EXTRA_SCREEN_NUM = "extra_screen";

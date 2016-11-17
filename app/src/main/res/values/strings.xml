@@ -69,10 +69,11 @@
     <string name="photo_blocked">Для продолжения фотографирования перейдите в ячейку добавления фото</string>
     <string name="video_blocked">Для продолжения cнятия видео перейдите в ячейку добавления видео</string>
     <string name="action_flash">Вспышка</string>
-
+    <string name="default_defect_name">Дефект %d</string>
+    <string name="default_defect_name_suffix">Коснитесь, чтобы переименовать</string>
 
     <string name="title_activity_gallery">Галерея</string>
-    <string name="camera_portrait_blocked">Съемка разрешена только в горизонтальном положении устройства</string>
+    <string name="camera_portrait_blocked">Для выполнения съемки устройство\nдолжно быть расположено\nгоризонтально</string>
 
 
     /////////////////////////////Settings Fragment/////////////////////////

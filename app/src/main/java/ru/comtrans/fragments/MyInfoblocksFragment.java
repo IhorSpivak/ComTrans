@@ -25,7 +25,6 @@ import java.util.ArrayList;
 
 import ru.comtrans.R;
 import ru.comtrans.activities.AddInfoBlockActivity;
-import ru.comtrans.activities.ShowInfoBlockActivity;
 import ru.comtrans.adapters.DialogArrayAdapter;
 import ru.comtrans.adapters.MyInfoBlocksAdapter;
 import ru.comtrans.helpers.Const;

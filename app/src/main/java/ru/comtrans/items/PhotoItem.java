@@ -9,7 +9,6 @@ import android.os.Parcelable;
 public class PhotoItem implements Parcelable {
 
 
-
     public static final String JSON_IS_DEFECT = "is_defect";
     public static final String JSON_TITLE = "title";
     public static final String JSON_SIZE = "size";
@@ -19,6 +18,8 @@ public class PhotoItem implements Parcelable {
     public static final String JSON_DURATION = "duration";
     public static final String JSON_IS_VIDEO = "is_video";
     public static final String JSON_IS_SEND = "is_send";
+    public static final String JSON_IS_EDITED = "is_edited";
+    public static final String JSON_RE_PHOTO_COUNT = "re_photo_count";
 
 
 
@@ -31,8 +32,30 @@ public class PhotoItem implements Parcelable {
     private long id;
     private String code;
     private int duration;
+    private int rePhotoCount = 0;
     private boolean isVideo;
     private boolean isSend = false;
+    private boolean isEdited = false;
+
+    public void incrementRePhotoCount(){
+        rePhotoCount++;
+    }
+
+    public int getRePhotoCount() {
+        return rePhotoCount;
+    }
+
+    public void setRePhotoCount(int rePhotoCount) {
+        this.rePhotoCount = rePhotoCount;
+    }
+
+    public boolean isEdited() {
+        return isEdited;
+    }
+
+    public void setEdited(boolean edited) {
+        isEdited = edited;
+    }
 
     public long getSize() {
         return size;
@@ -131,8 +154,10 @@ public class PhotoItem implements Parcelable {
         dest.writeLong(this.id);
         dest.writeString(this.code);
         dest.writeInt(this.duration);
+        dest.writeInt(this.rePhotoCount);
         dest.writeByte(this.isVideo ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isSend ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isEdited ? (byte) 1 : (byte) 0);
     }
 
     protected PhotoItem(Parcel in) {
@@ -143,11 +168,13 @@ public class PhotoItem implements Parcelable {
         this.id = in.readLong();
         this.code = in.readString();
         this.duration = in.readInt();
+        this.rePhotoCount = in.readInt();
         this.isVideo = in.readByte() != 0;
         this.isSend = in.readByte() != 0;
+        this.isEdited = in.readByte() != 0;
     }
 
-    public static final Parcelable.Creator<PhotoItem> CREATOR = new Parcelable.Creator<PhotoItem>() {
+    public static final Creator<PhotoItem> CREATOR = new Creator<PhotoItem>() {
         @Override
         public PhotoItem createFromParcel(Parcel source) {
             return new PhotoItem(source);

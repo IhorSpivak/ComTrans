@@ -7,14 +7,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.CountDownTimer;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 

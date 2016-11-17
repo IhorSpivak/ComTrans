@@ -9,7 +9,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.singlets.InfoBlockHelper;
-import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.views.ConnectionProgressDialog;
 
 /**
@@ -18,7 +17,6 @@ import ru.comtrans.views.ConnectionProgressDialog;
 public class SaveInfoBlockTask {
     private Context context;
     private InfoBlockHelper helper;
-    private InfoBlocksStorage storage;
     private String id;
     private OnPostExecuteListener listener;
     private boolean withDialog;
@@ -41,12 +39,12 @@ public class SaveInfoBlockTask {
     }
 
     private void init(String id,Context context, OnPostExecuteListener listener, boolean withDialog){
+
         this.context = context;
         this.listener = listener;
         this.id = id;
         this.withDialog = withDialog;
         helper = InfoBlockHelper.getInstance();
-        storage = InfoBlocksStorage.getInstance();
         if(withDialog) {
             new AsyncTaskForSaveAndExit().execute();
         }else{

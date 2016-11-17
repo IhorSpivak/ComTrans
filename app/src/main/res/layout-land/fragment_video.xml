@@ -13,6 +13,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical"/>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/grid"/>
+
+
+
 
 
     <RelativeLayout
@@ -20,7 +27,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:background="#33000000"
+        android:background="#66000000"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:paddingStart="5dp"
@@ -79,12 +86,33 @@
             android:layout_toRightOf="@android:id/list"
             android:layout_toEndOf="@android:id/list">
 
+            <ru.comtrans.views.CircleProgressBar
+                android:id="@+id/videoProgressBar"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_centerInParent="true"
+                app:progressBarThickness="8dp"
+                app:progressbarColor="@android:color/holo_red_dark"
+
+                />
+
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:id="@+id/take_video"
-                android:src="@drawable/ic_take_photo"
+                android:src="@drawable/ic_stop"
                 android:layout_centerInParent="true"/>
+
+            <Chronometer
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/chronometer"
+                android:visibility="invisible"
+                android:textColor="@android:color/white"
+                android:layout_centerVertical="true"/>
 
 
             <ImageView
@@ -105,41 +133,6 @@
 
 
 
-
-    <ru.comtrans.views.VerticalChronometer
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toStartOf="@id/bottomBar"
-        android:layout_toLeftOf="@id/bottomBar"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:id="@+id/chronometer"
-        android:visibility="invisible"
-        android:textColor="@android:color/holo_red_dark"
-        app:contentInsetLeft="0dp"
-        app:contentInsetStart="0dp"
-        android:layout_centerVertical="true"/>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginRight="80dp"
-        android:layout_marginEnd="80dp"
-        android:id="@+id/rlPortraitBlocked"
-        android:clickable="true"
-        android:visibility="gone">
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_centerInParent="true"
-            android:background="#33000000"
-            android:textColor="@android:color/white"
-            android:text="@string/camera_portrait_blocked"/>
-
-    </RelativeLayout>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -192,5 +185,45 @@
 
 
     </android.support.v7.widget.Toolbar>
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:rotation="45"
+        android:layout_centerInParent="true"
+        android:src="@drawable/cross"/>
+
+    <RelativeLayout android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#802d2d2d"
+        android:id="@+id/rlPortraitBlocked"
+        android:visibility="gone"
+        android:clickable="true">
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/empty_icon"
+            android:rotation="90"
+            android:src="@drawable/ic_empty_camera_screen"/>
+
+        <ru.comtrans.views.VerticalTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@id/empty_icon"
+            android:layout_toStartOf="@id/empty_icon"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
+            android:textColor="@android:color/white"
+            android:text="@string/camera_portrait_blocked"/>
+
+
+
+    </RelativeLayout>
 
 </RelativeLayout>

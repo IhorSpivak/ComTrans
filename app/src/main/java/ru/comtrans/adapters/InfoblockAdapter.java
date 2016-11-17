@@ -23,8 +23,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,7 +37,6 @@ import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.PhotoItem;
-import ru.comtrans.items.ProtectorItem;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.views.DividerItemDecoration;
 import ru.comtrans.views.ProtectorView;
@@ -337,6 +334,14 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 if (isEditable) {
                     final EditTextViewHolder editTextViewHolder = ((EditTextViewHolder) viewHolder);
                     editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
+                    editTextViewHolder.editText.setText(item.getValue());
+
+                    if(item.getCode().equals("general_vin")){
+                        editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT| InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+                        editTextViewHolder.editText.setFilters(new InputFilter[] {new InputFilter.AllCaps(),new InputFilter.LengthFilter(context.getResources().getInteger(R.integer.max_length))});
+                    }
+
+
 
 
 
@@ -344,21 +349,51 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
                     else
                         editTextViewHolder.textInputLayout.setHint(item.getName());
+
                     editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
-                    editTextViewHolder.editText.setText(item.getValue());
+
                     editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         public void onFocusChange(View v, boolean hasFocus) {
                             if (!hasFocus) {
+                                if(item.getCode().equals("man_pts_model")){
+                                    if (infoBlockHelper.getModelValue().getName().equals(editTextViewHolder.editText.getText().toString())) {
+                                        setConstructorChecked(false);
+                                    } else {
+                                        setConstructorChecked(true);
+                                    }
+                                }
+
                                 listener.saveState();
                             }
                         }
                     });
+
+                    if(item.getCode().equals("how_asc")){
+                        editTextViewHolder.editText.setSingleLine(false);
+                        editTextViewHolder.editText.setKeyListener(null);
+                        editTextViewHolder.editText.setFocusable(false);
+                        editTextViewHolder.editText.setClickable(false);
+                        editTextViewHolder.editText.setFocusableInTouchMode(false);
+                        editTextViewHolder.editText.setText(item.getDefaultValue());
+                        Log.d("TAG","default value "+item.getDefaultValue());
+                    }
+
+
+
                 } else {
                     NonEditableViewHolder nonEditableViewHolder = ((NonEditableViewHolder) viewHolder);
                     nonEditableViewHolder.title.setText(item.getName());
                     if (item.getValue() != null)
                         nonEditableViewHolder.tvText.setText(item.getValue());
+
+                    if(item.getCode().equals("how_asc")){
+                        nonEditableViewHolder.tvText.setText(item.getDefaultValue());
+                    }
                 }
+
+
+
+
                 break;
 
             case MainItem.TYPE_NUMBER:
@@ -686,7 +721,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         @Override
         public void afterTextChanged(Editable editable) {
-            // no op
+
         }
     }
 
@@ -822,5 +857,19 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
 
+    }
+
+    public ListItem setConstructorChecked(boolean isChecked){
+        for (MainItem item :
+                items) {
+            if(item.getCode()!=null&&item.getCode().equals("general_contructor")){
+                item.setChecked(isChecked);
+                try{
+                    notifyDataSetChanged();
+                }catch (Exception ignored){}
+
+            }
+        }
+        return null;
     }
 }

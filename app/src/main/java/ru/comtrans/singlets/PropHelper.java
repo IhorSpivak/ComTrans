@@ -99,6 +99,10 @@ public class PropHelper {
                             break;
                     }
                 }
+
+                if (object.has("default_value") && !object.get("default_value").isJsonNull()) {
+                    newObject.addProperty(MainItem.JSON_DEFAULT_VALUE, object.get("default_value").getAsString());
+                }
                 switch (object.get("prop_type").getAsString()) {
                     case "S":
                         newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_STRING);
@@ -216,7 +220,8 @@ public class PropHelper {
                 if(object.has("is_defect")&&!object.get("is_defect").isJsonNull()&&object.get("is_defect").getAsBoolean()){
                     newObject.addProperty(PhotoItem.JSON_IS_DEFECT,true);
                     Utility.saveData(Const.DEFAULT_DEFECT_NAME,object.get("name").getAsString());
-                    newObject.addProperty(PhotoItem.JSON_TITLE,object.get("name").getAsString()+" 1");
+                 //   newObject.addProperty(PhotoItem.JSON_TITLE,object.get("name").getAsString()+" 1");
+                    newObject.addProperty(PhotoItem.JSON_TITLE,"Дефект 1");
                 }else {
                     newObject.addProperty(PhotoItem.JSON_IS_DEFECT,false);
                 }

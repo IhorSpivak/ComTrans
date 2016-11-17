@@ -115,6 +115,15 @@ public class InfoBlocksStorage {
     }
 
 
+    public void saveInfoBlockAudio(String id, String path) {
+        Utility.saveData("audio" + id, path);
+    }
+
+    public String getInfoBlockAudio(String id) {
+        return Utility.getSavedData("audio" + id);
+    }
+
+
     public ArrayList<MyInfoBlockItem> getPreviewItems() {
         ArrayList<MyInfoBlockItem> items = new ArrayList<>();
 
@@ -336,6 +345,7 @@ public class InfoBlocksStorage {
                     object.addProperty(MainItem.JSON_ID, item.getId());
                     object.addProperty(MainItem.JSON_NAME, item.getName());
                     object.addProperty(MainItem.JSON_VALUE, item.getValue());
+                    object.addProperty(MainItem.JSON_DEFAULT_VALUE, item.getDefaultValue());
                     object.addProperty(MainItem.JSON_TYPE, item.getType());
                     object.addProperty(MainItem.JSON_IS_CHECKED, item.isChecked());
                     object.addProperty(MainItem.JSON_IS_REQUIRED, item.isRequired());
@@ -423,7 +433,9 @@ public class InfoBlocksStorage {
                             photoObject.addProperty(PhotoItem.JSON_IS_DEFECT, photoItem.isDefect());
                             photoObject.addProperty(PhotoItem.JSON_IS_VIDEO, photoItem.isVideo());
                             photoObject.addProperty(PhotoItem.JSON_TITLE, photoItem.getTitle());
+                            photoObject.addProperty(PhotoItem.JSON_IS_EDITED, photoItem.isEdited());
                             photoObject.addProperty(PhotoItem.JSON_IS_SEND, photoItem.isSend());
+                            photoObject.addProperty(PhotoItem.JSON_RE_PHOTO_COUNT,photoItem.getRePhotoCount());
                             photoArray.add(photoObject);
                         }
                         object.add(MainItem.JSON_PHOTO_VALUES, photoArray);
@@ -518,6 +530,9 @@ public class InfoBlocksStorage {
 
                 if (object.has(MainItem.JSON_VALUE) && !object.get(MainItem.JSON_VALUE).isJsonNull())
                     item.setValue(object.get(MainItem.JSON_VALUE).getAsString());
+
+                if (object.has(MainItem.JSON_DEFAULT_VALUE) && !object.get(MainItem.JSON_DEFAULT_VALUE).isJsonNull())
+                    item.setDefaultValue(object.get(MainItem.JSON_DEFAULT_VALUE).getAsString());
 
                 if (object.has(MainItem.JSON_LIST_VALUE) && !object.get(MainItem.JSON_LIST_VALUE).isJsonNull()) {
                     JsonObject valueObject = object.getAsJsonObject(MainItem.JSON_LIST_VALUE);
@@ -629,6 +644,12 @@ public class InfoBlocksStorage {
 
                         if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull())
                             photoItem.setImagePath(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+
+                        if (valueObject.has(PhotoItem.JSON_IS_EDITED) && !valueObject.get(PhotoItem.JSON_IS_EDITED).isJsonNull())
+                            photoItem.setEdited(valueObject.get(PhotoItem.JSON_IS_EDITED).getAsBoolean());
+
+                        if (valueObject.has(PhotoItem.JSON_RE_PHOTO_COUNT) && !valueObject.get(PhotoItem.JSON_RE_PHOTO_COUNT).isJsonNull())
+                            photoItem.setRePhotoCount(valueObject.get(PhotoItem.JSON_RE_PHOTO_COUNT).getAsInt());
 
                         if (valueObject.has(PhotoItem.JSON_ID) && !valueObject.get(PhotoItem.JSON_ID).isJsonNull()) {
                             photoItem.setId(valueObject.get(PhotoItem.JSON_ID).getAsLong());

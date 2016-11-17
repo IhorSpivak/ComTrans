@@ -15,8 +15,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import ru.comtrans.R;
-import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.views.VerticalTextView;
 
@@ -82,7 +80,10 @@ public class CameraPhotoAdapter extends BaseAdapter {
         if(item.isDefect()){
             selectedPosition++;
             defectsCount++;
-            items.add(0,new PhotoItem(Utility.getSavedData(Const.DEFAULT_DEFECT_NAME)+" "+defectsCount,true));
+//            items.add(0,new PhotoItem(Utility.getSavedData(Const.DEFAULT_DEFECT_NAME)+
+//                    " "+defectsCount,true));
+        items.add(0,new PhotoItem(String.format(context.getString(R.string.default_defect_name)
+                ,defectsCount),true));
         }
         notifyDataSetChanged();
     }
@@ -225,4 +226,6 @@ public class CameraPhotoAdapter extends BaseAdapter {
 
         return convertView;
     }
+
+
 }

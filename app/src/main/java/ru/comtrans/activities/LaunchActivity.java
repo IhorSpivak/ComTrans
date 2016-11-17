@@ -2,7 +2,6 @@ package ru.comtrans.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import ru.comtrans.R;
 import ru.comtrans.helpers.Utility;

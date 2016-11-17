@@ -84,7 +84,9 @@ public class PhotoViewerFragment extends Fragment implements View.OnClickListene
         Intent i;
         switch (v.getId()){
             case R.id.re_photo:
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Const.RE_PHOTO));
+                if(item.getRePhotoCount()!=3) {
+                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Const.RE_PHOTO));
+                }
                 break;
             case R.id.photo_full_screen:
                 i = new Intent(getActivity(), GalleryActivity.class);
@@ -110,6 +112,7 @@ public class PhotoViewerFragment extends Fragment implements View.OnClickListene
         if(imgFile.delete()){
             if(!item.isDefect()) {
                 item.setImagePath(null);
+                item.setRePhotoCount(0);
                 activity.getPhotoAdapter().setItem(item, selectedPosition);
             }else {
                 activity.getPhotoAdapter().removeItem(selectedPosition);
