@@ -35,6 +35,9 @@ public interface ApiInterface {
     @GET("prop/22")
     Call<JsonObject> getProp();
 
+    @GET("prop-value/834")
+    Call<JsonObject> getVehiceType();
+
     @POST("forgot-password/")
     Call<User> forgotPassword(@Body User user);
 

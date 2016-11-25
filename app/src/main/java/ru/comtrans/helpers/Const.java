@@ -5,6 +5,7 @@ package ru.comtrans.helpers;
  */
 public class Const {
     public static final String PREFERENCES_NAME = "ComTrans";
+    public static final String VEHICLE_TYPE = "vehicle_type";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
     public static final String TOKEN = "token";
@@ -34,6 +35,7 @@ public class Const {
 
     public static final int REQUEST_PERMISSION_CAMERA = 101;
     public static final int REQUEST_PERMISSION_VIDEO = 102;
+    public static final int REQUEST_PERMISSION_AUDIO_RECORDING = 103;
 
 
 

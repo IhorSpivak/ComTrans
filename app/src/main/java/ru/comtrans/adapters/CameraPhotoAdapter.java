@@ -25,7 +25,7 @@ public class CameraPhotoAdapter extends BaseAdapter {
     private ArrayList<PhotoItem> items;
     private Context context;
     int selectedPosition = 0; //needs to highlight first selected position
-    int defectsCount = 1;
+    private int defectsCount = 1;
 
     public ArrayList<PhotoItem> getItems() {
         return items;
@@ -53,6 +53,7 @@ public class CameraPhotoAdapter extends BaseAdapter {
         this.items = items;
         this.context = context;
         this.selectedPosition = items.size()-1;
+        defectsCount = getFactDefectCount()+1;
     }
 
     static class ViewHolder{
@@ -68,6 +69,10 @@ public class CameraPhotoAdapter extends BaseAdapter {
         return items.size();
     }
 
+    public boolean isImagePathNull(int position){
+        return items.get(position).getImagePath()!=null;
+    }
+
     @Override
     public PhotoItem getItem(int position) {
         return items.get(position);
@@ -80,8 +85,8 @@ public class CameraPhotoAdapter extends BaseAdapter {
         if(item.isDefect()){
             selectedPosition++;
             defectsCount++;
-//            items.add(0,new PhotoItem(Utility.getSavedData(Const.DEFAULT_DEFECT_NAME)+
-//                    " "+defectsCount,true));
+
+
         items.add(0,new PhotoItem(String.format(context.getString(R.string.default_defect_name)
                 ,defectsCount),true));
         }
@@ -133,7 +138,7 @@ public class CameraPhotoAdapter extends BaseAdapter {
         }
     }
 
-//    public void addItem(PhotoItem item) {
+//    public void addItemToTempArray(PhotoItem item) {
 //        items.add(0,item);
 //        selectedPosition++;
 //        notifyDataSetChanged();

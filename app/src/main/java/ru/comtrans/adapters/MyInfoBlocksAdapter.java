@@ -86,9 +86,7 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Date date = df.parse(item.getDate());
             String formattedDate = expectedFormat.format(date);
             myHolder.date.setText(formattedDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
 
 
         switch (storage.getInfoBlockStatus(item.getId())){

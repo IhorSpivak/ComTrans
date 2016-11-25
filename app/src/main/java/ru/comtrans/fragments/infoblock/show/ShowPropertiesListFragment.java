@@ -20,6 +20,7 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
+import ru.comtrans.managers.LinearLayoutManagerWithSmoothScroller;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.tasks.SaveInfoBlockTask;
@@ -30,7 +31,7 @@ import ru.comtrans.views.DividerItemDecoration;
  */
 public class ShowPropertiesListFragment extends BaseFragment {
     private RecyclerView recyclerView;
-    private LinearLayoutManager layoutManager;
+    private LinearLayoutManagerWithSmoothScroller layoutManager;
     private InfoBlockAdapter adapter;
     private InfoBlocksStorage storage;
     private InfoBlockHelper infoBlockHelper;
@@ -77,7 +78,7 @@ public class ShowPropertiesListFragment extends BaseFragment {
     private void initUi(View v){
         activity = (ShowInfoBlockActivity) getActivity();
         recyclerView = (RecyclerView)v.findViewById(android.R.id.list);
-        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManagerWithSmoothScroller(getActivity());
         infoBlockHelper = InfoBlockHelper.getInstance();
         storage = InfoBlocksStorage.getInstance();
 
@@ -91,31 +92,11 @@ public class ShowPropertiesListFragment extends BaseFragment {
     private void initPage(){
         items = infoBlockHelper.getScreen(page);
 
-        adapter = new InfoBlockAdapter(getContext(), items,page,totalPages,false, new InfoBlockAdapter.OnItemClickListener() {
+        adapter = new InfoBlockAdapter(getContext(), items, page, totalPages, false, new InfoBlockAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(MainItem item,View view,int position) {
-                switch (item.getType()){
-                    case MainItem.TYPE_BOTTOM_BAR:
-                        switch (position){
-                            case 1:
-                                activity.viewPager.setCurrentItem(page-1);
-                                break;
-                            case 2:
-                                if(page+1==totalPages){
-                                    new SaveInfoBlockTask(infoBlockId,getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
-                                        @Override
-                                        public void onPostExecute() {
-                                            getActivity().finish();
-                                        }
-                                    });
-                                }else {
-                                    activity.viewPager.setCurrentItem(page+1);
-                                }
-                                break;
-                        }
-                        break;
+            public void onItemClick(MainItem item, View view, int position) {
 
-                }
+
 
             }
 
@@ -123,7 +104,28 @@ public class ShowPropertiesListFragment extends BaseFragment {
             public void saveState() {
                 //stub
             }
-        },layoutManager);
+        }, new InfoBlockAdapter.OnBottomBarClickListener() {
+            @Override
+            public void onBottomBarClick(int type, int scrollPosition) {
+                switch (type) {
+                    case 1:
+                        activity.viewPager.setCurrentItem(page - 1);
+                        break;
+                    case 2:
+                        if (page + 1 == totalPages) {
+                            new SaveInfoBlockTask(infoBlockId, getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
+                                @Override
+                                public void onPostExecute() {
+                                    getActivity().finish();
+                                }
+                            });
+                        } else {
+                            activity.viewPager.setCurrentItem(page + 1);
+                        }
+                        break;
+                }
+            }
+        });
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {

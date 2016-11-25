@@ -134,8 +134,10 @@ public class PropHelper {
 
 
                 if (object.has("val") && !object.get("val").isJsonNull()) {
+
                     JsonArray newVal = new JsonArray();
                     JsonArray val = object.get("val").getAsJsonArray();
+
                     for (int j = 0; j < val.size(); j++) {
 
                         JsonObject valueObject = val.get(j).getAsJsonObject();

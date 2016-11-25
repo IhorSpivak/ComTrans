@@ -23,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -55,19 +56,19 @@ import ru.comtrans.tasks.SaveInfoBlockTask;
  * Created by Artco on 24.05.2016.
  */
 public class CameraFragment extends Fragment implements View.OnClickListener{
-    ListView listView;
-    Toolbar toolbar;
-    TextView toolbarTitle;
-    TextView defectsCount;
-    TextView photosCount;
-    EditText defectName;
-    ImageView takePhoto, takeDefect, done;
-    CameraPreviewFragment cameraPreviewFragment;
-    PhotoViewerFragment photoViewerFragment;
-    CountUpdateReceiver countUpdateReceiver = null;
-    RePhotoReceiver rePhotoReceiver = null;
+    private ListView listView;
+    private Toolbar toolbar;
+    private TextView toolbarTitle;
+    private TextView defectsCount;
+    private TextView photosCount;
+    private EditText defectName;
+    private ImageView takePhoto, takeDefect, done;
+    private CameraPreviewFragment cameraPreviewFragment;
+    private PhotoViewerFragment photoViewerFragment;
+    private CountUpdateReceiver countUpdateReceiver = null;
+    private RePhotoReceiver rePhotoReceiver = null;
     private TakePhotoReceiver takePhotoReceiver = null;
-    ProgressBar progressBar;
+    private ProgressBar progressBar;
     private CameraActivity activity;
     private MenuItem menuItem;
     private SimpleOrientationListener mOrientationListener;
@@ -135,7 +136,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
         listView.setAdapter(activity.getPhotoAdapter());
         activity.getPhotoAdapter().setSelectedPosition(activity.imagePosition);
-        Log.d("TAG","img pos "+activity.imagePosition+" count "+activity.getPhotoAdapter().getCount());
+
+
+
+     //   Log.d("TAG","img pos "+activity.imagePosition+" count "+activity.getPhotoAdapter().getCount());
         listView.post(new Runnable() {
             @Override
             public void run() {
@@ -145,6 +149,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                     listView.smoothScrollToPosition(activity.getPhotoAdapter().getSelectedPosition());
             }
         });
+
 
 
 
@@ -173,6 +178,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                         }else {
                             toolbarTitle.setText(photoItem.getTitle()+" "+getString(R.string.default_defect_name_suffix));
                         }
+                    }else {
+                        toolbarTitle.setText(photoItem.getTitle());
                     }
 
                 }
@@ -192,10 +199,23 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         });
         PhotoItem item = activity.getPhotoAdapter().getItem(activity.imagePosition);
         if(item.getImagePath()!=null){
-            toolbarTitle.setText(item.getTitle());
             replaceWithPhotoViewer(activity.imagePosition);
         }else {
             replaceWithCamera();
+        }
+
+        if(!item.isDefect()){
+            toolbarTitle.setText(item.getTitle());
+        }else {
+            if(item.getImagePath()!=null){
+                if(item.isEdited()){
+                    toolbarTitle.setText(item.getTitle());
+                }else {
+                    toolbarTitle.setText(item.getTitle()+" "+getString(R.string.default_defect_name_suffix));
+                }
+            }else {
+                toolbarTitle.setText(item.getTitle());
+            }
         }
 
         mOrientationListener = new SimpleOrientationListener(
@@ -298,35 +318,38 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                     defectName.setOnKeyListener(new View.OnKeyListener() {
                         public boolean onKey(View v, int keyCode, KeyEvent event) {
                             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                                if(!defectName.getText().toString().equals("")){
-                                    item.setTitle(defectName.getText().toString());
-                                    toolbarTitle.setText(defectName.getText().toString());
-                                    toolbarTitle.setVisibility(View.VISIBLE);
-                                    defectName.setVisibility(View.INVISIBLE);
-                                    item.setEdited(true);
-                                    activity.getPhotoAdapter().setTitleForItem(item,activity.getPhotoAdapter().getSelectedPosition());
+                                String enteredName = defectName.getText().toString().trim();
+                                if(!enteredName.equals("")){
+                                    if(!enteredName.equals(item.getTitle())) {
+                                        item.setTitle(enteredName);
+                                        toolbarTitle.setText(enteredName);
+                                        item.setEdited(true);
+                                        activity.getPhotoAdapter().setTitleForItem(item, activity.getPhotoAdapter().getSelectedPosition());
+                                    }
                                 }
+                                toolbarTitle.setVisibility(View.VISIBLE);
+                                defectName.setVisibility(View.INVISIBLE);
                                 return true;
+
                             }
                             return false;
                         }
                     });
-                    defectName.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.showSoftInput(defectName, InputMethodManager.SHOW_IMPLICIT);
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(defectName, InputMethodManager.SHOW_IMPLICIT);
 
-                            if (defectName.getText().length() > 0) {
-                                defectName.setSelection(defectName.getText().length());
-                            }
-                        }
-                    });
+                    if (defectName.getText().length() > 0) {
+                        defectName.setSelection(defectName.getText().length());
+                    }
+
+
                 }
                 break;
 
+
         }
     }
+
 
     private void setDefectsCount(int count){
         defectsCount.setText(getResources().getQuantityString(R.plurals.defects_count,count,count));
@@ -390,8 +413,18 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                             setProgressCount(activity.getPhotoAdapter().getPhotosCount());
 
                             int selectedPosition = activity.getPhotoAdapter().getSelectedPosition();
-                            if(selectedPosition!=0)
+                            if(selectedPosition!=0){
                                 selectedPosition--;
+                                while (activity.getPhotoAdapter().isImagePathNull(selectedPosition)){
+                                    if(selectedPosition!=0){
+                                        selectedPosition--;
+                                    }else {
+                                        break;
+                                    }
+                                }
+
+                            }
+
                             activity.getPhotoAdapter().setSelectedPosition(selectedPosition);
                             replaceWithCamera();
 
@@ -577,7 +610,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                done(true);
+                if(defectName.getVisibility()!=View.VISIBLE){
+                    done(true);
+                }else {
+                    toolbarTitle.setVisibility(View.VISIBLE);
+                    defectName.setVisibility(View.INVISIBLE);
+                }
+
                 return true;
             case R.id.action_flash:
                 if(Utility.getBoolean(Const.IS_FLASH_ENABLED)){

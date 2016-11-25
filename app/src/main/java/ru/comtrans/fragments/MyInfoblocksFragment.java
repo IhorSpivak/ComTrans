@@ -1,12 +1,17 @@
 package ru.comtrans.fragments;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,6 +19,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,19 +27,35 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.comtrans.R;
 import ru.comtrans.activities.AddInfoBlockActivity;
+import ru.comtrans.activities.CameraActivity;
 import ru.comtrans.adapters.DialogArrayAdapter;
 import ru.comtrans.adapters.MyInfoBlocksAdapter;
+import ru.comtrans.adapters.VehicleTypeDialogAdapter;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
+import ru.comtrans.interfaces.ApiInterface;
 import ru.comtrans.items.DialogItem;
+import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MyInfoBlockItem;
+import ru.comtrans.items.User;
 import ru.comtrans.services.SendingService;
+import ru.comtrans.singlets.AppController;
 import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.tasks.DeleteInfoBlockTask;
+import ru.comtrans.views.ConnectionProgressDialog;
 
 /**
  * Created by Artco on 06.07.2016.
@@ -49,6 +71,7 @@ public class MyInfoBlocksFragment extends Fragment {
     private TextView tvEmpty;
     private ProgressBar emptyBar;
     private ArrayList<MyInfoBlockItem> items;
+    private ConnectionProgressDialog progressDialog;
 
 
     @Nullable
@@ -64,8 +87,7 @@ public class MyInfoBlocksFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getContext(), AddInfoBlockActivity.class);
-                startActivity(i);
+               checkAudioRecordingPermission();
             }
         });
 
@@ -78,8 +100,50 @@ public class MyInfoBlocksFragment extends Fragment {
 
         new AsyncTaskForMyInfoBlocks().execute();
 
+        progressDialog = new ConnectionProgressDialog(getActivity());
+
+        getVehicleTypes();
+
 
         return v;
+    }
+
+    private void getVehicleTypes(){
+        Call<JsonObject> call = AppController.apiInterface.getVehiceType();
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                progressDialog.dismiss();
+                if (response.body() != null && !response.body().isJsonNull()) {
+                    if (response.body().get("status").getAsInt() == 1){
+                        JsonArray result = response.body().get("result").getAsJsonArray();
+                        if(!result.isJsonNull()&&result.size()>0){
+                            ArrayList<ListItem> typeArray = new ArrayList<>();
+                            for (int i = 0; i < result.size(); i++) {
+                                JsonObject typeObject = result.get(i).getAsJsonObject();
+                                if(!typeObject.isJsonNull()){
+                                    ListItem item = new ListItem(typeObject.get("id").getAsInt(),typeObject.get("name").getAsString());
+                                    typeArray.add(item);
+                                }
+                            }
+                            Log.d("TAG","save array");
+                            Utility.saveVehicleTypes(typeArray);
+
+                        }
+                    }else{
+                        Toast.makeText(getActivity(), response.body().get("message").getAsString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                progressDialog.dismiss();
+                Toast.makeText(getActivity(),R.string.something_went_wrong,Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
@@ -273,6 +337,83 @@ public class MyInfoBlocksFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
             adapter.updateStatus(id);
+        }
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkAudioRecordingPermission(){
+        int hasStoragePermission;
+        int hasRecorderPermission;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            hasStoragePermission = getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            hasRecorderPermission = getActivity().checkSelfPermission(Manifest.permission.RECORD_AUDIO);
+            List<String> permissions = new ArrayList<>();
+
+            if (hasStoragePermission != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+
+            if(hasRecorderPermission!= PackageManager.PERMISSION_GRANTED){
+                    permissions.add(Manifest.permission.RECORD_AUDIO);
+                }
+
+            if (!permissions.isEmpty()) {
+
+                requestPermissions(permissions.toArray(new String[permissions.size()]),
+                            Const.REQUEST_PERMISSION_AUDIO_RECORDING);
+
+
+            } else {
+              createNewInfoBlock();
+            }
+        } else {
+            createNewInfoBlock();
+        }
+    }
+
+    private void createNewInfoBlock(){
+        if(Utility.getVehicleType()!=null) {
+            VehicleTypeDialogAdapter adapter = new VehicleTypeDialogAdapter(Utility.getVehicleType(), getContext());
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View view = inflater.inflate(R.layout.title_vehicle_type, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setCustomTitle(view);
+            builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(getContext(), AddInfoBlockActivity.class);
+                    startActivity(intent);
+                    dialogInterface.dismiss();
+                }
+            });
+            builder.show();
+        }else {
+            Toast.makeText(getContext(),R.string.vehicle_type_not_exist,Toast.LENGTH_SHORT).show();
+            getVehicleTypes();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean allow = true;
+        switch (requestCode){
+
+            case Const.REQUEST_PERMISSION_AUDIO_RECORDING:
+                for (int i = 0; i < permissions.length; i++) {
+                    if(grantResults[i] == PackageManager.PERMISSION_DENIED){
+                        allow = false;
+                    }
+                }
+                if(allow) {
+                    createNewInfoBlock();
+                }
+                else {
+                    Toast.makeText(getContext(), R.string.not_all_permissions_granted, Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 }

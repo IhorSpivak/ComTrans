@@ -147,8 +147,14 @@ public class SendingService extends IntentService {
                         if (object.has(MainItem.JSON_LIST_VALUE) && !object.get(MainItem.JSON_LIST_VALUE).isJsonNull()) {
                             JsonObject listObject = new JsonObject();
                             listObject.addProperty(MainItem.JSON_CODE, object.get(MainItem.JSON_CODE).getAsString());
-                            listObject.addProperty(MainItem.JSON_VALUE, object.get(MainItem.JSON_LIST_VALUE)
-                                    .getAsJsonObject().get(ListItem.JSON_VALUE_ID).getAsLong());
+                            JsonObject savedListObject = object.get(MainItem.JSON_LIST_VALUE)
+                                    .getAsJsonObject();
+                            if(savedListObject.get(ListItem.JSON_VALUE_ID).getAsLong()!=-2){
+                                listObject.addProperty(MainItem.JSON_VALUE,savedListObject.get(ListItem.JSON_VALUE_ID).getAsLong());
+                            }else {
+                                listObject.addProperty("add",savedListObject.get(ListItem.JSON_VALUE_NAME).getAsString());
+                            }
+
                             fields.add(listObject);
                         }
                     }

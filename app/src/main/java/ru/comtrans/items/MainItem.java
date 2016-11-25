@@ -44,6 +44,7 @@ public class MainItem {
     private int type;
     private boolean isChecked = false;
     private boolean isRequired = false;
+    private boolean isError = false;
     private ListItem listValue;
     private ArrayList<ListItem> listValues;
     private ArrayList<PhotoItem> photoItems;
@@ -70,6 +71,14 @@ public class MainItem {
 
     public void setProtectorItems(ArrayList<ProtectorItem> protectorItems) {
         this.protectorItems = protectorItems;
+    }
+
+    public boolean isError() {
+        return isError;
+    }
+
+    public void setError(boolean error) {
+        isError = error;
     }
 
     public boolean isChecked() {

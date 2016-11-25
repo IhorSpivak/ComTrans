@@ -10,6 +10,8 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import ru.comtrans.R;
 import ru.comtrans.items.ListItem;
@@ -20,35 +22,76 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 
     private ArrayList<ListItem> mData = new ArrayList<>();
     private ArrayList<ListItem> items = new ArrayList<>();
+    private long mark;
 
 
     private LayoutInflater mInflater;
 
-    public ListAdapter(Context context,ArrayList<ListItem> items) {
+    public ListAdapter(Context context,ArrayList<ListItem> items, long mark) {
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         this.items = items;
+        this.mark = mark;
         enterValues(items);
     }
 
-    public void enterValues(ArrayList<ListItem> skills){
+    public void enterValues(ArrayList<ListItem> items){
         mData.clear();
-        notifyDataSetChanged();
 
+        for (ListItem item:items) {
+            if(mark!=-1){
+                if(item.getId()==-1||item.getMark()==mark){
+                    addItemToTempArray(item);
+                }
+            }else {
+                addItemToTempArray(item);
+            }
 
-        for (ListItem bean:skills) {
-            addItem(bean);
         }
-    }
-
-    public void addItem(final ListItem item) {
-        mData.add(item);
         notifyDataSetChanged();
     }
 
+    public void addItemToTempArray(final ListItem item) {
+        mData.add(item);
+    }
 
+    public void addItem(ListItem item){
+        items.add(item);
+        enterValues(items);
+    }
 
+    private void sortItems(){
+        Collections.sort(mData, new Comparator<ListItem>() {
+            @Override
+            public int compare(ListItem s1, ListItem s2) {
+                if(s1.getId()==-1){
+                    return 1;
+                }else if(s2.getId()==-1){
+                    return 1;
+                }else {
+                    return s1.getName().compareToIgnoreCase(s2.getName());
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        sortItems();
+        super.notifyDataSetChanged();
+    }
+
+    public boolean containsValue(String value){
+        for (ListItem item :
+                mData) {
+            if(item.getName()!=null&&item.getName().equals(value)){
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     @Override
@@ -59,6 +102,10 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     @Override
     public ListItem getItem(int position) {
         return mData.get(position);
+    }
+
+    public ArrayList<ListItem> getItems() {
+        return items;
     }
 
     @Override

@@ -4,6 +4,12 @@
     tools:context="pro.aeroapps.scarletsails.activities.Main">
 
     <item
+        android:id="@+id/action_add"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_fab_plus"
+        android:title="@string/action_add_property"/>
+
+    <item
         android:id="@+id/action_search"
         app:showAsAction="ifRoom"
         app:actionViewClass="android.support.v7.widget.SearchView"

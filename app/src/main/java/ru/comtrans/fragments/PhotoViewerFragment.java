@@ -75,6 +75,12 @@ public class PhotoViewerFragment extends Fragment implements View.OnClickListene
             photoView.setImageBitmap(BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
         }
 
+//        if(item.getRePhotoCount()!=3) {
+//            rePhoto.setSelected(false);
+//            rePhoto.setEnabled(false);
+//            rePhoto.setClickable(false);
+//        }
+
 
         return v;
     }

@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,13 +48,16 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private ArrayList<MainItem> items;
     private Context context;
     private final OnItemClickListener listener;
-    private  LinearLayoutManager layoutManager;
+    private final OnBottomBarClickListener bottomBarClickListener;
     private int page;
     private int totalPages;
     private boolean isEditable;
     private DividerItemDecoration decoration;
     private InfoBlockHelper infoBlockHelper;
 
+    public void setItems(ArrayList<MainItem> items) {
+        this.items = items;
+    }
 
     /**
      * Interface, that allows us to have OnItemClickListener for recyclerView
@@ -64,11 +68,17 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         void saveState();
     }
 
-    public InfoBlockAdapter(Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable, OnItemClickListener listener,LinearLayoutManager manager) {
+    public interface OnBottomBarClickListener {
+        void onBottomBarClick(int type,int scrollPosition);
+
+    }
+
+    public InfoBlockAdapter(Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable,
+                            OnItemClickListener listener, OnBottomBarClickListener bottomBarClickListener) {
         this.context = context;
-        this.layoutManager = manager;
         this.items = items;
         this.listener = listener;
+        this.bottomBarClickListener = bottomBarClickListener;
         this.page = page;
         this.isEditable = isEditable;
         this.totalPages = totalPages;
@@ -192,23 +202,34 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final PhotoContainerAdapter adapter;
         PhotoContainerAdapter defectsAdapter;
 
+
         int count;
 
         switch (getItemViewType(position)) {
             case MainItem.TYPE_LIST:
                 if (isEditable) {
                     ListViewHolder listViewHolder = ((ListViewHolder) viewHolder);
+
                     if (item.isRequired())
                         listViewHolder.title.setText(item.getName() + "*");
                     else
                         listViewHolder.title.setText(item.getName());
+
                     if (item.getListValue() != null)
                         listViewHolder.tvList.setText(item.getListValue().getName());
+
+                    if(item.isError()){
+                        listViewHolder.bottomStroke.setBackgroundColor(context.getColor(R.color.colorPrimary));
+                    }else {
+                        listViewHolder.bottomStroke.setBackgroundColor(context.getColor(R.color.colorSecondary));
+                    }
+
                 } else {
                     NonEditableViewHolder nonEditableViewHolder = ((NonEditableViewHolder) viewHolder);
                     nonEditableViewHolder.title.setText(item.getName());
                     if (item.getListValue() != null)
                         nonEditableViewHolder.tvText.setText(item.getListValue().getName());
+
                 }
                 break;
 
@@ -224,6 +245,13 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 } else {
                     calendarViewHolder.picker.setText(R.string.choose_date);
                 }
+
+                if(item.isError()){
+                    calendarViewHolder.picker.setBackgroundResource(R.drawable.error_button_rounded);
+                }else {
+                    calendarViewHolder.picker.setBackgroundResource(R.drawable.button_choose_date);
+                }
+
                 calendarViewHolder.picker.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -234,63 +262,111 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             case MainItem.TYPE_PHOTO:
                 final PhotoViewHolder photoViewHolder = ((PhotoViewHolder) viewHolder);
-                ArrayList<PhotoItem> photoItems = new ArrayList<>();
-                ArrayList<PhotoItem> defects = new ArrayList<>();
 
-                for (PhotoItem photoItem : item.getPhotoItems()) {
-                    if (!photoItem.isDefect()) {
-                        photoItems.add(photoItem);
-                    }
-                }
 
-                final LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-                manager.setAutoMeasureEnabled(true);
-                photoViewHolder.photoList.setLayoutManager(manager);
-                adapter = new PhotoContainerAdapter(context, photoItems, new PhotoContainerAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(PhotoItem item, View view) {
-                        MainItem mainItem = getItem(photoViewHolder.getAdapterPosition());
-                        listener.onItemClick(mainItem, view, mainItem.getPhotoItems().indexOf(item));
-                    }
-                }, MainItem.TYPE_PHOTO);
-                photoViewHolder.photoList.setAdapter(adapter);
+                if(item.getPhotoItems()!=null&&item.getPhotoItems().size()>0){
+                    if(item.getPhotoItems().get(item.getPhotoItems().size()-1).isDefect()){
+                        ArrayList<PhotoItem> photoItems = new ArrayList<>();
+                        ArrayList<PhotoItem> defects = new ArrayList<>();
 
-                count = 0;
-                for (PhotoItem photoItem : item.getPhotoItems()) {
-                    if (photoItem.getImagePath() != null && !photoItem.isDefect())
-                        count++;
-                }
-                if (count != 0) {
-                    int percent = (int) ((count * 100.0f) / item.getPhotosCount());
-                    if (percent == 100) {
-                        photoViewHolder.progressBar.setProgressDrawable(ContextCompat.getDrawable(context, R.drawable.progressbar_green));
-                    } else {
-                        photoViewHolder.progressBar.setProgressDrawable(ContextCompat.getDrawable(context, R.drawable.progressbar_red));
-                    }
-
-                    photoViewHolder.progressBar.setProgress(percent);
-                } else {
-                    photoViewHolder.progressBar.setProgress(0);
-                }
-
-                for (PhotoItem photoItem : item.getPhotoItems()) {
-                    if (photoItem.isDefect()) {
-                        defects.add(photoItem);
-                    }
-                }
-
-                if (defects.size() > 0) {
-                    LinearLayoutManager defectsManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-                    photoViewHolder.defectsList.setLayoutManager(defectsManager);
-                    defectsAdapter = new PhotoContainerAdapter(context, defects, new PhotoContainerAdapter.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(PhotoItem item, View view) {
-                            MainItem mainItem = getItem(viewHolder.getAdapterPosition());
-                            listener.onItemClick(mainItem, view, mainItem.getPhotoItems().indexOf(item));
+                        for (PhotoItem photoItem : item.getPhotoItems()) {
+                            if (!photoItem.isDefect()) {
+                                photoItems.add(photoItem);
+                            }
                         }
-                    }, MainItem.TYPE_PHOTO);
-                    photoViewHolder.defectsList.setAdapter(defectsAdapter);
+
+                        final LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                        manager.setAutoMeasureEnabled(true);
+                        photoViewHolder.photoList.setLayoutManager(manager);
+                        adapter = new PhotoContainerAdapter(context, photoItems, new PhotoContainerAdapter.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(PhotoItem item, View view) {
+                                MainItem mainItem = getItem(photoViewHolder.getAdapterPosition());
+                                listener.onItemClick(mainItem, view, mainItem.getPhotoItems().indexOf(item));
+                            }
+                        }, MainItem.TYPE_PHOTO);
+                        photoViewHolder.photoList.setAdapter(adapter);
+
+                        count = 0;
+                        for (PhotoItem photoItem : item.getPhotoItems()) {
+                            if (photoItem.getImagePath() != null && !photoItem.isDefect())
+                                count++;
+                        }
+                        if (count != 0) {
+                            int percent = (int) ((count * 100.0f) / item.getPhotosCount());
+                            if (percent == 100) {
+                                photoViewHolder.progressBar.setProgressDrawable(ContextCompat.getDrawable(context, R.drawable.progressbar_green));
+                            } else {
+                                photoViewHolder.progressBar.setProgressDrawable(ContextCompat.getDrawable(context, R.drawable.progressbar_red));
+                            }
+
+                            photoViewHolder.progressBar.setProgress(percent);
+                        } else {
+                            photoViewHolder.progressBar.setProgress(0);
+                        }
+
+                        for (PhotoItem photoItem : item.getPhotoItems()) {
+                            if (photoItem.isDefect()) {
+                                defects.add(photoItem);
+                            }
+                        }
+
+
+                        LinearLayoutManager defectsManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                        photoViewHolder.defectsList.setLayoutManager(defectsManager);
+                        defectsAdapter = new PhotoContainerAdapter(context, defects, new PhotoContainerAdapter.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(PhotoItem item, View view) {
+                                    MainItem mainItem = getItem(viewHolder.getAdapterPosition());
+                                    listener.onItemClick(mainItem, view, mainItem.getPhotoItems().indexOf(item));
+                                }
+                            }, MainItem.TYPE_PHOTO);
+                            photoViewHolder.defectsList.setAdapter(defectsAdapter);
+
+                    }else {
+                        ArrayList<PhotoItem> photoItems = new ArrayList<>();
+
+                        for (PhotoItem photoItem : item.getPhotoItems()) {
+                            if (!photoItem.isDefect()) {
+                                photoItems.add(photoItem);
+                            }
+                        }
+
+                        final LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                        manager.setAutoMeasureEnabled(true);
+                        photoViewHolder.photoList.setLayoutManager(manager);
+                        adapter = new PhotoContainerAdapter(context, photoItems, new PhotoContainerAdapter.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(PhotoItem item, View view) {
+                                MainItem mainItem = getItem(photoViewHolder.getAdapterPosition());
+                                listener.onItemClick(mainItem, view, mainItem.getPhotoItems().indexOf(item));
+                            }
+                        }, MainItem.TYPE_PHOTO);
+                        photoViewHolder.photoList.setAdapter(adapter);
+
+                        count = 0;
+                        for (PhotoItem photoItem : item.getPhotoItems()) {
+                            if (photoItem.getImagePath() != null && !photoItem.isDefect())
+                                count++;
+                        }
+                        if (count != 0) {
+                            int percent = (int) ((count * 100.0f) / item.getPhotosCount());
+                            if (percent == 100) {
+                                photoViewHolder.progressBar.setProgressDrawable(ContextCompat.getDrawable(context, R.drawable.progressbar_green));
+                            } else {
+                                photoViewHolder.progressBar.setProgressDrawable(ContextCompat.getDrawable(context, R.drawable.progressbar_red));
+                            }
+
+                            photoViewHolder.progressBar.setProgress(percent);
+                        } else {
+                            photoViewHolder.progressBar.setProgress(0);
+                        }
+                    }
+
+
                 }
+
+
 
                 break;
 
@@ -341,9 +417,40 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         editTextViewHolder.editText.setFilters(new InputFilter[] {new InputFilter.AllCaps(),new InputFilter.LengthFilter(context.getResources().getInteger(R.integer.max_length))});
                     }
 
+                    if(item.isError()){
+                        editTextViewHolder.textInputLayout.setErrorEnabled(true);
+                        editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
+                    }
 
+                    editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+                        }
 
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+                            if(!editable.toString().equals("")){
+                                item.setError(false);
+                                editTextViewHolder.textInputLayout.setErrorEnabled(false);
+                            }
+                            if(item.getCode().equals("man_pts_model")){
+                                if(editTextViewHolder.editText.getText().toString().equals("")){
+                                    setConstructorChecked(false);
+                                }else if (infoBlockHelper.getModelValue().getName().equalsIgnoreCase(editTextViewHolder.editText.getText().toString())) {
+                                    setConstructorChecked(false);
+                                } else {
+                                    setConstructorChecked(true);
+                                }
+                            }
+
+                        }
+                    });
 
                     if (item.isRequired())
                         editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
@@ -355,14 +462,6 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         public void onFocusChange(View v, boolean hasFocus) {
                             if (!hasFocus) {
-                                if(item.getCode().equals("man_pts_model")){
-                                    if (infoBlockHelper.getModelValue().getName().equals(editTextViewHolder.editText.getText().toString())) {
-                                        setConstructorChecked(false);
-                                    } else {
-                                        setConstructorChecked(true);
-                                    }
-                                }
-
                                 listener.saveState();
                             }
                         }
@@ -400,6 +499,32 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 if (isEditable) {
                     final EditTextViewHolder editTextViewHolder = ((EditTextViewHolder) viewHolder);
 
+                    if(item.isError()){
+                        editTextViewHolder.textInputLayout.setErrorEnabled(true);
+                        editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
+                    }else {
+                        editTextViewHolder.textInputLayout.setErrorEnabled(false);
+                    }
+
+                    editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+                            if(!editable.toString().equals("")){
+                                item.setError(false);
+                                editTextViewHolder.textInputLayout.setErrorEnabled(false);
+                            }
+                        }
+                    });
 
                     if (item.isRequired())
                         editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
@@ -439,6 +564,22 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             }
                         }
                     });
+
+                    if (!Utility.isEmailValid(item.getValue()) && !item.getValue().trim().equals("")) {
+                        editTextViewHolder.textInputLayout.setErrorEnabled(true);
+                        editTextViewHolder.textInputLayout.setError("Некорректный e-mail");
+                        // Для проверки на валидность
+                        item.setChecked(false);
+                    } else {
+                        editTextViewHolder.textInputLayout.setErrorEnabled(false);
+                        item.setChecked(true);
+                    }
+
+                    if(item.isError()){
+                        editTextViewHolder.textInputLayout.setErrorEnabled(true);
+                        editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
+                    }
+
                     editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -452,6 +593,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         @Override
                         public void afterTextChanged(Editable editable) {
+
                             if (!Utility.isEmailValid(editable) && !editable.toString().trim().equals("")) {
                                 editTextViewHolder.textInputLayout.setErrorEnabled(true);
                                 editTextViewHolder.textInputLayout.setError("Некорректный e-mail");
@@ -485,6 +627,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     editTextViewHolder.editText.setKeyListener(DigitsKeyListener.getInstance("0123456789+-()"));
 
 
+
                     editTextViewHolder.editText.setFilters(new InputFilter[]{new PartialRegexInputFilter(Const.phone_regex)});
                     editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         public void onFocusChange(View v, boolean hasFocus) {
@@ -497,6 +640,25 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             }
                         }
                     });
+
+                    if (!Utility.isFieldValid(Const.phone_regex, item.getValue()) && !item.getValue().trim().equals(context.getString(R.string.phone_prefix_bracket))&&
+                            !item.getValue().trim().equals("")) {
+                        editTextViewHolder.textInputLayout.setErrorEnabled(true);
+                        editTextViewHolder.textInputLayout.setError("Некорректный телефон");
+                        // Для проверки на валидность
+                        item.setChecked(false);
+                    } else {
+                        editTextViewHolder.textInputLayout.setErrorEnabled(false);
+                        item.setChecked(true);
+                    }
+
+                    if(item.isError()){
+                        editTextViewHolder.textInputLayout.setErrorEnabled(true);
+                        editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
+                    }
+
+
+
                     editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -524,6 +686,8 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     });
 
                     editTextViewHolder.editText.addTextChangedListener(new PhoneTextWatcher(editTextViewHolder.editText, context));
+
+
                 } else {
                     NonEditableViewHolder nonEditableViewHolder = ((NonEditableViewHolder) viewHolder);
                     nonEditableViewHolder.title.setText(item.getName());
@@ -568,6 +732,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     bottomBarViewHolder.btnNext.setText(R.string.save_infoblock);
                 }
 
+
                 bottomBarViewHolder.btnNext.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View v) {
@@ -576,36 +741,74 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             boolean isAllEntered = true;
                             boolean isMainEntered = true;
 
+                            int scrollPosition = -1;
+
 
                             for (MainItem item :
                                     items) {
 
-//                               if (item.getCode() != null && (item.getCode().equals("general_marka")
-//                                       || item.getCode().equals("general_model")
-//                                       || item.getCode().equals("general_number_gos")
-//                                       || item.getCode().equals("general_year"))) {
+//
                                 if (item.isRequired()) {
                                     switch (item.getType()) {
                                         case MainItem.TYPE_LIST:
                                             if (item.getListValue().getId() == -1) {
+                                                item.setError(true);
+                                                notifyItemChanged(items.indexOf(item));
+                                                if(scrollPosition==-1){
+                                                    scrollPosition = items.indexOf(item);
+                                                }
                                                 isMainEntered = false;
                                                 break;
                                             }
                                             break;
                                         case MainItem.TYPE_CALENDAR:
-                                            if (item.getValue() == null || item.getValue().equals(R.string.choose_date)) {
+                                            if (item.getValue() == null || item.getValue().equals(context.getString(R.string.choose_date))) {
+                                                item.setError(true);
+                                                notifyItemChanged(items.indexOf(item));
+                                                if(scrollPosition==-1){
+                                                    scrollPosition = items.indexOf(item);
+                                                }
                                                 isMainEntered = false;
                                             }
                                             break;
                                         case MainItem.TYPE_NUMBER:
                                         case MainItem.TYPE_STRING:
                                             if (item.getValue() == null || item.getValue().equals("")) {
+                                                item.setError(true);
+                                                notifyItemChanged(items.indexOf(item));
+                                                if(scrollPosition==-1){
+                                                    scrollPosition = items.indexOf(item);
+                                                }
                                                 isMainEntered = false;
                                             }
                                             break;
                                         case MainItem.TYPE_PHONE:
+                                            if (item.getValue() != null) {
+
+                                                if(item.getValue().equals(context.getString(R.string.phone_prefix_bracket))
+                                                        ||item.getValue().equals("")){
+                                                    item.setError(true);
+                                                    notifyItemChanged(items.indexOf(item));
+                                                    isMainEntered = false;
+                                                }else if(!Utility.isFieldValid(Const.phone_regex, item.getValue())){
+                                                    notifyItemChanged(items.indexOf(item));
+                                                    isMainEntered = false;
+                                                }
+                                                if(scrollPosition==-1){
+                                                    scrollPosition = items.indexOf(item);
+                                                }
+
+                                            }else {
+                                                isMainEntered = false;
+                                            }
+                                            break;
                                         case MainItem.TYPE_EMAIL:
                                             if (item.getValue() == null || !item.isChecked()) {
+                                                item.setError(true);
+                                                notifyItemChanged(items.indexOf(item));
+                                                if(scrollPosition==-1){
+                                                    scrollPosition = items.indexOf(item);
+                                                }
                                                 isMainEntered = false;
                                             }
                                             break;
@@ -614,9 +817,10 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                                 }
 
+
                                 switch (item.getType()) {
                                     case MainItem.TYPE_CALENDAR:
-                                        if (item.getValue() == null || item.getValue().equals(R.string.choose_date)) {
+                                        if (item.getValue() == null || item.getValue().equals(context.getString(R.string.choose_date))) {
                                             isAllEntered = false;
                                         }
                                         break;
@@ -641,11 +845,19 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                 }
                             }
                             if (!isMainEntered) {
+                                final int finalScrollPosition = scrollPosition;
                                 new AlertDialog.Builder(context)
                                         .setCancelable(true)
                                         .setTitle(R.string.warning_title)
                                         .setMessage(R.string.required_warning_message)
-                                        .setNeutralButton(R.string.btn_stay, null).show();
+                                        .setNeutralButton(R.string.btn_stay, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                bottomBarClickListener.onBottomBarClick(3, finalScrollPosition);
+                                            }
+                                        }).show();
+
+
                             } else if (!isAllEntered && page + 1 != totalPages) {
                                 new AlertDialog.Builder(context)
                                         .setCancelable(true)
@@ -655,16 +867,17 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
                                                 infoBlockHelper.saveScreen(items, page);
-                                                listener.onItemClick(item, v, 2);
+                                                bottomBarClickListener.onBottomBarClick(2, -1);
                                             }
                                         })
                                         .setNeutralButton(R.string.btn_stay, null).show();
+
                             } else {
                                 infoBlockHelper.saveScreen(items, page);
-                                listener.onItemClick(item, v, 2);
+                                bottomBarClickListener.onBottomBarClick(2, -1);
                             }
                         } else {
-                            listener.onItemClick(item, v, 2);
+                            bottomBarClickListener.onBottomBarClick(2, -1);
                         }
 
                     }
@@ -673,7 +886,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     @Override
                     public void onClick(View view) {
                         infoBlockHelper.saveScreen(items, page);
-                        listener.onItemClick(item, view, 1);
+                        bottomBarClickListener.onBottomBarClick(1, -1);
                     }
                 });
                 break;
@@ -728,11 +941,12 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static class ListViewHolder extends CustomViewHolder {
         public TextView title;
         public TextView tvList;
-
+        public View bottomStroke;
         public ListViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.list_title);
             tvList = (TextView) itemView.findViewById(R.id.tv_list);
+            bottomStroke = itemView.findViewById(R.id.bottomStroke);
 
         }
 
@@ -834,11 +1048,13 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static class CalendarViewHolder extends CustomViewHolder {
         public Button picker;
         public TextView title;
+        public LinearLayout itemLayout;
 
         public CalendarViewHolder(View itemView) {
             super(itemView);
             picker = (Button) itemView.findViewById(R.id.btn_picker);
             title = (TextView) itemView.findViewById(R.id.title);
+            itemLayout = (LinearLayout) itemView.findViewById(R.id.item_layout);
         }
 
     }
@@ -865,7 +1081,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             if(item.getCode()!=null&&item.getCode().equals("general_contructor")){
                 item.setChecked(isChecked);
                 try{
-                    notifyDataSetChanged();
+                    notifyItemChanged(items.indexOf(item));
                 }catch (Exception ignored){}
 
             }

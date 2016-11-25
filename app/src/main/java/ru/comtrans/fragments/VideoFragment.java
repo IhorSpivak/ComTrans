@@ -47,7 +47,6 @@ import ru.comtrans.services.AudioRecordService;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.tasks.SaveInfoBlockTask;
 import ru.comtrans.views.CircleProgressBar;
-import ru.comtrans.views.VerticalChronometer;
 
 /**
  * Created by Artco on 01.06.2016.
@@ -165,7 +164,19 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        replaceWithCamera();
+        PhotoItem photoItem = activity.getPhotoAdapter().getItem(activity.imagePosition);
+        if(photoItem.getImagePath()==null){
+            if(getFragmentManager().findFragmentByTag(Const.CAMERA_PREVIEW)==null)
+                replaceWithCamera();
+        }else {
+            if(getFragmentManager().findFragmentByTag(Const.PHOTO_VIEWER)==null){
+                replaceWithVideoViewer(photoItem,activity.imagePosition);
+            }else if(videoViewerFragment !=null&&!videoViewerFragment.getItem().getImagePath().equals(photoItem.getImagePath())){
+                replaceWithVideoViewer(photoItem,activity.imagePosition);
+            }
+        }
+
+
 
         mOrientationListener = new SimpleOrientationListener(
                 getActivity()) {
@@ -470,7 +481,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
             ArrayList<PhotoItem> items = new ArrayList<>(activity.getPhotoAdapter().getItems());
             Collections.reverse(items);
             InfoBlockHelper helper = InfoBlockHelper.getInstance();
-            helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(activity.getPhotoAdapter().getItems());
+            helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(items);
             getActivity().setResult(Const.CAMERA_PHOTO_RESULT, i);
             getActivity().finish();
         }else {

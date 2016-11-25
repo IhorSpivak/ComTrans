@@ -13,10 +13,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="10dp"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="200dp"
+        android:layout_marginEnd="200dp"
         android:layout_alignParentBottom="true">
 
-        <ImageView
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="25dp"
@@ -24,14 +27,16 @@
             android:paddingRight="25dp"
             android:paddingEnd="25dp"
             android:paddingTop="25dp"
+            android:background="@android:color/transparent"
             android:layout_marginEnd="30dp"
             android:layout_marginRight="30dp"
             android:id="@+id/re_photo"
             android:src="@drawable/ic_re_photo"/>
 
-        <ImageView
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             android:paddingStart="25dp"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
@@ -42,9 +47,10 @@
             android:id="@+id/delete_photo"
             android:src="@drawable/ic_delete_photo"/>
 
-        <ImageView
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             android:paddingTop="25dp"
             android:paddingStart="25dp"
             android:paddingLeft="25dp"

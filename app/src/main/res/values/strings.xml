@@ -91,6 +91,14 @@
 
     //////////////////////////SearchValueActivity////////////////////////////////
     <string name="action_search">Поиск</string>
+    <string name="action_add_property">Добавить</string>
+    <string name="search_values_empty">Список пуст</string>
+    <string name="add_value_hint">Введите значение</string>
+    <string name="dialog_add_property_title">Добавление значения</string>
+    <string name="dialog_negative_answer">Отмена</string>
+    <string name="enter_value_toast">Введите желаемое значение</string>
+    <string name="value_exist_toast">Значение уже есть в списке</string>
+    <string name="not_chosen">Не выбран</string>
 
 
     ////////////////////InfoBlockAdapter////////////////////////////////////
@@ -107,6 +115,7 @@
     <string name="phone_prefix">+7</string>
     <string name="phone_prefix_bracket">+7(</string>
     <string name="phone_prefix_bracket_value">+7(%1$s</string>
+    <string name="required_field">Обязательное поле</string>
 
     //////////////////////MyInfoblocksFragment//////////////////////////////////
     <string name="title_mark">Марка</string>
@@ -132,6 +141,8 @@
     <string name="toast_weak_internet">Ваше подключение неустойчиво</string>
     <string name="toast_not_connected_to_internet">Отсутствует интернет подключение</string>
 
+    <string name="choose_type_title">Выберите тип ТС</string>
+    <string name="vehicle_type_not_exist">Не подгружены типы ТС</string>
 
 
 

@@ -2,16 +2,34 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_margin="10dp"
-    android:layout_height="155dp">
+    android:layout_height="wrap_content">
     
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:id="@+id/ib_ellipsis"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:paddingEnd="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:clickable="true"
+            android:src="@drawable/ellipsis"
+            android:background="@android:color/transparent"/>
         
         <ImageView
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
             android:src="@drawable/ic_placeholder"
+            android:layout_centerVertical="true"
             android:scaleType="center"
             android:id="@+id/info_block_image"/>
 
@@ -20,7 +38,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
@@ -35,34 +53,20 @@
                 android:layout_height="wrap_content"
                 >
 
-                    <ImageButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/ib_ellipsis"
-                        android:paddingStart="10dp"
-                        android:paddingLeft="10dp"
-                        android:paddingBottom="5dp"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:clickable="true"
-                        android:src="@drawable/ellipsis"
-                        android:background="@android:color/transparent"/>
-
 
 
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/ib_ellipsis"
-                    android:layout_toStartOf="@id/ib_ellipsis"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginRight="5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginRight="25dp"
                     android:layout_centerVertical="true"
                     android:id="@+id/info_block_status"
                     android:textColor="@color/blue"
-                    android:textSize="16sp"/>
+                    android:textSize="14sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -90,6 +94,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textSize="12sp"
                         android:text="@string/title_mark"/>
 
                     <TextView
@@ -100,7 +108,7 @@
                         android:maxLines="1"
                         android:maxLength="10"
                         android:ellipsize="end"
-                        android:textSize="16sp"/>
+                        android:textSize="14sp"/>
 
 
 
@@ -119,6 +127,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textSize="12sp"
                         android:text="@string/title_model"/>
 
                     <TextView
@@ -129,7 +141,7 @@
                         android:textStyle="bold"
                         android:maxLines="1"
                         android:ellipsize="end"
-                        android:textSize="16sp"/>
+                        android:textSize="14sp"/>
 
 
                 </LinearLayout>
@@ -150,6 +162,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     android:text="@string/title_year"/>
 
                 <LinearLayout
@@ -166,7 +182,7 @@
                         android:textStyle="bold"
                         android:maxLines="1"
                         android:ellipsize="end"
-                        android:textSize="16sp"/>
+                        android:textSize="14sp"/>
 
                     <TextView
                         android:layout_width="0dp"
@@ -177,7 +193,7 @@
                         android:textStyle="bold"
                         android:maxLines="1"
                         android:ellipsize="end"
-                        android:textSize="16sp"/>
+                        android:textSize="14sp"/>
 
 
                 </LinearLayout>

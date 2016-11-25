@@ -30,6 +30,7 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
+import ru.comtrans.managers.LinearLayoutManagerWithSmoothScroller;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.tasks.SaveInfoBlockTask;
@@ -41,7 +42,7 @@ import ru.comtrans.views.DividerItemDecoration;
 public class AddPropertiesListFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
-    private LinearLayoutManager layoutManager;
+    private LinearLayoutManagerWithSmoothScroller layoutManager;
     private InfoBlockAdapter adapter;
     private InfoBlocksStorage storage;
     private InfoBlockHelper infoBlockHelper;
@@ -89,7 +90,7 @@ public class AddPropertiesListFragment extends BaseFragment {
     private void initUi(View v){
         activity = (AddInfoBlockActivity) getActivity();
         recyclerView = (RecyclerView)v.findViewById(android.R.id.list);
-        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManagerWithSmoothScroller(getActivity());
 
         infoBlockHelper = InfoBlockHelper.getInstance();
         storage = InfoBlocksStorage.getInstance();
@@ -142,12 +143,13 @@ public class AddPropertiesListFragment extends BaseFragment {
                                 dialogFragment.setListener(new DatePickerDialogFragment.DateListener() {
                                     @Override
                                     public void setDate(Calendar date) {
-                                        saveData();
                                         SimpleDateFormat sdf = new SimpleDateFormat(Const.INFO_BLOCK_DATE_FORMAT, Locale.getDefault());
                                         String formattedDate = sdf.format(date.getTime());
                                         infoBlockHelper.getItems().get(page).get(position).setValue(formattedDate);
                                         adapter.getItem(position).setValue(formattedDate);
-                                        adapter.notifyDataSetChanged();
+                                        adapter.getItem(position).setError(false);
+                                        adapter.notifyItemChanged(position);
+                                        saveData();
                                     }
                                 });
                                 dialogFragment.show(ft, "dialogFragmentDateAddOrder");
@@ -173,29 +175,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                             i.putExtra(Const.EXTRA_SCREEN_NUM, page);
                             startActivityForResult(i, Const.CAMERA_PHOTO_RESULT);
                             break;
-                        case MainItem.TYPE_BOTTOM_BAR:
-                            switch (position) {
-                                case 1:
-                                    new SaveInfoBlockTask(infoBlockId, getContext());
-                                    storage.updateInfoBlockPage(infoBlockId, page - 1);
-                                    activity.viewPager.setCurrentItem(page - 1);
-                                    break;
-                                case 2:
-                                    if (page + 1 == totalPages) {
-                                        new SaveInfoBlockTask(infoBlockId, getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
-                                            @Override
-                                            public void onPostExecute() {
-                                                getActivity().finish();
-                                            }
-                                        });
-                                    } else {
-                                        new SaveInfoBlockTask(infoBlockId, getContext());
-                                        storage.updateInfoBlockPage(infoBlockId, page + 1);
-                                        activity.viewPager.setCurrentItem(page + 1);
-                                    }
-                                    break;
-                            }
-                            break;
+
 
                     }
 
@@ -206,7 +186,36 @@ public class AddPropertiesListFragment extends BaseFragment {
                     saveData();
                 }
 
-            }, layoutManager);
+            }, new InfoBlockAdapter.OnBottomBarClickListener() {
+                @Override
+                public void onBottomBarClick(int type, int scrollPosition) {
+                    switch (type) {
+                        case 1:
+                            new SaveInfoBlockTask(infoBlockId, getContext());
+                            storage.updateInfoBlockPage(infoBlockId, page - 1);
+                            activity.viewPager.setCurrentItem(page - 1);
+                            break;
+                        case 2:
+                            if (page + 1 == totalPages) {
+                                new SaveInfoBlockTask(infoBlockId, getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
+                                    @Override
+                                    public void onPostExecute() {
+                                        getActivity().finish();
+                                    }
+                                });
+                            } else {
+                                new SaveInfoBlockTask(infoBlockId, getContext());
+                                storage.updateInfoBlockPage(infoBlockId, page + 1);
+                                activity.viewPager.setCurrentItem(page + 1);
+                            }
+                            break;
+                        case 3:
+                            if(scrollPosition!=-1)
+                            recyclerView.smoothScrollToPosition(scrollPosition);
+                            break;
+                    }
+                }
+            });
             recyclerView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -234,7 +243,6 @@ public class AddPropertiesListFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("WTF","onActivityResult addPropertiesListFragment requestCode="+requestCode+" resultCode="+resultCode);
         int position,screenNum;
 
         switch (resultCode){
@@ -244,9 +252,11 @@ public class AddPropertiesListFragment extends BaseFragment {
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
                 infoBlockHelper.getItems().get(page).get(position).setListValue(item);
                 if(adapter.getItem(position).getCode().equals("general_marka")){
-                  adapter.getItem(position+1).setListValue(adapter.getItem(position+1).getListValues().get(0));
+                  adapter.getItem(position+1).setListValue(new ListItem(-1,getString(R.string.not_chosen)));
+                    adapter.notifyItemChanged(position+1);
                 }
                 adapter.getItem(position).setListValue(item);
+                adapter.getItem(position).setError(false);
                 adapter.notifyItemChanged(position);
 //                adapter.notifyDataSetChanged();
                 break;
@@ -258,6 +268,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                 adapter.notifyItemChanged(position);
 //                adapter.notifyDataSetChanged();
                 //initPage();
+
                 break;
             case Const.CAMERA_VIDEO_RESULT:
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);

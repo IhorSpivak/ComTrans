@@ -28,9 +28,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private Camera camera;
     private int screenWidth, screenHeight;
     private Camera.Size optimalPreviewSize;
-    private Paint paint;
-    private Point size = new Point();
-    private DisplayMetrics realMetrics = new DisplayMetrics();
     private boolean isVideo;
     private  WindowManager windowManager;
 
@@ -51,7 +48,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void init(){
-        paint = new Paint();
         setWillNotDraw(false);
         mHolder = getHolder();
         mHolder.addCallback(this);
