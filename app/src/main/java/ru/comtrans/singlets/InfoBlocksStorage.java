@@ -35,6 +35,7 @@ import ru.comtrans.items.ProtectorItem;
 public class InfoBlocksStorage {
     private Set<String> infoBlockIds;
     private static final String INFO_BLOCK_IDS = "ids";
+    private double mb = 1024;
 
     private static InfoBlocksStorage instance;
 
@@ -92,6 +93,10 @@ public class InfoBlocksStorage {
 
 
         }
+        try{
+            File file = new File(getInfoBlockAudio(id));
+            file.delete();
+        }catch (Exception ignored){}
 
         Utility.saveData(id, null);
 
@@ -317,16 +322,19 @@ public class InfoBlocksStorage {
                         }
 
                     }
-
-
-
-                SimpleDateFormat df = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
-                String formattedDate = df.format(c.getTime());
-                previewObject.addProperty(MyInfoBlockItem.JSON_SIZE,size);
-                previewObject.addProperty(MyInfoBlockItem.JSON_DATE, formattedDate);
-                previewObject.addProperty(MyInfoBlockItem.JSON_ID, id);
             }
         }
+
+        File audioFile = new File(getInfoBlockAudio(id));
+        if(audioFile.exists()) {
+            double file_size = audioFile.length() / mb / mb;
+            size = (float) (size+file_size);
+        }
+        SimpleDateFormat df = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
+        String formattedDate = df.format(c.getTime());
+        previewObject.addProperty(MyInfoBlockItem.JSON_SIZE,size);
+        previewObject.addProperty(MyInfoBlockItem.JSON_DATE, formattedDate);
+        previewObject.addProperty(MyInfoBlockItem.JSON_ID, id);
 
         Utility.saveData("preview" + id, previewObject.toString());
     }
@@ -349,6 +357,7 @@ public class InfoBlocksStorage {
                     object.addProperty(MainItem.JSON_TYPE, item.getType());
                     object.addProperty(MainItem.JSON_IS_CHECKED, item.isChecked());
                     object.addProperty(MainItem.JSON_IS_REQUIRED, item.isRequired());
+                    object.addProperty(MainItem.JSON_CAN_ADD, item.canAdd());
 
                     if (item.getListValue() != null) {
                         JsonObject listObject = new JsonObject();
@@ -420,7 +429,6 @@ public class InfoBlocksStorage {
                                 File file = new File(Uri.parse(photoItem.getImagePath()).getPath());
 
                                 // long file_size = Long.parseLong(String.valueOf(file.length() / 1024 / 1024));
-                                double mb = 1024;
                                 double file_size = file.length() / mb / mb;
                                 Log.d("TAG", "file size " + file_size);
 
@@ -530,6 +538,9 @@ public class InfoBlocksStorage {
 
                 if (object.has(MainItem.JSON_VALUE) && !object.get(MainItem.JSON_VALUE).isJsonNull())
                     item.setValue(object.get(MainItem.JSON_VALUE).getAsString());
+
+                if (object.has(MainItem.JSON_CAN_ADD) && !object.get(MainItem.JSON_CAN_ADD).isJsonNull())
+                    item.setCanAdd(object.get(MainItem.JSON_CAN_ADD).getAsBoolean());
 
                 if (object.has(MainItem.JSON_DEFAULT_VALUE) && !object.get(MainItem.JSON_DEFAULT_VALUE).isJsonNull())
                     item.setDefaultValue(object.get(MainItem.JSON_DEFAULT_VALUE).getAsString());

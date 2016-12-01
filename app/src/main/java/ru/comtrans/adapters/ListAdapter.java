@@ -23,16 +23,18 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     private ArrayList<ListItem> mData = new ArrayList<>();
     private ArrayList<ListItem> items = new ArrayList<>();
     private long mark;
+    private boolean isNeedSort;
 
 
     private LayoutInflater mInflater;
 
-    public ListAdapter(Context context,ArrayList<ListItem> items, long mark) {
+    public ListAdapter(Context context,ArrayList<ListItem> items, long mark, boolean isNeedSort) {
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         this.items = items;
         this.mark = mark;
+        this.isNeedSort = isNeedSort;
         enterValues(items);
     }
 
@@ -79,7 +81,8 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public void notifyDataSetChanged() {
-        sortItems();
+        if(isNeedSort)
+            sortItems();
         super.notifyDataSetChanged();
     }
 

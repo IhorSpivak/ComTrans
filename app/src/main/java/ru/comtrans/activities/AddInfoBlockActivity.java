@@ -3,6 +3,7 @@ package ru.comtrans.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
@@ -10,9 +11,7 @@ import java.util.UUID;
 
 import ru.comtrans.R;
 import ru.comtrans.fragments.infoblock.add.AddInfoBlockFragment;
-import ru.comtrans.fragments.infoblock.add.InfoBlockTutorialFragment;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.Utility;
 import ru.comtrans.services.AudioRecordService;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.tasks.SaveInfoBlockTask;
@@ -23,7 +22,9 @@ public class AddInfoBlockActivity extends BaseActivity {
     public NonSwipeableViewPager viewPager;
     private String infoBlockId;
     private int page;
+    private long propCode;
     private InfoBlockHelper helper;
+    boolean isNew = false;
 
 
 
@@ -42,7 +43,9 @@ public class AddInfoBlockActivity extends BaseActivity {
 
         infoBlockId = getIntent().getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
         page = getIntent().getIntExtra(Const.EXTRA_INFO_BLOCK_PAGE,0);
-        boolean isNew = false;
+        propCode = getIntent().getLongExtra(Const.EXTRA_PROP_CODE,0);
+
+
         if(infoBlockId==null){
             isNew = true;
             infoBlockId = UUID.randomUUID().toString();
@@ -52,10 +55,9 @@ public class AddInfoBlockActivity extends BaseActivity {
         startService(i);
         helper = InfoBlockHelper.getInstance();
 
-        if(Utility.getBoolean(Const.IS_FIRST_ADD_INFOBLOCK_LAUNCH))
-            openMainFragment(isNew);
-        else
-            openTutorialFragment(isNew);
+
+        openMainFragment();
+
 
 
     }
@@ -64,12 +66,15 @@ public class AddInfoBlockActivity extends BaseActivity {
         super.onPause();
     }
 
-    private void openMainFragment(boolean isNew){
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId, page, isNew)).commit();
+    private void openMainFragment(){
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId, page,propCode, isNew)).commit();
     }
 
-    private void openTutorialFragment(boolean isNew){
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, InfoBlockTutorialFragment.newInstance(infoBlockId, page, isNew)).commit();
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("TAG","onActivity result in activity");
     }
 
     @Override

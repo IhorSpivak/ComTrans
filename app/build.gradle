@@ -23,7 +23,7 @@ android {
         applicationId "ru.comtrans"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 50
+        versionCode 51
         versionName "1.0"
     }
     buildTypes {

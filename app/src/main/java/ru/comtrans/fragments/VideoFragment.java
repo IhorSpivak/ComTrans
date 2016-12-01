@@ -7,8 +7,8 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -22,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -33,9 +32,11 @@ import android.widget.Toast;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import ru.comtrans.R;
 import ru.comtrans.activities.CameraActivity;
@@ -52,28 +53,27 @@ import ru.comtrans.views.CircleProgressBar;
  * Created by Artco on 01.06.2016.
  */
 public class VideoFragment extends Fragment implements View.OnClickListener{
-    ListView listView;
-    Toolbar toolbar;
-    TextView toolbarTitle;
-    TextView videosCount;
-    ImageView takeVideo, done;
-    CameraPreviewFragment cameraPreviewFragment;
-    ProgressBar progressBar;
+    private ListView listView;
+    private TextView toolbarTitle;
+    private TextView videosCount;
+    private ImageView takeVideo, done;
+    private CameraPreviewFragment cameraPreviewFragment;
+    private ProgressBar progressBar;
     private TakePhotoReceiver takePhotoReceiver = null;
-
     private CameraActivity activity;
-    VideoViewerFragment videoViewerFragment;
-    MediaRecorder mediaRecorder;
-    boolean isVideoRecording = false;
-    private Chronometer chronometer;
-    int currentPosition;
-    File videoFile;
-    CountUpdateReceiver countUpdateReceiver = null;
-    RePhotoReceiver rePhotoReceiver = null;
+    private VideoViewerFragment videoViewerFragment;
+    private MediaRecorder mediaRecorder;
+    private boolean isVideoRecording = false;
+    private TextView countDownText;
+    private int currentPosition;
+    private File videoFile;
+    private CountUpdateReceiver countUpdateReceiver = null;
+    private RePhotoReceiver rePhotoReceiver = null;
     private MenuItem menuItem;
     private SimpleOrientationListener mOrientationListener;
     private RelativeLayout rlPortraitBlocked;
     private CircleProgressBar videoProgressBar;
+    private CountDownTimer countDownTimer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,11 +87,11 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_video,container,false);
-        toolbar = (Toolbar)v.findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         toolbarTitle  = (TextView) toolbar.findViewById(R.id.toolbarTitle);
         toolbarTitle.setSelected(true);
 
-        Log.d("TAG","video fragment");
+
 
 
         activity = (CameraActivity) getActivity();
@@ -103,7 +103,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         done = (ImageView) v.findViewById(R.id.btn_done);
         progressBar = (ProgressBar)v.findViewById(R.id.progress_bar);
         videosCount = (TextView)v.findViewById(R.id.videos_count);
-        chronometer = (Chronometer) v.findViewById(R.id.chronometer);
+        countDownText = (TextView) v.findViewById(R.id.countdownText);
         rlPortraitBlocked = (RelativeLayout)v.findViewById(R.id.rlPortraitBlocked);
         videoProgressBar = (CircleProgressBar)v.findViewById(R.id.videoProgressBar);
 
@@ -151,6 +151,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
 
 
                 toolbarTitle.setText(photoItem.getTitle());
+                countDownText.setText(getTime(photoItem.getDuration()*1000));
                 if(photoItem.getImagePath()==null){
                     if(getFragmentManager().findFragmentByTag(Const.CAMERA_PREVIEW)==null)
                         replaceWithCamera();
@@ -193,7 +194,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                         if(isVideoRecording){
                             takeVideo();
                             isVideoRecording = false;
-                            chronometer.setBase(SystemClock.elapsedRealtime());
+
                         }
                         rlPortraitBlocked.setVisibility(View.VISIBLE);
                         Log.d("TAG", "portrait");
@@ -219,8 +220,12 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer,cameraPreviewFragment, Const.CAMERA_PREVIEW).commit();
         if(menuItem!=null)
             menuItem.setVisible(true);
+        countDownText.setVisibility(View.VISIBLE);
+        countDownText.setText(getTime(activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition()).getDuration()*1000));
+
     }
     private void replaceWithVideoViewer(PhotoItem item, int position){
+        countDownText.setVisibility(View.INVISIBLE);
         videoViewerFragment = VideoViewerFragment.newInstance(item,position);
         getFragmentManager().beginTransaction().replace(R.id.cameraContainer, videoViewerFragment,Const.PHOTO_VIEWER).commit();
         if(menuItem!=null)
@@ -273,7 +278,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         if(isVideoRecording){
             videoProgressBar.setProgressWithAnimation(0);
             if (mediaRecorder != null) {
-                chronometer.setOnChronometerTickListener(null);
+
                 isVideoRecording = false;
                 try{
                     mediaRecorder.stop();
@@ -282,9 +287,12 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 }
 
                 releaseMediaRecorder();
-                chronometer.stop();
-                chronometer.setBase(SystemClock.elapsedRealtime());
-                chronometer.setVisibility(View.INVISIBLE);
+                countDownTimer.cancel();
+                countDownTimer = null;
+                countDownText.setText("");
+                countDownText.setVisibility(View.INVISIBLE);
+
+
                 PhotoItem item = activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition());
                 if(item.getImagePath()!=null&&!item.getImagePath().equals("")){
                     File file = new File(item.getImagePath());
@@ -320,32 +328,35 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         }else {
 
             if (prepareVideoRecorder()) {
-                isVideoRecording = true;
-                mediaRecorder.start();
-                chronometer.setVisibility(View.VISIBLE);
-                chronometer.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        chronometer.setBase(SystemClock.elapsedRealtime());
-                        chronometer.start();
-                    }
-                });
                 PhotoItem item = activity.getPhotoAdapter().getItem(activity.getPhotoAdapter().getSelectedPosition());
                 final double duration = item.getDuration()*1000;
-                chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+                long countDownDuration = item.getDuration()*1000;
+                isVideoRecording = true;
+                mediaRecorder.start();
+                countDownText.setVisibility(View.VISIBLE);
+                countDownTimer = new CountDownTimer(countDownDuration,1000) {
                     @Override
-                    public void onChronometerTick(Chronometer chronometer) {
-                        double elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
-                        Log.d("TAG", String.valueOf(elapsedMillis));
-                        double progress = (elapsedMillis / duration)*100;
+                    public void onTick(long l) {
+                        countDownText.setText(getTime(l));
+                       double ellapsedMillis = duration-l;
+                        double progress = (ellapsedMillis / duration)*100;
                         Log.d("TAG", "progress "+String.valueOf(progress));
                         videoProgressBar.setProgressWithAnimation((float) progress);
 
-                        if(elapsedMillis>=duration&&chronometer.getBase()!=0){
-                            takeVideo();
-                        }
                     }
-                });
+
+
+                    @Override
+                    public void onFinish() {
+                        videoProgressBar.setProgress(100);
+                        takeVideo();
+                    }
+
+
+                };
+                countDownTimer.start();
+
+
 
             } else {
                 releaseMediaRecorder();
@@ -355,6 +366,18 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
 
     }
 
+    private String getTime(long l){
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(l);
+        long seconds =  TimeUnit.MILLISECONDS.toSeconds(l) -
+                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(l));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MINUTE, (int) minutes);
+        calendar.set(Calendar.SECOND, (int) seconds);
+        SimpleDateFormat format = new SimpleDateFormat("mm:ss",Locale.getDefault());
+        format.setTimeZone(calendar.getTimeZone());
+        return format.format(calendar.getTime());
+    }
+
 
     @Override
     public void onPause() {
@@ -362,7 +385,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         if(isVideoRecording){
             takeVideo();
             isVideoRecording = false;
-            chronometer.setBase(SystemClock.elapsedRealtime());
+
         }
 
     }

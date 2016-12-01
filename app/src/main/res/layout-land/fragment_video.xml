@@ -103,13 +103,13 @@
                 android:src="@drawable/ic_stop"
                 android:layout_centerInParent="true"/>
 
-            <Chronometer
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginStart="10dp"
                 android:layout_marginLeft="10dp"
-                android:id="@+id/chronometer"
+                android:id="@+id/countdownText"
                 android:visibility="invisible"
                 android:textColor="@android:color/white"
                 android:layout_centerVertical="true"/>

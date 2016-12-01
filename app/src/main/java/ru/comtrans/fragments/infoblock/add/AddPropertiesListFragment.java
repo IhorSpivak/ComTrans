@@ -4,7 +4,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -264,18 +263,16 @@ public class AddPropertiesListFragment extends BaseFragment {
                 Log.e("WTF","CAMERA_PHOTO_RESULT");
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
                 screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
-                adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
+              //  adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
                 adapter.notifyItemChanged(position);
-//                adapter.notifyDataSetChanged();
-                //initPage();
+
 
                 break;
             case Const.CAMERA_VIDEO_RESULT:
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
                 screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
-                adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
+             //   adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
                 adapter.notifyItemChanged(position);
-//                adapter.notifyDataSetChanged();
                 break;
         }
     }

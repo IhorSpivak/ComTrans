@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;

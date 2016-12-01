@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -26,7 +27,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class GalleryActivity extends BaseActivity implements View.OnClickListener {
+public class GalleryActivity extends AppCompatActivity implements View.OnClickListener {
 
     PhotoItem item;
     File imgFile;

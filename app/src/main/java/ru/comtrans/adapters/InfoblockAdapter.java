@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.util.Log;
@@ -54,6 +55,9 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private boolean isEditable;
     private DividerItemDecoration decoration;
     private InfoBlockHelper infoBlockHelper;
+    private String blockCharacterSet = "0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
+    private InputFilter vinFilter;
+
 
     public void setItems(ArrayList<MainItem> items) {
         this.items = items;
@@ -83,6 +87,17 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.isEditable = isEditable;
         this.totalPages = totalPages;
         infoBlockHelper = InfoBlockHelper.getInstance();
+        vinFilter = new InputFilter() {
+
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+                if (source != null && !blockCharacterSet.contains((source))) {
+                    return "";
+                }
+                return null;
+            }
+        };
     }
 
     public ArrayList<MainItem> getItems() {
@@ -247,9 +262,9 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
 
                 if(item.isError()){
-                    calendarViewHolder.picker.setBackgroundResource(R.drawable.error_button_rounded);
+                    calendarViewHolder.bottomStroke.setVisibility(View.VISIBLE);
                 }else {
-                    calendarViewHolder.picker.setBackgroundResource(R.drawable.button_choose_date);
+                    calendarViewHolder.bottomStroke.setVisibility(View.GONE);
                 }
 
                 calendarViewHolder.picker.setOnClickListener(new View.OnClickListener() {
@@ -414,7 +429,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                     if(item.getCode().equals("general_vin")){
                         editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT| InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
-                        editTextViewHolder.editText.setFilters(new InputFilter[] {new InputFilter.AllCaps(),new InputFilter.LengthFilter(context.getResources().getInteger(R.integer.max_length))});
+                        editTextViewHolder.editText.setFilters(new InputFilter[] {new InputFilter.AllCaps(),new InputFilter.LengthFilter(17)});
                     }
 
                     if(item.isError()){
@@ -435,19 +450,35 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         @Override
                         public void afterTextChanged(Editable editable) {
+
                             if(!editable.toString().equals("")){
                                 item.setError(false);
                                 editTextViewHolder.textInputLayout.setErrorEnabled(false);
                             }
+
                             if(item.getCode().equals("man_pts_model")){
                                 if(editTextViewHolder.editText.getText().toString().equals("")){
-                                    setConstructorChecked(false);
+
                                 }else if (infoBlockHelper.getModelValue().getName().equalsIgnoreCase(editTextViewHolder.editText.getText().toString())) {
                                     setConstructorChecked(false);
                                 } else {
                                     setConstructorChecked(true);
                                 }
                             }
+
+//                            if(item.getCode().equals("general_vin")){
+//                                if (!editable.toString().equals("")&&editable.toString().length()!=17) {
+//                                    editTextViewHolder.textInputLayout.setErrorEnabled(true);
+//                                    editTextViewHolder.textInputLayout.setError(context.getString(R.string.short_vin));
+//                                    // Для проверки на валидность
+//                                    item.setChecked(false);
+//                                } else {
+//                                    editTextViewHolder.textInputLayout.setErrorEnabled(false);
+//                                    item.setChecked(true);
+//                                }
+//                            }
+
+
 
                         }
                     });
@@ -472,9 +503,10 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         editTextViewHolder.editText.setKeyListener(null);
                         editTextViewHolder.editText.setFocusable(false);
                         editTextViewHolder.editText.setClickable(false);
+                        editTextViewHolder.editText.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
                         editTextViewHolder.editText.setFocusableInTouchMode(false);
                         editTextViewHolder.editText.setText(item.getDefaultValue());
-                        Log.d("TAG","default value "+item.getDefaultValue());
+
                     }
 
 
@@ -738,7 +770,6 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     public void onClick(final View v) {
                         if (isEditable) {
                             listener.saveState();
-                            boolean isAllEntered = true;
                             boolean isMainEntered = true;
 
                             int scrollPosition = -1;
@@ -818,31 +849,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                 }
 
 
-                                switch (item.getType()) {
-                                    case MainItem.TYPE_CALENDAR:
-                                        if (item.getValue() == null || item.getValue().equals(context.getString(R.string.choose_date))) {
-                                            isAllEntered = false;
-                                        }
-                                        break;
-                                    case MainItem.TYPE_NUMBER:
-                                    case MainItem.TYPE_STRING:
-                                        if (item.getValue() == null || item.getValue().equals("")) {
-                                            isAllEntered = false;
-                                        }
-                                        break;
-                                    case MainItem.TYPE_PHONE:
-                                    case MainItem.TYPE_EMAIL:
-                                        if (item.getValue() == null || !item.isChecked()) {
-                                            isAllEntered = false;
-                                        }
-                                        break;
-                                    case MainItem.TYPE_LIST:
-                                        if (item.getListValue().getId() == -1) {
-                                            isAllEntered = false;
-                                        }
-                                        break;
 
-                                }
                             }
                             if (!isMainEntered) {
                                 final int finalScrollPosition = scrollPosition;
@@ -858,21 +865,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                         }).show();
 
 
-                            } else if (!isAllEntered && page + 1 != totalPages) {
-                                new AlertDialog.Builder(context)
-                                        .setCancelable(true)
-                                        .setTitle(R.string.warning_title)
-                                        .setMessage(R.string.warning_message)
-                                        .setPositiveButton(R.string.btn_next, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                infoBlockHelper.saveScreen(items, page);
-                                                bottomBarClickListener.onBottomBarClick(2, -1);
-                                            }
-                                        })
-                                        .setNeutralButton(R.string.btn_stay, null).show();
-
-                            } else {
+                            } else{
                                 infoBlockHelper.saveScreen(items, page);
                                 bottomBarClickListener.onBottomBarClick(2, -1);
                             }
@@ -885,7 +878,9 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 bottomBarViewHolder.btnPrevious.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        infoBlockHelper.saveScreen(items, page);
+                        if(isEditable) {
+                            infoBlockHelper.saveScreen(items, page);
+                        }
                         bottomBarClickListener.onBottomBarClick(1, -1);
                     }
                 });
@@ -1049,12 +1044,14 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public Button picker;
         public TextView title;
         public LinearLayout itemLayout;
+        public View bottomStroke;
 
         public CalendarViewHolder(View itemView) {
             super(itemView);
             picker = (Button) itemView.findViewById(R.id.btn_picker);
             title = (TextView) itemView.findViewById(R.id.title);
             itemLayout = (LinearLayout) itemView.findViewById(R.id.item_layout);
+            bottomStroke = itemView.findViewById(R.id.bottomStroke);
         }
 
     }

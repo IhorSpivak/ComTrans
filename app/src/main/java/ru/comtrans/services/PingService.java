@@ -1,11 +1,14 @@
 package ru.comtrans.services;
 
 import android.app.IntentService;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.CountDownTimer;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
@@ -20,66 +23,78 @@ import ru.comtrans.helpers.Utility;
  * Created by Artco on 07.10.2016.
  */
 
-public class PingService extends IntentService {
+public class PingService extends Service {
+    private CountDownTimer timer;
+    private String id;
+    private Thread thread;
 
-    public PingService(String name) {
-        super(name);
-    }
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d("TAG","ping service create");
+        timer  = new CountDownTimer(30000,1000){
 
-    public PingService() {
-        super("ping service");
+            @Override
+            public void onTick(long millisUntilFinished) {
+            thread =  new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean isReachable;
+                        isReachable =
+                                isURLReachable(getApplicationContext());
+
+                        if(!Utility.isConnectingToInternet(getApplicationContext())) {
+                            Log.d("TAG","first");
+                        }else if(Utility.getBoolean(Const.SETTINGS_ALLOWS_MOBILE_CONN)&&!Utility.isConnectingToWifi(getApplicationContext())&&!Utility.isConnectingToFastNetwork(getApplicationContext())){
+                            Log.d("TAG","second");
+                        }else if(!Utility.getBoolean(Const.SETTINGS_ALLOWS_MOBILE_CONN)&&!Utility.isConnectingToWifi(getApplicationContext())){
+                            Log.d("TAG","third");
+                        }else {
+                            Log.d("TAG","fourth");
+                            if(isReachable){
+                                Intent intentMyIntentService = new Intent(getApplicationContext(), SendingService.class);
+                                intentMyIntentService.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
+                                startService(intentMyIntentService);
+                                stopSelf();
+                            }
+                        }
+                    }
+                });
+                thread.start();
+
+            }
+
+            @Override
+            public void onFinish() {
+                stopSelf();
+            }
+
+
+        };
+
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("TAG","service started");
-        final String id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
-        boolean isReachable;
+        id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
 
-            new CountDownTimer(30000,1000){
+        timer.start();
+        return START_NOT_STICKY;
+    }
 
-                @Override
-                public void onTick(long millisUntilFinished) {
+    @Override
+    public void onDestroy() {
+        timer.cancel();
+        Log.d("TAG","ping service destroy");
+        super.onDestroy();
 
-                }
+    }
 
-                @Override
-                public void onFinish() {
-                    stopSelf();
-                }
-            };
-
-        for(int i=0; i<300; i++){
-            try {
-                Thread.sleep(1000);
-                isReachable =
-                        isURLReachable(getApplicationContext());
-
-                if(!Utility.isConnectingToInternet(getApplicationContext())) {
-                }else if(Utility.getBoolean(Const.SETTINGS_ALLOWS_MOBILE_CONN)&&!Utility.isConnectingToWifi(getApplicationContext())&&!Utility.isConnectingToFastNetwork(getApplicationContext())){
-                }else if(!Utility.getBoolean(Const.SETTINGS_ALLOWS_MOBILE_CONN)&&!Utility.isConnectingToWifi(getApplicationContext())){
-                }else {
-                    if(isReachable){
-                        Intent intentMyIntentService = new Intent(getApplicationContext(), SendingService.class);
-                        intentMyIntentService.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
-                        startService(intentMyIntentService);
-                        stopSelf();
-                        break;
-                    }
-                }
-
-
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-
-
-
-
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     static public boolean isURLReachable(Context context) {

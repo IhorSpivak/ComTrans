@@ -2,8 +2,6 @@ package ru.comtrans.camera;
 
 import android.content.Context;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera;
@@ -189,7 +187,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             });
             for (int i = 0; i < sizes.size(); i++) {
                 Camera.Size size = sizes.get(i);
-                Log.d("TAG","size "+size.width+" "+size.height);
 
                 if(!isVideo&&size.width<=1920&&size.height<=1080) {
                     Camera.Parameters parameters = camera.getParameters();

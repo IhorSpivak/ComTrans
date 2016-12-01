@@ -23,7 +23,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -488,6 +487,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 getActivity().getParent().setResult(Const.CAMERA_PHOTO_RESULT, i);
             }
             getActivity().finish();
+            new SaveInfoBlockTask(helper.getId(),getContext());
 
         }else {
             ArrayList<PhotoItem> items = new ArrayList<>(activity.getPhotoAdapter().getItems());

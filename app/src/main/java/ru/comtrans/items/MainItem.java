@@ -10,6 +10,7 @@ public class MainItem {
     public static final String JSON_TYPE = "type";
     public static final String JSON_CODE = "code";
     public static final String JSON_VALUE = "value";
+    public static final String JSON_CAN_ADD = "can_add";
     public static final String JSON_DEFAULT_VALUE = "default_value";
     public static final String JSON_IS_CHECKED = "is_checked";
     public static final String JSON_IS_REQUIRED = "is_required";
@@ -45,6 +46,7 @@ public class MainItem {
     private boolean isChecked = false;
     private boolean isRequired = false;
     private boolean isError = false;
+    private boolean canAdd = false;
     private ListItem listValue;
     private ArrayList<ListItem> listValues;
     private ArrayList<PhotoItem> photoItems;
@@ -71,6 +73,14 @@ public class MainItem {
 
     public void setProtectorItems(ArrayList<ProtectorItem> protectorItems) {
         this.protectorItems = protectorItems;
+    }
+
+    public boolean canAdd() {
+        return canAdd;
+    }
+
+    public void setCanAdd(boolean canAdd) {
+        this.canAdd = canAdd;
     }
 
     public boolean isError() {

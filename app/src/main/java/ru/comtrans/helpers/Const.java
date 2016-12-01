@@ -42,7 +42,10 @@ public class Const {
     public static final String SETTINGS_ALLOWS_MOBILE_CONN = "allow_mobile_conn";
     public static final String SETTINGS_ALLOWS_BIG_DATA = "allow_big_data";
 
-    public static final String JSON_PROP = "json_prop";
+   // public static final String JSON_PROP = "json_prop";
+    public static final String IS_MAIN_JSON_DOWNLOADED = "is_main_json_downloaded";
+    public static final String JSON_PROP_CODE = "json_prop_code";
+    public static final String EXTRA_PROP_CODE = "extra_prop_code";
 
 
     //////////////////////////AddInfoBlockActivity/////////////////////////
@@ -69,6 +72,7 @@ public class Const {
     public static final int SEARCH_VALUE_RESULT = 102;
     public static final int CAMERA_PHOTO_RESULT = 103;
     public static final int CAMERA_VIDEO_RESULT = 104;
+    public static final int TUTORIAL_FRAGMENT_REQUEST = 105;
     public static final String phone_regex = "[0-9,\\+]7\\([0-9]{3}[0-9,\\)][0-9]{3}[0-9,-][0-9]{2}[0-9,-][0-9]{2}";
 
 

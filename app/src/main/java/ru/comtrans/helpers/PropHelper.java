@@ -1,4 +1,4 @@
-package ru.comtrans.singlets;
+package ru.comtrans.helpers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -7,43 +7,37 @@ import com.google.gson.JsonObject;
 
 import java.util.Map;
 
-import ru.comtrans.helpers.Const;
-import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.items.ProtectorItem;
 
 /**
- * Created by Artco on 06.07.2016.
+ * Created by Artco on 28.11.2016.
  */
+
 public class PropHelper {
-    private static PropHelper instance;
+
+    private long propCode;
     private Gson gson;
-    private JsonArray prop;
     private JsonArray screens;
 
-
-    public static PropHelper getInstance() {
-        if(instance==null){
-            instance = new PropHelper();
-        }
-        return instance;
+    public PropHelper(long propCode){
+        this.propCode = propCode;
+        gson = new Gson();
+        screens = new JsonArray();
+        parseJson();
     }
 
     public JsonArray getScreens() {
         return screens;
     }
 
-    private PropHelper(){
-        gson = new Gson();
-        screens = new JsonArray();
-        parseJson();
-    }
+    private void parseJson(){
+        String jsonString = Utility.getSavedData(Const.JSON_PROP_CODE+propCode);
+        JsonArray prop = gson.fromJson(jsonString,JsonArray.class);
 
-    public void parseJson(){
-        prop = gson.fromJson(Utility.getSavedData(Const.JSON_PROP), JsonArray.class);
-        for(int i=0; i<prop.size();i++){
+        for(int i = 0; i< prop.size(); i++){
             JsonArray screen = new JsonArray();
             JsonObject object = prop.get(i).getAsJsonObject();
             JsonArray val = object.get("val").getAsJsonArray();
@@ -51,14 +45,14 @@ public class PropHelper {
                 JsonObject valObject = val.get(j).getAsJsonObject();
                 for(Map.Entry<String,JsonElement> entry:valObject.entrySet()){
                     if(entry.getKey().startsWith("photo")){
-                    screen.addAll(getPhotoItems(entry.getValue().getAsJsonArray(),false));
+                        screen.addAll(getPhotoItems(entry.getValue().getAsJsonArray(),false));
 
-                }else if(entry.getKey().startsWith("video")){
+                    }else if(entry.getKey().startsWith("video")){
                         screen.addAll(getPhotoItems(entry.getValue().getAsJsonArray(),true));
-                }else if(entry.getKey().startsWith("protector")){
+                    }else if(entry.getKey().startsWith("protector")){
                         screen.addAll(getProtectorItems(entry.getValue().getAsJsonArray()));
-                }else {
-                        screen.addAll(getItems(entry.getValue().getAsJsonArray()));
+                    }else {
+                        screen.addAll(getItems(entry.getValue().getAsJsonArray(),propCode));
                     }
                 }
             }
@@ -69,10 +63,9 @@ public class PropHelper {
 
             screens.add(screen);
         }
-
     }
 
-    private static JsonArray getItems(JsonArray array){
+    private static JsonArray getItems(JsonArray array, long propCode){
         JsonArray newArray = new JsonArray();
         for (int i = 0; i < array.size(); i++) {
             try {
@@ -103,6 +96,10 @@ public class PropHelper {
                 if (object.has("default_value") && !object.get("default_value").isJsonNull()) {
                     newObject.addProperty(MainItem.JSON_DEFAULT_VALUE, object.get("default_value").getAsString());
                 }
+
+                if (object.has("can_add") && !object.get("can_add").isJsonNull()) {
+                    newObject.addProperty(MainItem.JSON_CAN_ADD, object.get("can_add").getAsBoolean());
+                }
                 switch (object.get("prop_type").getAsString()) {
                     case "S":
                         newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_STRING);
@@ -129,8 +126,8 @@ public class PropHelper {
                 }
                 newObject.addProperty(MainItem.JSON_NAME, object.get("name").getAsString());
                 newObject.addProperty(MainItem.JSON_CODE, object.get("code").getAsString());
-//                if(object.get("code").getAsString().equals("shas_wheel_formula"))
-//                    Log.e("WTF","PROP_HELPER code="+object.get("code").getAsString());
+
+
 
 
                 if (object.has("val") && !object.get("val").isJsonNull()) {
@@ -157,14 +154,22 @@ public class PropHelper {
                         }
                         newVal.add(newValueObject);
 
-                        if (j == 0) {
-                            newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+                        if(object.get("code").getAsString().equals("general_type_id")){
+                            if(newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong()==propCode){
+                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+                            }
+                        }else {
+                            if (j == 0) {
+                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+                            }
                         }
+
                     }
                     newObject.add(MainItem.JSON_LIST_VALUES, newVal);
 
 
                 }
+
                 newArray.add(newObject);
             }catch (Exception ignored){}
         }
@@ -222,7 +227,7 @@ public class PropHelper {
                 if(object.has("is_defect")&&!object.get("is_defect").isJsonNull()&&object.get("is_defect").getAsBoolean()){
                     newObject.addProperty(PhotoItem.JSON_IS_DEFECT,true);
                     Utility.saveData(Const.DEFAULT_DEFECT_NAME,object.get("name").getAsString());
-                 //   newObject.addProperty(PhotoItem.JSON_TITLE,object.get("name").getAsString()+" 1");
+                    //   newObject.addProperty(PhotoItem.JSON_TITLE,object.get("name").getAsString()+" 1");
                     newObject.addProperty(PhotoItem.JSON_TITLE,"Дефект 1");
                 }else {
                     newObject.addProperty(PhotoItem.JSON_IS_DEFECT,false);
@@ -256,7 +261,5 @@ public class PropHelper {
 
         return newArray;
     }
-
-
 
 }

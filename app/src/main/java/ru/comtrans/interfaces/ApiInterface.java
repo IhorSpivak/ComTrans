@@ -32,11 +32,11 @@ public interface ApiInterface {
     @GET("profile/")
     Call<User> getUser(@Header("token") String token);
 
-    @GET("prop/22")
+    @GET("all-prop/")
     Call<JsonObject> getProp();
 
     @GET("prop-value/834")
-    Call<JsonObject> getVehiceType();
+    Call<JsonObject> getVehicleType();
 
     @POST("forgot-password/")
     Call<User> forgotPassword(@Body User user);

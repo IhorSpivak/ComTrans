@@ -36,6 +36,7 @@ public class SearchValueActivity extends BaseActivity {
     private int screenNum;
     private int extraPosition;
     private long mark;
+    private boolean canAdd;
 
 
 
@@ -66,12 +67,14 @@ public class SearchValueActivity extends BaseActivity {
 
         items = helper.getItems().get(screenNum).get(extraPosition).getListValues();
 
+        canAdd = helper.getItems().get(screenNum).get(extraPosition).canAdd();
+
 
 
 
 
         if(items!=null) {
-            adapter = new ListAdapter(SearchValueActivity.this,items,mark);
+            adapter = new ListAdapter(SearchValueActivity.this,items,mark,canAdd);
             listView.setAdapter(adapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -85,22 +88,20 @@ public class SearchValueActivity extends BaseActivity {
                     finish();
                 }
             });
-        }else {
-            if(addValueItem!=null)
-             addValueItem.setVisible(false);
         }
-
-
-
-
-
-
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search_value,menu);
         addValueItem = menu.findItem(R.id.action_add);
+        if(!canAdd){
+            if(addValueItem!=null)
+                addValueItem.setVisible(false);
+            invalidateOptionsMenu();
+        }
         final MenuItem myActionMenuItem = menu.findItem( R.id.action_search);
         searchView = (SearchView) myActionMenuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

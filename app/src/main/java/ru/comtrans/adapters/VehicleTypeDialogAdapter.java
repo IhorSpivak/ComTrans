@@ -5,18 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
-import ru.comtrans.R;
 import ru.comtrans.items.ListItem;
-import ru.comtrans.items.PhotoItem;
-import ru.comtrans.views.VerticalTextView;
 
 /**
  * Created by Artco on 24.11.2016.

@@ -3,6 +3,8 @@ package ru.comtrans.fragments.infoblock.add;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,15 +23,10 @@ public class InfoBlockTutorialFragment extends Fragment implements View.OnClickL
 
     private ImageView close;
     private Button confirm;
-    private String infoBlockId;
-    private int page;
-    private boolean isNew;
 
-    public static InfoBlockTutorialFragment newInstance(String id, int page, boolean isNew) {
+
+    public static InfoBlockTutorialFragment newInstance() {
         Bundle args = new Bundle();
-        args.putString(Const.EXTRA_INFO_BLOCK_ID,id);
-        args.putInt(Const.EXTRA_INFO_BLOCK_PAGE,page);
-        args.putBoolean(Const.IS_NEW_INFO_BLOCK,isNew);
         InfoBlockTutorialFragment fragment = new InfoBlockTutorialFragment();
         fragment.setArguments(args);
         return fragment;
@@ -45,15 +42,21 @@ public class InfoBlockTutorialFragment extends Fragment implements View.OnClickL
         confirm = (Button)v.findViewById(R.id.button_confirm);
         close.setOnClickListener(this);
         confirm.setOnClickListener(this);
-        infoBlockId = getArguments().getString(Const.EXTRA_INFO_BLOCK_ID);
-        page = getArguments().getInt(Const.EXTRA_INFO_BLOCK_PAGE,0);
-        isNew = getArguments().getBoolean(Const.IS_NEW_INFO_BLOCK);
+
+
         return v;
+    }
+    private void removeFragment(){
+        FragmentManager manager = getActivity().getSupportFragmentManager();
+        FragmentTransaction trans = manager.beginTransaction();
+        trans.remove(this);
+        trans.commit();
     }
 
     @Override
     public void onClick(View view) {
         Utility.saveBoolean(Const.IS_FIRST_ADD_INFOBLOCK_LAUNCH,true);
-        getFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId, page, isNew)).commit();
+        getTargetFragment().onActivityResult(Const.TUTORIAL_FRAGMENT_REQUEST,Const.TUTORIAL_FRAGMENT_REQUEST,null);
+        removeFragment();
     }
 }

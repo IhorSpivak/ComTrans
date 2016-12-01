@@ -1,5 +1,6 @@
 package ru.comtrans.fragments.infoblock.add;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import retrofit2.Call;
@@ -23,12 +25,12 @@ import ru.comtrans.activities.AddInfoBlockActivity;
 import ru.comtrans.adapters.AddInfoBlockPagerAdapter;
 import ru.comtrans.fragments.BaseFragment;
 import ru.comtrans.helpers.Const;
+import ru.comtrans.helpers.PropHelper;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.MyInfoBlockItem;
 import ru.comtrans.singlets.AppController;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
-import ru.comtrans.singlets.PropHelper;
 import ru.comtrans.views.ConnectionProgressDialog;
 import ru.comtrans.views.NonSwipeableViewPager;
 
@@ -41,6 +43,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
     private LinearLayout pager_indicator;
     private InfoBlocksStorage storage;
     private int page;
+    private long propCode;
     private InfoBlockHelper infoBlockHelper;
     private int dotsCount;
     private ImageView[] dots;
@@ -51,11 +54,12 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
     private String infoBlockId;
     boolean isNew;
 
-    public static AddInfoBlockFragment newInstance(String id, int page, boolean isNew) {
+    public static AddInfoBlockFragment newInstance(String id, int page, long propCode, boolean isNew) {
         Bundle args = new Bundle();
         args.putString(Const.EXTRA_INFO_BLOCK_ID,id);
         args.putInt(Const.EXTRA_INFO_BLOCK_PAGE,page);
         args.putBoolean(Const.IS_NEW_INFO_BLOCK,isNew);
+        args.putLong(Const.EXTRA_PROP_CODE,propCode);
         AddInfoBlockFragment fragment = new AddInfoBlockFragment();
         fragment.setArguments(args);
         return fragment;
@@ -75,25 +79,40 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
         infoBlockId = getArguments().getString(Const.EXTRA_INFO_BLOCK_ID);
         page = getArguments().getInt(Const.EXTRA_INFO_BLOCK_PAGE);
         isNew = getArguments().getBoolean(Const.IS_NEW_INFO_BLOCK);
+        propCode = getArguments().getLong(Const.EXTRA_PROP_CODE);
 
         progressDialog = new ConnectionProgressDialog(getContext());
 
         emptyBar.setVisibility(View.VISIBLE);
         activity.viewPager = (NonSwipeableViewPager) v.findViewById(R.id.pager);
 
+        if(!Utility.getBoolean(Const.IS_FIRST_ADD_INFOBLOCK_LAUNCH))
+            openTutorialFragment();
+        else
+            init();
 
+        return v;
+    }
 
+    private void init(){
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar.setVisibility(View.VISIBLE);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                if(!Utility.containsData(Const.JSON_PROP))
+                if(!Utility.getBoolean(Const.IS_MAIN_JSON_DOWNLOADED))
                     getProp();
                 else
                     new AsyncTaskForGetProp().execute();
             }
         });
         t.start();
-        return v;
+    }
+
+    private void openTutorialFragment(){
+        InfoBlockTutorialFragment fragment  = InfoBlockTutorialFragment.newInstance();
+        fragment.setTargetFragment(this,Const.TUTORIAL_FRAGMENT_REQUEST);
+        getFragmentManager().beginTransaction().add(R.id.container,fragment).commit();
     }
 
     private void getProp(){
@@ -110,7 +129,16 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
 
                 if(response.body().get("status").getAsInt()==1){
-                    Utility.saveData(Const.JSON_PROP,response.body().get("result").getAsJsonArray().toString());
+                    JsonArray prop = response.body().get("result").getAsJsonArray();
+                    Utility.saveBoolean(Const.IS_MAIN_JSON_DOWNLOADED,true);
+                    if(prop.size()>0) {
+                        for (int i = 0; i < prop.size(); i++) {
+                            JsonObject object = prop.get(i).getAsJsonObject();
+                            int propCode = object.get("prop_code").getAsInt();
+                            Utility.saveData(Const.JSON_PROP_CODE+propCode,object.get("fields").getAsJsonArray().toString());
+                        }
+                    }
+
                     new AsyncTaskForGetProp().execute();
                 }else {
 
@@ -141,7 +169,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
             storage = InfoBlocksStorage.getInstance();
             infoBlockHelper = InfoBlockHelper.getInstance();
             if(isNew) {
-                propHelper = PropHelper.getInstance();
+                propHelper = new PropHelper(propCode);
                 storage.saveInfoBlock(infoBlockId, propHelper.getScreens());
                 storage.setInfoBlockStatus(infoBlockId, MyInfoBlockItem.STATUS_DRAFT);
             }
@@ -208,5 +236,12 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
     public void onPageScrollStateChanged(int state) {
 
     }
-    
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==Const.TUTORIAL_FRAGMENT_REQUEST){
+            init();
+        }
+    }
 }

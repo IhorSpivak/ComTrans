@@ -30,8 +30,6 @@ import android.widget.Toast;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,17 +38,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.comtrans.R;
 import ru.comtrans.activities.AddInfoBlockActivity;
-import ru.comtrans.activities.CameraActivity;
+import ru.comtrans.activities.ShowInfoBlockActivity;
 import ru.comtrans.adapters.DialogArrayAdapter;
 import ru.comtrans.adapters.MyInfoBlocksAdapter;
 import ru.comtrans.adapters.VehicleTypeDialogAdapter;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
-import ru.comtrans.interfaces.ApiInterface;
 import ru.comtrans.items.DialogItem;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MyInfoBlockItem;
-import ru.comtrans.items.User;
 import ru.comtrans.services.SendingService;
 import ru.comtrans.singlets.AppController;
 import ru.comtrans.singlets.InfoBlocksStorage;
@@ -109,7 +105,7 @@ public class MyInfoBlocksFragment extends Fragment {
     }
 
     private void getVehicleTypes(){
-        Call<JsonObject> call = AppController.apiInterface.getVehiceType();
+        Call<JsonObject> call = AppController.apiInterface.getVehicleType();
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -163,8 +159,8 @@ public class MyInfoBlocksFragment extends Fragment {
                         Toast.makeText(getContext(), R.string.click_on_sending, Toast.LENGTH_SHORT).show();
                         break;
                     case MyInfoBlockItem.STATUS_SENT:
-                        storage.setInfoBlockStatus(item.getId(),MyInfoBlockItem.STATUS_DRAFT);
-                        i = new Intent(getContext(), AddInfoBlockActivity.class);
+                       // storage.setInfoBlockStatus(item.getId(),MyInfoBlockItem.STATUS_DRAFT);
+                        i = new Intent(getContext(), ShowInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID, item.getId());
                         i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE, item.getLastPosition());
                         startActivity(i);
@@ -213,7 +209,7 @@ public class MyInfoBlocksFragment extends Fragment {
                 ArrayList<DialogItem> items = new ArrayList<>();
                 DialogItem dialogItem1 = new DialogItem(R.string.dialog_delete,getContext());
                 DialogItem dialogItem3 = new DialogItem(R.string.dialog_neutral,getContext());
-                DialogItem dialogItem4 = new DialogItem(R.string.dialog_send_email,getContext());
+              //  DialogItem dialogItem4 = new DialogItem(R.string.dialog_send_email,getContext());
 
 
                 if(storage.getInfoBlockStatus(item.getId())!=MyInfoBlockItem.STATUS_SENT) {
@@ -224,9 +220,11 @@ public class MyInfoBlocksFragment extends Fragment {
                         dialogItem2 = new DialogItem(R.string.dialog_send,getContext());
                     }
 
-                    items.add(dialogItem2); items.add(dialogItem1);  items.add(dialogItem4); items.add(dialogItem3);
+                    items.add(dialogItem2); items.add(dialogItem1); // items.add(dialogItem4);
+                     items.add(dialogItem3);
                 }else {
-                    items.add(dialogItem1);  items.add(dialogItem4); items.add(dialogItem3);
+                    items.add(dialogItem1);  //items.add(dialogItem4);
+                     items.add(dialogItem3);
                 }
                 adapter.setItems(items);
 
@@ -374,7 +372,7 @@ public class MyInfoBlocksFragment extends Fragment {
 
     private void createNewInfoBlock(){
         if(Utility.getVehicleType()!=null) {
-            VehicleTypeDialogAdapter adapter = new VehicleTypeDialogAdapter(Utility.getVehicleType(), getContext());
+            final VehicleTypeDialogAdapter adapter = new VehicleTypeDialogAdapter(Utility.getVehicleType(), getContext());
             LayoutInflater inflater = getActivity().getLayoutInflater();
             View view = inflater.inflate(R.layout.title_vehicle_type, null);
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -383,6 +381,7 @@ public class MyInfoBlocksFragment extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent intent = new Intent(getContext(), AddInfoBlockActivity.class);
+                    intent.putExtra(Const.EXTRA_PROP_CODE,adapter.getItem(i).getId());
                     startActivity(intent);
                     dialogInterface.dismiss();
                 }

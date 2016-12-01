@@ -111,14 +111,6 @@ public class CameraPhotoAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public int getLastDefectPosition(){
-        for(int i=0; i<items.size();i++){
-            if(items.get(i).isDefect()&&items.get(i).getImagePath()==null){
-                return i;
-            }
-        }
-        return 0;
-    }
 
     public int getFactDefectCount(){
         int count = 0;
@@ -138,11 +130,6 @@ public class CameraPhotoAdapter extends BaseAdapter {
         }
     }
 
-//    public void addItemToTempArray(PhotoItem item) {
-//        items.add(0,item);
-//        selectedPosition++;
-//        notifyDataSetChanged();
-//    }
 
 
     public int getPhotosCount(){

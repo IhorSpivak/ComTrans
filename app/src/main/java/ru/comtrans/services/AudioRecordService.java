@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import java.io.File;
+
 import ru.comtrans.audio.AudioRecorder;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.singlets.InfoBlocksStorage;
@@ -36,6 +38,9 @@ public class AudioRecordService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
         storage = InfoBlocksStorage.getInstance();
+        File file = new File(storage.getInfoBlockAudio(id));
+        if(file.exists())
+            file.delete();
         recorder = new AudioRecorder();
         recorder.onRecord(true);
         return START_STICKY;
