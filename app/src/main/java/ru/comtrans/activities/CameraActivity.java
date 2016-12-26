@@ -47,6 +47,7 @@ public class CameraActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_camera);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         isVideoFlag = getIntent().getIntExtra(Const.CAMERA_MODE,-1);
         screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM,-1);

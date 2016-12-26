@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -39,6 +40,7 @@ public class ShowPropertiesListFragment extends BaseFragment {
     private int page;
     private int totalPages;
     private String infoBlockId;
+    private TextView tvHeader;
 
 
 
@@ -77,6 +79,7 @@ public class ShowPropertiesListFragment extends BaseFragment {
     private void initUi(View v){
         activity = (ShowInfoBlockActivity) getActivity();
         recyclerView = (RecyclerView)v.findViewById(android.R.id.list);
+        tvHeader = (TextView)v.findViewById(R.id.tv_header);
         layoutManager = new LinearLayoutManagerWithSmoothScroller(getActivity());
         infoBlockHelper = InfoBlockHelper.getInstance();
         storage = InfoBlocksStorage.getInstance();
@@ -89,53 +92,58 @@ public class ShowPropertiesListFragment extends BaseFragment {
 
 
     private void initPage(){
-        items = infoBlockHelper.getScreen(page);
+        try {
+            items = infoBlockHelper.getScreen(page);
+        }catch (Exception ignored){}
 
-        adapter = new InfoBlockAdapter(getContext(), items, page, totalPages, false, new InfoBlockAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(MainItem item, View view, int position) {
+        if(items!=null) {
+
+            tvHeader.setText(items.get(0).getName());
+            adapter = new InfoBlockAdapter(getContext(), items, page, totalPages, false, new InfoBlockAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(MainItem item, View view, int position) {
 
 
-
-            }
-
-            @Override
-            public void saveState() {
-                //stub
-            }
-        }, new InfoBlockAdapter.OnBottomBarClickListener() {
-            @Override
-            public void onBottomBarClick(int type, int scrollPosition) {
-                switch (type) {
-                    case 1:
-                        activity.viewPager.setCurrentItem(page - 1);
-                        break;
-                    case 2:
-                        if (page + 1 == totalPages) {
-                            new SaveInfoBlockTask(infoBlockId, getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
-                                @Override
-                                public void onPostExecute() {
-                                    getActivity().finish();
-                                }
-                            });
-                        } else {
-                            activity.viewPager.setCurrentItem(page + 1);
-                        }
-                        break;
                 }
-            }
-        });
-        recyclerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                Utility.hideKeyboard(getActivity(),view);
-                return false;
-            }
-        });
-        recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL_LIST));
+
+                @Override
+                public void saveState() {
+                    //stub
+                }
+            }, new InfoBlockAdapter.OnBottomBarClickListener() {
+                @Override
+                public void onBottomBarClick(int type, int scrollPosition) {
+                    switch (type) {
+                        case 1:
+                            activity.viewPager.setCurrentItem(page - 1);
+                            break;
+                        case 2:
+                            if (page + 1 == totalPages) {
+                                new SaveInfoBlockTask(infoBlockId, getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
+                                    @Override
+                                    public void onPostExecute() {
+                                        getActivity().finish();
+                                    }
+                                });
+                            } else {
+                                activity.viewPager.setCurrentItem(page + 1);
+                            }
+                            break;
+                    }
+                }
+            });
+            recyclerView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    Utility.hideKeyboard(getActivity(), view);
+                    return false;
+                }
+            });
+            recyclerView.setAdapter(adapter);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
+        }
 
     }
 

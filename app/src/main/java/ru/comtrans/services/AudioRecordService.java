@@ -36,14 +36,18 @@ public class AudioRecordService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
-        storage = InfoBlocksStorage.getInstance();
-        File file = new File(storage.getInfoBlockAudio(id));
-        if(file.exists())
-            file.delete();
-        recorder = new AudioRecorder();
-        recorder.onRecord(true);
-        return START_STICKY;
+        if(intent!=null) {
+            id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
+            storage = InfoBlocksStorage.getInstance();
+            File file = new File(storage.getInfoBlockAudio(id));
+            if (file.exists())
+                file.delete();
+            recorder = new AudioRecorder();
+            recorder.onRecord(true);
+            return START_STICKY;
+        }
+        return START_NOT_STICKY;
+
     }
 
     @Override

@@ -15,11 +15,11 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.services.AudioRecordService;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.tasks.SaveInfoBlockTask;
-import ru.comtrans.views.NonSwipeableViewPager;
+import ru.comtrans.views.CustomViewPager;
 
 public class AddInfoBlockActivity extends BaseActivity {
 
-    public NonSwipeableViewPager viewPager;
+    public CustomViewPager viewPager;
     private String infoBlockId;
     private int page;
     private long propCode;

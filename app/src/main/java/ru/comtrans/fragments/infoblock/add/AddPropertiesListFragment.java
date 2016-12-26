@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -50,6 +51,7 @@ public class AddPropertiesListFragment extends BaseFragment {
     private int page;
     private int totalPages;
     private String infoBlockId;
+    private TextView tvHeader;
 
 
 
@@ -89,6 +91,7 @@ public class AddPropertiesListFragment extends BaseFragment {
     private void initUi(View v){
         activity = (AddInfoBlockActivity) getActivity();
         recyclerView = (RecyclerView)v.findViewById(android.R.id.list);
+        tvHeader = (TextView)v.findViewById(R.id.tv_header);
         layoutManager = new LinearLayoutManagerWithSmoothScroller(getActivity());
 
         infoBlockHelper = InfoBlockHelper.getInstance();
@@ -103,7 +106,7 @@ public class AddPropertiesListFragment extends BaseFragment {
 
         if(items!=null) {
 
-
+            tvHeader.setText(items.get(0).getName());
             adapter = new InfoBlockAdapter(getContext(), items, page, totalPages, true, new InfoBlockAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(MainItem item, View view, final int position) {

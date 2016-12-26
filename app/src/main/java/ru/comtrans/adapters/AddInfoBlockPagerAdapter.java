@@ -4,13 +4,14 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import ru.comtrans.fragments.infoblock.add.AddPropertiesListFragment;
 
 /**
  * Created by Artco on 14.07.2016.
  */
-public class AddInfoBlockPagerAdapter extends FragmentPagerAdapter {
+public class AddInfoBlockPagerAdapter extends FragmentStatePagerAdapter {
     Context c;
     int pagesCount;
     String infoBlockId;

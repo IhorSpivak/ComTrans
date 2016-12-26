@@ -32,7 +32,7 @@ import ru.comtrans.singlets.AppController;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.views.ConnectionProgressDialog;
-import ru.comtrans.views.NonSwipeableViewPager;
+import ru.comtrans.views.CustomViewPager;
 
 /**
  * Created by Artco on 14.07.2016.
@@ -84,7 +84,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
         progressDialog = new ConnectionProgressDialog(getContext());
 
         emptyBar.setVisibility(View.VISIBLE);
-        activity.viewPager = (NonSwipeableViewPager) v.findViewById(R.id.pager);
+        activity.viewPager = (CustomViewPager) v.findViewById(R.id.pager);
 
         if(!Utility.getBoolean(Const.IS_FIRST_ADD_INFOBLOCK_LAUNCH))
             openTutorialFragment();

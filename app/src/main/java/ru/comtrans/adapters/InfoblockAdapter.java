@@ -56,7 +56,10 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private DividerItemDecoration decoration;
     private InfoBlockHelper infoBlockHelper;
     private String blockCharacterSet = "0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
+    private String emailCharacterRegEx = "[A-Za-z0-9!\"#$%&'()*+,\\-./:;<>=?@\\[\\]{\\}\\\\\\^_`~]+$";
+
     private InputFilter vinFilter;
+    private InputFilter emailFilter;
 
 
     public void setItems(ArrayList<MainItem> items) {
@@ -92,8 +95,22 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             @Override
             public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
 
-                if (source != null && !blockCharacterSet.contains((source))) {
-                    return "";
+                for (int i = start; i < end; i++) {
+                    if (!blockCharacterSet.contains(String.valueOf(source.charAt(i)))) { // Accept only letter & digits ; otherwise just return
+                        return "";
+                    }
+                }
+                return null;
+            }
+        };
+
+        emailFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence charSequence, int start, int end, Spanned spanned, int i2, int i3) {
+                for (int i = start; i < end; i++) {
+                    if (!String.valueOf(charSequence.charAt(i)).matches(emailCharacterRegEx)) { // Accept only letter & digits ; otherwise just return
+                        return "";
+                    }
                 }
                 return null;
             }
@@ -234,9 +251,9 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         listViewHolder.tvList.setText(item.getListValue().getName());
 
                     if(item.isError()){
-                        listViewHolder.bottomStroke.setBackgroundColor(context.getColor(R.color.colorPrimary));
+                        listViewHolder.bottomStroke.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
                     }else {
-                        listViewHolder.bottomStroke.setBackgroundColor(context.getColor(R.color.colorSecondary));
+                        listViewHolder.bottomStroke.setBackgroundColor(context.getResources().getColor(R.color.colorSecondary));
                     }
 
                 } else {
@@ -429,7 +446,8 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                     if(item.getCode().equals("general_vin")){
                         editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT| InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
-                        editTextViewHolder.editText.setFilters(new InputFilter[] {new InputFilter.AllCaps(),new InputFilter.LengthFilter(17)});
+                        editTextViewHolder.editText.setFilters(new InputFilter[] {vinFilter,new  InputFilter.AllCaps(),new InputFilter.LengthFilter(17)});
+
                     }
 
                     if(item.isError()){
@@ -466,17 +484,25 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                 }
                             }
 
-//                            if(item.getCode().equals("general_vin")){
-//                                if (!editable.toString().equals("")&&editable.toString().length()!=17) {
-//                                    editTextViewHolder.textInputLayout.setErrorEnabled(true);
-//                                    editTextViewHolder.textInputLayout.setError(context.getString(R.string.short_vin));
-//                                    // Для проверки на валидность
-//                                    item.setChecked(false);
-//                                } else {
-//                                    editTextViewHolder.textInputLayout.setErrorEnabled(false);
-//                                    item.setChecked(true);
-//                                }
-//                            }
+                            if(item.getCode().equals("general_vin")){
+                                String s=editable.toString();
+                                if(!s.equals(s.toUpperCase()))
+                                {
+                                    s=s.toUpperCase();
+                                    editTextViewHolder.editText.setText(s);
+                                }
+                                editTextViewHolder.editText.setSelection(editTextViewHolder.editText.getText().length());
+
+                                if (!editable.toString().equals("")&&editable.toString().length()!=17) {
+                                    editTextViewHolder.textInputLayout.setErrorEnabled(true);
+                                    editTextViewHolder.textInputLayout.setError(context.getString(R.string.short_vin));
+                                    // Для проверки на валидность
+                                    item.setChecked(false);
+                                } else {
+                                    editTextViewHolder.textInputLayout.setErrorEnabled(false);
+                                    item.setChecked(true);
+                                }
+                            }
 
 
 
@@ -586,8 +612,9 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
                     else
                         editTextViewHolder.textInputLayout.setHint(item.getName());
-                    editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                    editTextViewHolder.editText.setFilters(new InputFilter[]{emailFilter,new InputFilter.LengthFilter(context.getResources().getInteger(R.integer.max_length))});
                     editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
+                    editTextViewHolder.editText.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                     editTextViewHolder.editText.setText(item.getValue());
                     editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         public void onFocusChange(View v, boolean hasFocus) {
@@ -625,6 +652,14 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         @Override
                         public void afterTextChanged(Editable editable) {
+
+                            String s=editable.toString();
+                            if(!s.equals(s.toLowerCase()))
+                            {
+                                s=s.toLowerCase();
+                                editTextViewHolder.editText.setText(s);
+                            }
+                            editTextViewHolder.editText.setSelection(editTextViewHolder.editText.getText().length());
 
                             if (!Utility.isEmailValid(editable) && !editable.toString().trim().equals("")) {
                                 editTextViewHolder.textInputLayout.setErrorEnabled(true);
@@ -730,8 +765,16 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
             case MainItem.TYPE_HEADER:
+
                 HeaderViewHolder headerViewHolder = ((HeaderViewHolder) viewHolder);
-                headerViewHolder.tvHeader.setText(item.getName());
+
+                if(headerViewHolder.getAdapterPosition()==0){
+                    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(0,0);
+                    headerViewHolder.headerLayout.setLayoutParams(params);
+                }else {
+                    headerViewHolder.headerLayout.setVisibility(View.VISIBLE);
+                    headerViewHolder.tvHeader.setText(item.getName());
+                }
                 break;
 
             case MainItem.TYPE_FLAG:
@@ -1006,10 +1049,12 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private static class HeaderViewHolder extends CustomViewHolder {
         public TextView tvHeader;
+        public LinearLayout headerLayout;
 
 
         public HeaderViewHolder(View itemView) {
             super(itemView);
+            headerLayout = (LinearLayout)itemView.findViewById(R.id.header_layout);
             tvHeader = (TextView) itemView.findViewById(R.id.tv_header);
         }
 

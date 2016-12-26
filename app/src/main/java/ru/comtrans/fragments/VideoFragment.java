@@ -9,6 +9,7 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -75,11 +76,14 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     private CircleProgressBar videoProgressBar;
     private CountDownTimer countDownTimer;
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         getActivity().stopService(new Intent(getContext(), AudioRecordService.class));
+
+
     }
 
 
