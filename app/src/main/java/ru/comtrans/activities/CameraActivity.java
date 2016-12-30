@@ -25,6 +25,7 @@ import ru.comtrans.adapters.CameraPhotoAdapter;
 import ru.comtrans.fragments.CameraFragment;
 import ru.comtrans.fragments.VideoFragment;
 import ru.comtrans.helpers.Const;
+import ru.comtrans.items.ListItem;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.tasks.SaveInfoBlockTask;
@@ -38,6 +39,7 @@ public class CameraActivity extends AppCompatActivity {
     public int imagePosition;
     public  int screenNum;
     int isVideoFlag;
+    private InfoBlockHelper helper;
 
 
 
@@ -49,13 +51,15 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        helper = InfoBlockHelper.getInstance();
+
         isVideoFlag = getIntent().getIntExtra(Const.CAMERA_MODE,-1);
         screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
         position = getIntent().getIntExtra(Const.EXTRA_POSITION,-1);
         imagePosition = getIntent().getIntExtra(Const.EXTRA_IMAGE_POSITION,-1);
 
         InfoBlockHelper helper = InfoBlockHelper.getInstance();
-        items = new ArrayList<>(helper.getItems().get(screenNum).get(position).getPhotoItems());
+        items = new ArrayList<>(helper.getPhotos(screenNum,position));
         new SaveInfoBlockTask(helper.getId(),CameraActivity.this);
 
 
@@ -202,6 +206,13 @@ public class CameraActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    public boolean checkIsOs(PhotoItem item){
+       ListItem tireScheme=  helper.getTireSchemeValue();
+        if(tireScheme.getId()==-1)
+            return true;
+        return tireScheme.getRevealOs().contains(item.getIsOs());
     }
 
 

@@ -100,6 +100,10 @@ public class PropHelper {
                 if (object.has("can_add") && !object.get("can_add").isJsonNull()) {
                     newObject.addProperty(MainItem.JSON_CAN_ADD, object.get("can_add").getAsBoolean());
                 }
+
+                if (object.has("capitalize") && !object.get("capitalize").isJsonNull()) {
+                    newObject.addProperty(MainItem.JSON_CAPITALIZE, object.get("capitalize").getAsBoolean());
+                }
                 switch (object.get("prop_type").getAsString()) {
                     case "S":
                         newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_STRING);
@@ -152,6 +156,11 @@ public class PropHelper {
                         if (valueObject.has("axis")&&!valueObject.get("axis").isJsonNull()) {
                             newValueObject.add(ListItem.JSON_PROTECTOR_VALUES, valueObject.get("axis").getAsJsonArray());
                         }
+
+                        if (valueObject.has("reveal_os")&&!valueObject.get("reveal_os").isJsonNull()) {
+                            newValueObject.add(ListItem.JSON_REVEAL_OS, valueObject.get("reveal_os").getAsJsonArray());
+                        }
+
                         newVal.add(newValueObject);
 
                         if(object.get("code").getAsString().equals("general_type_id")){
@@ -223,6 +232,10 @@ public class PropHelper {
             JsonObject newObject = new JsonObject();
             newObject.addProperty(PhotoItem.JSON_TITLE,object.get("name").getAsString());
             newObject.addProperty(PhotoItem.JSON_CODE,object.get("code").getAsString());
+
+            if(object.has("is_os")&&!object.get("is_os").isJsonNull()){
+                newObject.addProperty(PhotoItem.JSON_IS_OS,object.get("is_os").getAsInt());
+            }
             if(i == array.size()-1){
                 if(object.has("is_defect")&&!object.get("is_defect").isJsonNull()&&object.get("is_defect").getAsBoolean()){
                     newObject.addProperty(PhotoItem.JSON_IS_DEFECT,true);

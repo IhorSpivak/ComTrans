@@ -1,9 +1,12 @@
 package ru.comtrans.singlets;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
+import ru.comtrans.items.PhotoItem;
 import ru.comtrans.items.ProtectorItem;
 
 /**
@@ -98,6 +101,75 @@ public class InfoBlockHelper {
     public ArrayList<ArrayList<MainItem>> getItems() {
         return items;
     }
+
+    public void savePhotos(int screenNum, int position, ArrayList<PhotoItem> photoItems){
+        ArrayList<PhotoItem> currentPhotoItems = new ArrayList<>(items.get(screenNum).get(position).getPhotoItems());
+        ArrayList<PhotoItem> defectItems = new ArrayList<>();
+        ArrayList<PhotoItem> currentDefectItems = new ArrayList<>();
+
+        for (int i = 0; i <photoItems.size() ; i++) {
+            if(photoItems.get(i).isDefect()) {
+                defectItems.add(photoItems.get(i));
+                Log.d("TAG","defects "+photoItems.get(i).getTitle());
+            }
+        }
+        photoItems.removeAll(defectItems);
+
+
+
+        for (int i = 0; i < currentPhotoItems.size(); i++) {
+            if(currentPhotoItems.get(i).isDefect())
+                currentDefectItems.add(currentPhotoItems.get(i));
+        }
+
+        currentPhotoItems.removeAll(currentDefectItems);
+
+
+
+        for (int i = 0; i < currentPhotoItems.size(); i++) {
+            for (int j = 0; j < photoItems.size(); j++) {
+                if (currentPhotoItems.get(i).getCode().equals(photoItems.get(j).getCode())) {
+                    currentPhotoItems.get(i).setImagePath(photoItems.get(j).getImagePath());
+                }
+            }
+
+        }
+
+
+        currentPhotoItems.addAll(defectItems);
+
+        for (int i = 0; i < currentPhotoItems.size(); i++) {
+            Log.d("TAG","------------------------- "+currentPhotoItems.get(i).getTitle());
+        }
+
+
+        items.get(screenNum).get(position).setPhotoItems(currentPhotoItems);
+    }
+
+    public ArrayList<PhotoItem> getPhotos(int screenNum, int position){
+        ArrayList<PhotoItem> newItems = new ArrayList<>();
+        ArrayList<PhotoItem> currentPhotoItems = items.get(screenNum).get(position).getPhotoItems();
+        for (PhotoItem photoItem : currentPhotoItems) {
+            if (!photoItem.isDefect()) {
+                if(photoItem.getIsOs()!=0&&getTireSchemeValue().getId()!=-1){
+                    if(getTireSchemeValue().getRevealOs().contains(photoItem.getIsOs())){
+                        newItems.add(photoItem);
+                    }
+                }else {
+                    newItems.add(photoItem);
+                }
+            }
+        }
+        for (int i = 0; i < currentPhotoItems.size(); i++) {
+            if(currentPhotoItems.get(i).isDefect())
+                newItems.add(currentPhotoItems.get(i));
+        }
+
+        return newItems;
+
+    }
+
+
     public int getItemsSize(){
         return items.size();
     }

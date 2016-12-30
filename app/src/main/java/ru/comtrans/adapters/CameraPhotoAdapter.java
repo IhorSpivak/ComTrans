@@ -122,6 +122,16 @@ public class CameraPhotoAdapter extends BaseAdapter {
         return count;
     }
 
+    public boolean isDefect(){
+        boolean isDefect = false;
+        for(int i=0; i<items.size(); i++){
+            if(items.get(i).isDefect()){
+                isDefect = true;
+            }
+        }
+        return isDefect;
+    }
+
     public boolean isPositionDefect(int position){
         if(items.get(position).isDefect()){
             return true;

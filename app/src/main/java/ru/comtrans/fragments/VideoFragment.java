@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -75,6 +76,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
     private RelativeLayout rlPortraitBlocked;
     private CircleProgressBar videoProgressBar;
     private CountDownTimer countDownTimer;
+    private LinearLayout dummyView;
 
 
     @Override
@@ -110,7 +112,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
         countDownText = (TextView) v.findViewById(R.id.countdownText);
         rlPortraitBlocked = (RelativeLayout)v.findViewById(R.id.rlPortraitBlocked);
         videoProgressBar = (CircleProgressBar)v.findViewById(R.id.videoProgressBar);
-
+        dummyView = (LinearLayout)v.findViewById(R.id.dummy_view);
         toolbarTitle.setOnClickListener(this);
         takeVideo.setOnClickListener(this);
         done.setOnClickListener(this);
@@ -206,7 +208,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                 }catch (Exception ignored){}
             }
         };
-        mOrientationListener.enable();
+
 
 
 
@@ -215,6 +217,38 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
 
 
         return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+//        if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_LAUNCH))
+        if(!Utility.getBoolean(Const.IS_FIRST_VIDEO_LAUNCH)) {
+            final TutorialPagerFragment fragment = TutorialPagerFragment.newInstance(Const.EXTRA_TUTORIAL_VIDEO);
+            fragment.setListener(new TutorialPagerFragment.OnTutorialListener() {
+                @Override
+                public void onPositionChanged(int position) {
+                    if(position==0){
+                        dummyView.setVisibility(View.VISIBLE);
+                    }else {
+                        dummyView.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onOkClick() {
+                    getFragmentManager().beginTransaction().remove(fragment).commit();
+                    dummyView.setVisibility(View.GONE);
+                    mOrientationListener.enable();
+                }
+            });
+            getFragmentManager().beginTransaction().add(R.id.container, fragment).addToBackStack(null).commitAllowingStateLoss();
+        }else {
+            mOrientationListener.enable();
+        }
+
+
+
     }
 
     private void replaceWithCamera(){

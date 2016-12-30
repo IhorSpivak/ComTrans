@@ -7,25 +7,44 @@
 
 
 
-    <android.support.v4.view.ViewPager
+    <ru.comtrans.views.VerticalViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#99000000"
         android:fitsSystemWindows="true"
         tools:listitem="@layout/pager_image_item" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_clear"
+        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:rotation="270"
+        android:layout_centerVertical="true"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="@string/btn_clear"/>
+
     <RelativeLayout
         android:id="@+id/viewPagerIndicator"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="55dp"
-        android:layout_alignParentBottom="true"
+        android:rotation="270"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginTop="5dp"
         android:gravity="center">
 
+
+
         <LinearLayout
             android:id="@+id/viewPagerCountDots"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:gravity="center"

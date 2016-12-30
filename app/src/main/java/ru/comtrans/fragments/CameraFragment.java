@@ -33,6 +33,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.florent37.tutoshowcase.TutoShowcase;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
@@ -74,6 +76,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     private RelativeLayout rlPortraitBlocked;
     private boolean isRePhoto = false;
     private int currentRePhotoPosition = -1;
+    InfoBlockHelper helper = InfoBlockHelper.getInstance();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -235,7 +238,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 }catch (Exception ignored){}
             }
         };
-        mOrientationListener.enable();
 
 
 
@@ -249,8 +251,49 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_LAUNCH))
-            getFragmentManager().beginTransaction().add(R.id.container,new ViewPagerPhotoDemoFragment()).addToBackStack(null).commitAllowingStateLoss();
+
+            if (activity.getPhotoAdapter().isDefect()) {
+                if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_DEFECT_LAUNCH)) {
+                    final TutorialPagerFragment fragment = TutorialPagerFragment.newInstance(Const.EXTRA_TUTORIAL_PHOTO_DEFECT);
+                    fragment.setListener(new TutorialPagerFragment.OnTutorialListener() {
+                        @Override
+                        public void onPositionChanged(int position) {
+
+                        }
+
+                        @Override
+                        public void onOkClick() {
+                            getFragmentManager().beginTransaction().remove(fragment).commit();
+                            mOrientationListener.enable();
+                        }
+                    });
+                    getFragmentManager().beginTransaction().add(R.id.container,fragment).addToBackStack(null).commitAllowingStateLoss();
+
+                }else {
+                    mOrientationListener.enable();
+                }
+            } else {
+                if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_LAUNCH)) {
+                    final TutorialPagerFragment fragment = TutorialPagerFragment.newInstance(Const.EXTRA_TUTORIAL_PHOTO);
+                    fragment.setListener(new TutorialPagerFragment.OnTutorialListener() {
+                        @Override
+                        public void onPositionChanged(int position) {
+
+                        }
+
+                        @Override
+                        public void onOkClick() {
+                            getFragmentManager().beginTransaction().remove(fragment).commit();
+                            mOrientationListener.enable();
+
+                        }
+                    });
+                    getFragmentManager().beginTransaction().add(R.id.container,fragment).addToBackStack(null).commitAllowingStateLoss();
+                }else {
+                    mOrientationListener.enable();
+                }
+            }
+
     }
 
     
@@ -433,6 +476,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
                         }
 
+                    done(false);
+
 
                 }
             });
@@ -440,7 +485,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
             switchButtons(true,false);
             e.printStackTrace();
         }
-        done(false);
+
 
         switchButtons(true,false);
     }
@@ -478,9 +523,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
             i.putExtra(Const.EXTRA_SCREEN_NUM, activity.screenNum);
             ArrayList<PhotoItem> items = new ArrayList<>(activity.getPhotoAdapter().getItems());
             Collections.reverse(items);
-            InfoBlockHelper helper = InfoBlockHelper.getInstance();
-            helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(items);
-//        getActivity().setResult(Const.CAMERA_PHOTO_RESULT,i);
+            helper.savePhotos(activity.screenNum,activity.position,items);
             if (getActivity().getParent() == null) {
                 getActivity().setResult(Const.CAMERA_PHOTO_RESULT, i);
             } else {
@@ -492,8 +535,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         }else {
             ArrayList<PhotoItem> items = new ArrayList<>(activity.getPhotoAdapter().getItems());
             Collections.reverse(items);
-            InfoBlockHelper helper = InfoBlockHelper.getInstance();
-            helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(items);
+            helper.savePhotos(activity.screenNum,activity.position,items);
             new SaveInfoBlockTask(helper.getId(),getContext());
         }
     }

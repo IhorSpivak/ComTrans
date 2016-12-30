@@ -66,19 +66,8 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.items = items;
     }
 
-    /**
-     * Interface, that allows us to have OnItemClickListener for recyclerView
-     */
-    public interface OnItemClickListener {
-        void onItemClick(MainItem item, View view, int position);
 
-        void saveState();
-    }
 
-    public interface OnBottomBarClickListener {
-        void onBottomBarClick(int type,int scrollPosition);
-
-    }
 
     public InfoBlockAdapter(Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable,
                             OnItemClickListener listener, OnBottomBarClickListener bottomBarClickListener) {
@@ -121,112 +110,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return items;
     }
 
-    private static class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        public CustomViewHolder(View itemView) {
-            super(itemView);
-        }
-
-        public void bind(final MainItem item, final OnItemClickListener listener) {
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(item, v, getAdapterPosition());
-                }
-            });
-        }
-    }
-
-
-    @Override
-    public int getItemViewType(int position) {
-        return items.get(position).getType();
-    }
-
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v;
-        switch (viewType) {
-            case MainItem.TYPE_LIST:
-                if (isEditable) {
-                    v = LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.list_item, parent, false);
-
-                    return new ListViewHolder(v);
-                } else {
-                    v = LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.non_editable_item, parent, false);
-
-                    return new NonEditableViewHolder(v);
-                }
-            case MainItem.TYPE_EMAIL:
-            case MainItem.TYPE_PHONE:
-            case MainItem.TYPE_STRING:
-            case MainItem.TYPE_NUMBER:
-                if (isEditable) {
-                    v = LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.edit_text_item, parent, false);
-
-                    return new EditTextViewHolder(v, new InfoBlockTextWatcher());
-                } else {
-                    v = LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.non_editable_item, parent, false);
-
-                    return new NonEditableViewHolder(v);
-                }
-            case MainItem.TYPE_HEADER:
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.header_item, parent, false);
-
-                return new HeaderViewHolder(v);
-
-            case MainItem.TYPE_FLAG:
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.flag_item, parent, false);
-
-                return new FlagViewHolder(v);
-
-
-            case MainItem.TYPE_PHOTO:
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.photo_container_recycler_view, parent, false);
-
-                return new PhotoViewHolder(v);
-
-            case MainItem.TYPE_VIDEO:
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.video_container_recycler_view, parent, false);
-
-                return new PhotoViewHolder(v);
-
-            case MainItem.TYPE_TIRE_SCHEME:
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.tire_scheme_item, parent, false);
-
-                return new TireSchemeViewHolder(v);
-
-            case MainItem.TYPE_BOTTOM_BAR:
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.bottom_bar_list_item, parent, false);
-
-                return new BottomBarViewHolder(v);
-
-            case MainItem.TYPE_CALENDAR:
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.calendar_item, parent, false);
-
-                return new CalendarViewHolder(v);
-
-
-            default:
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.header_item, parent, false);
-
-                return new HeaderViewHolder(v);
-        }
-
-    }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
@@ -294,7 +178,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             case MainItem.TYPE_PHOTO:
                 final PhotoViewHolder photoViewHolder = ((PhotoViewHolder) viewHolder);
-
+                ListItem tireSchemeValue = infoBlockHelper.getTireSchemeValue();
 
                 if(item.getPhotoItems()!=null&&item.getPhotoItems().size()>0){
                     if(item.getPhotoItems().get(item.getPhotoItems().size()-1).isDefect()){
@@ -303,7 +187,13 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         for (PhotoItem photoItem : item.getPhotoItems()) {
                             if (!photoItem.isDefect()) {
-                                photoItems.add(photoItem);
+                                if(photoItem.getIsOs()!=0&&tireSchemeValue.getId()!=-1){
+                                    if(tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())){
+                                        photoItems.add(photoItem);
+                                    }
+                                }else {
+                                    photoItems.add(photoItem);
+                                }
                             }
                         }
 
@@ -359,9 +249,15 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         ArrayList<PhotoItem> photoItems = new ArrayList<>();
 
                         for (PhotoItem photoItem : item.getPhotoItems()) {
-                            if (!photoItem.isDefect()) {
-                                photoItems.add(photoItem);
-                            }
+
+                                if(photoItem.getIsOs()!=0&&tireSchemeValue.getId()!=-1){
+                                    if(tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())){
+                                        photoItems.add(photoItem);
+                                    }
+                                }else {
+                                    photoItems.add(photoItem);
+                                }
+
                         }
 
                         final LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -453,6 +349,35 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     if(item.isError()){
                         editTextViewHolder.textInputLayout.setErrorEnabled(true);
                         editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
+                    }
+
+                    if(item.isCapitalize()){
+                        editTextViewHolder.editText.setInputType(InputType.TYPE_CLASS_TEXT| InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                        editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
+
+                            @Override
+                            public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+
+                            }
+                            @Override
+                            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                                          int arg3) {
+                            }
+                            @Override
+                            public void afterTextChanged(Editable et) {
+                                int selectionStart = editTextViewHolder.editText.getSelectionStart();
+                                String s=et.toString();
+                                if((selectionStart!=0&&!s.equals(s.toUpperCase()) && s.length()==1)) {
+                                    s=s.toUpperCase();
+                                    editTextViewHolder.editText.setText(s);
+                                }
+                                try{
+                                    editTextViewHolder.editText.setSelection(selectionStart);
+                                }catch (Exception ignored){}
+
+                           //     editTextViewHolder.editText.setSelection(editTextViewHolder.editText.getText().length());
+                            }
+                        });
                     }
 
                     editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
@@ -652,14 +577,18 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         @Override
                         public void afterTextChanged(Editable editable) {
-
+                            int selectionStart = editTextViewHolder.editText.getSelectionStart();
                             String s=editable.toString();
                             if(!s.equals(s.toLowerCase()))
                             {
                                 s=s.toLowerCase();
                                 editTextViewHolder.editText.setText(s);
                             }
-                            editTextViewHolder.editText.setSelection(editTextViewHolder.editText.getText().length());
+
+                            try{
+                                editTextViewHolder.editText.setSelection(selectionStart);
+                            }catch (Exception ignored){}
+
 
                             if (!Utility.isEmailValid(editable) && !editable.toString().trim().equals("")) {
                                 editTextViewHolder.textInputLayout.setErrorEnabled(true);
@@ -1129,5 +1058,123 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         }
         return null;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(MainItem item, View view, int position);
+
+        void saveState();
+    }
+
+    public interface OnBottomBarClickListener {
+        void onBottomBarClick(int type,int scrollPosition);
+
+    }
+
+    private static class CustomViewHolder extends RecyclerView.ViewHolder {
+
+        public CustomViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        public void bind(final MainItem item, final OnItemClickListener listener) {
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(item, v, getAdapterPosition());
+                }
+            });
+        }
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        return items.get(position).getType();
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v;
+        switch (viewType) {
+            case MainItem.TYPE_LIST:
+                if (isEditable) {
+                    v = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.list_item, parent, false);
+
+                    return new ListViewHolder(v);
+                } else {
+                    v = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.non_editable_item, parent, false);
+
+                    return new NonEditableViewHolder(v);
+                }
+            case MainItem.TYPE_EMAIL:
+            case MainItem.TYPE_PHONE:
+            case MainItem.TYPE_STRING:
+            case MainItem.TYPE_NUMBER:
+                if (isEditable) {
+                    v = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.edit_text_item, parent, false);
+
+                    return new EditTextViewHolder(v, new InfoBlockTextWatcher());
+                } else {
+                    v = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.non_editable_item, parent, false);
+
+                    return new NonEditableViewHolder(v);
+                }
+            case MainItem.TYPE_HEADER:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.header_item, parent, false);
+
+                return new HeaderViewHolder(v);
+
+            case MainItem.TYPE_FLAG:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.flag_item, parent, false);
+
+                return new FlagViewHolder(v);
+
+
+            case MainItem.TYPE_PHOTO:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.photo_container_recycler_view, parent, false);
+
+                return new PhotoViewHolder(v);
+
+            case MainItem.TYPE_VIDEO:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.video_container_recycler_view, parent, false);
+
+                return new PhotoViewHolder(v);
+
+            case MainItem.TYPE_TIRE_SCHEME:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.tire_scheme_item, parent, false);
+
+                return new TireSchemeViewHolder(v);
+
+            case MainItem.TYPE_BOTTOM_BAR:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.bottom_bar_list_item, parent, false);
+
+                return new BottomBarViewHolder(v);
+
+            case MainItem.TYPE_CALENDAR:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.calendar_item, parent, false);
+
+                return new CalendarViewHolder(v);
+
+
+            default:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.header_item, parent, false);
+
+                return new HeaderViewHolder(v);
+        }
+
     }
 }

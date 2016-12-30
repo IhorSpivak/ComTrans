@@ -358,6 +358,7 @@ public class InfoBlocksStorage {
                     object.addProperty(MainItem.JSON_IS_CHECKED, item.isChecked());
                     object.addProperty(MainItem.JSON_IS_REQUIRED, item.isRequired());
                     object.addProperty(MainItem.JSON_CAN_ADD, item.canAdd());
+                    object.addProperty(MainItem.JSON_CAPITALIZE, item.isCapitalize());
 
                     if (item.getListValue() != null) {
                         JsonObject listObject = new JsonObject();
@@ -365,6 +366,8 @@ public class InfoBlocksStorage {
                         listObject.addProperty(ListItem.JSON_VALUE_ID, listItem.getId());
                         listObject.addProperty(ListItem.JSON_VALUE_NAME, listItem.getName());
                         listObject.addProperty(ListItem.JSON_VALUE_MARK, listItem.getMark());
+                        listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
+
                         if (listItem.getProtectorValues() != null && listItem.getProtectorValues().size() > 0) {
                             JsonArray protectorValues = new JsonArray();
                             for (String s :
@@ -373,7 +376,16 @@ public class InfoBlocksStorage {
                             }
                             listObject.add(ListItem.JSON_PROTECTOR_VALUES, protectorValues);
                         }
-                        listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
+
+                        if (listItem.getRevealOs() != null && listItem.getRevealOs().size() > 0) {
+                            JsonArray revealOsValues = new JsonArray();
+                            for (Integer integer :
+                                    listItem.getRevealOs()) {
+                                revealOsValues.add(integer);
+                            }
+                            listObject.add(ListItem.JSON_REVEAL_OS, revealOsValues);
+                        }
+
                         object.add(MainItem.JSON_LIST_VALUE, listObject);
                     }
 
@@ -385,6 +397,7 @@ public class InfoBlocksStorage {
                             listObject.addProperty(ListItem.JSON_VALUE_ID, listItem.getId());
                             listObject.addProperty(ListItem.JSON_VALUE_NAME, listItem.getName());
                             listObject.addProperty(ListItem.JSON_VALUE_MARK, listItem.getMark());
+                            listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
                             if (listItem.getProtectorValues() != null && listItem.getProtectorValues().size() > 0) {
                                 JsonArray protectorValues = new JsonArray();
                                 for (String s :
@@ -393,7 +406,17 @@ public class InfoBlocksStorage {
                                 }
                                 listObject.add(ListItem.JSON_PROTECTOR_VALUES, protectorValues);
                             }
-                            listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
+
+                            if (listItem.getRevealOs() != null && listItem.getRevealOs().size() > 0) {
+                                JsonArray revealOsValues = new JsonArray();
+                                for (Integer integer :
+                                        listItem.getRevealOs()) {
+                                    revealOsValues.add(integer);
+                                }
+                                listObject.add(ListItem.JSON_REVEAL_OS, revealOsValues);
+                            }
+
+
                             listArray.add(listObject);
                         }
                         object.add(MainItem.JSON_LIST_VALUES, listArray);
@@ -436,6 +459,9 @@ public class InfoBlocksStorage {
                             }
 
 
+                            if(photoItem.getIsOs()!=0){
+                                photoObject.addProperty(PhotoItem.JSON_IS_OS,photoItem.getIsOs());
+                            }
                             photoObject.addProperty(PhotoItem.JSON_IMAGE_PATH, photoItem.getImagePath());
                             photoObject.addProperty(PhotoItem.JSON_CODE, photoItem.getCode());
                             photoObject.addProperty(PhotoItem.JSON_IS_DEFECT, photoItem.isDefect());
@@ -542,6 +568,9 @@ public class InfoBlocksStorage {
                 if (object.has(MainItem.JSON_CAN_ADD) && !object.get(MainItem.JSON_CAN_ADD).isJsonNull())
                     item.setCanAdd(object.get(MainItem.JSON_CAN_ADD).getAsBoolean());
 
+                if (object.has(MainItem.JSON_CAPITALIZE) && !object.get(MainItem.JSON_CAPITALIZE).isJsonNull())
+                    item.setCapitalize(object.get(MainItem.JSON_CAPITALIZE).getAsBoolean());
+
                 if (object.has(MainItem.JSON_DEFAULT_VALUE) && !object.get(MainItem.JSON_DEFAULT_VALUE).isJsonNull())
                     item.setDefaultValue(object.get(MainItem.JSON_DEFAULT_VALUE).getAsString());
 
@@ -562,6 +591,15 @@ public class InfoBlocksStorage {
                             protectorValues.add(protectorArray.get(k).getAsString());
                         }
                         listItem.setProtectorValues(protectorValues);
+                    }
+
+                    if (valueObject.has(ListItem.JSON_REVEAL_OS) && !valueObject.get(ListItem.JSON_REVEAL_OS).isJsonNull()) {
+                        ArrayList<Integer> revealOsValues = new ArrayList<>();
+                        JsonArray revealOsArray = valueObject.getAsJsonArray(ListItem.JSON_REVEAL_OS);
+                        for (int k = 0; k < revealOsArray.size(); k++) {
+                            revealOsValues.add(revealOsArray.get(k).getAsInt());
+                        }
+                        listItem.setRevealOs(revealOsValues);
                     }
 
                     item.setListValue(listItem);
@@ -590,6 +628,15 @@ public class InfoBlocksStorage {
                                 protectorValues.add(protectorArray.get(l).getAsString());
                             }
                             listItem.setProtectorValues(protectorValues);
+                        }
+
+                        if (valueObject.has(ListItem.JSON_REVEAL_OS) && !valueObject.get(ListItem.JSON_REVEAL_OS).isJsonNull()) {
+                            ArrayList<Integer> revealOsValues = new ArrayList<>();
+                            JsonArray revealOsArray = valueObject.getAsJsonArray(ListItem.JSON_REVEAL_OS);
+                            for (int l = 0; l < revealOsArray.size(); l++) {
+                                revealOsValues.add(revealOsArray.get(l).getAsInt());
+                            }
+                            listItem.setRevealOs(revealOsValues);
                         }
 
                         listItems.add(listItem);
@@ -674,6 +721,9 @@ public class InfoBlocksStorage {
 
                         if (valueObject.has(PhotoItem.JSON_IS_VIDEO) && !valueObject.get(PhotoItem.JSON_IS_VIDEO).isJsonNull())
                             photoItem.setVideo(valueObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean());
+
+                        if (valueObject.has(PhotoItem.JSON_IS_OS) && !valueObject.get(PhotoItem.JSON_IS_OS).isJsonNull())
+                            photoItem.setIsOs(valueObject.get(PhotoItem.JSON_IS_OS).getAsInt());
 
                         photoItems.add(photoItem);
 

@@ -15,15 +15,25 @@ public class ListItem implements Parcelable {
     public static final String JSON_VALUE_MARK = "value_mark";
     public static final String JSON_PROTECTOR_VALUES = "protector_values";
     public static final String JSON_TIRE_SCHEME_ID = "tire_scheme_id";
+    public static final String JSON_REVEAL_OS = "reveal_os";
 
     private long id;
     private String name;
     private int mark;
 
     private ArrayList<String> protectorValues;
+    private ArrayList<Integer> revealOs;
     private int tireSchemeId;
 
 
+
+    public ArrayList<Integer> getRevealOs() {
+        return revealOs;
+    }
+
+    public void setRevealOs(ArrayList<Integer> revealOs) {
+        this.revealOs = revealOs;
+    }
 
     public ArrayList<String> getProtectorValues() {
         return protectorValues;
@@ -92,6 +102,7 @@ public class ListItem implements Parcelable {
         dest.writeString(this.name);
         dest.writeInt(this.mark);
         dest.writeStringList(this.protectorValues);
+        dest.writeList(this.revealOs);
         dest.writeInt(this.tireSchemeId);
     }
 
@@ -100,6 +111,8 @@ public class ListItem implements Parcelable {
         this.name = in.readString();
         this.mark = in.readInt();
         this.protectorValues = in.createStringArrayList();
+        this.revealOs = new ArrayList<>();
+        in.readList(this.revealOs, Integer.class.getClassLoader());
         this.tireSchemeId = in.readInt();
     }
 

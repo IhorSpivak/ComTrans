@@ -18,6 +18,8 @@ public class Const {
     public static final String EXTRA_PHOTO_ITEM = "extra_photo_item";
     public static final String EXTRA_SELECTED_POSITION = "extra_selected_position";
     public static final String IS_FIRST_CAMERA_LAUNCH = "is_first_camera_launch";
+    public static final String IS_FIRST_CAMERA_DEFECT_LAUNCH = "is_first_camera_defect_launch";
+    public static final String IS_FIRST_VIDEO_LAUNCH = "is_first_video_launch";
     public static final String CAMERA_PREVIEW = "camera_preview";
     public static final String PHOTO_VIEWER = "photo_viewer";
     public static final String CAMERA_MODE = "camera_mode";
@@ -97,6 +99,11 @@ public class Const {
 
     public static final String IS_FLASH_ENABLED = "is_flash_enabled";
     public static final String IS_VIDEO = "is_video";
+
+    public static final String EXTRA_TUTORIAL = "extra_tutorial";
+    public static final int EXTRA_TUTORIAL_PHOTO = 222;
+    public static final int EXTRA_TUTORIAL_PHOTO_DEFECT = 223;
+    public static final int EXTRA_TUTORIAL_VIDEO = 224;
 
 
 

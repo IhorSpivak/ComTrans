@@ -20,6 +20,7 @@ public class PhotoItem implements Parcelable {
     public static final String JSON_IS_SEND = "is_send";
     public static final String JSON_IS_EDITED = "is_edited";
     public static final String JSON_RE_PHOTO_COUNT = "re_photo_count";
+    public static final String JSON_IS_OS = "is_os";
 
 
 
@@ -36,6 +37,15 @@ public class PhotoItem implements Parcelable {
     private boolean isVideo;
     private boolean isSend = false;
     private boolean isEdited = false;
+    private int isOs;
+
+    public int getIsOs() {
+        return isOs;
+    }
+
+    public void setIsOs(int isOs) {
+        this.isOs = isOs;
+    }
 
     public void incrementRePhotoCount(){
         rePhotoCount++;
