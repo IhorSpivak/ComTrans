@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -30,6 +31,9 @@ import ru.comtrans.items.PhotoItem;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.tasks.SaveInfoBlockTask;
 
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -38,7 +42,9 @@ public class CameraActivity extends AppCompatActivity {
     public int position;
     public int imagePosition;
     public  int screenNum;
+    public boolean isFromDefect;
     int isVideoFlag;
+    View container;
     private InfoBlockHelper helper;
 
 
@@ -48,7 +54,12 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            getWindow().addFlags(SYSTEM_UI_FLAG_LAYOUT_STABLE|SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        }
         setContentView(R.layout.activity_camera);
+        container = findViewById(R.id.container);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         helper = InfoBlockHelper.getInstance();
@@ -57,6 +68,7 @@ public class CameraActivity extends AppCompatActivity {
         screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
         position = getIntent().getIntExtra(Const.EXTRA_POSITION,-1);
         imagePosition = getIntent().getIntExtra(Const.EXTRA_IMAGE_POSITION,-1);
+        isFromDefect = getIntent().getBooleanExtra(Const.EXTRA_IS_DEFECT,false);
 
         InfoBlockHelper helper = InfoBlockHelper.getInstance();
         items = new ArrayList<>(helper.getPhotos(screenNum,position));
@@ -81,6 +93,22 @@ public class CameraActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+
+            container.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
+    }
+
+
 
     public CameraPhotoAdapter getPhotoAdapter() {
         return photoAdapter;

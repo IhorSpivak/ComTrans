@@ -16,6 +16,7 @@ public class MainItem {
     public static final String JSON_IS_CHECKED = "is_checked";
     public static final String JSON_IS_REQUIRED = "is_required";
     public static final String JSON_LIST_VALUE = "list_value";
+    public static final String IS_NEVER_MODIFIED = "never_modified";
     public static final String JSON_LIST_VALUES = "list_values";
     public static final String JSON_PHOTO_VALUES = "photo_values";
     public static final String JSON_PROTECTOR_VALUES = "protector_values";
@@ -49,6 +50,7 @@ public class MainItem {
     private boolean isError = false;
     private boolean canAdd = false;
     private boolean capitalize = false;
+    private boolean isNeverModified = false;
     private ListItem listValue;
     private ArrayList<ListItem> listValues;
     private ArrayList<PhotoItem> photoItems;
@@ -68,6 +70,13 @@ public class MainItem {
         this.type = type;
     }
 
+    public boolean isNeverModified() {
+        return isNeverModified;
+    }
+
+    public void setNeverModified(boolean neverModified) {
+        isNeverModified = neverModified;
+    }
 
     public ArrayList<ProtectorItem> getProtectorItems() {
         return protectorItems;

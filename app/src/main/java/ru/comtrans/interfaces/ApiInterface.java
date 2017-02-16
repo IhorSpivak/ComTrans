@@ -11,6 +11,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 import ru.comtrans.items.User;
 
 public interface ApiInterface {
@@ -35,8 +36,15 @@ public interface ApiInterface {
     @GET("all-prop/")
     Call<JsonObject> getProp();
 
+    @GET("prop/{vehicleTypeId}/{inspectionTypeId}")
+    Call<JsonObject> getPropWithParameters(@Path("vehicleTypeId") String vehicleTypeId,
+                                           @Path("inspectionTypeId") String inspectionTypeId);
+
     @GET("prop-value/834")
-    Call<JsonObject> getVehicleType();
+    Call<JsonObject> getVehicleTypes();
+
+    @GET("prop-value/1067")
+    Call<JsonObject> getInspectionTypes();
 
     @POST("forgot-password/")
     Call<User> forgotPassword(@Body User user);

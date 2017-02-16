@@ -240,6 +240,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
                     getFragmentManager().beginTransaction().remove(fragment).commit();
                     dummyView.setVisibility(View.GONE);
                     mOrientationListener.enable();
+                    Utility.saveBoolean(Const.IS_FIRST_VIDEO_LAUNCH,true);
                 }
             });
             getFragmentManager().beginTransaction().add(R.id.container, fragment).addToBackStack(null).commitAllowingStateLoss();

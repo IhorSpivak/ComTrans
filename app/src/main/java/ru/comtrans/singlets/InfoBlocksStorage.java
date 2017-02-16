@@ -359,6 +359,7 @@ public class InfoBlocksStorage {
                     object.addProperty(MainItem.JSON_IS_REQUIRED, item.isRequired());
                     object.addProperty(MainItem.JSON_CAN_ADD, item.canAdd());
                     object.addProperty(MainItem.JSON_CAPITALIZE, item.isCapitalize());
+                    object.addProperty(MainItem.IS_NEVER_MODIFIED, item.isNeverModified());
 
                     if (item.getListValue() != null) {
                         JsonObject listObject = new JsonObject();
@@ -546,6 +547,9 @@ public class InfoBlocksStorage {
 
                 if (object.has(MainItem.JSON_NAME) && !object.get(MainItem.JSON_NAME).isJsonNull())
                     item.setName(object.get(MainItem.JSON_NAME).getAsString());
+
+                if (object.has(MainItem.IS_NEVER_MODIFIED) && !object.get(MainItem.IS_NEVER_MODIFIED).isJsonNull())
+                    item.setNeverModified(object.get(MainItem.IS_NEVER_MODIFIED).getAsBoolean());
 
                 if (object.has(MainItem.JSON_IS_CHECKED) && !object.get(MainItem.JSON_IS_CHECKED).isJsonNull())
                     item.setChecked(object.get(MainItem.JSON_IS_CHECKED).getAsBoolean());

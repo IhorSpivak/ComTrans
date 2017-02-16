@@ -69,6 +69,31 @@ public class InfoBlockHelper {
         return null;
     }
 
+    public ListItem getMarkValue(){
+        for (ArrayList<MainItem> array :
+                items) {
+            for (MainItem item :
+                    array) {
+                if(item.getCode()!=null&&item.getCode().equals("general_marka")){
+                    return item.getListValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public void setModelValue(){
+        for (ArrayList<MainItem> array :
+                items) {
+            for (MainItem item :
+                    array) {
+                if(item.getCode()!=null&&item.getCode().equals("general_model")){
+
+                }
+            }
+        }
+    }
+
 
 
     public void saveScreen(ArrayList<MainItem> screen,int position){

@@ -252,7 +252,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-            if (activity.getPhotoAdapter().isDefect()) {
+            if (activity.isFromDefect) {
                 if(!Utility.getBoolean(Const.IS_FIRST_CAMERA_DEFECT_LAUNCH)) {
                     final TutorialPagerFragment fragment = TutorialPagerFragment.newInstance(Const.EXTRA_TUTORIAL_PHOTO_DEFECT);
                     fragment.setListener(new TutorialPagerFragment.OnTutorialListener() {
@@ -265,6 +265,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                         public void onOkClick() {
                             getFragmentManager().beginTransaction().remove(fragment).commit();
                             mOrientationListener.enable();
+                            Utility.saveBoolean(Const.IS_FIRST_CAMERA_DEFECT_LAUNCH,true);
                         }
                     });
                     getFragmentManager().beginTransaction().add(R.id.container,fragment).addToBackStack(null).commitAllowingStateLoss();
@@ -285,6 +286,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                         public void onOkClick() {
                             getFragmentManager().beginTransaction().remove(fragment).commit();
                             mOrientationListener.enable();
+                            Utility.saveBoolean(Const.IS_FIRST_CAMERA_LAUNCH,true);
 
                         }
                     });

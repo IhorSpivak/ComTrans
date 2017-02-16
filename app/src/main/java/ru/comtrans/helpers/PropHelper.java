@@ -19,8 +19,10 @@ import ru.comtrans.items.ProtectorItem;
 public class PropHelper {
 
     private long propCode;
+    private long inspectionCode;
     private Gson gson;
     private JsonArray screens;
+    private JsonArray dataArray;
 
     public PropHelper(long propCode){
         this.propCode = propCode;
@@ -29,17 +31,29 @@ public class PropHelper {
         parseJson();
     }
 
+    public PropHelper(JsonArray result, long propCode, long inspectionCode){
+        this.propCode = propCode;
+        this.inspectionCode = inspectionCode;
+        gson = new Gson();
+        screens = new JsonArray();
+        dataArray = result;
+        parseJson();
+    }
+
     public JsonArray getScreens() {
         return screens;
     }
 
-    private void parseJson(){
-        String jsonString = Utility.getSavedData(Const.JSON_PROP_CODE+propCode);
-        JsonArray prop = gson.fromJson(jsonString,JsonArray.class);
+    private void parseJson() {
 
-        for(int i = 0; i< prop.size(); i++){
+        if (dataArray == null){
+            String jsonString = Utility.getSavedData(Const.JSON_PROP_CODE + propCode);
+            dataArray = gson.fromJson(jsonString, JsonArray.class);
+    }
+
+        for(int i = 0; i< dataArray.size(); i++){
             JsonArray screen = new JsonArray();
-            JsonObject object = prop.get(i).getAsJsonObject();
+            JsonObject object = dataArray.get(i).getAsJsonObject();
             JsonArray val = object.get("val").getAsJsonArray();
             for (int j = 0; j < val.size(); j++) {
                 JsonObject valObject = val.get(j).getAsJsonObject();
@@ -52,7 +66,7 @@ public class PropHelper {
                     }else if(entry.getKey().startsWith("protector")){
                         screen.addAll(getProtectorItems(entry.getValue().getAsJsonArray()));
                     }else {
-                        screen.addAll(getItems(entry.getValue().getAsJsonArray(),propCode));
+                        screen.addAll(getItems(entry.getValue().getAsJsonArray(),propCode,inspectionCode));
                     }
                 }
             }
@@ -65,7 +79,7 @@ public class PropHelper {
         }
     }
 
-    private static JsonArray getItems(JsonArray array, long propCode){
+    private static JsonArray getItems(JsonArray array, long propCode, long inspectionCode){
         JsonArray newArray = new JsonArray();
         for (int i = 0; i < array.size(); i++) {
             try {
@@ -166,6 +180,18 @@ public class PropHelper {
                         if(object.get("code").getAsString().equals("general_type_id")){
                             if(newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong()==propCode){
                                 newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED,true);
+                            }
+                        }else {
+                            if (j == 0) {
+                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+                            }
+                        }
+
+                        if(object.get("code").getAsString().equals("view_type_list")){
+                            if(newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong()==inspectionCode){
+                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED,true);
                             }
                         }else {
                             if (j == 0) {

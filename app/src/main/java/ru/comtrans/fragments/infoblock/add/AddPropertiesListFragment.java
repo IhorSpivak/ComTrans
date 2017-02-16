@@ -11,6 +11,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
+import ru.comtrans.listeners.HidingScrollListener;
 import ru.comtrans.managers.LinearLayoutManagerWithSmoothScroller;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
@@ -105,7 +108,17 @@ public class AddPropertiesListFragment extends BaseFragment {
         }catch (Exception ignored){}
 
         if(items!=null) {
-
+//            recyclerView.addOnScrollListener(new HidingScrollListener() {
+//                @Override
+//                public void onHide() {
+//                    tvHeader.animate().translationY(-tvHeader.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+//                }
+//
+//                @Override
+//                public void onShow() {
+//                    tvHeader.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+//                }
+//            });
             tvHeader.setText(items.get(0).getName());
             adapter = new InfoBlockAdapter(getContext(), items, page, totalPages, true, new InfoBlockAdapter.OnItemClickListener() {
                 @Override
@@ -120,14 +133,14 @@ public class AddPropertiesListFragment extends BaseFragment {
                                 i.putExtra(Const.EXTRA_SCREEN_NUM, page);
                                 startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
                             } else {
-                                if (items.get(position - 1).getListValue().getId() == -1) {
+                                if (infoBlockHelper.getMarkValue().getId() == -1) {
                                     Toast.makeText(getContext(), R.string.no_mark_toast, Toast.LENGTH_SHORT).show();
                                 } else {
                                     i = new Intent(getActivity(), SearchValueActivity.class);
                                     i.putExtra(Const.EXTRA_TITLE, item.getName());
                                     i.putExtra(Const.EXTRA_POSITION, position);
                                     i.putExtra(Const.EXTRA_SCREEN_NUM, page);
-                                    i.putExtra(Const.EXTRA_MARK, items.get(position - 1).getListValue().getId());
+                                    i.putExtra(Const.EXTRA_MARK, infoBlockHelper.getMarkValue().getId());
                                     startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
                                 }
 
@@ -169,9 +182,18 @@ public class AddPropertiesListFragment extends BaseFragment {
                             startActivityForResult(i, Const.CAMERA_VIDEO_RESULT);
                             break;
                         case MainItem.TYPE_PHOTO:
-                            //
+
                             i = new Intent(getActivity(), CameraActivity.class);
                             i.putExtra(Const.CAMERA_MODE, Const.MODE_PHOTO);
+
+                            try {
+                                if (adapter.getItems().get(adapter.getItems().indexOf(item)).getPhotoItems().get(position).isDefect()) {
+                                    i.putExtra(Const.EXTRA_IS_DEFECT, true);
+                                } else {
+                                    i.putExtra(Const.EXTRA_IS_DEFECT, false);
+                                }
+                            }catch (Exception ignored){}
+
                             i.putExtra(Const.EXTRA_POSITION, adapter.getItems().indexOf(item));
                             i.putExtra(Const.EXTRA_IMAGE_POSITION, position);
                             i.putExtra(Const.EXTRA_SCREEN_NUM, page);
@@ -254,8 +276,8 @@ public class AddPropertiesListFragment extends BaseFragment {
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
                 infoBlockHelper.getItems().get(page).get(position).setListValue(item);
                 if(adapter.getItem(position).getCode().equals("general_marka")){
-                  adapter.getItem(position+1).setListValue(new ListItem(-1,getString(R.string.not_chosen)));
-                    adapter.notifyItemChanged(position+1);
+                  adapter.getItem(adapter.getPositionByCode("general_model")).setListValue(new ListItem(-1,getString(R.string.not_chosen)));
+                    adapter.notifyItemChanged(adapter.getPositionByCode("general_model"));
                 }
                 adapter.getItem(position).setListValue(item);
                 adapter.getItem(position).setError(false);
@@ -267,7 +289,9 @@ public class AddPropertiesListFragment extends BaseFragment {
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
                 screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
               //  adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
-                adapter.notifyItemChanged(position);
+                try {
+                    adapter.notifyItemChanged(position);
+                }catch (Exception ignored){}
 
 
                 break;
@@ -275,7 +299,9 @@ public class AddPropertiesListFragment extends BaseFragment {
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
                 screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
              //   adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
-                adapter.notifyItemChanged(position);
+                try {
+                    adapter.notifyItemChanged(position);
+                }catch (Exception ignored){}
                 break;
         }
     }

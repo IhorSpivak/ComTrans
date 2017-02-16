@@ -36,40 +36,40 @@ public class ViewPagerTutorialPhoto extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((LinearLayout) object);
+        return view == ((ImageView) object);
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        View itemView;
+        ImageView imageView = new ImageView(container.getContext());
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
         switch (position){
             case 2:
-                itemView = LayoutInflater.from(fragment.getContext()).inflate(R.layout.fragment_tutorial_first_screen, container, false);
-                container.addView(itemView);
+                imageView.setImageResource(R.drawable.photo1);
                 break;
             case 1:
-                itemView = LayoutInflater.from(fragment.getContext()).inflate(R.layout.fragment_tutorial_second_non_defect, container, false);
-                container.addView(itemView);
+                imageView.setImageResource(R.drawable.photo2);
                 break;
             case 0:
-                itemView = LayoutInflater.from(fragment.getContext()).inflate(R.layout.fragment_tutorial_third_non_defect, container, false);
-                container.addView(itemView);
+                imageView.setImageResource(R.drawable.photo3);
                 break;
             default:
-                itemView = LayoutInflater.from(fragment.getContext()).inflate(R.layout.fragment_tutorial_third_non_defect, container, false);
-                container.addView(itemView);
+                imageView.setImageResource(R.drawable.photo1);
         }
+        container.addView(imageView);
 
 
 
 
 
 
-        return itemView;
+        return imageView;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((LinearLayout) object);
+        container.removeView((ImageView) object);
     }
 }

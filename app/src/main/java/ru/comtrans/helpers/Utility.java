@@ -104,11 +104,50 @@ public class Utility {
         editor.apply();
     }
 
-    public static ArrayList<ListItem> getVehicleType() {
+
+    public static void saveInspectionTypes(ArrayList<ListItem> items) {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        JsonArray typeArray = new JsonArray();
+        for (ListItem item :
+                items) {
+            JsonObject typeObject = new JsonObject();
+            typeObject.addProperty(ListItem.JSON_VALUE_ID,item.getId());
+            typeObject.addProperty(ListItem.JSON_VALUE_NAME,item.getName());
+            typeArray.add(typeObject);
+        }
+        SharedPreferences.Editor editor = appData.edit();
+        editor.putString(Const.INSPECTION_TYPE, typeArray.toString());
+        editor.apply();
+    }
+
+    public static ArrayList<ListItem> getVehicleTypes() {
         final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
                 Const.PREFERENCES_NAME, 0);
 
         String vehicleTypesString  = appData.getString(Const.VEHICLE_TYPE, null);
+        if(vehicleTypesString!=null){
+            Gson gson = new Gson();
+            JsonArray typeArray = gson.fromJson(vehicleTypesString,JsonArray.class);
+            ArrayList<ListItem> items = new ArrayList<>();
+            for (int i = 0; i < typeArray.size(); i++) {
+                JsonObject object = typeArray.get(i).getAsJsonObject();
+                ListItem item = new ListItem(object.get(ListItem.JSON_VALUE_ID).getAsInt(),
+                        object.get(ListItem.JSON_VALUE_NAME).getAsString());
+                items.add(item);
+
+            }
+            return items;
+        }
+
+        return null;
+    }
+
+    public static ArrayList<ListItem> getInspectionTypes() {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+
+        String vehicleTypesString  = appData.getString(Const.INSPECTION_TYPE, null);
         if(vehicleTypesString!=null){
             Gson gson = new Gson();
             JsonArray typeArray = gson.fromJson(vehicleTypesString,JsonArray.class);

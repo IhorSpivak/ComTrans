@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -69,7 +70,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
 
-    public InfoBlockAdapter(Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable,
+    public InfoBlockAdapter(final Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable,
                             OnItemClickListener listener, OnBottomBarClickListener bottomBarClickListener) {
         this.context = context;
         this.items = items;
@@ -86,7 +87,8 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 for (int i = start; i < end; i++) {
                     if (!blockCharacterSet.contains(String.valueOf(source.charAt(i)))) { // Accept only letter & digits ; otherwise just return
-                        return "";
+                        Toast.makeText(context, R.string.accepted_numbers_toast, Toast.LENGTH_SHORT).show();
+                        return source.toString().substring(0,source.toString().length()-1);
                     }
                 }
                 return null;
@@ -125,6 +127,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case MainItem.TYPE_LIST:
                 if (isEditable) {
                     ListViewHolder listViewHolder = ((ListViewHolder) viewHolder);
+
 
                     if (item.isRequired())
                         listViewHolder.title.setText(item.getName() + "*");
@@ -698,8 +701,8 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 HeaderViewHolder headerViewHolder = ((HeaderViewHolder) viewHolder);
 
                 if(headerViewHolder.getAdapterPosition()==0){
-                    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(0,0);
-                    headerViewHolder.headerLayout.setLayoutParams(params);
+                 //   ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(0,0);
+                    headerViewHolder.headerLayout.setVisibility(View.INVISIBLE);
                 }else {
                     headerViewHolder.headerLayout.setVisibility(View.VISIBLE);
                     headerViewHolder.tvHeader.setText(item.getName());
@@ -868,8 +871,20 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
         }
-        ((CustomViewHolder) viewHolder).bind(item, listener);
+        if(!item.isNeverModified())
+            ((CustomViewHolder) viewHolder).bind(item, listener);
 
+    }
+
+
+    public int getPositionByCode(String code){
+        for (int i = 0; i < items.size(); i++) {
+            MainItem item = items.get(i);
+            if(item.getCode()!=null&&item.getCode().equals(code)){
+                return i;
+            }
+        }
+        return -1;
     }
 
 
@@ -909,6 +924,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public TextView title;
         public TextView tvList;
         public View bottomStroke;
+
         public ListViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.list_title);

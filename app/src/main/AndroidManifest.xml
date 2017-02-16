@@ -77,7 +77,8 @@
             android:name=".activities.AddInfoBlockActivity"
             android:windowSoftInputMode="stateVisible"
             android:label="@string/add_or_edit_infoblock_activity_title"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
         <activity
             android:name=".activities.SearchValueActivity"
             android:screenOrientation="portrait" />

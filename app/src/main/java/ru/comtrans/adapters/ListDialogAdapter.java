@@ -15,11 +15,11 @@ import ru.comtrans.items.ListItem;
  * Created by Artco on 24.11.2016.
  */
 
-public class VehicleTypeDialogAdapter extends BaseAdapter {
+public class ListDialogAdapter extends BaseAdapter {
     private ArrayList<ListItem> items;
     private Context context;
 
-    public VehicleTypeDialogAdapter(ArrayList<ListItem> items,Context context){
+    public ListDialogAdapter(ArrayList<ListItem> items, Context context){
         this.items = items;
         this.context = context;
     }

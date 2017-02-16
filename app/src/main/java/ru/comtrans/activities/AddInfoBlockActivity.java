@@ -21,8 +21,10 @@ public class AddInfoBlockActivity extends BaseActivity {
 
     public CustomViewPager viewPager;
     private String infoBlockId;
+
     private int page;
     private long propCode;
+    private long inspectionCode;
     private InfoBlockHelper helper;
     boolean isNew = false;
 
@@ -44,6 +46,9 @@ public class AddInfoBlockActivity extends BaseActivity {
         infoBlockId = getIntent().getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
         page = getIntent().getIntExtra(Const.EXTRA_INFO_BLOCK_PAGE,0);
         propCode = getIntent().getLongExtra(Const.EXTRA_PROP_CODE,0);
+        inspectionCode = getIntent().getLongExtra(Const.EXTRA_INSPECTION_CODE,-1);
+
+
 
 
         if(infoBlockId==null){
@@ -67,7 +72,7 @@ public class AddInfoBlockActivity extends BaseActivity {
     }
 
     private void openMainFragment(){
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId, page,propCode, isNew)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId, page,propCode,inspectionCode, isNew)).commit();
     }
 
 

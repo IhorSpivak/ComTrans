@@ -44,6 +44,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
     private InfoBlocksStorage storage;
     private int page;
     private long propCode;
+    private long inspectionCode;
     private InfoBlockHelper infoBlockHelper;
     private int dotsCount;
     private ImageView[] dots;
@@ -52,14 +53,16 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
     private AddInfoBlockActivity activity;
     private ProgressBar emptyBar;
     private String infoBlockId;
+    private JsonArray dataArray;
     boolean isNew;
 
-    public static AddInfoBlockFragment newInstance(String id, int page, long propCode, boolean isNew) {
+    public static AddInfoBlockFragment newInstance(String id, int page, long propCode, long inspectionCode, boolean isNew) {
         Bundle args = new Bundle();
         args.putString(Const.EXTRA_INFO_BLOCK_ID,id);
         args.putInt(Const.EXTRA_INFO_BLOCK_PAGE,page);
         args.putBoolean(Const.IS_NEW_INFO_BLOCK,isNew);
         args.putLong(Const.EXTRA_PROP_CODE,propCode);
+        args.putLong(Const.EXTRA_INSPECTION_CODE,inspectionCode);
         AddInfoBlockFragment fragment = new AddInfoBlockFragment();
         fragment.setArguments(args);
         return fragment;
@@ -80,6 +83,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
         page = getArguments().getInt(Const.EXTRA_INFO_BLOCK_PAGE);
         isNew = getArguments().getBoolean(Const.IS_NEW_INFO_BLOCK);
         propCode = getArguments().getLong(Const.EXTRA_PROP_CODE);
+        inspectionCode = getArguments().getLong(Const.EXTRA_INSPECTION_CODE);
 
         progressDialog = new ConnectionProgressDialog(getContext());
 
@@ -100,10 +104,15 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                if(!Utility.getBoolean(Const.IS_MAIN_JSON_DOWNLOADED))
-                    getProp();
-                else
+//                if(!Utility.getBoolean(Const.IS_MAIN_JSON_DOWNLOADED))
+//                    getProp();
+//                else
+//                    new AsyncTaskForGetProp().execute();
+                if(isNew) {
+                    getVehicleFields();
+                }else {
                     new AsyncTaskForGetProp().execute();
+                }
             }
         });
         t.start();
@@ -115,29 +124,25 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
         getFragmentManager().beginTransaction().add(R.id.container,fragment).commit();
     }
 
-    private void getProp(){
-       getActivity().runOnUiThread(new Runnable() {
+    private void getVehicleFields(){
+               getActivity().runOnUiThread(new Runnable() {
            @Override
            public void run() {
                progressDialog.show();
            }
        });
+        String inspectionTypeId = "";
 
-        Call<JsonObject> call = AppController.apiInterface.getProp();
+        if(inspectionCode!=-1)
+            inspectionTypeId = String.valueOf(inspectionCode);
+        Call<JsonObject> call = AppController.apiInterface.getPropWithParameters(String.valueOf(propCode),inspectionTypeId);
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
 
                 if(response.body().get("status").getAsInt()==1){
-                    JsonArray prop = response.body().get("result").getAsJsonArray();
-                    Utility.saveBoolean(Const.IS_MAIN_JSON_DOWNLOADED,true);
-                    if(prop.size()>0) {
-                        for (int i = 0; i < prop.size(); i++) {
-                            JsonObject object = prop.get(i).getAsJsonObject();
-                            int propCode = object.get("prop_code").getAsInt();
-                            Utility.saveData(Const.JSON_PROP_CODE+propCode,object.get("fields").getAsJsonArray().toString());
-                        }
-                    }
+                    dataArray = response.body().get("result").getAsJsonArray();
+
 
                     new AsyncTaskForGetProp().execute();
                 }else {
@@ -154,8 +159,6 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
     }
 
 
-
-
     private class AsyncTaskForGetProp extends AsyncTask<Void,Void,Void> {
 
         @Override
@@ -169,7 +172,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
             storage = InfoBlocksStorage.getInstance();
             infoBlockHelper = InfoBlockHelper.getInstance();
             if(isNew) {
-                propHelper = new PropHelper(propCode);
+                propHelper = new PropHelper(dataArray,propCode,inspectionCode);
                 storage.saveInfoBlock(infoBlockId, propHelper.getScreens());
                 storage.setInfoBlockStatus(infoBlockId, MyInfoBlockItem.STATUS_DRAFT);
             }
@@ -185,6 +188,77 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
             emptyBar.setVisibility(View.GONE);
         }
     }
+
+//    private void getProp(){
+//       getActivity().runOnUiThread(new Runnable() {
+//           @Override
+//           public void run() {
+//               progressDialog.show();
+//           }
+//       });
+//
+//        Call<JsonObject> call = AppController.apiInterface.getProp();
+//        call.enqueue(new Callback<JsonObject>() {
+//            @Override
+//            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+//
+//                if(response.body().get("status").getAsInt()==1){
+//                    JsonArray prop = response.body().get("result").getAsJsonArray();
+//                    Utility.saveBoolean(Const.IS_MAIN_JSON_DOWNLOADED,true);
+//                    if(prop.size()>0) {
+//                        for (int i = 0; i < prop.size(); i++) {
+//                            JsonObject object = prop.get(i).getAsJsonObject();
+//                            int propCode = object.get("prop_code").getAsInt();
+//                            Utility.saveData(Const.JSON_PROP_CODE+propCode,object.get("fields").getAsJsonArray().toString());
+//                        }
+//                    }
+//
+//                    new AsyncTaskForGetProp().execute();
+//                }else {
+//
+//                }
+//                progressDialog.dismiss();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<JsonObject> call, Throwable t) {
+//                progressDialog.dismiss();
+//            }
+//        });
+//    }
+
+
+
+//
+//    private class AsyncTaskForGetProp extends AsyncTask<Void,Void,Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            emptyBar.setVisibility(View.VISIBLE);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            storage = InfoBlocksStorage.getInstance();
+//            infoBlockHelper = InfoBlockHelper.getInstance();
+//            if(isNew) {
+//                propHelper = new PropHelper(propCode);
+//                storage.saveInfoBlock(infoBlockId, propHelper.getScreens());
+//                storage.setInfoBlockStatus(infoBlockId, MyInfoBlockItem.STATUS_DRAFT);
+//            }
+//
+//            infoBlockHelper.getAllItems(infoBlockId);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            setAdapter();
+//            emptyBar.setVisibility(View.GONE);
+//        }
+//    }
 
 
     private void setAdapter(){

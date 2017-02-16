@@ -30,6 +30,8 @@ import android.widget.Toast;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +43,7 @@ import ru.comtrans.activities.AddInfoBlockActivity;
 import ru.comtrans.activities.ShowInfoBlockActivity;
 import ru.comtrans.adapters.DialogArrayAdapter;
 import ru.comtrans.adapters.MyInfoBlocksAdapter;
-import ru.comtrans.adapters.VehicleTypeDialogAdapter;
+import ru.comtrans.adapters.ListDialogAdapter;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.DialogItem;
@@ -99,13 +101,51 @@ public class MyInfoBlocksFragment extends Fragment {
         progressDialog = new ConnectionProgressDialog(getActivity());
 
         getVehicleTypes();
+        getInspectionTypes();
 
 
         return v;
     }
 
     private void getVehicleTypes(){
-        Call<JsonObject> call = AppController.apiInterface.getVehicleType();
+        Call<JsonObject> call = AppController.apiInterface.getVehicleTypes();
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                progressDialog.dismiss();
+                if (response.body() != null && !response.body().isJsonNull()) {
+                    if (response.body().get("status").getAsInt() == 1){
+                        JsonArray result = response.body().get("result").getAsJsonArray();
+                        if(!result.isJsonNull()&&result.size()>0){
+                            ArrayList<ListItem> typeArray = new ArrayList<>();
+                            for (int i = 0; i < result.size(); i++) {
+                                JsonObject typeObject = result.get(i).getAsJsonObject();
+                                if(!typeObject.isJsonNull()){
+                                    ListItem item = new ListItem(typeObject.get("id").getAsInt(),typeObject.get("name").getAsString());
+                                    typeArray.add(item);
+                                }
+                            }
+                            Utility.saveVehicleTypes(typeArray);
+
+                        }
+                    }else{
+                        Toast.makeText(getActivity(), response.body().get("message").getAsString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                progressDialog.dismiss();
+                Toast.makeText(getActivity(),R.string.something_went_wrong,Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getInspectionTypes(){
+        Call<JsonObject> call = AppController.apiInterface.getInspectionTypes();
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -123,7 +163,7 @@ public class MyInfoBlocksFragment extends Fragment {
                                 }
                             }
                             Log.d("TAG","save array");
-                            Utility.saveVehicleTypes(typeArray);
+                            Utility.saveInspectionTypes(typeArray);
 
                         }
                     }else{
@@ -371,27 +411,59 @@ public class MyInfoBlocksFragment extends Fragment {
     }
 
     private void createNewInfoBlock(){
-        if(Utility.getVehicleType()!=null) {
-            final VehicleTypeDialogAdapter adapter = new VehicleTypeDialogAdapter(Utility.getVehicleType(), getContext());
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            View view = inflater.inflate(R.layout.title_vehicle_type, null);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setCustomTitle(view);
-            builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Intent intent = new Intent(getContext(), AddInfoBlockActivity.class);
-                    intent.putExtra(Const.EXTRA_PROP_CODE,adapter.getItem(i).getId());
-                    startActivity(intent);
-                    dialogInterface.dismiss();
-                }
-            });
-            builder.show();
-        }else {
+        if(Utility.getVehicleTypes()==null) {
+            progressDialog.show();
             Toast.makeText(getContext(),R.string.vehicle_type_not_exist,Toast.LENGTH_SHORT).show();
             getVehicleTypes();
-        }
+        }else if(Utility.getInspectionTypes()==null) {
+            progressDialog.show();
+            Toast.makeText(getContext(),R.string.inspection_type_not_exist,Toast.LENGTH_SHORT).show();
+            getInspectionTypes();
+        }else {
+            final ListDialogAdapter vehicleTypeAdapter = new ListDialogAdapter(Utility.getVehicleTypes(), getContext());
 
+
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+
+
+            View vehicleTypeTitle = inflater.inflate(R.layout.dialog_title, null);
+            AlertDialog.Builder vehicleTypeBuilder = new AlertDialog.Builder(getContext());
+            vehicleTypeBuilder.setCustomTitle(vehicleTypeTitle);
+            vehicleTypeBuilder.setAdapter(vehicleTypeAdapter, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    setInspectionType(vehicleTypeAdapter.getItem(i).getId());
+                }
+            });
+            vehicleTypeBuilder.show();
+
+
+
+
+        }
+    }
+
+    public void setInspectionType(final long vehicleTypeId){
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final ListDialogAdapter inspectionAdapter = new ListDialogAdapter(Utility.getInspectionTypes(), getContext());
+
+
+        TextView inspectionTypeTitle = (TextView) inflater.inflate(R.layout.dialog_title, null);
+        inspectionTypeTitle.setText(R.string.choose_inspection_type_title);
+        AlertDialog.Builder inspectionTypeBuilder = new AlertDialog.Builder(getContext());
+        inspectionTypeBuilder.setCustomTitle(inspectionTypeTitle);
+        inspectionTypeBuilder.setAdapter(inspectionAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(getContext(), AddInfoBlockActivity.class);
+                intent.putExtra(Const.EXTRA_PROP_CODE, vehicleTypeId);
+                intent.putExtra(Const.EXTRA_INSPECTION_CODE,inspectionAdapter.getItem(i).getId());
+                startActivity(intent);
+                dialogInterface.dismiss();
+            }
+        });
+
+        inspectionTypeBuilder.show();
     }
 
     @Override

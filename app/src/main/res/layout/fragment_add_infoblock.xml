@@ -11,7 +11,7 @@
         android:id="@+id/viewPagerIndicator"
         android:layout_width="match_parent"
         android:clipChildren="true"
-        android:background="@android:color/transparent"
+        android:background="@android:color/white"
         android:layout_height="30dp"
         android:gravity="center">
 

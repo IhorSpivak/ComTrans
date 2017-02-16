@@ -6,6 +6,7 @@ package ru.comtrans.helpers;
 public class Const {
     public static final String PREFERENCES_NAME = "ComTrans";
     public static final String VEHICLE_TYPE = "vehicle_type";
+    public static final String INSPECTION_TYPE = "inspection_type";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
     public static final String TOKEN = "token";
@@ -48,6 +49,7 @@ public class Const {
     public static final String IS_MAIN_JSON_DOWNLOADED = "is_main_json_downloaded";
     public static final String JSON_PROP_CODE = "json_prop_code";
     public static final String EXTRA_PROP_CODE = "extra_prop_code";
+    public static final String EXTRA_INSPECTION_CODE = "extra_inspection_code";
 
 
     //////////////////////////AddInfoBlockActivity/////////////////////////
@@ -64,6 +66,7 @@ public class Const {
     public static final String TOTAL_PAGES = "total_pages";
     public static final String EXTRA_VALUES = "extra_values";
     public static final String EXTRA_TITLE = "extra_title";
+    public static final String EXTRA_IS_DEFECT = "is_defect"; ///POSITION OF MAIN ITEM IN ADAPTER;
     public static final String EXTRA_POSITION = "extra_pos"; ///POSITION OF MAIN ITEM IN ADAPTER;
     public static final String EXTRA_IMAGE_POSITION = "extra_img_pos"; /// POSITION OF CLICKED PHOTO
     public static final String EXTRA_VALUE = "extra_value";

@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.interfaces.ApiInterface;
 import ru.comtrans.items.MyInfoBlockItem;
@@ -22,7 +23,7 @@ import ru.comtrans.services.SendingService;
 public class AppController extends Application {
     private static AppController instance;
     public static ApiInterface apiInterface;
-    public static final String BASE_URL = "http://dev.100fur.ru/ru/api/";
+    public   String BASE_URL;
 
     public AppController() {
         instance = this;
@@ -38,7 +39,7 @@ public class AppController extends Application {
 
 
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-
+        BASE_URL = getString(R.string.API_URL);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
