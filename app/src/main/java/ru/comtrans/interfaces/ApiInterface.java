@@ -43,7 +43,7 @@ public interface ApiInterface {
     @GET("prop-value/834")
     Call<JsonObject> getVehicleTypes();
 
-    @GET("prop-value/1067")
+    @GET("prop-value/1030")
     Call<JsonObject> getInspectionTypes();
 
     @POST("forgot-password/")

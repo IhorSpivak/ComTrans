@@ -30,7 +30,7 @@ public class ViewPagerTutorialVideo extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -45,9 +45,6 @@ public class ViewPagerTutorialVideo extends PagerAdapter {
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
         switch (position){
-            case 2:
-                imageView.setImageResource(R.drawable.video1);
-                break;
             case 1:
                 imageView.setImageResource(R.drawable.video2);
                 break;
@@ -55,7 +52,7 @@ public class ViewPagerTutorialVideo extends PagerAdapter {
                 imageView.setImageResource(R.drawable.video3);
                 break;
             default:
-                imageView.setImageResource(R.drawable.video1);
+                imageView.setImageResource(R.drawable.video2);
         }
         container.addView(imageView);
 

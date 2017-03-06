@@ -31,7 +31,7 @@ public class TutorialPagerFragment extends Fragment implements ViewPager.OnPageC
     private LinearLayout pager_indicator;
     private int dotsCount;
     private ImageView[] dots;
-    private Button btnClear;
+    private ImageView btnClose;
 
     private int tutorial;
     private OnTutorialListener listener;
@@ -59,13 +59,13 @@ public class TutorialPagerFragment extends Fragment implements ViewPager.OnPageC
         View v = inflater.inflate(R.layout.fragment_view_pager_photo_demo,container,false);
 
         ViewPager viewPager = (ViewPager) v.findViewById(R.id.pager);
-        btnClear = (Button)v.findViewById(R.id.btn_clear);
+        btnClose = (ImageView)v.findViewById(R.id.btn_clear);
 
         pager_indicator = (LinearLayout) v.findViewById(R.id.viewPagerCountDots);
 
         tutorial = getArguments().getInt(Const.EXTRA_TUTORIAL);
 
-        btnClear.setOnClickListener(new View.OnClickListener() {
+        btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.onOkClick();
@@ -147,20 +147,14 @@ public class TutorialPagerFragment extends Fragment implements ViewPager.OnPageC
 
         switch (position){
             case 0:
-                btnClear.setVisibility(View.VISIBLE);
-                dots[2].setImageDrawable(getResources().getDrawable(R.drawable.selected_item_dot));
-                pager_indicator.setVisibility(View.GONE);
-                break;
-            case 1:
-                pager_indicator.setVisibility(View.VISIBLE);
-                btnClear.setVisibility(View.GONE);
                 dots[1].setImageDrawable(getResources().getDrawable(R.drawable.selected_item_dot));
                 break;
-            case 2:
-                pager_indicator.setVisibility(View.VISIBLE);
-                btnClear.setVisibility(View.GONE);
+            case 1:
                 dots[0].setImageDrawable(getResources().getDrawable(R.drawable.selected_item_dot));
                 break;
+//            case 2:
+//                dots[0].setImageDrawable(getResources().getDrawable(R.drawable.selected_item_dot));
+//                break;
         }
 
 

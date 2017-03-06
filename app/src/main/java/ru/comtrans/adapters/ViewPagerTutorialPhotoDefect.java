@@ -30,7 +30,7 @@ public class ViewPagerTutorialPhotoDefect extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -45,9 +45,6 @@ public class ViewPagerTutorialPhotoDefect extends PagerAdapter {
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         switch (position){
-            case 2:
-                imageView.setImageResource(R.drawable.defect1);
-                break;
             case 1:
                 imageView.setImageResource(R.drawable.defect2);
                 break;
@@ -55,7 +52,7 @@ public class ViewPagerTutorialPhotoDefect extends PagerAdapter {
                 imageView.setImageResource(R.drawable.defect3);
                 break;
             default:
-                imageView.setImageResource(R.drawable.defect1);
+                imageView.setImageResource(R.drawable.defect2);
         }
         container.addView(imageView);
 

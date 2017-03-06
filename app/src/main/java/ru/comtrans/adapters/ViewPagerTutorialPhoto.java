@@ -31,7 +31,7 @@ public class ViewPagerTutorialPhoto extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -46,9 +46,6 @@ public class ViewPagerTutorialPhoto extends PagerAdapter {
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
         switch (position){
-            case 2:
-                imageView.setImageResource(R.drawable.photo1);
-                break;
             case 1:
                 imageView.setImageResource(R.drawable.photo2);
                 break;
@@ -56,7 +53,7 @@ public class ViewPagerTutorialPhoto extends PagerAdapter {
                 imageView.setImageResource(R.drawable.photo3);
                 break;
             default:
-                imageView.setImageResource(R.drawable.photo1);
+                imageView.setImageResource(R.drawable.photo2);
         }
         container.addView(imageView);
 

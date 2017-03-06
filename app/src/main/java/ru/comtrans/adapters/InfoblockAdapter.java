@@ -56,7 +56,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private boolean isEditable;
     private DividerItemDecoration decoration;
     private InfoBlockHelper infoBlockHelper;
-    private String blockCharacterSet = "0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
+    private String blockCharacterSet = "0123456789ABCDEFGHJKLMNPRSTUVWXYZ".toLowerCase();
     private String emailCharacterRegEx = "[A-Za-z0-9!\"#$%&'()*+,\\-./:;<>=?@\\[\\]{\\}\\\\\\^_`~]+$";
 
     private InputFilter vinFilter;
@@ -86,9 +86,9 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
 
                 for (int i = start; i < end; i++) {
-                    if (!blockCharacterSet.contains(String.valueOf(source.charAt(i)))) { // Accept only letter & digits ; otherwise just return
+                    if (!blockCharacterSet.contains(String.valueOf(source.charAt(i)).toLowerCase())) { // Accept only letter & digits ; otherwise just return
                         Toast.makeText(context, R.string.accepted_numbers_toast, Toast.LENGTH_SHORT).show();
-                        return source.toString().substring(0,source.toString().length()-1);
+                        return source.toString().substring(0,source.toString().length()-1).toUpperCase();
                     }
                 }
                 return null;
@@ -181,6 +181,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             case MainItem.TYPE_PHOTO:
                 final PhotoViewHolder photoViewHolder = ((PhotoViewHolder) viewHolder);
+
                 ListItem tireSchemeValue = infoBlockHelper.getTireSchemeValue();
 
                 if(item.getPhotoItems()!=null&&item.getPhotoItems().size()>0){
@@ -190,7 +191,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         for (PhotoItem photoItem : item.getPhotoItems()) {
                             if (!photoItem.isDefect()) {
-                                if(photoItem.getIsOs()!=0&&tireSchemeValue.getId()!=-1){
+                                if(photoItem.getIsOs()!=0&&tireSchemeValue!=null&&tireSchemeValue.getId()!=-1){
                                     if(tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())){
                                         photoItems.add(photoItem);
                                     }
@@ -340,19 +341,53 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case MainItem.TYPE_STRING:
                 if (isEditable) {
                     final EditTextViewHolder editTextViewHolder = ((EditTextViewHolder) viewHolder);
+                    editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
                     editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
                     editTextViewHolder.editText.setText(item.getValue());
 
-                    if(item.getCode().equals("general_vin")){
-                        editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT| InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
-                        editTextViewHolder.editText.setFilters(new InputFilter[] {vinFilter,new  InputFilter.AllCaps(),new InputFilter.LengthFilter(17)});
 
+                    if(item.getCode().toLowerCase().contains("vin")){
+                        editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT| InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+                        editTextViewHolder.editText.setFilters(new InputFilter[] {vinFilter,new InputFilter.AllCaps(),new InputFilter.LengthFilter(17)});
+                    }else {
+                        editTextViewHolder.editText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(context.getResources().getInteger(R.integer.max_length))});
                     }
 
                     if(item.isError()){
+                        Log.d("TAG","test "+item.getCode());
                         editTextViewHolder.textInputLayout.setErrorEnabled(true);
                         editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
+                    }else {
+                        editTextViewHolder.textInputLayout.setErrorEnabled(false);
                     }
+
+                    if (item.isRequired()) {
+                        editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
+                    }else {
+                        editTextViewHolder.textInputLayout.setHint(item.getName());
+                    }
+
+
+
+                    editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                        public void onFocusChange(View v, boolean hasFocus) {
+                            if (!hasFocus) {
+                                listener.saveState();
+                            }
+                        }
+                    });
+
+                    if(item.getCode().equals("how_asc")){
+                        editTextViewHolder.editText.setSingleLine(false);
+                        editTextViewHolder.editText.setKeyListener(null);
+                        editTextViewHolder.editText.setFocusable(false);
+                        editTextViewHolder.editText.setClickable(false);
+                        editTextViewHolder.editText.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
+                        editTextViewHolder.editText.setFocusableInTouchMode(false);
+                        editTextViewHolder.editText.setText(item.getDefaultValue());
+
+                    }
+
 
                     if(item.isCapitalize()){
                         editTextViewHolder.editText.setInputType(InputType.TYPE_CLASS_TEXT| InputType.TYPE_TEXT_FLAG_CAP_WORDS);
@@ -383,6 +418,66 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         });
                     }
 
+                    if(item.getCode().equals("man_pts_model")) {
+                        editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                                if (infoBlockHelper.getModelValue().getName().equalsIgnoreCase(s.toString())) {
+                                    setConstructorChecked(false);
+                                } else {
+                                    setConstructorChecked(true);
+                                }
+                            }
+                        });
+                    }
+
+                    if(item.getCode().toLowerCase().contains("vin")) {
+
+                        editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable editable) {
+//                                String s = editable.toString();
+////
+//                                if(!s.equals(s.toUpperCase()))
+//                                {
+//                                    s=s.toUpperCase();
+//                                    editTextViewHolder.editText.setText(s);
+//                                }
+                        //        editTextViewHolder.editText.setSelection(editTextViewHolder.editText.getText().length());
+
+                                if (!editable.toString().equals("")&&editable.toString().length()!=17) {
+                                    editTextViewHolder.textInputLayout.setErrorEnabled(true);
+                                    editTextViewHolder.textInputLayout.setError(context.getString(R.string.short_vin));
+                                    // Для проверки на валидность
+                                    item.setChecked(false);
+                                } else {
+                                    editTextViewHolder.textInputLayout.setErrorEnabled(false);
+                                    item.setChecked(true);
+                                }
+                            }
+                        });
+                    }
+
                     editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -396,32 +491,12 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         @Override
                         public void afterTextChanged(Editable editable) {
-
                             if(!editable.toString().equals("")){
                                 item.setError(false);
                                 editTextViewHolder.textInputLayout.setErrorEnabled(false);
                             }
-
-                            if(item.getCode().equals("man_pts_model")){
-                                if(editTextViewHolder.editText.getText().toString().equals("")){
-
-                                }else if (infoBlockHelper.getModelValue().getName().equalsIgnoreCase(editTextViewHolder.editText.getText().toString())) {
-                                    setConstructorChecked(false);
-                                } else {
-                                    setConstructorChecked(true);
-                                }
-                            }
-
-                            if(item.getCode().equals("general_vin")){
-                                String s=editable.toString();
-                                if(!s.equals(s.toUpperCase()))
-                                {
-                                    s=s.toUpperCase();
-                                    editTextViewHolder.editText.setText(s);
-                                }
-                                editTextViewHolder.editText.setSelection(editTextViewHolder.editText.getText().length());
-
-                                if (!editable.toString().equals("")&&editable.toString().length()!=17) {
+                            if(item.getCode().toLowerCase().contains("vin")) {
+                                if (!editable.toString().equals("") && editable.toString().length() != 17) {
                                     editTextViewHolder.textInputLayout.setErrorEnabled(true);
                                     editTextViewHolder.textInputLayout.setError(context.getString(R.string.short_vin));
                                     // Для проверки на валидность
@@ -431,37 +506,9 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                     item.setChecked(true);
                                 }
                             }
-
-
-
                         }
                     });
 
-                    if (item.isRequired())
-                        editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
-                    else
-                        editTextViewHolder.textInputLayout.setHint(item.getName());
-
-                    editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
-
-                    editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                        public void onFocusChange(View v, boolean hasFocus) {
-                            if (!hasFocus) {
-                                listener.saveState();
-                            }
-                        }
-                    });
-
-                    if(item.getCode().equals("how_asc")){
-                        editTextViewHolder.editText.setSingleLine(false);
-                        editTextViewHolder.editText.setKeyListener(null);
-                        editTextViewHolder.editText.setFocusable(false);
-                        editTextViewHolder.editText.setClickable(false);
-                        editTextViewHolder.editText.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
-                        editTextViewHolder.editText.setFocusableInTouchMode(false);
-                        editTextViewHolder.editText.setText(item.getDefaultValue());
-
-                    }
 
 
 
@@ -516,6 +563,8 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
                     else
                         editTextViewHolder.textInputLayout.setHint(item.getName());
+
+
                     editTextViewHolder.editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
                     editTextViewHolder.editText.setText(item.getValue());
@@ -564,7 +613,13 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                     if(item.isError()){
                         editTextViewHolder.textInputLayout.setErrorEnabled(true);
-                        editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
+                        if(!editTextViewHolder.editText.getText().toString().equals("")
+                                &&!Utility.isEmailValid(editTextViewHolder.editText.getText().toString())){
+                            editTextViewHolder.textInputLayout.setError("Некорректный e-mail");
+                        }else {
+                            editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
+                        }
+
                     }
 
                     editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
@@ -746,14 +801,10 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         if (isEditable) {
                             listener.saveState();
                             boolean isMainEntered = true;
-
                             int scrollPosition = -1;
-
-
                             for (MainItem item :
                                     items) {
 
-//
                                 if (item.isRequired()) {
                                     switch (item.getType()) {
                                         case MainItem.TYPE_LIST:
@@ -765,6 +816,8 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                 }
                                                 isMainEntered = false;
                                                 break;
+                                            }else {
+                                                item.setError(false);
                                             }
                                             break;
                                         case MainItem.TYPE_CALENDAR:
@@ -775,6 +828,8 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                     scrollPosition = items.indexOf(item);
                                                 }
                                                 isMainEntered = false;
+                                            }else {
+                                                item.setError(false);
                                             }
                                             break;
                                         case MainItem.TYPE_NUMBER:
@@ -786,46 +841,64 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                     scrollPosition = items.indexOf(item);
                                                 }
                                                 isMainEntered = false;
+                                            }else {
+                                                item.setError(false);
                                             }
                                             break;
                                         case MainItem.TYPE_PHONE:
                                             if (item.getValue() != null) {
-
                                                 if(item.getValue().equals(context.getString(R.string.phone_prefix_bracket))
                                                         ||item.getValue().equals("")){
                                                     item.setError(true);
                                                     notifyItemChanged(items.indexOf(item));
                                                     isMainEntered = false;
+                                                    if(scrollPosition==-1){
+                                                        scrollPosition = items.indexOf(item);
+                                                    }
                                                 }else if(!Utility.isFieldValid(Const.phone_regex, item.getValue())){
                                                     notifyItemChanged(items.indexOf(item));
                                                     isMainEntered = false;
+                                                    if(scrollPosition==-1){
+                                                        scrollPosition = items.indexOf(item);
+                                                    }
+                                                }else {
+                                                    item.setError(false);
                                                 }
-                                                if(scrollPosition==-1){
-                                                    scrollPosition = items.indexOf(item);
-                                                }
+
 
                                             }else {
                                                 isMainEntered = false;
                                             }
                                             break;
                                         case MainItem.TYPE_EMAIL:
-                                            if (item.getValue() == null || !item.isChecked()) {
-                                                item.setError(true);
-                                                notifyItemChanged(items.indexOf(item));
-                                                if(scrollPosition==-1){
-                                                    scrollPosition = items.indexOf(item);
+                                            if (item.getValue() != null) {
+                                                if(item.getValue().equals("")){
+                                                    item.setError(true);
+                                                    notifyItemChanged(items.indexOf(item));
+                                                    isMainEntered = false;
+                                                    if(scrollPosition==-1){
+                                                        scrollPosition = items.indexOf(item);
+                                                    }
+                                                }else if(!Utility.isEmailValid(item.getValue())){
+                                                    notifyItemChanged(items.indexOf(item));
+                                                    isMainEntered = false;
+                                                    if(scrollPosition==-1){
+                                                        scrollPosition = items.indexOf(item);
+                                                    }
+                                                }else {
+                                                    item.setError(false);
                                                 }
+
+
+                                            }else {
                                                 isMainEntered = false;
                                             }
                                             break;
 
                                     }
-
                                 }
-
-
-
                             }
+
                             if (!isMainEntered) {
                                 final int finalScrollPosition = scrollPosition;
                                 new AlertDialog.Builder(context)
@@ -897,9 +970,23 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return items.get(position);
     }
 
+
+    public ListItem setConstructorChecked(boolean isChecked){
+        for (MainItem item :
+                items) {
+            if(item.getCode()!=null&&item.getCode().equals("general_contructor")){
+                item.setChecked(isChecked);
+                try{
+                    notifyItemChanged(items.indexOf(item));
+                }catch (Exception ignored){}
+
+            }
+        }
+        return null;
+    }
+
     private class InfoBlockTextWatcher implements TextWatcher {
         private int position;
-
         public void updatePosition(int position) {
             this.position = position;
         }
@@ -1046,6 +1133,8 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
+
+
     private static class PhotoViewHolder extends CustomViewHolder {
         public RecyclerView photoList;
         public RecyclerView defectsList;
@@ -1059,31 +1148,6 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             progressBar = (ProgressBar) itemView.findViewById(R.id.progress_bar);
         }
 
-
-    }
-
-    public ListItem setConstructorChecked(boolean isChecked){
-        for (MainItem item :
-                items) {
-            if(item.getCode()!=null&&item.getCode().equals("general_contructor")){
-                item.setChecked(isChecked);
-                try{
-                    notifyItemChanged(items.indexOf(item));
-                }catch (Exception ignored){}
-
-            }
-        }
-        return null;
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(MainItem item, View view, int position);
-
-        void saveState();
-    }
-
-    public interface OnBottomBarClickListener {
-        void onBottomBarClick(int type,int scrollPosition);
 
     }
 
@@ -1191,6 +1255,17 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 return new HeaderViewHolder(v);
         }
+
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(MainItem item, View view, int position);
+
+        void saveState();
+    }
+
+    public interface OnBottomBarClickListener {
+        void onBottomBarClick(int type,int scrollPosition);
 
     }
 }

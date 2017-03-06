@@ -82,17 +82,7 @@ public class InfoBlockHelper {
         return null;
     }
 
-    public void setModelValue(){
-        for (ArrayList<MainItem> array :
-                items) {
-            for (MainItem item :
-                    array) {
-                if(item.getCode()!=null&&item.getCode().equals("general_model")){
 
-                }
-            }
-        }
-    }
 
 
 

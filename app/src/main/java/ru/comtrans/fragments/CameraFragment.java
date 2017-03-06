@@ -286,7 +286,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                         public void onOkClick() {
                             getFragmentManager().beginTransaction().remove(fragment).commit();
                             mOrientationListener.enable();
-                            Utility.saveBoolean(Const.IS_FIRST_CAMERA_LAUNCH,true);
+                           Utility.saveBoolean(Const.IS_FIRST_CAMERA_LAUNCH,true);
 
                         }
                     });

@@ -58,16 +58,42 @@ public class PropHelper {
             for (int j = 0; j < val.size(); j++) {
                 JsonObject valObject = val.get(j).getAsJsonObject();
                 for(Map.Entry<String,JsonElement> entry:valObject.entrySet()){
-                    if(entry.getKey().startsWith("photo")){
-                        screen.addAll(getPhotoItems(entry.getValue().getAsJsonArray(),false));
 
-                    }else if(entry.getKey().startsWith("video")){
-                        screen.addAll(getPhotoItems(entry.getValue().getAsJsonArray(),true));
-                    }else if(entry.getKey().startsWith("protector")){
-                        screen.addAll(getProtectorItems(entry.getValue().getAsJsonArray()));
-                    }else {
-                        screen.addAll(getItems(entry.getValue().getAsJsonArray(),propCode,inspectionCode));
+                    if(!entry.getValue().getAsJsonArray().isJsonNull()){
+                        JsonArray array = entry.getValue().getAsJsonArray();
+                        if(array.size()>0){
+                            JsonObject jsonObject = array.get(0).getAsJsonObject();
+                            if(jsonObject.has("prop_type")){
+                               String propType = jsonObject.get("prop_type").getAsString();
+                                switch (propType){
+                                    case "F":
+                                        screen.addAll(getPhotoItems(array,false));
+                                        break;
+                                    case "V":
+                                        screen.addAll(getPhotoItems(array,true));
+                                        break;
+                                    case "T":
+                                        screen.addAll(getProtectorItems(array));
+                                        break;
+                                    default:
+                                        screen.addAll(getItems(array,propCode,inspectionCode));
+                                        break;
+                                }
+
+                            }
+                        }
                     }
+//                    if(entry.getKey().startsWith("photo")){
+//                        screen.addAll(getPhotoItems(entry.getValue().getAsJsonArray(),false));
+//                    }else if(entry.getKey().startsWith("video")){
+//                        screen.addAll(getPhotoItems(entry.getValue().getAsJsonArray(),true));
+                 //   }else
+//                    if(entry.getKey().startsWith("tyres_scheme")) {
+//                        screen.addAll(getProtectorItems(entry.getValue().getAsJsonArray()));
+//                    }
+//                    }else {
+//                        screen.addAll(getItems(entry.getValue().getAsJsonArray(),propCode,inspectionCode));
+//                    }
                 }
             }
 
@@ -82,7 +108,7 @@ public class PropHelper {
     private static JsonArray getItems(JsonArray array, long propCode, long inspectionCode){
         JsonArray newArray = new JsonArray();
         for (int i = 0; i < array.size(); i++) {
-            try {
+
 
 
                 JsonObject object = array.get(i).getAsJsonObject();
@@ -206,7 +232,7 @@ public class PropHelper {
                 }
 
                 newArray.add(newObject);
-            }catch (Exception ignored){}
+     //       }catch (Exception ignored){}
         }
 
         return newArray;

@@ -538,86 +538,53 @@ public class InfoBlocksStorage {
         Gson gson = new Gson();
         JsonArray array = gson.fromJson(Utility.getSavedData(id), JsonArray.class);
         ArrayList<ArrayList<MainItem>> arrayOfItems = new ArrayList<>();
-        for (int i = 0; i < array.size(); i++) {
-            JsonArray screenArray = array.get(i).getAsJsonArray();
-            ArrayList<MainItem> mainItems = new ArrayList<>();
-            for (int j = 0; j < screenArray.size(); j++) {
-                JsonObject object = screenArray.get(j).getAsJsonObject();
-                MainItem item = new MainItem(object.get(MainItem.JSON_TYPE).getAsInt());
 
-                if (object.has(MainItem.JSON_NAME) && !object.get(MainItem.JSON_NAME).isJsonNull())
-                    item.setName(object.get(MainItem.JSON_NAME).getAsString());
+            for (int i = 0; i < array.size(); i++) {
+                try {
+                JsonArray screenArray = array.get(i).getAsJsonArray();
+                ArrayList<MainItem> mainItems = new ArrayList<>();
+                for (int j = 0; j < screenArray.size(); j++) {
+                    JsonObject object = screenArray.get(j).getAsJsonObject();
+                    Log.d("TAG", "object to string " + object.toString());
+                    MainItem item = new MainItem(object.get(MainItem.JSON_TYPE).getAsInt());
 
-                if (object.has(MainItem.IS_NEVER_MODIFIED) && !object.get(MainItem.IS_NEVER_MODIFIED).isJsonNull())
-                    item.setNeverModified(object.get(MainItem.IS_NEVER_MODIFIED).getAsBoolean());
 
-                if (object.has(MainItem.JSON_IS_CHECKED) && !object.get(MainItem.JSON_IS_CHECKED).isJsonNull())
-                    item.setChecked(object.get(MainItem.JSON_IS_CHECKED).getAsBoolean());
+                    if (object.has(MainItem.JSON_NAME) && !object.get(MainItem.JSON_NAME).isJsonNull())
+                        item.setName(object.get(MainItem.JSON_NAME).getAsString());
 
-                if (object.has(MainItem.JSON_IS_REQUIRED) && !object.get(MainItem.JSON_IS_REQUIRED).isJsonNull())
-                    item.setRequired(object.get(MainItem.JSON_IS_REQUIRED).getAsBoolean());
+                    if (object.has(MainItem.IS_NEVER_MODIFIED) && !object.get(MainItem.IS_NEVER_MODIFIED).isJsonNull())
+                        item.setNeverModified(object.get(MainItem.IS_NEVER_MODIFIED).getAsBoolean());
 
-                if (object.has(MainItem.JSON_ID) && !object.get(MainItem.JSON_ID).isJsonNull())
-                    item.setId(object.get(MainItem.JSON_ID).getAsString());
+                    if (object.has(MainItem.JSON_IS_CHECKED) && !object.get(MainItem.JSON_IS_CHECKED).isJsonNull())
+                        item.setChecked(object.get(MainItem.JSON_IS_CHECKED).getAsBoolean());
 
-                if (object.has(MainItem.JSON_CODE) && !object.get(MainItem.JSON_CODE).isJsonNull()) {
+                    if (object.has(MainItem.JSON_IS_REQUIRED) && !object.get(MainItem.JSON_IS_REQUIRED).isJsonNull())
+                        item.setRequired(object.get(MainItem.JSON_IS_REQUIRED).getAsBoolean());
+
+                    if (object.has(MainItem.JSON_ID) && !object.get(MainItem.JSON_ID).isJsonNull())
+                        item.setId(object.get(MainItem.JSON_ID).getAsString());
+
+                    if (object.has(MainItem.JSON_CODE) && !object.get(MainItem.JSON_CODE).isJsonNull()) {
 //                    if(object.get(MainItem.JSON_CODE).getAsString().equals("shas_wheel_formula"))
 //                        Log.e("WTF","INFO_BLOCK_STORAGE code="+object.get(MainItem.JSON_CODE).getAsString());
-                    item.setCode(object.get(MainItem.JSON_CODE).getAsString());
-                }
-
-                if (object.has(MainItem.JSON_VALUE) && !object.get(MainItem.JSON_VALUE).isJsonNull())
-                    item.setValue(object.get(MainItem.JSON_VALUE).getAsString());
-
-                if (object.has(MainItem.JSON_CAN_ADD) && !object.get(MainItem.JSON_CAN_ADD).isJsonNull())
-                    item.setCanAdd(object.get(MainItem.JSON_CAN_ADD).getAsBoolean());
-
-                if (object.has(MainItem.JSON_CAPITALIZE) && !object.get(MainItem.JSON_CAPITALIZE).isJsonNull())
-                    item.setCapitalize(object.get(MainItem.JSON_CAPITALIZE).getAsBoolean());
-
-                if (object.has(MainItem.JSON_DEFAULT_VALUE) && !object.get(MainItem.JSON_DEFAULT_VALUE).isJsonNull())
-                    item.setDefaultValue(object.get(MainItem.JSON_DEFAULT_VALUE).getAsString());
-
-                if (object.has(MainItem.JSON_LIST_VALUE) && !object.get(MainItem.JSON_LIST_VALUE).isJsonNull()) {
-                    JsonObject valueObject = object.getAsJsonObject(MainItem.JSON_LIST_VALUE);
-                    ListItem listItem = new ListItem(valueObject.get(ListItem.JSON_VALUE_ID).getAsLong(), valueObject.get(ListItem.JSON_VALUE_NAME).getAsString());
-                    if (valueObject.has(ListItem.JSON_VALUE_MARK) && !valueObject.get(ListItem.JSON_VALUE_MARK).isJsonNull()) {
-                        listItem.setMark(valueObject.get(ListItem.JSON_VALUE_MARK).getAsInt());
+                        item.setCode(object.get(MainItem.JSON_CODE).getAsString());
                     }
 
-                    if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {
-                        listItem.setTireSchemeId(valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).getAsInt());
-                    }
-                    if (valueObject.has(ListItem.JSON_PROTECTOR_VALUES) && !valueObject.get(ListItem.JSON_PROTECTOR_VALUES).isJsonNull()) {
-                        ArrayList<String> protectorValues = new ArrayList<>();
-                        JsonArray protectorArray = valueObject.getAsJsonArray(ListItem.JSON_PROTECTOR_VALUES);
-                        for (int k = 0; k < protectorArray.size(); k++) {
-                            protectorValues.add(protectorArray.get(k).getAsString());
-                        }
-                        listItem.setProtectorValues(protectorValues);
-                    }
+                    if (object.has(MainItem.JSON_VALUE) && !object.get(MainItem.JSON_VALUE).isJsonNull())
+                        item.setValue(object.get(MainItem.JSON_VALUE).getAsString());
 
-                    if (valueObject.has(ListItem.JSON_REVEAL_OS) && !valueObject.get(ListItem.JSON_REVEAL_OS).isJsonNull()) {
-                        ArrayList<Integer> revealOsValues = new ArrayList<>();
-                        JsonArray revealOsArray = valueObject.getAsJsonArray(ListItem.JSON_REVEAL_OS);
-                        for (int k = 0; k < revealOsArray.size(); k++) {
-                            revealOsValues.add(revealOsArray.get(k).getAsInt());
-                        }
-                        listItem.setRevealOs(revealOsValues);
-                    }
+                    if (object.has(MainItem.JSON_CAN_ADD) && !object.get(MainItem.JSON_CAN_ADD).isJsonNull())
+                        item.setCanAdd(object.get(MainItem.JSON_CAN_ADD).getAsBoolean());
 
-                    item.setListValue(listItem);
+                    if (object.has(MainItem.JSON_CAPITALIZE) && !object.get(MainItem.JSON_CAPITALIZE).isJsonNull())
+                        item.setCapitalize(object.get(MainItem.JSON_CAPITALIZE).getAsBoolean());
 
-                }
-                if (object.has(MainItem.JSON_LIST_VALUES)) {
-                    JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_LIST_VALUES);
-                    ArrayList<ListItem> listItems = new ArrayList<>();
-                    for (int k = 0; k < valuesArray.size(); k++) {
-                        JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
-                        ListItem listItem = new ListItem(valueObject.get(ListItem.JSON_VALUE_ID).getAsLong()
-                                , valueObject.get(ListItem.JSON_VALUE_NAME).getAsString());
+                    if (object.has(MainItem.JSON_DEFAULT_VALUE) && !object.get(MainItem.JSON_DEFAULT_VALUE).isJsonNull())
+                        item.setDefaultValue(object.get(MainItem.JSON_DEFAULT_VALUE).getAsString());
 
-
+                    if (object.has(MainItem.JSON_LIST_VALUE) && !object.get(MainItem.JSON_LIST_VALUE).isJsonNull()) {
+                        JsonObject valueObject = object.getAsJsonObject(MainItem.JSON_LIST_VALUE);
+                        ListItem listItem = new ListItem(valueObject.get(ListItem.JSON_VALUE_ID).getAsLong(), valueObject.get(ListItem.JSON_VALUE_NAME).getAsString());
                         if (valueObject.has(ListItem.JSON_VALUE_MARK) && !valueObject.get(ListItem.JSON_VALUE_MARK).isJsonNull()) {
                             listItem.setMark(valueObject.get(ListItem.JSON_VALUE_MARK).getAsInt());
                         }
@@ -628,8 +595,8 @@ public class InfoBlocksStorage {
                         if (valueObject.has(ListItem.JSON_PROTECTOR_VALUES) && !valueObject.get(ListItem.JSON_PROTECTOR_VALUES).isJsonNull()) {
                             ArrayList<String> protectorValues = new ArrayList<>();
                             JsonArray protectorArray = valueObject.getAsJsonArray(ListItem.JSON_PROTECTOR_VALUES);
-                            for (int l = 0; l < protectorArray.size(); l++) {
-                                protectorValues.add(protectorArray.get(l).getAsString());
+                            for (int k = 0; k < protectorArray.size(); k++) {
+                                protectorValues.add(protectorArray.get(k).getAsString());
                             }
                             listItem.setProtectorValues(protectorValues);
                         }
@@ -637,108 +604,147 @@ public class InfoBlocksStorage {
                         if (valueObject.has(ListItem.JSON_REVEAL_OS) && !valueObject.get(ListItem.JSON_REVEAL_OS).isJsonNull()) {
                             ArrayList<Integer> revealOsValues = new ArrayList<>();
                             JsonArray revealOsArray = valueObject.getAsJsonArray(ListItem.JSON_REVEAL_OS);
-                            for (int l = 0; l < revealOsArray.size(); l++) {
-                                revealOsValues.add(revealOsArray.get(l).getAsInt());
+                            for (int k = 0; k < revealOsArray.size(); k++) {
+                                revealOsValues.add(revealOsArray.get(k).getAsInt());
                             }
                             listItem.setRevealOs(revealOsValues);
                         }
 
-                        listItems.add(listItem);
-                    }
-                    item.setListValues(listItems);
-                }
-
-                if (object.has(MainItem.JSON_PROTECTOR_VALUES)) {
-                    JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_PROTECTOR_VALUES);
-                    ArrayList<ProtectorItem> protectorItems = new ArrayList<>();
-                    for (int k = 0; k < valuesArray.size(); k++) {
-                        JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
-                        ProtectorItem protectorItem = new ProtectorItem();
-
-                        if (valueObject.has(ProtectorItem.JSON_GROUP_NAME) && !valueObject.get(ProtectorItem.JSON_GROUP_NAME).isJsonNull()) {
-                            protectorItem.setGroupName(valueObject.get(ProtectorItem.JSON_GROUP_NAME).getAsString());
-                        }
-
-                        if (valueObject.has(ProtectorItem.JSON_CODE) && !valueObject.get(ProtectorItem.JSON_CODE).isJsonNull()) {
-                            protectorItem.setCode(valueObject.get(ProtectorItem.JSON_CODE).getAsString());
-                        }
-
-                        if (valueObject.has(ProtectorItem.JSON_TITLE) && !valueObject.get(ProtectorItem.JSON_TITLE).isJsonNull()) {
-                            protectorItem.setTitle(valueObject.get(ProtectorItem.JSON_TITLE).getAsString());
-                        }
-
-                        if (valueObject.has(ProtectorItem.JSON_TYPE) && !valueObject.get(ProtectorItem.JSON_TYPE).isJsonNull()) {
-                            protectorItem.setType(valueObject.get(ProtectorItem.JSON_TYPE).getAsInt());
-                        }
-
-                        if (valueObject.has(ProtectorItem.JSON_VALUE) && !valueObject.get(ProtectorItem.JSON_VALUE).isJsonNull()) {
-                            protectorItem.setValue(valueObject.get(ProtectorItem.JSON_VALUE).getAsString());
-                        }
-
-
-                        protectorItems.add(protectorItem);
-                    }
-                    item.setProtectorItems(protectorItems);
-                }
-
-
-                if (object.has(MainItem.JSON_PHOTO_VALUES)) {
-                    JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_PHOTO_VALUES);
-                    ArrayList<PhotoItem> photoItems = new ArrayList<>();
-                    for (int k = 0; k < valuesArray.size(); k++) {
-                        JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
-                        PhotoItem photoItem = new PhotoItem();
-
-                        if (valueObject.has(PhotoItem.JSON_IS_DEFECT) && !valueObject.get(PhotoItem.JSON_IS_DEFECT).isJsonNull())
-                            photoItem.setDefect(valueObject.get(PhotoItem.JSON_IS_DEFECT).getAsBoolean());
-
-                        if (valueObject.has(PhotoItem.JSON_SIZE) && !valueObject.get(PhotoItem.JSON_SIZE).isJsonNull())
-                            photoItem.setSize(valueObject.get(PhotoItem.JSON_SIZE).getAsLong());
-
-                        if (valueObject.has(PhotoItem.JSON_TITLE) && !valueObject.get(PhotoItem.JSON_TITLE).isJsonNull())
-                            photoItem.setTitle(valueObject.get(PhotoItem.JSON_TITLE).getAsString());
-
-                        if (valueObject.has(PhotoItem.JSON_DURATION) && !valueObject.get(PhotoItem.JSON_DURATION).isJsonNull())
-                            photoItem.setDuration(valueObject.get(PhotoItem.JSON_DURATION).getAsInt());
-
-                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull())
-                            photoItem.setImagePath(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
-
-                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull())
-                            photoItem.setImagePath(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
-
-                        if (valueObject.has(PhotoItem.JSON_IS_EDITED) && !valueObject.get(PhotoItem.JSON_IS_EDITED).isJsonNull())
-                            photoItem.setEdited(valueObject.get(PhotoItem.JSON_IS_EDITED).getAsBoolean());
-
-                        if (valueObject.has(PhotoItem.JSON_RE_PHOTO_COUNT) && !valueObject.get(PhotoItem.JSON_RE_PHOTO_COUNT).isJsonNull())
-                            photoItem.setRePhotoCount(valueObject.get(PhotoItem.JSON_RE_PHOTO_COUNT).getAsInt());
-
-                        if (valueObject.has(PhotoItem.JSON_ID) && !valueObject.get(PhotoItem.JSON_ID).isJsonNull()) {
-                            photoItem.setId(valueObject.get(PhotoItem.JSON_ID).getAsLong());
-                        }
-
-                        if (valueObject.has(PhotoItem.JSON_CODE) && !valueObject.get(PhotoItem.JSON_CODE).isJsonNull())
-                            photoItem.setCode(valueObject.get(PhotoItem.JSON_CODE).getAsString());
-
-                        if (valueObject.has(PhotoItem.JSON_IS_SEND) && !valueObject.get(PhotoItem.JSON_IS_SEND).isJsonNull())
-                            photoItem.setSend(valueObject.get(PhotoItem.JSON_IS_SEND).getAsBoolean());
-
-                        if (valueObject.has(PhotoItem.JSON_IS_VIDEO) && !valueObject.get(PhotoItem.JSON_IS_VIDEO).isJsonNull())
-                            photoItem.setVideo(valueObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean());
-
-                        if (valueObject.has(PhotoItem.JSON_IS_OS) && !valueObject.get(PhotoItem.JSON_IS_OS).isJsonNull())
-                            photoItem.setIsOs(valueObject.get(PhotoItem.JSON_IS_OS).getAsInt());
-
-                        photoItems.add(photoItem);
+                        item.setListValue(listItem);
 
                     }
-                    item.setPhotoItems(photoItems);
+                    if (object.has(MainItem.JSON_LIST_VALUES)) {
+                        JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_LIST_VALUES);
+                        ArrayList<ListItem> listItems = new ArrayList<>();
+                        for (int k = 0; k < valuesArray.size(); k++) {
+                            JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
+                            ListItem listItem = new ListItem(valueObject.get(ListItem.JSON_VALUE_ID).getAsLong()
+                                    , valueObject.get(ListItem.JSON_VALUE_NAME).getAsString());
+
+
+                            if (valueObject.has(ListItem.JSON_VALUE_MARK) && !valueObject.get(ListItem.JSON_VALUE_MARK).isJsonNull()) {
+                                listItem.setMark(valueObject.get(ListItem.JSON_VALUE_MARK).getAsInt());
+                            }
+
+                            if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {
+                                listItem.setTireSchemeId(valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).getAsInt());
+                            }
+                            if (valueObject.has(ListItem.JSON_PROTECTOR_VALUES) && !valueObject.get(ListItem.JSON_PROTECTOR_VALUES).isJsonNull()) {
+                                ArrayList<String> protectorValues = new ArrayList<>();
+                                JsonArray protectorArray = valueObject.getAsJsonArray(ListItem.JSON_PROTECTOR_VALUES);
+                                for (int l = 0; l < protectorArray.size(); l++) {
+                                    protectorValues.add(protectorArray.get(l).getAsString());
+                                }
+                                listItem.setProtectorValues(protectorValues);
+                            }
+
+                            if (valueObject.has(ListItem.JSON_REVEAL_OS) && !valueObject.get(ListItem.JSON_REVEAL_OS).isJsonNull()) {
+                                ArrayList<Integer> revealOsValues = new ArrayList<>();
+                                JsonArray revealOsArray = valueObject.getAsJsonArray(ListItem.JSON_REVEAL_OS);
+                                for (int l = 0; l < revealOsArray.size(); l++) {
+                                    revealOsValues.add(revealOsArray.get(l).getAsInt());
+                                }
+                                listItem.setRevealOs(revealOsValues);
+                            }
+
+                            listItems.add(listItem);
+                        }
+                        item.setListValues(listItems);
+                    }
+
+                    if (object.has(MainItem.JSON_PROTECTOR_VALUES)) {
+                        JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_PROTECTOR_VALUES);
+                        ArrayList<ProtectorItem> protectorItems = new ArrayList<>();
+                        for (int k = 0; k < valuesArray.size(); k++) {
+                            JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
+                            ProtectorItem protectorItem = new ProtectorItem();
+
+                            if (valueObject.has(ProtectorItem.JSON_GROUP_NAME) && !valueObject.get(ProtectorItem.JSON_GROUP_NAME).isJsonNull()) {
+                                protectorItem.setGroupName(valueObject.get(ProtectorItem.JSON_GROUP_NAME).getAsString());
+                            }
+
+                            if (valueObject.has(ProtectorItem.JSON_CODE) && !valueObject.get(ProtectorItem.JSON_CODE).isJsonNull()) {
+                                protectorItem.setCode(valueObject.get(ProtectorItem.JSON_CODE).getAsString());
+                            }
+
+                            if (valueObject.has(ProtectorItem.JSON_TITLE) && !valueObject.get(ProtectorItem.JSON_TITLE).isJsonNull()) {
+                                protectorItem.setTitle(valueObject.get(ProtectorItem.JSON_TITLE).getAsString());
+                            }
+
+                            if (valueObject.has(ProtectorItem.JSON_TYPE) && !valueObject.get(ProtectorItem.JSON_TYPE).isJsonNull()) {
+                                protectorItem.setType(valueObject.get(ProtectorItem.JSON_TYPE).getAsInt());
+                            }
+
+                            if (valueObject.has(ProtectorItem.JSON_VALUE) && !valueObject.get(ProtectorItem.JSON_VALUE).isJsonNull()) {
+                                protectorItem.setValue(valueObject.get(ProtectorItem.JSON_VALUE).getAsString());
+                            }
+
+
+                            protectorItems.add(protectorItem);
+                        }
+                        item.setProtectorItems(protectorItems);
+                    }
+
+
+                    if (object.has(MainItem.JSON_PHOTO_VALUES)) {
+                        JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_PHOTO_VALUES);
+                        ArrayList<PhotoItem> photoItems = new ArrayList<>();
+                        for (int k = 0; k < valuesArray.size(); k++) {
+                            JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
+                            PhotoItem photoItem = new PhotoItem();
+
+                            if (valueObject.has(PhotoItem.JSON_IS_DEFECT) && !valueObject.get(PhotoItem.JSON_IS_DEFECT).isJsonNull())
+                                photoItem.setDefect(valueObject.get(PhotoItem.JSON_IS_DEFECT).getAsBoolean());
+
+                            if (valueObject.has(PhotoItem.JSON_SIZE) && !valueObject.get(PhotoItem.JSON_SIZE).isJsonNull())
+                                photoItem.setSize(valueObject.get(PhotoItem.JSON_SIZE).getAsLong());
+
+                            if (valueObject.has(PhotoItem.JSON_TITLE) && !valueObject.get(PhotoItem.JSON_TITLE).isJsonNull())
+                                photoItem.setTitle(valueObject.get(PhotoItem.JSON_TITLE).getAsString());
+
+                            if (valueObject.has(PhotoItem.JSON_DURATION) && !valueObject.get(PhotoItem.JSON_DURATION).isJsonNull())
+                                photoItem.setDuration(valueObject.get(PhotoItem.JSON_DURATION).getAsInt());
+
+                            if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull())
+                                photoItem.setImagePath(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+
+                            if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull())
+                                photoItem.setImagePath(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+
+                            if (valueObject.has(PhotoItem.JSON_IS_EDITED) && !valueObject.get(PhotoItem.JSON_IS_EDITED).isJsonNull())
+                                photoItem.setEdited(valueObject.get(PhotoItem.JSON_IS_EDITED).getAsBoolean());
+
+                            if (valueObject.has(PhotoItem.JSON_RE_PHOTO_COUNT) && !valueObject.get(PhotoItem.JSON_RE_PHOTO_COUNT).isJsonNull())
+                                photoItem.setRePhotoCount(valueObject.get(PhotoItem.JSON_RE_PHOTO_COUNT).getAsInt());
+
+                            if (valueObject.has(PhotoItem.JSON_ID) && !valueObject.get(PhotoItem.JSON_ID).isJsonNull()) {
+                                photoItem.setId(valueObject.get(PhotoItem.JSON_ID).getAsLong());
+                            }
+
+                            if (valueObject.has(PhotoItem.JSON_CODE) && !valueObject.get(PhotoItem.JSON_CODE).isJsonNull())
+                                photoItem.setCode(valueObject.get(PhotoItem.JSON_CODE).getAsString());
+
+                            if (valueObject.has(PhotoItem.JSON_IS_SEND) && !valueObject.get(PhotoItem.JSON_IS_SEND).isJsonNull())
+                                photoItem.setSend(valueObject.get(PhotoItem.JSON_IS_SEND).getAsBoolean());
+
+                            if (valueObject.has(PhotoItem.JSON_IS_VIDEO) && !valueObject.get(PhotoItem.JSON_IS_VIDEO).isJsonNull())
+                                photoItem.setVideo(valueObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean());
+
+                            if (valueObject.has(PhotoItem.JSON_IS_OS) && !valueObject.get(PhotoItem.JSON_IS_OS).isJsonNull())
+                                photoItem.setIsOs(valueObject.get(PhotoItem.JSON_IS_OS).getAsInt());
+
+                            photoItems.add(photoItem);
+
+                        }
+                        item.setPhotoItems(photoItems);
+                    }
+                    mainItems.add(item);
                 }
-                mainItems.add(item);
+                arrayOfItems.add(mainItems);
+            }catch (Exception ignored){}
+
             }
-            arrayOfItems.add(mainItems);
 
-        }
 
 
         return arrayOfItems;

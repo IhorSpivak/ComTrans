@@ -2,11 +2,17 @@ package ru.comtrans.singlets;
 
 import android.app.Application;
 import android.content.Intent;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.io.IOException;
+
 import io.fabric.sdk.android.Fabric;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -34,12 +40,31 @@ public class AppController extends Application {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
 
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(String message) {
+                Log.e("OkHttp", message);
+            }
+        });
 
 
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor)
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request original = chain.request();
+
+                        // Request customization: add request headers
+                        Request.Builder requestBuilder = original.newBuilder()
+                                .header("Authorization", "Basic ZGV2bXVzdDplTk5vU3AjWFJ3MzhR"); // <-- this is the important line
+
+                        Request request = requestBuilder.build();
+                        return chain.proceed(request);
+                    }
+                })
+                .build();
         BASE_URL = getString(R.string.API_URL);
+
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)

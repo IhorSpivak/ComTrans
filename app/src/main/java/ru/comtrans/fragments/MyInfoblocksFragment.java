@@ -100,20 +100,20 @@ public class MyInfoBlocksFragment extends Fragment {
 
         progressDialog = new ConnectionProgressDialog(getActivity());
 
-        getVehicleTypes();
-        getInspectionTypes();
+        getVehicleTypes(false);
+        getInspectionTypes(false);
 
 
         return v;
     }
 
-    private void getVehicleTypes(){
+    private void getVehicleTypes(final boolean isFromButton){
         Call<JsonObject> call = AppController.apiInterface.getVehicleTypes();
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 progressDialog.dismiss();
-                if (response.body() != null && !response.body().isJsonNull()) {
+                if (response.body() != null && !response.body().get("result").isJsonNull()) {
                     if (response.body().get("status").getAsInt() == 1){
                         JsonArray result = response.body().get("result").getAsJsonArray();
                         if(!result.isJsonNull()&&result.size()>0){
@@ -126,7 +126,8 @@ public class MyInfoBlocksFragment extends Fragment {
                                 }
                             }
                             Utility.saveVehicleTypes(typeArray);
-
+                            if(isFromButton)
+                                createNewInfoBlock();
                         }
                     }else{
                         Toast.makeText(getActivity(), response.body().get("message").getAsString(), Toast.LENGTH_SHORT).show();
@@ -144,13 +145,13 @@ public class MyInfoBlocksFragment extends Fragment {
         });
     }
 
-    private void getInspectionTypes(){
+    private void getInspectionTypes(final boolean isFromButton){
         Call<JsonObject> call = AppController.apiInterface.getInspectionTypes();
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 progressDialog.dismiss();
-                if (response.body() != null && !response.body().isJsonNull()) {
+                if (response.body() != null && !response.body().get("result").isJsonNull()) {
                     if (response.body().get("status").getAsInt() == 1){
                         JsonArray result = response.body().get("result").getAsJsonArray();
                         if(!result.isJsonNull()&&result.size()>0){
@@ -164,6 +165,8 @@ public class MyInfoBlocksFragment extends Fragment {
                             }
                             Log.d("TAG","save array");
                             Utility.saveInspectionTypes(typeArray);
+                            if(isFromButton)
+                                createNewInfoBlock();
 
                         }
                     }else{
@@ -413,12 +416,12 @@ public class MyInfoBlocksFragment extends Fragment {
     private void createNewInfoBlock(){
         if(Utility.getVehicleTypes()==null) {
             progressDialog.show();
-            Toast.makeText(getContext(),R.string.vehicle_type_not_exist,Toast.LENGTH_SHORT).show();
-            getVehicleTypes();
+          //  Toast.makeText(getContext(),R.string.vehicle_type_not_exist,Toast.LENGTH_SHORT).show();
+            getVehicleTypes(true);
         }else if(Utility.getInspectionTypes()==null) {
             progressDialog.show();
-            Toast.makeText(getContext(),R.string.inspection_type_not_exist,Toast.LENGTH_SHORT).show();
-            getInspectionTypes();
+         //   Toast.makeText(getContext(),R.string.inspection_type_not_exist,Toast.LENGTH_SHORT).show();
+            getInspectionTypes(true);
         }else {
             final ListDialogAdapter vehicleTypeAdapter = new ListDialogAdapter(Utility.getVehicleTypes(), getContext());
 
