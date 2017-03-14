@@ -67,10 +67,7 @@ public class PropHelper {
                                String propType = jsonObject.get("prop_type").getAsString();
                                 switch (propType){
                                     case "F":
-                                        screen.addAll(getPhotoItems(array,false));
-                                        break;
-                                    case "V":
-                                        screen.addAll(getPhotoItems(array,true));
+                                        screen.addAll(getPhotoItems(array));
                                         break;
                                     case "T":
                                         screen.addAll(getProtectorItems(array));
@@ -108,13 +105,11 @@ public class PropHelper {
     private static JsonArray getItems(JsonArray array, long propCode, long inspectionCode){
         JsonArray newArray = new JsonArray();
         for (int i = 0; i < array.size(); i++) {
+            JsonObject object = array.get(i).getAsJsonObject();
+            if (object.has("prop_type") && !object.get("prop_type").isJsonNull()) {
 
 
-
-                JsonObject object = array.get(i).getAsJsonObject();
-
-
-                if (i == 0) {
+                if (i == 0 && object.has("group") && !object.get("group").isJsonNull()) {
                     JsonObject newObject = new JsonObject();
                     newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_HEADER);
                     newObject.addProperty(MainItem.JSON_NAME, object.get("group").getAsString());
@@ -122,28 +117,7 @@ public class PropHelper {
                 }
 
                 JsonObject newObject = new JsonObject();
-                if (object.has("is_required") && !object.get("is_required").isJsonNull()) {
-                    switch (object.get("is_required").getAsString()) {
-                        case "Y":
-                            newObject.addProperty(MainItem.JSON_IS_REQUIRED, true);
-                            break;
-                        case "N":
-                            newObject.addProperty(MainItem.JSON_IS_REQUIRED, false);
-                            break;
-                    }
-                }
 
-                if (object.has("default_value") && !object.get("default_value").isJsonNull()) {
-                    newObject.addProperty(MainItem.JSON_DEFAULT_VALUE, object.get("default_value").getAsString());
-                }
-
-                if (object.has("can_add") && !object.get("can_add").isJsonNull()) {
-                    newObject.addProperty(MainItem.JSON_CAN_ADD, object.get("can_add").getAsBoolean());
-                }
-
-                if (object.has("capitalize") && !object.get("capitalize").isJsonNull()) {
-                    newObject.addProperty(MainItem.JSON_CAPITALIZE, object.get("capitalize").getAsBoolean());
-                }
                 switch (object.get("prop_type").getAsString()) {
                     case "S":
                         newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_STRING);
@@ -166,12 +140,39 @@ public class PropHelper {
                     case "PHONE":
                         newObject.addProperty(MainItem.JSON_TYPE, MainItem.TYPE_PHONE);
                         break;
+                    default:
+                        break;
 
                 }
-                newObject.addProperty(MainItem.JSON_NAME, object.get("name").getAsString());
-                newObject.addProperty(MainItem.JSON_CODE, object.get("code").getAsString());
+                if(object.has("name")&&!object.get("name").isJsonNull())
+                    newObject.addProperty(MainItem.JSON_NAME, object.get("name").getAsString());
+
+                if(object.has("name")&&!object.get("name").isJsonNull())
+                    newObject.addProperty(MainItem.JSON_CODE, object.get("code").getAsString());
 
 
+                if (object.has("is_required") && !object.get("is_required").isJsonNull()) {
+                    switch (object.get("is_required").getAsString()) {
+                        case "Y":
+                            newObject.addProperty(MainItem.JSON_IS_REQUIRED, true);
+                            break;
+                        case "N":
+                            newObject.addProperty(MainItem.JSON_IS_REQUIRED, false);
+                            break;
+                    }
+                }
+
+                if (object.has("default_value") && !object.get("default_value").isJsonNull()) {
+                    newObject.addProperty(MainItem.JSON_DEFAULT_VALUE, object.get("default_value").getAsString());
+                }
+
+                if (object.has("can_add") && !object.get("can_add").isJsonNull()) {
+                    newObject.addProperty(MainItem.JSON_CAN_ADD, object.get("can_add").getAsBoolean());
+                }
+
+                if (object.has("capitalize") && !object.get("capitalize").isJsonNull()) {
+                    newObject.addProperty(MainItem.JSON_CAPITALIZE, object.get("capitalize").getAsBoolean());
+                }
 
 
                 if (object.has("val") && !object.get("val").isJsonNull()) {
@@ -185,41 +186,41 @@ public class PropHelper {
                         JsonObject newValueObject = new JsonObject();
                         newValueObject.addProperty(ListItem.JSON_VALUE_ID, valueObject.get("id").getAsLong());
                         newValueObject.addProperty(ListItem.JSON_VALUE_NAME, valueObject.get("name").getAsString());
-                        if (valueObject.has("mark")&&!valueObject.get("mark").isJsonNull()) {
+                        if (valueObject.has("mark") && !valueObject.get("mark").isJsonNull()) {
                             newValueObject.addProperty(ListItem.JSON_VALUE_MARK, valueObject.get("mark").getAsInt());
                         }
 
-                        if (valueObject.has("axis_code")&&!valueObject.get("axis_code").isJsonNull()) {
+                        if (valueObject.has("axis_code") && !valueObject.get("axis_code").isJsonNull()) {
                             newValueObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, valueObject.get("axis_code").getAsInt());
                         }
 
-                        if (valueObject.has("axis")&&!valueObject.get("axis").isJsonNull()) {
+                        if (valueObject.has("axis") && !valueObject.get("axis").isJsonNull()) {
                             newValueObject.add(ListItem.JSON_PROTECTOR_VALUES, valueObject.get("axis").getAsJsonArray());
                         }
 
-                        if (valueObject.has("reveal_os")&&!valueObject.get("reveal_os").isJsonNull()) {
+                        if (valueObject.has("reveal_os") && !valueObject.get("reveal_os").isJsonNull()) {
                             newValueObject.add(ListItem.JSON_REVEAL_OS, valueObject.get("reveal_os").getAsJsonArray());
                         }
 
                         newVal.add(newValueObject);
 
-                        if(object.get("code").getAsString().equals("general_type_id")){
-                            if(newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong()==propCode){
+                        if (object.get("code").getAsString().equals("general_type_id")) {
+                            if (newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong() == propCode) {
                                 newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
-                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED,true);
+                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED, true);
                             }
-                        }else {
+                        } else {
                             if (j == 0) {
                                 newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
                             }
                         }
 
-                        if(object.get("code").getAsString().equals("view_type_list")){
-                            if(newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong()==inspectionCode){
+                        if (object.get("code").getAsString().equals("view_type_list")) {
+                            if (newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong() == inspectionCode) {
                                 newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
-                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED,true);
+                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED, true);
                             }
-                        }else {
+                        } else {
                             if (j == 0) {
                                 newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
                             }
@@ -230,9 +231,10 @@ public class PropHelper {
 
 
                 }
-
-                newArray.add(newObject);
-     //       }catch (Exception ignored){}
+                if(newObject.has(MainItem.JSON_TYPE))
+                    newArray.add(newObject);
+                //       }catch (Exception ignored){}
+            }
         }
 
         return newArray;
@@ -269,7 +271,8 @@ public class PropHelper {
         return newArray;
     }
 
-    private static JsonArray getPhotoItems(JsonArray array, boolean isVideo){
+    private static JsonArray getPhotoItems(JsonArray array){
+        boolean isVideo = false;
         JsonArray newArray = new JsonArray();
 
         JsonObject header = new JsonObject();
@@ -282,34 +285,42 @@ public class PropHelper {
 
             JsonObject object = array.get(i).getAsJsonObject();
             JsonObject newObject = new JsonObject();
-            newObject.addProperty(PhotoItem.JSON_TITLE,object.get("name").getAsString());
-            newObject.addProperty(PhotoItem.JSON_CODE,object.get("code").getAsString());
+            if(object!=null&&object.has("code")&&!object.get("code").isJsonNull()){
 
-            if(object.has("is_os")&&!object.get("is_os").isJsonNull()){
-                newObject.addProperty(PhotoItem.JSON_IS_OS,object.get("is_os").getAsInt());
-            }
-            if(i == array.size()-1){
-                if(object.has("is_defect")&&!object.get("is_defect").isJsonNull()&&object.get("is_defect").getAsBoolean()){
-                    newObject.addProperty(PhotoItem.JSON_IS_DEFECT,true);
-                    Utility.saveData(Const.DEFAULT_DEFECT_NAME,object.get("name").getAsString());
-                    //   newObject.addProperty(PhotoItem.JSON_TITLE,object.get("name").getAsString()+" 1");
-                    newObject.addProperty(PhotoItem.JSON_TITLE,"Дефект 1");
-                }else {
-                    newObject.addProperty(PhotoItem.JSON_IS_DEFECT,false);
+                 if(object.get("code").getAsString().startsWith("video")){
+                     isVideo = true;
+                 }
+
+
+                newObject.addProperty(PhotoItem.JSON_TITLE, object.get("name").getAsString());
+                newObject.addProperty(PhotoItem.JSON_CODE, object.get("code").getAsString());
+
+                if (object.has("is_os") && !object.get("is_os").isJsonNull()) {
+                    newObject.addProperty(PhotoItem.JSON_IS_OS, object.get("is_os").getAsInt());
                 }
+                if (i == array.size() - 1) {
+                    if (object.has("is_defect") && !object.get("is_defect").isJsonNull() && object.get("is_defect").getAsBoolean()) {
+                        newObject.addProperty(PhotoItem.JSON_IS_DEFECT, true);
+                        Utility.saveData(Const.DEFAULT_DEFECT_NAME, object.get("name").getAsString());
+                        //   newObject.addProperty(PhotoItem.JSON_TITLE,object.get("name").getAsString()+" 1");
+                        newObject.addProperty(PhotoItem.JSON_TITLE, "Дефект 1");
+                    } else {
+                        newObject.addProperty(PhotoItem.JSON_IS_DEFECT, false);
+                    }
 
 
-            }else {
-                newObject.addProperty(PhotoItem.JSON_IS_DEFECT,false);
-            }
-            if(isVideo){
-                if(object.has("duration")&&!object.get("duration").isJsonNull()) {
-                    newObject.addProperty(PhotoItem.JSON_DURATION, object.get("duration").getAsInt());
+                } else {
+                    newObject.addProperty(PhotoItem.JSON_IS_DEFECT, false);
                 }
+                if (isVideo) {
+                    if (object.has("duration") && !object.get("duration").isJsonNull()) {
+                        newObject.addProperty(PhotoItem.JSON_DURATION, object.get("duration").getAsInt());
+                    }
+                }
+                photoArray.add(newObject);
+
+
             }
-            photoArray.add(newObject);
-
-
 
         }
         JsonObject photoObject = new JsonObject();

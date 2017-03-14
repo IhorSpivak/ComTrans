@@ -346,6 +346,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     editTextViewHolder.editText.setText(item.getValue());
 
 
+
                     if(item.getCode().toLowerCase().contains("vin")){
                         editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT| InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
                         editTextViewHolder.editText.setFilters(new InputFilter[] {vinFilter,new InputFilter.AllCaps(),new InputFilter.LengthFilter(17)});
@@ -677,34 +678,25 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         editTextViewHolder.textInputLayout.setHint(item.getName());
                     editTextViewHolder.editText.setInputType(InputType.TYPE_CLASS_PHONE);
                     editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
-                    editTextViewHolder.editText.setText(item.getValue());
+                    if(item.getValue()!=null&&!item.getValue().equals("")) {
+                        editTextViewHolder.editText.setText(item.getValue());
+                    }else {
+                        editTextViewHolder.editText.setText("+7");
+                    }
                     editTextViewHolder.editText.setKeyListener(DigitsKeyListener.getInstance("0123456789+-()"));
 
 
 
-                    editTextViewHolder.editText.setFilters(new InputFilter[]{new PartialRegexInputFilter(Const.phone_regex)});
                     editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         public void onFocusChange(View v, boolean hasFocus) {
                             if (!hasFocus) {
                                 listener.saveState();
                             }
-                            if (hasFocus && editTextViewHolder.editText.getText().toString().length() == 0) {
-                                editTextViewHolder.editText.setText(context.getString(R.string.phone_prefix_bracket));
-                                editTextViewHolder.editText.setSelection(editTextViewHolder.editText.getText().length());
-                            }
+
                         }
                     });
 
-                    if (!Utility.isFieldValid(Const.phone_regex, item.getValue()) && !item.getValue().trim().equals(context.getString(R.string.phone_prefix_bracket))&&
-                            !item.getValue().trim().equals("")) {
-                        editTextViewHolder.textInputLayout.setErrorEnabled(true);
-                        editTextViewHolder.textInputLayout.setError("Некорректный телефон");
-                        // Для проверки на валидность
-                        item.setChecked(false);
-                    } else {
-                        editTextViewHolder.textInputLayout.setErrorEnabled(false);
-                        item.setChecked(true);
-                    }
+
 
                     if(item.isError()){
                         editTextViewHolder.textInputLayout.setErrorEnabled(true);
@@ -713,33 +705,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
 
-                    editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable editable) {
-                            if (!Utility.isFieldValid(Const.phone_regex, editable) && !editable.toString().trim().equals(context.getString(R.string.phone_prefix_bracket))) {
-                                editTextViewHolder.textInputLayout.setErrorEnabled(true);
-                                editTextViewHolder.textInputLayout.setError("Некорректный телефон");
-                                // Для проверки на валидность
-                                item.setChecked(false);
-                            } else {
-                                editTextViewHolder.textInputLayout.setErrorEnabled(false);
-                                item.setChecked(true);
-                            }
-
-                        }
-                    });
-
-                    editTextViewHolder.editText.addTextChangedListener(new PhoneTextWatcher(editTextViewHolder.editText, context));
 
 
                 } else {
@@ -855,12 +821,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                     if(scrollPosition==-1){
                                                         scrollPosition = items.indexOf(item);
                                                     }
-                                                }else if(!Utility.isFieldValid(Const.phone_regex, item.getValue())){
-                                                    notifyItemChanged(items.indexOf(item));
-                                                    isMainEntered = false;
-                                                    if(scrollPosition==-1){
-                                                        scrollPosition = items.indexOf(item);
-                                                    }
+
                                                 }else {
                                                     item.setError(false);
                                                 }

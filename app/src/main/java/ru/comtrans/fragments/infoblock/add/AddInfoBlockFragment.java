@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -139,16 +140,27 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-
-                if(response.body().get("status").getAsInt()==1){
-                    dataArray = response.body().get("result").getAsJsonArray();
-
-
-                    new AsyncTaskForGetProp().execute();
-                }else {
-
-                }
                 progressDialog.dismiss();
+                if (response.body().has("status")) {
+                    if (response.body().get("status").getAsInt() == 1) {
+                        dataArray = response.body().get("result").getAsJsonArray();
+
+
+                        new AsyncTaskForGetProp().execute();
+                    } else {
+
+                    }
+
+                }else {
+                    String message ;
+                    if(response.body().has("message")){
+                        message = response.body().get("message").getAsString();
+                    }else {
+                        message = "Ошибка сервера";
+                    }
+                    Toast.makeText(getContext(),message,Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
+                }
             }
 
             @Override

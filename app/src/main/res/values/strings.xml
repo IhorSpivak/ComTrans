@@ -113,7 +113,7 @@
     <string name="btn_stay">Остаться</string>
     <string name="choose_date">Выберите дату</string>
     <string name="phone_prefix">+7</string>
-    <string name="phone_prefix_bracket">+7(</string>
+    <string name="phone_prefix_bracket">+7</string>
     <string name="phone_prefix_bracket_value">+7(%1$s</string>
     <string name="required_field">Обязательное поле</string>
     <string name="short_vin">Вы уверены, что VIN короче стандартного?</string>

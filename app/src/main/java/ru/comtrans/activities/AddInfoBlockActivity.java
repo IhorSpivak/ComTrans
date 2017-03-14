@@ -76,11 +76,7 @@ public class AddInfoBlockActivity extends BaseActivity {
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d("TAG","onActivity result in activity");
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

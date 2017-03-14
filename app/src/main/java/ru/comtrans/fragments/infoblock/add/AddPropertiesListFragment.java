@@ -127,6 +127,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                     switch (item.getType()) {
                         case MainItem.TYPE_LIST:
                             if (!item.getCode().equals("general_model")) {
+                                Log.d("TAG","int position "+position);
                                 i = new Intent(getActivity(), SearchValueActivity.class);
                                 i.putExtra(Const.EXTRA_TITLE, item.getName());
                                 i.putExtra(Const.EXTRA_POSITION, position);
@@ -267,6 +268,7 @@ public class AddPropertiesListFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("TAG","fragment result");
         int position,screenNum;
 
         switch (resultCode){
@@ -274,10 +276,13 @@ public class AddPropertiesListFragment extends BaseFragment {
                 saveData();
                 ListItem item = data.getParcelableExtra(Const.EXTRA_VALUE);
                 position = data.getIntExtra(Const.EXTRA_POSITION,-1);
+                Log.d("TAG","position result "+data.getIntExtra(Const.EXTRA_POSITION,-1));
                 infoBlockHelper.getItems().get(page).get(position).setListValue(item);
                 if(adapter.getItem(position).getCode().equals("general_marka")){
-                  adapter.getItem(adapter.getPositionByCode("general_model")).setListValue(new ListItem(-1,getString(R.string.not_chosen)));
-                    adapter.notifyItemChanged(adapter.getPositionByCode("general_model"));
+                    if(adapter.getPositionByCode("general_model")!=-1) {
+                        adapter.getItem(adapter.getPositionByCode("general_model")).setListValue(new ListItem(-1, getString(R.string.not_chosen)));
+                        adapter.notifyItemChanged(adapter.getPositionByCode("general_model"));
+                    }
                 }
                 adapter.getItem(position).setListValue(item);
                 adapter.getItem(position).setError(false);
