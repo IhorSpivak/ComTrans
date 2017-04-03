@@ -683,6 +683,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     }else {
                         editTextViewHolder.editText.setText("+7");
                     }
+                    editTextViewHolder.editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(12)});
                     editTextViewHolder.editText.setKeyListener(DigitsKeyListener.getInstance("0123456789+-()"));
 
 
@@ -700,8 +701,30 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                     if(item.isError()){
                         editTextViewHolder.textInputLayout.setErrorEnabled(true);
-                        editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
+                        if(item.getValue().equals("")||item.getValue().equals("+7"))
+                            editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
+                        else if(item.getValue().length()<12)
+                            editTextViewHolder.textInputLayout.setError(context.getString(R.string.phone_invalid));
                     }
+
+                    editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            if(s.length()==12){
+                                editTextViewHolder.textInputLayout.setErrorEnabled(false);
+                            }
+                        }
+                    });
 
 
 
@@ -814,7 +837,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                         case MainItem.TYPE_PHONE:
                                             if (item.getValue() != null) {
                                                 if(item.getValue().equals(context.getString(R.string.phone_prefix_bracket))
-                                                        ||item.getValue().equals("")){
+                                                        ||item.getValue().equals("")||item.getValue().length()!=12){
                                                     item.setError(true);
                                                     notifyItemChanged(items.indexOf(item));
                                                     isMainEntered = false;

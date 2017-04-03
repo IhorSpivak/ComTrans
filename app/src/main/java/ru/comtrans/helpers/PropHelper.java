@@ -187,7 +187,9 @@ public class PropHelper {
                         newValueObject.addProperty(ListItem.JSON_VALUE_ID, valueObject.get("id").getAsLong());
                         newValueObject.addProperty(ListItem.JSON_VALUE_NAME, valueObject.get("name").getAsString());
                         if (valueObject.has("mark") && !valueObject.get("mark").isJsonNull()) {
-                            newValueObject.addProperty(ListItem.JSON_VALUE_MARK, valueObject.get("mark").getAsInt());
+                            try {
+                                newValueObject.addProperty(ListItem.JSON_VALUE_MARK, valueObject.get("mark").getAsInt());
+                            }catch (Exception ignored){}
                         }
 
                         if (valueObject.has("axis_code") && !valueObject.get("axis_code").isJsonNull()) {
@@ -285,7 +287,9 @@ public class PropHelper {
 
             JsonObject object = array.get(i).getAsJsonObject();
             JsonObject newObject = new JsonObject();
-            if(object!=null&&object.has("code")&&!object.get("code").isJsonNull()){
+            if(object!=null&&object.has("code")&&!object.get("code").isJsonNull()
+                   &&object.has("prop_type")&&!object.get("prop_type").isJsonNull()&&
+                    object.get("prop_type").getAsString().equals("F")){
 
                  if(object.get("code").getAsString().startsWith("video")){
                      isVideo = true;
@@ -313,8 +317,10 @@ public class PropHelper {
                     newObject.addProperty(PhotoItem.JSON_IS_DEFECT, false);
                 }
                 if (isVideo) {
-                    if (object.has("duration") && !object.get("duration").isJsonNull()) {
+                    if (object.has("duration") && !object.get("duration").isJsonNull()&&!object.get("duration").getAsString().equals("")) {
                         newObject.addProperty(PhotoItem.JSON_DURATION, object.get("duration").getAsInt());
+                    }else {
+                        newObject.addProperty(PhotoItem.JSON_DURATION,30);
                     }
                 }
                 photoArray.add(newObject);
