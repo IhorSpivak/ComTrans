@@ -52,6 +52,7 @@ public class PropHelper {
     }
 
         for(int i = 0; i< dataArray.size(); i++){
+
             JsonArray screen = new JsonArray();
             JsonObject object = dataArray.get(i).getAsJsonObject();
             JsonArray val = object.get("val").getAsJsonArray();
@@ -191,6 +192,14 @@ public class PropHelper {
                                 newValueObject.addProperty(ListItem.JSON_VALUE_MARK, valueObject.get("mark").getAsInt());
                             }catch (Exception ignored){}
                         }
+                        if (valueObject.has("engine_mark") && !valueObject.get("engine_mark").isJsonNull()) {
+                            try {
+                                newValueObject.addProperty(ListItem.JSON_VALUE_ENGINE_MARK, valueObject.get("engine_mark").getAsInt());
+                            }catch (Exception ignored){}
+                        }
+                        if (valueObject.has("model") && !valueObject.get("model").isJsonNull() && valueObject.get("model").isJsonArray()) {
+                            newValueObject.add(ListItem.JSON_VALUE_MODEL, valueObject.get("model").getAsJsonArray());
+                        }
 
                         if (valueObject.has("axis_code") && !valueObject.get("axis_code").isJsonNull()) {
                             newValueObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, valueObject.get("axis_code").getAsInt());
@@ -206,16 +215,16 @@ public class PropHelper {
 
                         newVal.add(newValueObject);
 
-                        if (object.get("code").getAsString().equals("general_type_id")) {
-                            if (newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong() == propCode) {
-                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
-                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED, true);
-                            }
-                        } else {
-                            if (j == 0) {
-                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
-                            }
-                        }
+//                        if (object.get("code").getAsString().equals("general_type_id")) {
+//                            if (newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong() == propCode) {
+//                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+//                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED, true);
+//                            }
+//                        } else {
+//                            if (j == 0) {
+//                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+//                            }
+//                        }
 
                         if (object.get("code").getAsString().equals("view_type_list")) {
                             if (newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong() == inspectionCode) {

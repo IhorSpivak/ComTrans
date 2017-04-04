@@ -1,6 +1,7 @@
 package ru.comtrans.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,40 +15,77 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import ru.comtrans.R;
+import ru.comtrans.items.IdsRelationHelperItem;
 import ru.comtrans.items.ListItem;
 
 public class ListAdapter extends BaseAdapter implements Filterable {
 
 
-
     private ArrayList<ListItem> mData = new ArrayList<>();
     private ArrayList<ListItem> items = new ArrayList<>();
-    private long mark;
+    //    private long mark;
+    private IdsRelationHelperItem idsRelationHelperItem;
     private boolean isNeedSort;
 
 
     private LayoutInflater mInflater;
 
-    public ListAdapter(Context context,ArrayList<ListItem> items, long mark, boolean isNeedSort) {
+    public ListAdapter(Context context, ArrayList<ListItem> items, IdsRelationHelperItem idsRelationHelperItem, boolean isNeedSort) {
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         this.items = items;
-        this.mark = mark;
+        this.idsRelationHelperItem = idsRelationHelperItem;
         this.isNeedSort = isNeedSort;
         enterValues(items);
     }
 
-    public void enterValues(ArrayList<ListItem> items){
+    public void enterValues(ArrayList<ListItem> items) {
         mData.clear();
 
-        for (ListItem item:items) {
-            if(mark!=-1){
-                if(item.getId()==-1||item.getMark()==mark){
+        for (ListItem item : items) {
+            switch (idsRelationHelperItem.getCode()) {
+                case IdsRelationHelperItem.CODE_GENERAL_MODEL:
+                    if (idsRelationHelperItem.getMark() != -1) {
+                        Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
+                        if (item.getId() == -1 || item.getMark() == idsRelationHelperItem.getMark()) {
+                            addItemToTempArray(item);
+                        }
+                    } else {
+                        addItemToTempArray(item);
+                    }
+                    break;
+                case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
+                    if (idsRelationHelperItem.getMark() != -1 &&
+                            idsRelationHelperItem.getEngineMark() != -1 &&
+                            idsRelationHelperItem.getModel() != -1) {
+                        if (item.getId() == -1) {
+                            addItemToTempArray(item);
+                        }
+                        if (item.getMark() == idsRelationHelperItem.getMark() &&
+                                item.getEngineMark() == idsRelationHelperItem.getEngineMark()) {
+                            boolean isAdd = false;
+                            if (item.getModel() == null || item.getModel().size() == 0)
+                                isAdd = true;
+                            else {
+                                Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
+                                for (int i = 0; i < item.getModel().size(); i++) {
+                                    if (item.getModel().get(i) == idsRelationHelperItem.getModel()) {
+                                        isAdd = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (isAdd)
+                                addItemToTempArray(item);
+                        }
+                    } else {
+                        addItemToTempArray(item);
+                    }
+                    break;
+                default:
                     addItemToTempArray(item);
-                }
-            }else {
-                addItemToTempArray(item);
+                    break;
             }
 
         }
@@ -58,20 +96,20 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         mData.add(item);
     }
 
-    public void addItem(ListItem item){
+    public void addItem(ListItem item) {
         items.add(item);
         enterValues(items);
     }
 
-    private void sortItems(){
+    private void sortItems() {
         Collections.sort(mData, new Comparator<ListItem>() {
             @Override
             public int compare(ListItem s1, ListItem s2) {
-                if(s1.getId()==-1){
+                if (s1.getId() == -1) {
                     return 1;
-                }else if(s2.getId()==-1){
+                } else if (s2.getId() == -1) {
                     return 1;
-                }else {
+                } else {
                     return s1.getName().compareToIgnoreCase(s2.getName());
                 }
 
@@ -81,15 +119,15 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public void notifyDataSetChanged() {
-        if(isNeedSort)
+        if (isNeedSort)
             sortItems();
         super.notifyDataSetChanged();
     }
 
-    public boolean containsValue(String value){
+    public boolean containsValue(String value) {
         for (ListItem item :
                 mData) {
-            if(item.getName()!=null&&item.getName().equals(value)){
+            if (item.getName() != null && item.getName().equals(value)) {
                 return true;
             }
         }
@@ -122,7 +160,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = mInflater.inflate(R.layout.search_list_item, parent,false);
+            convertView = mInflater.inflate(R.layout.search_list_item, parent, false);
             holder.textView = (TextView) convertView.findViewById(R.id.name);
             convertView.setTag(holder);
         } else {
@@ -159,7 +197,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                     String searchCriteria = constraint.toString().toLowerCase();
                     for (int i = 0; i < items.size(); i++) {
                         String dataNames = items.get(i).getName();
-                        if (dataNames.toLowerCase().contains(searchCriteria))  {
+                        if (dataNames.toLowerCase().contains(searchCriteria)) {
                             FilteredArrayNames.add(items.get(i));
                         }
                     }
@@ -175,7 +213,6 @@ public class ListAdapter extends BaseAdapter implements Filterable {
             }
         };
     }
-
 
 
     public static class ViewHolder {

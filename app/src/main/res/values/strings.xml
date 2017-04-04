@@ -87,6 +87,7 @@
     <string name="btn_next">Далее</string>
     <string name="btn_done">Отправить</string>
     <string name="no_mark_toast">Выберите марку!</string>
+    <string name="no_mark_model_enginemark_toast">Выберите марку ТС, модель ТС и марку двигателя!</string>
 
 
     //////////////////////////SearchValueActivity////////////////////////////////
@@ -144,6 +145,7 @@
     <string name="toast_not_connected_to_internet">Отсутствует интернет подключение</string>
 
     <string name="choose_type_title">Выберите тип ТС</string>
+    <string name="choose_category_title">Выберите категорию</string>
     <string name="choose_inspection_type_title">Выберите вид осмотра</string>
     <string name="vehicle_type_not_exist">Не подгружены типы ТС</string>
     <string name="inspection_type_not_exist">Не подгружены виды осмотра</string>

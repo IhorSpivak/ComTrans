@@ -367,6 +367,15 @@ public class InfoBlocksStorage {
                         listObject.addProperty(ListItem.JSON_VALUE_ID, listItem.getId());
                         listObject.addProperty(ListItem.JSON_VALUE_NAME, listItem.getName());
                         listObject.addProperty(ListItem.JSON_VALUE_MARK, listItem.getMark());
+                        listObject.addProperty(ListItem.JSON_VALUE_ENGINE_MARK, listItem.getEngineMark());
+                        if (listItem.getModel() != null && listItem.getModel().size() > 0) {
+                            JsonArray modelValues = new JsonArray();
+                            for (Integer integer :
+                                    listItem.getModel()) {
+                                modelValues.add(integer);
+                            }
+                            listObject.add(ListItem.JSON_VALUE_MODEL, modelValues);
+                        }
                         listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
 
                         if (listItem.getProtectorValues() != null && listItem.getProtectorValues().size() > 0) {
@@ -398,6 +407,15 @@ public class InfoBlocksStorage {
                             listObject.addProperty(ListItem.JSON_VALUE_ID, listItem.getId());
                             listObject.addProperty(ListItem.JSON_VALUE_NAME, listItem.getName());
                             listObject.addProperty(ListItem.JSON_VALUE_MARK, listItem.getMark());
+                            listObject.addProperty(ListItem.JSON_VALUE_ENGINE_MARK, listItem.getEngineMark());
+                            if (listItem.getModel() != null && listItem.getModel().size() > 0) {
+                                JsonArray modelValues = new JsonArray();
+                                for (Integer integer :
+                                        listItem.getModel()) {
+                                    modelValues.add(integer);
+                                }
+                                listObject.add(ListItem.JSON_VALUE_MODEL, modelValues);
+                            }
                             listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
                             if (listItem.getProtectorValues() != null && listItem.getProtectorValues().size() > 0) {
                                 JsonArray protectorValues = new JsonArray();
@@ -585,8 +603,20 @@ public class InfoBlocksStorage {
                     if (object.has(MainItem.JSON_LIST_VALUE) && !object.get(MainItem.JSON_LIST_VALUE).isJsonNull()) {
                         JsonObject valueObject = object.getAsJsonObject(MainItem.JSON_LIST_VALUE);
                         ListItem listItem = new ListItem(valueObject.get(ListItem.JSON_VALUE_ID).getAsLong(), valueObject.get(ListItem.JSON_VALUE_NAME).getAsString());
+
                         if (valueObject.has(ListItem.JSON_VALUE_MARK) && !valueObject.get(ListItem.JSON_VALUE_MARK).isJsonNull()) {
                             listItem.setMark(valueObject.get(ListItem.JSON_VALUE_MARK).getAsInt());
+                        }
+                        if (valueObject.has(ListItem.JSON_VALUE_ENGINE_MARK) && !valueObject.get(ListItem.JSON_VALUE_ENGINE_MARK).isJsonNull()) {
+                            listItem.setEngineMark(valueObject.get(ListItem.JSON_VALUE_ENGINE_MARK).getAsInt());
+                        }
+                        if (valueObject.has(ListItem.JSON_VALUE_MODEL) && !valueObject.get(ListItem.JSON_VALUE_MODEL).isJsonNull()) {
+                            ArrayList<Integer> modelsValues = new ArrayList<>();
+                            JsonArray modelsArray = valueObject.getAsJsonArray(ListItem.JSON_VALUE_MODEL);
+                            for (int k = 0; k < modelsArray.size(); k++) {
+                                modelsValues.add(Integer.parseInt(modelsArray.get(k).getAsString()));
+                            }
+                            listItem.setModel(modelsValues);
                         }
 
                         if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {
@@ -624,6 +654,18 @@ public class InfoBlocksStorage {
 
                             if (valueObject.has(ListItem.JSON_VALUE_MARK) && !valueObject.get(ListItem.JSON_VALUE_MARK).isJsonNull()) {
                                 listItem.setMark(valueObject.get(ListItem.JSON_VALUE_MARK).getAsInt());
+                            }
+                            if (valueObject.has(ListItem.JSON_VALUE_ENGINE_MARK) && !valueObject.get(ListItem.JSON_VALUE_ENGINE_MARK).isJsonNull()) {
+                                listItem.setEngineMark(valueObject.get(ListItem.JSON_VALUE_ENGINE_MARK).getAsInt());
+                            }
+                            if (valueObject.has(ListItem.JSON_VALUE_MODEL) && !valueObject.get(ListItem.JSON_VALUE_MODEL).isJsonNull()) {
+                                ArrayList<Integer> modelsValues = new ArrayList<>();
+                                JsonArray modelsArray = valueObject.getAsJsonArray(ListItem.JSON_VALUE_MODEL);
+                                for (int l = 0; l < modelsArray.size(); l++) {
+                                    modelsValues.add(Integer.parseInt(modelsArray.get(l).getAsString()));
+//                                    modelsValues.add(modelsArray.get(l).getAsInt());
+                                }
+                                listItem.setModel(modelsValues);
                             }
 
                             if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {

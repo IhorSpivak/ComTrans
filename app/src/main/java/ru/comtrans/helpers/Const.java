@@ -72,7 +72,12 @@ public class Const {
     public static final String EXTRA_VALUE = "extra_value";
     public static final String DEFAULT_DEFECT_NAME = "default_defect_name";
     public static final String EXTRA_SCREEN_NUM = "extra_screen";
+
+    public static final String EXTRA_IDS_HELPER = "extra_mark";
     public static final String EXTRA_MARK = "extra_mark";
+    public static final String EXTRA_ENGINE_MARK = "extra_engine_mark";
+    public static final String EXTRA_MODEL = "extra_model";
+
     public static final String EXTRA_DATE = "extra_date";
     public static final int SEARCH_VALUE_RESULT = 102;
     public static final int CAMERA_PHOTO_RESULT = 103;

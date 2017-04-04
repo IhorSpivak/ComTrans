@@ -11,8 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,9 +28,9 @@ import ru.comtrans.dialogs.DatePickerDialogFragment;
 import ru.comtrans.fragments.BaseFragment;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
+import ru.comtrans.items.IdsRelationHelperItem;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
-import ru.comtrans.listeners.HidingScrollListener;
 import ru.comtrans.managers.LinearLayoutManagerWithSmoothScroller;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
@@ -57,14 +55,12 @@ public class AddPropertiesListFragment extends BaseFragment {
     private TextView tvHeader;
 
 
-
-
     public static AddPropertiesListFragment newInstance(int page, int totalPages, String infoBlockId) {
 
         Bundle args = new Bundle();
-        args.putInt(Const.PAGE,page);
-        args.putInt(Const.TOTAL_PAGES,totalPages);
-        args.putString(Const.EXTRA_INFO_BLOCK_ID,infoBlockId);
+        args.putInt(Const.PAGE, page);
+        args.putInt(Const.TOTAL_PAGES, totalPages);
+        args.putString(Const.EXTRA_INFO_BLOCK_ID, infoBlockId);
         AddPropertiesListFragment fragment = new AddPropertiesListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -73,7 +69,7 @@ public class AddPropertiesListFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_list,container,false);
+        View v = inflater.inflate(R.layout.fragment_list, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         initUi(v);
         return v;
@@ -91,10 +87,10 @@ public class AddPropertiesListFragment extends BaseFragment {
 
     }
 
-    private void initUi(View v){
+    private void initUi(View v) {
         activity = (AddInfoBlockActivity) getActivity();
-        recyclerView = (RecyclerView)v.findViewById(android.R.id.list);
-        tvHeader = (TextView)v.findViewById(R.id.tv_header);
+        recyclerView = (RecyclerView) v.findViewById(android.R.id.list);
+        tvHeader = (TextView) v.findViewById(R.id.tv_header);
         layoutManager = new LinearLayoutManagerWithSmoothScroller(getActivity());
 
         infoBlockHelper = InfoBlockHelper.getInstance();
@@ -102,12 +98,22 @@ public class AddPropertiesListFragment extends BaseFragment {
 
     }
 
-    private void initPage(){
+    private void startTypeListCheck(MainItem item, int position) {
+
+        Intent i = new Intent(getActivity(), SearchValueActivity.class);
+        i.putExtra(Const.EXTRA_TITLE, item.getName());
+        i.putExtra(Const.EXTRA_POSITION, position);
+        i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+        startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
+    }
+
+    private void initPage() {
         try {
             items = infoBlockHelper.getScreen(page);
-        }catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
 
-        if(items!=null) {
+        if (items != null) {
 //            recyclerView.addOnScrollListener(new HidingScrollListener() {
 //                @Override
 //                public void onHide() {
@@ -126,26 +132,73 @@ public class AddPropertiesListFragment extends BaseFragment {
                     final Intent i;
                     switch (item.getType()) {
                         case MainItem.TYPE_LIST:
-                            if (!item.getCode().equals("general_model")) {
-                                Log.d("TAG","int position "+position);
-                                i = new Intent(getActivity(), SearchValueActivity.class);
-                                i.putExtra(Const.EXTRA_TITLE, item.getName());
-                                i.putExtra(Const.EXTRA_POSITION, position);
-                                i.putExtra(Const.EXTRA_SCREEN_NUM, page);
-                                startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
-                            } else {
-                                if (infoBlockHelper.getMarkValue().getId() == -1) {
-                                    Toast.makeText(getContext(), R.string.no_mark_toast, Toast.LENGTH_SHORT).show();
-                                } else {
+                            IdsRelationHelperItem idsRelationHelperItem = new IdsRelationHelperItem();
+                            idsRelationHelperItem.setCode(item.getCode());
+                            switch (item.getCode()) {
+                                case IdsRelationHelperItem.CODE_GENERAL_MODEL:
+                                    if (infoBlockHelper.getMarkValue().getId() == -1) {
+                                        Toast.makeText(getContext(), R.string.no_mark_toast, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        i = new Intent(getActivity(), SearchValueActivity.class);
+                                        idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
+                                        i.putExtra(Const.EXTRA_IDS_HELPER, idsRelationHelperItem);
+                                        i.putExtra(Const.EXTRA_TITLE, item.getName());
+                                        i.putExtra(Const.EXTRA_POSITION, position);
+                                        i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+//                                        i.putExtra(Const.EXTRA_MARK, infoBlockHelper.getMarkValue().getId());
+                                        startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
+                                    }
+                                    break;
+                                case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
+                                    if (infoBlockHelper.getMarkValue().getId() == -1 ||
+                                            infoBlockHelper.getModelValue().getId() == -1 ||
+                                            infoBlockHelper.getEngineMarkValue().getId() == -1) {
+                                        Toast.makeText(getContext(), R.string.no_mark_model_enginemark_toast, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        i = new Intent(getActivity(), SearchValueActivity.class);
+                                        idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
+                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                        idsRelationHelperItem.setEngineMark(infoBlockHelper.getEngineMarkValue().getId());
+                                        i.putExtra(Const.EXTRA_IDS_HELPER, idsRelationHelperItem);
+                                        i.putExtra(Const.EXTRA_TITLE, item.getName());
+                                        i.putExtra(Const.EXTRA_POSITION, position);
+                                        i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+//                                        i.putExtra(Const.EXTRA_MARK, infoBlockHelper.getMarkValue().getId());
+//                                        i.putExtra(Const.EXTRA_MODEL, infoBlockHelper.getModelValue().getId());
+//                                        i.putExtra(Const.EXTRA_ENGINE_MARK, infoBlockHelper.getEngineMarkValue().getId());
+                                        startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
+                                    }
+                                    break;
+                                default:
+                                    Log.d("TAG", "int position " + position);
                                     i = new Intent(getActivity(), SearchValueActivity.class);
+                                    i.putExtra(Const.EXTRA_IDS_HELPER, idsRelationHelperItem);
                                     i.putExtra(Const.EXTRA_TITLE, item.getName());
                                     i.putExtra(Const.EXTRA_POSITION, position);
                                     i.putExtra(Const.EXTRA_SCREEN_NUM, page);
-                                    i.putExtra(Const.EXTRA_MARK, infoBlockHelper.getMarkValue().getId());
                                     startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
-                                }
-
+                                    break;
                             }
+//                            if (!item.getCode().equals("general_model")) {
+//                                Log.d("TAG", "int position " + position);
+//                                i = new Intent(getActivity(), SearchValueActivity.class);
+//                                i.putExtra(Const.EXTRA_TITLE, item.getName());
+//                                i.putExtra(Const.EXTRA_POSITION, position);
+//                                i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+//                                startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
+//                            } else {
+//                                if (infoBlockHelper.getMarkValue().getId() == -1) {
+//                                    Toast.makeText(getContext(), R.string.no_mark_toast, Toast.LENGTH_SHORT).show();
+//                                } else {
+//                                    i = new Intent(getActivity(), SearchValueActivity.class);
+//                                    i.putExtra(Const.EXTRA_TITLE, item.getName());
+//                                    i.putExtra(Const.EXTRA_POSITION, position);
+//                                    i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+//                                    i.putExtra(Const.EXTRA_MARK, infoBlockHelper.getMarkValue().getId());
+//                                    startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
+//                                }
+//
+//                            }
                             break;
 
                         case MainItem.TYPE_CALENDAR:
@@ -193,7 +246,8 @@ public class AddPropertiesListFragment extends BaseFragment {
                                 } else {
                                     i.putExtra(Const.EXTRA_IS_DEFECT, false);
                                 }
-                            }catch (Exception ignored){}
+                            } catch (Exception ignored) {
+                            }
 
                             i.putExtra(Const.EXTRA_POSITION, adapter.getItems().indexOf(item));
                             i.putExtra(Const.EXTRA_IMAGE_POSITION, position);
@@ -235,8 +289,8 @@ public class AddPropertiesListFragment extends BaseFragment {
                             }
                             break;
                         case 3:
-                            if(scrollPosition!=-1)
-                            recyclerView.smoothScrollToPosition(scrollPosition);
+                            if (scrollPosition != -1)
+                                recyclerView.smoothScrollToPosition(scrollPosition);
                             break;
                     }
                 }
@@ -256,30 +310,30 @@ public class AddPropertiesListFragment extends BaseFragment {
 
     }
 
-    private void saveData(){
+    private void saveData() {
         new SaveInfoBlockTask(infoBlockId, getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
             @Override
             public void onPostExecute() {
             }
-        },false);
+        }, false);
     }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("TAG","fragment result");
-        int position,screenNum;
+        Log.d("TAG", "fragment result");
+        int position, screenNum;
 
-        switch (resultCode){
+        switch (resultCode) {
             case Const.SEARCH_VALUE_RESULT:
                 saveData();
                 ListItem item = data.getParcelableExtra(Const.EXTRA_VALUE);
-                position = data.getIntExtra(Const.EXTRA_POSITION,-1);
-                Log.d("TAG","position result "+data.getIntExtra(Const.EXTRA_POSITION,-1));
+                position = data.getIntExtra(Const.EXTRA_POSITION, -1);
+                Log.d("TAG", "position result " + data.getIntExtra(Const.EXTRA_POSITION, -1));
                 infoBlockHelper.getItems().get(page).get(position).setListValue(item);
-                if(adapter.getItem(position).getCode().equals("general_marka")){
-                    if(adapter.getPositionByCode("general_model")!=-1) {
+                if (adapter.getItem(position).getCode().equals("general_marka")) {
+                    if (adapter.getPositionByCode("general_model") != -1) {
                         adapter.getItem(adapter.getPositionByCode("general_model")).setListValue(new ListItem(-1, getString(R.string.not_chosen)));
                         adapter.notifyItemChanged(adapter.getPositionByCode("general_model"));
                     }
@@ -290,23 +344,25 @@ public class AddPropertiesListFragment extends BaseFragment {
 //                adapter.notifyDataSetChanged();
                 break;
             case Const.CAMERA_PHOTO_RESULT:
-                Log.e("WTF","CAMERA_PHOTO_RESULT");
-                position = data.getIntExtra(Const.EXTRA_POSITION,-1);
-                screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
-              //  adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
+                Log.e("WTF", "CAMERA_PHOTO_RESULT");
+                position = data.getIntExtra(Const.EXTRA_POSITION, -1);
+                screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM, -1);
+                //  adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
                 try {
                     adapter.notifyItemChanged(position);
-                }catch (Exception ignored){}
+                } catch (Exception ignored) {
+                }
 
 
                 break;
             case Const.CAMERA_VIDEO_RESULT:
-                position = data.getIntExtra(Const.EXTRA_POSITION,-1);
-                screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
-             //   adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
+                position = data.getIntExtra(Const.EXTRA_POSITION, -1);
+                screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM, -1);
+                //   adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
                 try {
                     adapter.notifyItemChanged(position);
-                }catch (Exception ignored){}
+                } catch (Exception ignored) {
+                }
                 break;
         }
     }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import ru.comtrans.R;
 import ru.comtrans.adapters.ListAdapter;
 import ru.comtrans.helpers.Const;
+import ru.comtrans.items.IdsRelationHelperItem;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.singlets.InfoBlockHelper;
 
@@ -35,10 +37,8 @@ public class SearchValueActivity extends BaseActivity {
     private InfoBlockHelper helper;
     private int screenNum;
     private int extraPosition;
-    private long mark;
     private boolean canAdd;
-
-
+    private IdsRelationHelperItem idsRelationHelperItem;
 
 
     @Override
@@ -48,20 +48,23 @@ public class SearchValueActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
 
-
-        listView = (ListView)findViewById(android.R.id.list);
-        tvEmpty = (TextView)findViewById(android.R.id.empty);
+        listView = (ListView) findViewById(android.R.id.list);
+        tvEmpty = (TextView) findViewById(android.R.id.empty);
         listView.setEmptyView(tvEmpty);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar()!=null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(getIntent().getStringExtra(Const.EXTRA_TITLE));
 
         }
 
-        screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
-        extraPosition = getIntent().getIntExtra(Const.EXTRA_POSITION,-1);
-        mark = getIntent().getLongExtra(Const.EXTRA_MARK,-1);
+        screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM, -1);
+        extraPosition = getIntent().getIntExtra(Const.EXTRA_POSITION, -1);
+        idsRelationHelperItem = (IdsRelationHelperItem) getIntent().getSerializableExtra(Const.EXTRA_IDS_HELPER);
+        Log.e("TMP_TEST",idsRelationHelperItem.toString());
+//        mark = getIntent().getLongExtra(Const.EXTRA_MARK,-1);
+//        model = getIntent().getLongExtra(Const.EXTRA_MODEL,-1);
+//        engineMark = getIntent().getLongExtra(Const.EXTRA_ENGINE_MARK,-1);
 
         helper = InfoBlockHelper.getInstance();
 
@@ -69,12 +72,10 @@ public class SearchValueActivity extends BaseActivity {
 
         canAdd = helper.getItems().get(screenNum).get(extraPosition).canAdd();
 
+        Log.e("TMP_TEST","items.size="+items.size());
 
-
-
-
-        if(items!=null) {
-            adapter = new ListAdapter(SearchValueActivity.this,items,mark,canAdd);
+        if (items != null) {
+            adapter = new ListAdapter(SearchValueActivity.this, items, idsRelationHelperItem, canAdd);
             listView.setAdapter(adapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -82,8 +83,8 @@ public class SearchValueActivity extends BaseActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent result = new Intent();
                     helper.getItems().get(screenNum).get(extraPosition).setListValues(adapter.getItems());
-                    result.putExtra(Const.EXTRA_POSITION,extraPosition);
-                    result.putExtra(Const.EXTRA_VALUE,adapter.getItem(position));
+                    result.putExtra(Const.EXTRA_POSITION, extraPosition);
+                    result.putExtra(Const.EXTRA_VALUE, adapter.getItem(position));
                     setResult(Const.SEARCH_VALUE_RESULT, result);
                     finish();
                 }
@@ -92,17 +93,16 @@ public class SearchValueActivity extends BaseActivity {
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_search_value,menu);
+        getMenuInflater().inflate(R.menu.menu_search_value, menu);
         addValueItem = menu.findItem(R.id.action_add);
-        if(!canAdd){
-            if(addValueItem!=null)
+        if (!canAdd) {
+            if (addValueItem != null)
                 addValueItem.setVisible(false);
             invalidateOptionsMenu();
         }
-        final MenuItem myActionMenuItem = menu.findItem( R.id.action_search);
+        final MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) myActionMenuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -111,6 +111,7 @@ public class SearchValueActivity extends BaseActivity {
                 searchView.setQuery("", false);
                 return false;
             }
+
             @Override
             public boolean onQueryTextChange(String s) {
                 ((ListAdapter) listView.getAdapter()).getFilter().filter(s);
@@ -122,7 +123,7 @@ public class SearchValueActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 helper.getItems().get(screenNum).get(extraPosition).setListValues(adapter.getItems());
                 finish();
@@ -130,7 +131,7 @@ public class SearchValueActivity extends BaseActivity {
             case R.id.action_add:
                 android.support.v7.app.AlertDialog.Builder addPropertyDialog = new android.support.v7.app.AlertDialog.Builder(this);
                 addPropertyDialog.setTitle(R.string.dialog_add_property_title);
-                View v = View.inflate(this,R.layout.dialog_add_property,null);
+                View v = View.inflate(this, R.layout.dialog_add_property, null);
 
                 addPropertyDialog.setView(v);
                 final EditText etValue = (EditText) v.findViewById(R.id.et_value);
@@ -153,14 +154,22 @@ public class SearchValueActivity extends BaseActivity {
                         b.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                if(etValue.getText().toString().trim().equals("")) {
+                                if (etValue.getText().toString().trim().equals("")) {
                                     Toast.makeText(SearchValueActivity.this, R.string.enter_value_toast, Toast.LENGTH_SHORT).show();
-                                }else if(adapter.containsValue(etValue.getText().toString())){
+                                } else if (adapter.containsValue(etValue.getText().toString())) {
                                     Toast.makeText(SearchValueActivity.this, R.string.value_exist_toast, Toast.LENGTH_SHORT).show();
-                                }else {
+                                } else {
                                     ListItem listItem = new ListItem(-2, etValue.getText().toString().trim());
-                                    if(mark!=-1){
-                                        listItem.setMark((int) mark);
+                                    if (idsRelationHelperItem.getMark() != -1) {
+                                        listItem.setMark((int) idsRelationHelperItem.getMark());
+                                    }
+                                    if (idsRelationHelperItem.getEngineMark() != -1) {
+                                        listItem.setEngineMark((int) idsRelationHelperItem.getEngineMark());
+                                    }
+                                    if (idsRelationHelperItem.getModel() != -1) {
+                                        ArrayList<Integer> model = new ArrayList<>();
+                                        model.add((int) idsRelationHelperItem.getModel());
+                                        listItem.setModel(model);
                                     }
                                     adapter.addItem(listItem);
                                     searchView.onActionViewCollapsed();

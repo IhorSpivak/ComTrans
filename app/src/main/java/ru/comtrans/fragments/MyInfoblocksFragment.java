@@ -108,7 +108,7 @@ public class MyInfoBlocksFragment extends Fragment {
     }
 
     private void getVehicleTypes(final boolean isFromButton){
-        Call<JsonObject> call = AppController.apiInterface.getVehicleTypes();
+        Call<JsonObject> call = AppController.apiInterface.getInspectionCategories();
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {

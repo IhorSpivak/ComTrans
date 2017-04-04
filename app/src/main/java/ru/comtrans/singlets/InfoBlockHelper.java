@@ -43,43 +43,43 @@ public class InfoBlockHelper {
         items = storage.getInfoBlock(id);
     }
 
-    public ListItem getTireSchemeValue(){
+    public ListItem getValueByKey(String key){
         for (ArrayList<MainItem> array :
                 items) {
             for (MainItem item :
                     array) {
-                if(item.getCode()!=null&&item.getCode().equals("shas_wheel_formula")){
+                if(item.getCode()!=null&&item.getCode().equals(key)){
                     return item.getListValue();
                 }
             }
         }
         return null;
+    }
+
+    public ListItem getTireSchemeValue(){
+        return getValueByKey("shas_wheel_formula");
     }
 
     public ListItem getModelValue(){
-        for (ArrayList<MainItem> array :
-                items) {
-            for (MainItem item :
-                    array) {
-                if(item.getCode()!=null&&item.getCode().equals("general_model")){
-                    return item.getListValue();
-                }
-            }
-        }
-        return null;
+//        for (ArrayList<MainItem> array :
+//                items) {
+//            for (MainItem item :
+//                    array) {
+//                if(item.getCode()!=null&&item.getCode().equals("general_model")){
+//                    return item.getListValue();
+//                }
+//            }
+//        }
+//        return null;
+        return getValueByKey("general_model");
     }
 
     public ListItem getMarkValue(){
-        for (ArrayList<MainItem> array :
-                items) {
-            for (MainItem item :
-                    array) {
-                if(item.getCode()!=null&&item.getCode().equals("general_marka")){
-                    return item.getListValue();
-                }
-            }
-        }
-        return null;
+        return getValueByKey("general_marka");
+    }
+
+    public ListItem getEngineMarkValue(){
+        return getValueByKey("tec_engine_mark");
     }
 
 

@@ -5,7 +5,7 @@
     android:textSize="16sp"
     android:textStyle="bold"
     android:padding="10dp"
-    android:text="@string/choose_type_title"
+    android:text="@string/choose_category_title"
     android:textColor="@android:color/black"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">

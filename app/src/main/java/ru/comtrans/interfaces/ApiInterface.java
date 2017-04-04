@@ -46,6 +46,9 @@ public interface ApiInterface {
     @GET("prop-value/1030")
     Call<JsonObject> getInspectionTypes();
 
+    @GET("prop-value/1031")
+    Call<JsonObject> getInspectionCategories();
+
     @POST("forgot-password/")
     Call<User> forgotPassword(@Body User user);
 
