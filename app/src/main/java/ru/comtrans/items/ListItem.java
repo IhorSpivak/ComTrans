@@ -16,6 +16,8 @@ public class ListItem implements Parcelable {
     public static final String JSON_VALUE_MARK = "value_mark";
     public static final String JSON_VALUE_ENGINE_MARK = "value_engine_mark";
     public static final String JSON_VALUE_MODEL = "value_model";
+    public static final String JSON_VALUE_ENGINE_MODEL = "value_engine_model";
+    public static final String JSON_VALUE_KPP_MODEL = "value_kpp_model";
 
     public static final String JSON_PROTECTOR_VALUES = "protector_values";
     public static final String JSON_TIRE_SCHEME_ID = "tire_scheme_id";
@@ -27,6 +29,7 @@ public class ListItem implements Parcelable {
     private int engineMark;
 
     private ArrayList<Integer> model;
+    private ArrayList<Integer> engineModel;
     private ArrayList<String> protectorValues;
     private ArrayList<Integer> revealOs;
     private int tireSchemeId;
@@ -100,6 +103,14 @@ public class ListItem implements Parcelable {
     public ListItem() {
     }
 
+    public ArrayList<Integer> getEngineModel() {
+        return engineModel;
+    }
+
+    public void setEngineModel(ArrayList<Integer> engineModel) {
+        this.engineModel = engineModel;
+    }
+
     public ListItem(long id, String name) {
         this.id = id;
         this.name = name;
@@ -126,6 +137,7 @@ public class ListItem implements Parcelable {
         dest.writeStringList(this.protectorValues);
         dest.writeList(this.revealOs);
         dest.writeList(this.model);
+        dest.writeList(this.engineModel);
         dest.writeInt(this.tireSchemeId);
     }
 
@@ -139,6 +151,8 @@ public class ListItem implements Parcelable {
         in.readList(this.revealOs, Integer.class.getClassLoader());
         this.model = new ArrayList<>();
         in.readList(this.model, Integer.class.getClassLoader());
+        this.engineModel = new ArrayList<>();
+        in.readList(this.engineModel, Integer.class.getClassLoader());
         this.tireSchemeId = in.readInt();
     }
 

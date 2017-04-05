@@ -42,58 +42,117 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 
     public void enterValues(ArrayList<ListItem> items) {
         mData.clear();
-
-        for (ListItem item : items) {
-            switch (idsRelationHelperItem.getCode()) {
-                case IdsRelationHelperItem.CODE_GENERAL_MODEL:
-                    if (idsRelationHelperItem.getMark() != -1) {
-                        Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
-                        if (item.getId() == -1 || item.getMark() == idsRelationHelperItem.getMark()) {
-                            addItemToTempArray(item);
-                        }
-                    } else {
-                        addItemToTempArray(item);
-                    }
-                    break;
-                case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
-                    if (idsRelationHelperItem.getMark() != -1 &&
-                            idsRelationHelperItem.getEngineMark() != -1 &&
-                            idsRelationHelperItem.getModel() != -1) {
-                        if (item.getId() == -1) {
-                            addItemToTempArray(item);
-                        }
-                        if (item.getMark() == idsRelationHelperItem.getMark() &&
-                                item.getEngineMark() == idsRelationHelperItem.getEngineMark()) {
-                            boolean isAdd = false;
-                            if (item.getModel() == null || item.getModel().size() == 0)
-                                isAdd = true;
-                            else {
-                                Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
-                                for (int i = 0; i < item.getModel().size(); i++) {
-                                    if (item.getModel().get(i) == idsRelationHelperItem.getModel()) {
-                                        isAdd = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (isAdd)
-                                addItemToTempArray(item);
-                        }
-                    } else {
-                        addItemToTempArray(item);
-                    }
-                    break;
-                default:
-                    addItemToTempArray(item);
-                    break;
-            }
-
+        switch (idsRelationHelperItem.getCode()) {
+            case IdsRelationHelperItem.CODE_GENERAL_MODEL:
+                filterByMark();
+                break;
+            case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_GENERAL_MARK:
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_TEC_ENGINE_POWER:
+                filterByEngineModel();
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_TEC_ENGINE_TYPE:
+                filterByEngineModel();
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_TEC_ENGINE_VOLUME:
+                filterByEngineModel();
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_TEC_ECO_CLASS:
+                filterByEngineModel();
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_SHAS_CAPACITY_TOTAL:
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_SHAS_WHEEL_FORMULA:
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_MARK_KPP:
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_MODEL_KPP:
+                filterByModel();
+                break;
+            case IdsRelationHelperItem.CODE_TEC_KPP_GEARS:
+                break;
+            case IdsRelationHelperItem.CODE_TEC_KPP_TYPE:
+                break;
+            default:
+                break;
+        }
+        if (getCount() <= 1) {
+            addAllItemsToTempArray();
         }
         notifyDataSetChanged();
     }
 
+    //Filters
+
+    private void filterByMark(){
+        for (ListItem item : items) {
+            Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
+            if (item.getId() == -1 || item.getMark() == idsRelationHelperItem.getMark()) {
+                addItemToTempArray(item);
+            }
+        }
+    }
+
+    private void filterByModel(){
+        for (ListItem item : items) {
+            Log.e("TMP_TEST", "item.getModel()=" + item.getModel());
+            boolean isAdd = false;
+            if(item.getId() == -1)
+                isAdd = true;
+            if (item.getModel() != null && item.getModel().size() != 0)
+                for (int i = 0; i < item.getModel().size(); i++) {
+                    if (item.getModel().get(i) == idsRelationHelperItem.getModel()) {
+                        isAdd = true;
+                        break;
+                    }
+                }
+            if (isAdd)
+                addItemToTempArray(item);
+        }
+    }
+
+    private void filterByEngineModel(){
+        for (ListItem item : items) {
+            Log.e("TMP_TEST", "item.getEngineModel()=" + item.getEngineModel());
+            boolean isAdd = false;
+            if(item.getId() == -1)
+                isAdd = true;
+            if (item.getEngineModel() != null && item.getEngineModel().size() != 0)
+                for (int i = 0; i < item.getEngineModel().size(); i++) {
+                    if (item.getEngineModel().get(i) == idsRelationHelperItem.getEngineModel()) {
+                        isAdd = true;
+                        break;
+                    }
+                }
+            if (isAdd)
+                addItemToTempArray(item);
+        }
+    }
+
     public void addItemToTempArray(final ListItem item) {
         mData.add(item);
+    }
+
+    private void addAllItemsToTempArray() {
+        mData.clear();
+        mData.addAll(items);
     }
 
     public void addItem(ListItem item) {

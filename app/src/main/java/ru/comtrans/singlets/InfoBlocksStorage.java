@@ -376,6 +376,14 @@ public class InfoBlocksStorage {
                             }
                             listObject.add(ListItem.JSON_VALUE_MODEL, modelValues);
                         }
+                        if (listItem.getEngineModel() != null && listItem.getEngineModel().size() > 0) {
+                            JsonArray modelValues = new JsonArray();
+                            for (Integer integer :
+                                    listItem.getEngineModel()) {
+                                modelValues.add(integer);
+                            }
+                            listObject.add(ListItem.JSON_VALUE_ENGINE_MODEL, modelValues);
+                        }
                         listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
 
                         if (listItem.getProtectorValues() != null && listItem.getProtectorValues().size() > 0) {
@@ -415,6 +423,14 @@ public class InfoBlocksStorage {
                                     modelValues.add(integer);
                                 }
                                 listObject.add(ListItem.JSON_VALUE_MODEL, modelValues);
+                            }
+                            if (listItem.getEngineModel() != null && listItem.getEngineModel().size() > 0) {
+                                JsonArray modelValues = new JsonArray();
+                                for (Integer integer :
+                                        listItem.getEngineModel()) {
+                                    modelValues.add(integer);
+                                }
+                                listObject.add(ListItem.JSON_VALUE_ENGINE_MODEL, modelValues);
                             }
                             listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
                             if (listItem.getProtectorValues() != null && listItem.getProtectorValues().size() > 0) {
@@ -618,6 +634,14 @@ public class InfoBlocksStorage {
                             }
                             listItem.setModel(modelsValues);
                         }
+                        if (valueObject.has(ListItem.JSON_VALUE_ENGINE_MODEL) && !valueObject.get(ListItem.JSON_VALUE_ENGINE_MODEL).isJsonNull()) {
+                            ArrayList<Integer> modelsValues = new ArrayList<>();
+                            JsonArray modelsArray = valueObject.getAsJsonArray(ListItem.JSON_VALUE_ENGINE_MODEL);
+                            for (int k = 0; k < modelsArray.size(); k++) {
+                                modelsValues.add(Integer.parseInt(modelsArray.get(k).getAsString()));
+                            }
+                            listItem.setEngineModel(modelsValues);
+                        }
 
                         if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {
                             listItem.setTireSchemeId(valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).getAsInt());
@@ -663,9 +687,16 @@ public class InfoBlocksStorage {
                                 JsonArray modelsArray = valueObject.getAsJsonArray(ListItem.JSON_VALUE_MODEL);
                                 for (int l = 0; l < modelsArray.size(); l++) {
                                     modelsValues.add(Integer.parseInt(modelsArray.get(l).getAsString()));
-//                                    modelsValues.add(modelsArray.get(l).getAsInt());
                                 }
                                 listItem.setModel(modelsValues);
+                            }
+                            if (valueObject.has(ListItem.JSON_VALUE_ENGINE_MODEL) && !valueObject.get(ListItem.JSON_VALUE_ENGINE_MODEL).isJsonNull()) {
+                                ArrayList<Integer> modelsValues = new ArrayList<>();
+                                JsonArray modelsArray = valueObject.getAsJsonArray(ListItem.JSON_VALUE_ENGINE_MODEL);
+                                for (int l = 0; l < modelsArray.size(); l++) {
+                                    modelsValues.add(Integer.parseInt(modelsArray.get(l).getAsString()));
+                                }
+                                listItem.setEngineModel(modelsValues);
                             }
 
                             if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {

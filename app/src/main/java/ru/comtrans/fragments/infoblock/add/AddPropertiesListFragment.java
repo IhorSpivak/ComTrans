@@ -132,51 +132,73 @@ public class AddPropertiesListFragment extends BaseFragment {
                     final Intent i;
                     switch (item.getType()) {
                         case MainItem.TYPE_LIST:
+                            i = new Intent(getActivity(), SearchValueActivity.class);
                             IdsRelationHelperItem idsRelationHelperItem = new IdsRelationHelperItem();
                             idsRelationHelperItem.setCode(item.getCode());
                             switch (item.getCode()) {
                                 case IdsRelationHelperItem.CODE_GENERAL_MODEL:
-                                    if (infoBlockHelper.getMarkValue().getId() == -1) {
-                                        Toast.makeText(getContext(), R.string.no_mark_toast, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        i = new Intent(getActivity(), SearchValueActivity.class);
+//                                    if (infoBlockHelper.getMarkValue().getId() == -1) {
+//                                        Toast.makeText(getContext(), R.string.no_mark_toast, Toast.LENGTH_SHORT).show();
+//                                    } else {
                                         idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
-                                        i.putExtra(Const.EXTRA_IDS_HELPER, idsRelationHelperItem);
-                                        i.putExtra(Const.EXTRA_TITLE, item.getName());
-                                        i.putExtra(Const.EXTRA_POSITION, position);
-                                        i.putExtra(Const.EXTRA_SCREEN_NUM, page);
-//                                        i.putExtra(Const.EXTRA_MARK, infoBlockHelper.getMarkValue().getId());
-                                        startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
-                                    }
+//                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
-                                    if (infoBlockHelper.getMarkValue().getId() == -1 ||
-                                            infoBlockHelper.getModelValue().getId() == -1 ||
-                                            infoBlockHelper.getEngineMarkValue().getId() == -1) {
-                                        Toast.makeText(getContext(), R.string.no_mark_model_enginemark_toast, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        i = new Intent(getActivity(), SearchValueActivity.class);
+//                                    if (infoBlockHelper.getMarkValue().getId() == -1 ||
+//                                            infoBlockHelper.getModelValue().getId() == -1 ||
+//                                            infoBlockHelper.getEngineMarkValue().getId() == -1) {
+//                                        Toast.makeText(getContext(), R.string.no_mark_model_enginemark_toast, Toast.LENGTH_SHORT).show();
+//                                    } else {
                                         idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
                                         idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                         idsRelationHelperItem.setEngineMark(infoBlockHelper.getEngineMarkValue().getId());
-                                        i.putExtra(Const.EXTRA_IDS_HELPER, idsRelationHelperItem);
-                                        i.putExtra(Const.EXTRA_TITLE, item.getName());
-                                        i.putExtra(Const.EXTRA_POSITION, position);
-                                        i.putExtra(Const.EXTRA_SCREEN_NUM, page);
-//                                        i.putExtra(Const.EXTRA_MARK, infoBlockHelper.getMarkValue().getId());
-//                                        i.putExtra(Const.EXTRA_MODEL, infoBlockHelper.getModelValue().getId());
-//                                        i.putExtra(Const.EXTRA_ENGINE_MARK, infoBlockHelper.getEngineMarkValue().getId());
-                                        startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
-                                    }
+//                                    }
+                                    break;
+                                case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_GENERAL_MARK:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_TEC_ENGINE_POWER:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getEngineModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_TEC_ENGINE_TYPE:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getEngineModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_TEC_ENGINE_VOLUME:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getEngineModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_TEC_ECO_CLASS:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getEngineModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_SHAS_CAPACITY_TOTAL:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_SHAS_WHEEL_FORMULA:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_MARK_KPP:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_MODEL_KPP:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_TEC_KPP_GEARS:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_TEC_KPP_TYPE:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                     break;
                                 default:
                                     Log.d("TAG", "int position " + position);
-                                    i = new Intent(getActivity(), SearchValueActivity.class);
-                                    i.putExtra(Const.EXTRA_IDS_HELPER, idsRelationHelperItem);
-                                    i.putExtra(Const.EXTRA_TITLE, item.getName());
-                                    i.putExtra(Const.EXTRA_POSITION, position);
-                                    i.putExtra(Const.EXTRA_SCREEN_NUM, page);
-                                    startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
                                     break;
                             }
 //                            if (!item.getCode().equals("general_model")) {
@@ -199,6 +221,12 @@ public class AddPropertiesListFragment extends BaseFragment {
 //                                }
 //
 //                            }
+
+                            i.putExtra(Const.EXTRA_IDS_HELPER, idsRelationHelperItem);
+                            i.putExtra(Const.EXTRA_TITLE, item.getName());
+                            i.putExtra(Const.EXTRA_POSITION, position);
+                            i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+                            startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
                             break;
 
                         case MainItem.TYPE_CALENDAR:
