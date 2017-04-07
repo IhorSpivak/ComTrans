@@ -384,6 +384,26 @@ public class InfoBlocksStorage {
                             }
                             listObject.add(ListItem.JSON_VALUE_ENGINE_MODEL, modelValues);
                         }
+
+
+                        if (listItem.getKppModel() != null && listItem.getKppModel().size() > 0) {
+                            JsonArray kppModelValues = new JsonArray();
+                            for (Integer integer :
+                                    listItem.getKppModel()) {
+                                kppModelValues.add(integer);
+                            }
+                            listObject.add(ListItem.JSON_VALUE_KPP_MODEL, kppModelValues);
+                        }
+                        if (listItem.getVehicleOwner() != null && listItem.getVehicleOwner().size() > 0) {
+                            JsonArray vehicleOwnerValues = new JsonArray();
+                            for (Integer integer :
+                                    listItem.getVehicleOwner()) {
+                                vehicleOwnerValues.add(integer);
+                            }
+                            listObject.add(ListItem.JSON_VALUE_VEHICLE_OWNER, vehicleOwnerValues);
+                        }
+
+
                         listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
 
                         if (listItem.getProtectorValues() != null && listItem.getProtectorValues().size() > 0) {
@@ -432,6 +452,26 @@ public class InfoBlocksStorage {
                                 }
                                 listObject.add(ListItem.JSON_VALUE_ENGINE_MODEL, modelValues);
                             }
+
+
+                            if (listItem.getKppModel() != null && listItem.getKppModel().size() > 0) {
+                                JsonArray kppModelValues = new JsonArray();
+                                for (Integer integer :
+                                        listItem.getKppModel()) {
+                                    kppModelValues.add(integer);
+                                }
+                                listObject.add(ListItem.JSON_VALUE_KPP_MODEL, kppModelValues);
+                            }
+                            if (listItem.getVehicleOwner() != null && listItem.getVehicleOwner().size() > 0) {
+                                JsonArray vehicleOwnerValues = new JsonArray();
+                                for (Integer integer :
+                                        listItem.getVehicleOwner()) {
+                                    vehicleOwnerValues.add(integer);
+                                }
+                                listObject.add(ListItem.JSON_VALUE_VEHICLE_OWNER, vehicleOwnerValues);
+                            }
+
+
                             listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
                             if (listItem.getProtectorValues() != null && listItem.getProtectorValues().size() > 0) {
                                 JsonArray protectorValues = new JsonArray();
@@ -643,6 +683,25 @@ public class InfoBlocksStorage {
                             listItem.setEngineModel(modelsValues);
                         }
 
+
+                        if (valueObject.has(ListItem.JSON_VALUE_KPP_MODEL) && !valueObject.get(ListItem.JSON_VALUE_KPP_MODEL).isJsonNull()) {
+                            ArrayList<Integer> modelsValues = new ArrayList<>();
+                            JsonArray modelsArray = valueObject.getAsJsonArray(ListItem.JSON_VALUE_KPP_MODEL);
+                            for (int k = 0; k < modelsArray.size(); k++) {
+                                modelsValues.add(Integer.parseInt(modelsArray.get(k).getAsString()));
+                            }
+                            listItem.setKppModel(modelsValues);
+                        }
+                        if (valueObject.has(ListItem.JSON_VALUE_VEHICLE_OWNER) && !valueObject.get(ListItem.JSON_VALUE_VEHICLE_OWNER).isJsonNull()) {
+                            ArrayList<Integer> modelsValues = new ArrayList<>();
+                            JsonArray modelsArray = valueObject.getAsJsonArray(ListItem.JSON_VALUE_VEHICLE_OWNER);
+                            for (int k = 0; k < modelsArray.size(); k++) {
+                                modelsValues.add(Integer.parseInt(modelsArray.get(k).getAsString()));
+                            }
+                            listItem.setVehicleOwner(modelsValues);
+                        }
+
+
                         if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {
                             listItem.setTireSchemeId(valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).getAsInt());
                         }
@@ -697,6 +756,24 @@ public class InfoBlocksStorage {
                                     modelsValues.add(Integer.parseInt(modelsArray.get(l).getAsString()));
                                 }
                                 listItem.setEngineModel(modelsValues);
+                            }
+
+
+                            if (valueObject.has(ListItem.JSON_VALUE_KPP_MODEL) && !valueObject.get(ListItem.JSON_VALUE_KPP_MODEL).isJsonNull()) {
+                                ArrayList<Integer> modelsValues = new ArrayList<>();
+                                JsonArray modelsArray = valueObject.getAsJsonArray(ListItem.JSON_VALUE_KPP_MODEL);
+                                for (int l = 0; l < modelsArray.size(); l++) {
+                                    modelsValues.add(Integer.parseInt(modelsArray.get(l).getAsString()));
+                                }
+                                listItem.setKppModel(modelsValues);
+                            }
+                            if (valueObject.has(ListItem.JSON_VALUE_VEHICLE_OWNER) && !valueObject.get(ListItem.JSON_VALUE_VEHICLE_OWNER).isJsonNull()) {
+                                ArrayList<Integer> modelsValues = new ArrayList<>();
+                                JsonArray modelsArray = valueObject.getAsJsonArray(ListItem.JSON_VALUE_VEHICLE_OWNER);
+                                for (int l = 0; l < modelsArray.size(); l++) {
+                                    modelsValues.add(Integer.parseInt(modelsArray.get(l).getAsString()));
+                                }
+                                listItem.setVehicleOwner(modelsValues);
                             }
 
                             if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {

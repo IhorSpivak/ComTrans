@@ -136,12 +136,20 @@ public class AddPropertiesListFragment extends BaseFragment {
                             IdsRelationHelperItem idsRelationHelperItem = new IdsRelationHelperItem();
                             idsRelationHelperItem.setCode(item.getCode());
                             switch (item.getCode()) {
+                                case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_GENERAL_MARK:
+                                    break;
                                 case IdsRelationHelperItem.CODE_GENERAL_MODEL:
 //                                    if (infoBlockHelper.getMarkValue().getId() == -1) {
 //                                        Toast.makeText(getContext(), R.string.no_mark_toast, Toast.LENGTH_SHORT).show();
 //                                    } else {
-                                        idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
+                                    idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
 //                                    }
+                                    break;
+                                case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
 //                                    if (infoBlockHelper.getMarkValue().getId() == -1 ||
@@ -149,19 +157,10 @@ public class AddPropertiesListFragment extends BaseFragment {
 //                                            infoBlockHelper.getEngineMarkValue().getId() == -1) {
 //                                        Toast.makeText(getContext(), R.string.no_mark_model_enginemark_toast, Toast.LENGTH_SHORT).show();
 //                                    } else {
-                                        idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
-                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                        idsRelationHelperItem.setEngineMark(infoBlockHelper.getEngineMarkValue().getId());
+                                    idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    idsRelationHelperItem.setEngineMark(infoBlockHelper.getEngineMarkValue().getId());
 //                                    }
-                                    break;
-                                case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    break;
-                                case IdsRelationHelperItem.CODE_GENERAL_MARK:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    break;
-                                case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_POWER:
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
@@ -186,16 +185,22 @@ public class AddPropertiesListFragment extends BaseFragment {
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_MARK_KPP:
+                                    idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_MODEL_KPP:
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_KPP_GEARS:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelKppValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_KPP_TYPE:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelKppValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_FORM_ORGANIZATION:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getVehicleOwnerValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
                                     break;
                                 default:
                                     Log.d("TAG", "int position " + position);
@@ -360,12 +365,69 @@ public class AddPropertiesListFragment extends BaseFragment {
                 position = data.getIntExtra(Const.EXTRA_POSITION, -1);
                 Log.d("TAG", "position result " + data.getIntExtra(Const.EXTRA_POSITION, -1));
                 infoBlockHelper.getItems().get(page).get(position).setListValue(item);
-                if (adapter.getItem(position).getCode().equals("general_marka")) {
-                    if (adapter.getPositionByCode("general_model") != -1) {
-                        adapter.getItem(adapter.getPositionByCode("general_model")).setListValue(new ListItem(-1, getString(R.string.not_chosen)));
-                        adapter.notifyItemChanged(adapter.getPositionByCode("general_model"));
-                    }
+//                if (adapter.getItem(position).getCode().equals("general_marka")) {
+//                    if (adapter.getPositionByCode("general_model") != -1) {
+//                        adapter.getItem(adapter.getPositionByCode("general_model")).setListValue(new ListItem(-1, getString(R.string.not_chosen)));
+//                        adapter.notifyItemChanged(adapter.getPositionByCode("general_model"));
+//                    }
+//                }
+                switch (adapter.getItem(position).getCode()) {
+                    case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
+                        break;
+                    case IdsRelationHelperItem.CODE_GENERAL_MARK:
+                        dropElemValue(IdsRelationHelperItem.CODE_GENERAL_MODEL);
+                        dropElemValue(IdsRelationHelperItem.CODE_TEC_ENGINE_MARK);
+                        dropElemValue(IdsRelationHelperItem.CODE_MARK_KPP);
+                        break;
+                    case IdsRelationHelperItem.CODE_GENERAL_MODEL:
+                        dropElemValue(IdsRelationHelperItem.CODE_TEC_ENGINE_MARK);
+                        dropElemValue(IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL);
+                        dropElemValue(IdsRelationHelperItem.CODE_TEC_ENGINE_POWER);
+                        dropElemValue(IdsRelationHelperItem.CODE_TEC_ENGINE_TYPE);
+                        dropElemValue(IdsRelationHelperItem.CODE_TEC_ENGINE_VOLUME);
+                        dropElemValue(IdsRelationHelperItem.CODE_TEC_ECO_CLASS);
+                        dropElemValue(IdsRelationHelperItem.CODE_SHAS_CAPACITY_TOTAL);
+                        dropElemValue(IdsRelationHelperItem.CODE_SHAS_WHEEL_FORMULA);
+                        dropElemValue(IdsRelationHelperItem.CODE_MARK_KPP);
+                        dropElemValue(IdsRelationHelperItem.CODE_MODEL_KPP);
+                        break;
+                    case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
+                        break;
+                    case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
+                        break;
+                    case IdsRelationHelperItem.CODE_TEC_ENGINE_POWER:
+                        break;
+                    case IdsRelationHelperItem.CODE_TEC_ENGINE_TYPE:
+                        break;
+                    case IdsRelationHelperItem.CODE_TEC_ENGINE_VOLUME:
+                        break;
+                    case IdsRelationHelperItem.CODE_TEC_ECO_CLASS:
+                        break;
+                    case IdsRelationHelperItem.CODE_SHAS_CAPACITY_TOTAL:
+                        break;
+                    case IdsRelationHelperItem.CODE_SHAS_WHEEL_FORMULA:
+                        break;
+                    case IdsRelationHelperItem.CODE_MARK_KPP:
+                        break;
+                    case IdsRelationHelperItem.CODE_MODEL_KPP:
+                        dropElemValue(IdsRelationHelperItem.CODE_TEC_KPP_GEARS);
+                        dropElemValue(IdsRelationHelperItem.CODE_TEC_KPP_TYPE);
+                        break;
+                    case IdsRelationHelperItem.CODE_TEC_KPP_GEARS:
+                        break;
+                    case IdsRelationHelperItem.CODE_TEC_KPP_TYPE:
+                        break;
+                    case IdsRelationHelperItem.CODE_FORM_ORGANIZATION:
+                        break;
+                    case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
+                        dropElemValue(IdsRelationHelperItem.CODE_FORM_ORGANIZATION);
+                        break;
+                    default:
+                        Log.d("TAG", "int position " + position);
+                        break;
                 }
+
+
                 adapter.getItem(position).setListValue(item);
                 adapter.getItem(position).setError(false);
                 adapter.notifyItemChanged(position);
@@ -395,5 +457,9 @@ public class AddPropertiesListFragment extends BaseFragment {
         }
     }
 
+    private void dropElemValue(String key) {
+        adapter.getItem(adapter.getPositionByCode(key)).setListValue(new ListItem(-1, getString(R.string.not_chosen)));
+        adapter.notifyItemChanged(adapter.getPositionByCode(key));
+    }
 
 }

@@ -43,19 +43,22 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     public void enterValues(ArrayList<ListItem> items) {
         mData.clear();
         switch (idsRelationHelperItem.getCode()) {
+            case IdsRelationHelperItem.CODE_GENERAL_MARK:
+                //todo type_link
+                break;
             case IdsRelationHelperItem.CODE_GENERAL_MODEL:
+                //todo type_link
                 filterByMark();
                 break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
+                //todo type_link
+                filterByMark();
                 filterByModel();
                 break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
                 filterByModel();
                 break;
             case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
-                filterByModel();
-                break;
-            case IdsRelationHelperItem.CODE_GENERAL_MARK:
                 filterByModel();
                 break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_POWER:
@@ -81,14 +84,22 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                 filterByModel();
                 break;
             case IdsRelationHelperItem.CODE_MARK_KPP:
+                filterByMark();
                 filterByModel();
                 break;
             case IdsRelationHelperItem.CODE_MODEL_KPP:
                 filterByModel();
                 break;
             case IdsRelationHelperItem.CODE_TEC_KPP_GEARS:
+                filterByKppModel();
                 break;
             case IdsRelationHelperItem.CODE_TEC_KPP_TYPE:
+                filterByKppModel();
+                break;
+            case IdsRelationHelperItem.CODE_FORM_ORGANIZATION:
+                filterByVehicleOwner();
+                break;
+            case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
                 break;
             default:
                 break;
@@ -137,6 +148,42 @@ public class ListAdapter extends BaseAdapter implements Filterable {
             if (item.getEngineModel() != null && item.getEngineModel().size() != 0)
                 for (int i = 0; i < item.getEngineModel().size(); i++) {
                     if (item.getEngineModel().get(i) == idsRelationHelperItem.getEngineModel()) {
+                        isAdd = true;
+                        break;
+                    }
+                }
+            if (isAdd)
+                addItemToTempArray(item);
+        }
+    }
+
+    private void filterByKppModel(){
+        for (ListItem item : items) {
+            Log.e("TMP_TEST", "item.getKppModel()=" + item.getKppModel());
+            boolean isAdd = false;
+            if(item.getId() == -1)
+                isAdd = true;
+            if (item.getKppModel() != null && item.getKppModel().size() != 0)
+                for (int i = 0; i < item.getKppModel().size(); i++) {
+                    if (item.getKppModel().get(i) == idsRelationHelperItem.getKppModel()) {
+                        isAdd = true;
+                        break;
+                    }
+                }
+            if (isAdd)
+                addItemToTempArray(item);
+        }
+    }
+
+    private void filterByVehicleOwner(){
+        for (ListItem item : items) {
+            Log.e("TMP_TEST", "item.getVehicleOwner()=" + item.getVehicleOwner());
+            boolean isAdd = false;
+            if(item.getId() == -1)
+                isAdd = true;
+            if (item.getVehicleOwner() != null && item.getVehicleOwner().size() != 0)
+                for (int i = 0; i < item.getVehicleOwner().size(); i++) {
+                    if (item.getVehicleOwner().get(i) == idsRelationHelperItem.getVehicleOwner()) {
                         isAdd = true;
                         break;
                     }

@@ -18,6 +18,7 @@ public class ListItem implements Parcelable {
     public static final String JSON_VALUE_MODEL = "value_model";
     public static final String JSON_VALUE_ENGINE_MODEL = "value_engine_model";
     public static final String JSON_VALUE_KPP_MODEL = "value_kpp_model";
+    public static final String JSON_VALUE_VEHICLE_OWNER = "value_vehicle_owner";
 
     public static final String JSON_PROTECTOR_VALUES = "protector_values";
     public static final String JSON_TIRE_SCHEME_ID = "tire_scheme_id";
@@ -30,6 +31,8 @@ public class ListItem implements Parcelable {
 
     private ArrayList<Integer> model;
     private ArrayList<Integer> engineModel;
+    private ArrayList<Integer> kppModel;
+    private ArrayList<Integer> vehicleOwner;
     private ArrayList<String> protectorValues;
     private ArrayList<Integer> revealOs;
     private int tireSchemeId;
@@ -103,8 +106,24 @@ public class ListItem implements Parcelable {
     public ListItem() {
     }
 
+    public ArrayList<Integer> getVehicleOwner() {
+        return vehicleOwner;
+    }
+
+    public void setVehicleOwner(ArrayList<Integer> vehicleOwner) {
+        this.vehicleOwner = vehicleOwner;
+    }
+
     public ArrayList<Integer> getEngineModel() {
         return engineModel;
+    }
+
+    public ArrayList<Integer> getKppModel() {
+        return kppModel;
+    }
+
+    public void setKppModel(ArrayList<Integer> kppModel) {
+        this.kppModel = kppModel;
     }
 
     public void setEngineModel(ArrayList<Integer> engineModel) {
@@ -138,6 +157,8 @@ public class ListItem implements Parcelable {
         dest.writeList(this.revealOs);
         dest.writeList(this.model);
         dest.writeList(this.engineModel);
+        dest.writeList(this.kppModel);
+        dest.writeList(this.vehicleOwner);
         dest.writeInt(this.tireSchemeId);
     }
 
@@ -153,6 +174,10 @@ public class ListItem implements Parcelable {
         in.readList(this.model, Integer.class.getClassLoader());
         this.engineModel = new ArrayList<>();
         in.readList(this.engineModel, Integer.class.getClassLoader());
+        this.kppModel = new ArrayList<>();
+        in.readList(this.kppModel, Integer.class.getClassLoader());
+        this.vehicleOwner = new ArrayList<>();
+        in.readList(this.vehicleOwner, Integer.class.getClassLoader());
         this.tireSchemeId = in.readInt();
     }
 

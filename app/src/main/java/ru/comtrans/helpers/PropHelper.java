@@ -204,6 +204,13 @@ public class PropHelper {
                             newValueObject.add(ListItem.JSON_VALUE_ENGINE_MODEL, valueObject.get("engine_model").getAsJsonArray());
                         }
 
+                        if (valueObject.has("kpp_model") && !valueObject.get("kpp_model").isJsonNull() && valueObject.get("kpp_model").isJsonArray()) {
+                            newValueObject.add(ListItem.JSON_VALUE_KPP_MODEL, valueObject.get("kpp_model").getAsJsonArray());
+                        }
+                        if (valueObject.has("vehicle_owner") && !valueObject.get("vehicle_owner").isJsonNull() && valueObject.get("vehicle_owner").isJsonArray()) {
+                            newValueObject.add(ListItem.JSON_VALUE_VEHICLE_OWNER, valueObject.get("vehicle_owner").getAsJsonArray());
+                        }
+
                         if (valueObject.has("axis_code") && !valueObject.get("axis_code").isJsonNull()) {
                             newValueObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, valueObject.get("axis_code").getAsInt());
                         }

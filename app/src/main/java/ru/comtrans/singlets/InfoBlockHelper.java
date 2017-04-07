@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import ru.comtrans.items.IdsRelationHelperItem;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.PhotoItem;
@@ -74,6 +75,14 @@ public class InfoBlockHelper {
 
     public ListItem getEngineModelValue() {
         return getValueByKey("tec_engine_model");
+    }
+
+    public ListItem getModelKppValue() {
+        return getValueByKey("MODEL_KPP");
+    }
+
+    public ListItem getVehicleOwnerValue() {
+        return getValueByKey("SOBSTVENNIK_CHASTNOE_YUR_LITSO");
     }
 
 
