@@ -457,7 +457,7 @@ public class AddPropertiesListFragment extends BaseFragment {
     }
 
     private void dropElemValue(String key) {
-        if (adapter.getPositionByCode(key) > 0) {
+        if (adapter.getPositionByCode(key) >= 0) {
             adapter.getItem(adapter.getPositionByCode(key)).setListValue(new ListItem(-1, getString(R.string.not_chosen)));
             adapter.notifyItemChanged(adapter.getPositionByCode(key));
         }
