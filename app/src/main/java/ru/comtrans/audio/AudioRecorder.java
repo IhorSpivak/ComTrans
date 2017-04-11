@@ -59,7 +59,8 @@ public class AudioRecorder {
     }
 
     private void stopRecording() {
-        mRecorder.stop();
+        // TODO app crash here. Need more investigation to fix it
+//        mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
     }
