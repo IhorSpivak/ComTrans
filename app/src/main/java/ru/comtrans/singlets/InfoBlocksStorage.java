@@ -25,7 +25,7 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
-import ru.comtrans.items.MyInfoBlockItem;
+import ru.comtrans.items.MyInfoblockItem;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.items.ProtectorItem;
 
@@ -129,8 +129,8 @@ public class InfoBlocksStorage {
     }
 
 
-    public ArrayList<MyInfoBlockItem> getPreviewItems() {
-        ArrayList<MyInfoBlockItem> items = new ArrayList<>();
+    public ArrayList<MyInfoblockItem> getPreviewItems() {
+        ArrayList<MyInfoblockItem> items = new ArrayList<>();
 
 
         for (String s :
@@ -140,32 +140,32 @@ public class InfoBlocksStorage {
 
             if (object != null) {
 
-                MyInfoBlockItem item = new MyInfoBlockItem();
+                MyInfoblockItem item = new MyInfoblockItem();
 
-                if (object.has(MyInfoBlockItem.JSON_MARK) && !object.get(MyInfoBlockItem.JSON_MARK).isJsonNull())
-                    item.setMark(object.get(MyInfoBlockItem.JSON_MARK).getAsString());
+                if (object.has(MyInfoblockItem.JSON_MARK) && !object.get(MyInfoblockItem.JSON_MARK).isJsonNull())
+                    item.setMark(object.get(MyInfoblockItem.JSON_MARK).getAsString());
 
-                if (object.has(MyInfoBlockItem.JSON_MODEL) && !object.get(MyInfoBlockItem.JSON_MODEL).isJsonNull())
-                    item.setModel(object.get(MyInfoBlockItem.JSON_MODEL).getAsString());
+                if (object.has(MyInfoblockItem.JSON_MODEL) && !object.get(MyInfoblockItem.JSON_MODEL).isJsonNull())
+                    item.setModel(object.get(MyInfoblockItem.JSON_MODEL).getAsString());
 
-                if (object.has(MyInfoBlockItem.JSON_YEAR) && !object.get(MyInfoBlockItem.JSON_YEAR).isJsonNull())
-                    item.setYear(object.get(MyInfoBlockItem.JSON_YEAR).getAsString());
+                if (object.has(MyInfoblockItem.JSON_YEAR) && !object.get(MyInfoblockItem.JSON_YEAR).isJsonNull())
+                    item.setYear(object.get(MyInfoblockItem.JSON_YEAR).getAsString());
 
-                if (object.has(MyInfoBlockItem.JSON_ID) && !object.get(MyInfoBlockItem.JSON_ID).isJsonNull())
-                    item.setId(object.get(MyInfoBlockItem.JSON_ID).getAsString());
+                if (object.has(MyInfoblockItem.JSON_ID) && !object.get(MyInfoblockItem.JSON_ID).isJsonNull())
+                    item.setId(object.get(MyInfoblockItem.JSON_ID).getAsString());
 
-                if (object.has(MyInfoBlockItem.JSON_PHOTO_PATH) && !object.get(MyInfoBlockItem.JSON_PHOTO_PATH).isJsonNull())
-                    item.setPhotoPath(object.get(MyInfoBlockItem.JSON_PHOTO_PATH).getAsString());
+                if (object.has(MyInfoblockItem.JSON_PHOTO_PATH) && !object.get(MyInfoblockItem.JSON_PHOTO_PATH).isJsonNull())
+                    item.setPhotoPath(object.get(MyInfoblockItem.JSON_PHOTO_PATH).getAsString());
 
-                if (object.has(MyInfoBlockItem.JSON_DATE) && !object.get(MyInfoBlockItem.JSON_DATE).isJsonNull())
-                    item.setDate(object.get(MyInfoBlockItem.JSON_DATE).getAsString());
+                if (object.has(MyInfoblockItem.JSON_DATE) && !object.get(MyInfoblockItem.JSON_DATE).isJsonNull())
+                    item.setDate(object.get(MyInfoblockItem.JSON_DATE).getAsString());
 
-                if (object.has(MyInfoBlockItem.JSON_LAST_POSITION) && !object.get(MyInfoBlockItem.JSON_LAST_POSITION).isJsonNull())
-                    item.setLastPosition(object.get(MyInfoBlockItem.JSON_LAST_POSITION).getAsInt());
+                if (object.has(MyInfoblockItem.JSON_LAST_POSITION) && !object.get(MyInfoblockItem.JSON_LAST_POSITION).isJsonNull())
+                    item.setLastPosition(object.get(MyInfoblockItem.JSON_LAST_POSITION).getAsInt());
 
 
-                if (object.has(MyInfoBlockItem.JSON_SIZE) && !object.get(MyInfoBlockItem.JSON_SIZE).isJsonNull()){
-                    item.setSize(object.get(MyInfoBlockItem.JSON_SIZE).getAsDouble());
+                if (object.has(MyInfoblockItem.JSON_SIZE) && !object.get(MyInfoblockItem.JSON_SIZE).isJsonNull()){
+                    item.setSize(object.get(MyInfoblockItem.JSON_SIZE).getAsDouble());
                 }
 
 
@@ -178,9 +178,9 @@ public class InfoBlocksStorage {
 
         }
 
-        Collections.sort(items, new Comparator<MyInfoBlockItem>() {
+        Collections.sort(items, new Comparator<MyInfoblockItem>() {
             @Override
-            public int compare(MyInfoBlockItem i1, MyInfoBlockItem i2) {
+            public int compare(MyInfoblockItem i1, MyInfoblockItem i2) {
 
 
                 int returnValue = 0;
@@ -194,7 +194,7 @@ public class InfoBlocksStorage {
                     date2 = sdf.parse(i2.getDate());
 
                     if (date1 != null&&date2!=null) {
-                        if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoBlockItem.STATUS_DRAFT) {
+                        if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoblockItem.STATUS_DRAFT) {
                             if(date1.after(date2)){
                                 returnValue =  -1;
                             }else if(date2.after(date1)){
@@ -202,11 +202,11 @@ public class InfoBlocksStorage {
                             }else {
                                 returnValue =  0;
                             }
-                        } else if (i1.getStatus() == MyInfoBlockItem.STATUS_DRAFT) {
+                        } else if (i1.getStatus() == MyInfoblockItem.STATUS_DRAFT) {
                             returnValue =  -1;
-                        } else if (i2.getStatus() == MyInfoBlockItem.STATUS_DRAFT) {
+                        } else if (i2.getStatus() == MyInfoblockItem.STATUS_DRAFT) {
                             returnValue =  1;
-                        } else if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoBlockItem.STATUS_SENDING) {
+                        } else if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoblockItem.STATUS_SENDING) {
                             if(date1.after(date2)){
                                 returnValue =  -1;
                             }else if(date2.after(date1)){
@@ -214,11 +214,11 @@ public class InfoBlocksStorage {
                             }else {
                                 returnValue =  0;
                             }
-                        } else if (i1.getStatus() == MyInfoBlockItem.STATUS_SENDING) {
+                        } else if (i1.getStatus() == MyInfoblockItem.STATUS_SENDING) {
                             returnValue =  -1;
-                        } else if (i2.getStatus() == MyInfoBlockItem.STATUS_SENDING) {
+                        } else if (i2.getStatus() == MyInfoblockItem.STATUS_SENDING) {
                             returnValue =  1;
-                        } else if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoBlockItem.STATUS_SENT) {
+                        } else if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoblockItem.STATUS_SENT) {
                             if(date1.after(date2)){
                                 returnValue =  -1;
                             }else if(date2.after(date1)){
@@ -226,9 +226,9 @@ public class InfoBlocksStorage {
                             }else {
                                 returnValue =  0;
                             }
-                        } else if (i1.getStatus() == MyInfoBlockItem.STATUS_SENT) {
+                        } else if (i1.getStatus() == MyInfoblockItem.STATUS_SENT) {
                             returnValue =  -1;
-                        } else if (i2.getStatus() == MyInfoBlockItem.STATUS_SENT) {
+                        } else if (i2.getStatus() == MyInfoblockItem.STATUS_SENT) {
                             returnValue =  1;
                         } else {
                             returnValue =  0;
@@ -253,7 +253,7 @@ public class InfoBlocksStorage {
         JsonObject object = gson.fromJson(Utility.getSavedData("preview" + id), JsonObject.class);
 
         if (object != null) {
-            object.addProperty(MyInfoBlockItem.JSON_LAST_POSITION, page);
+            object.addProperty(MyInfoblockItem.JSON_LAST_POSITION, page);
             Utility.saveData("preview" + id, object.toString());
         }
     }
@@ -275,17 +275,17 @@ public class InfoBlocksStorage {
                 JsonObject object = block.get(i).getAsJsonArray().get(j).getAsJsonObject();
                 if (object.has(MainItem.JSON_CODE) && !object.get(MainItem.JSON_CODE).isJsonNull()) {
                     if (object.get(MainItem.JSON_CODE).getAsString().equals("general_marka")) {
-                        previewObject.addProperty(MyInfoBlockItem.JSON_MARK,
+                        previewObject.addProperty(MyInfoblockItem.JSON_MARK,
                                 object.get(MainItem.JSON_LIST_VALUE).
                                         getAsJsonObject().get(ListItem.JSON_VALUE_NAME).getAsString());
                     }
                     if (object.get(MainItem.JSON_CODE).getAsString().equals("general_model")) {
-                        previewObject.addProperty(MyInfoBlockItem.JSON_MODEL,
+                        previewObject.addProperty(MyInfoblockItem.JSON_MODEL,
                                 object.get(MainItem.JSON_LIST_VALUE).
                                         getAsJsonObject().get(ListItem.JSON_VALUE_NAME).getAsString());
                     }
                     if (object.get(MainItem.JSON_CODE).getAsString().equals("general_year")) {
-                        previewObject.addProperty(MyInfoBlockItem.JSON_YEAR,
+                        previewObject.addProperty(MyInfoblockItem.JSON_YEAR,
                                 object.get(MainItem.JSON_LIST_VALUE).
                                         getAsJsonObject().get(ListItem.JSON_VALUE_NAME).getAsString());
                     }
@@ -313,7 +313,7 @@ public class InfoBlocksStorage {
 
                                 if (photoObject.has(PhotoItem.JSON_IMAGE_PATH) && !photoObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()
                                         &&photoObject.has(PhotoItem.JSON_IS_VIDEO)&&!photoObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean()) {
-                                    previewObject.addProperty(MyInfoBlockItem.JSON_PHOTO_PATH, photoObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+                                    previewObject.addProperty(MyInfoblockItem.JSON_PHOTO_PATH, photoObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
 
                                 }
                             }
@@ -332,9 +332,9 @@ public class InfoBlocksStorage {
         }
         SimpleDateFormat df = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
         String formattedDate = df.format(c.getTime());
-        previewObject.addProperty(MyInfoBlockItem.JSON_SIZE,size);
-        previewObject.addProperty(MyInfoBlockItem.JSON_DATE, formattedDate);
-        previewObject.addProperty(MyInfoBlockItem.JSON_ID, id);
+        previewObject.addProperty(MyInfoblockItem.JSON_SIZE,size);
+        previewObject.addProperty(MyInfoblockItem.JSON_DATE, formattedDate);
+        previewObject.addProperty(MyInfoblockItem.JSON_ID, id);
 
         Utility.saveData("preview" + id, previewObject.toString());
     }

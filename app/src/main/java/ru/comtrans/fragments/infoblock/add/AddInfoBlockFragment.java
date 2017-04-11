@@ -28,7 +28,7 @@ import ru.comtrans.fragments.BaseFragment;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.PropHelper;
 import ru.comtrans.helpers.Utility;
-import ru.comtrans.items.MyInfoBlockItem;
+import ru.comtrans.items.MyInfoblockItem;
 import ru.comtrans.singlets.AppController;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.singlets.InfoBlocksStorage;
@@ -186,7 +186,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
             if(isNew) {
                 propHelper = new PropHelper(dataArray,propCode,inspectionCode);
                 storage.saveInfoBlock(infoBlockId, propHelper.getScreens());
-                storage.setInfoBlockStatus(infoBlockId, MyInfoBlockItem.STATUS_DRAFT);
+                storage.setInfoBlockStatus(infoBlockId, MyInfoblockItem.STATUS_DRAFT);
             }
 
             infoBlockHelper.getAllItems(infoBlockId);

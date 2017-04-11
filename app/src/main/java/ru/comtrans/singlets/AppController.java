@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.interfaces.ApiInterface;
-import ru.comtrans.items.MyInfoBlockItem;
+import ru.comtrans.items.MyInfoblockItem;
 import ru.comtrans.services.SendingService;
 
 
@@ -80,7 +80,7 @@ public class AppController extends Application {
         InfoBlocksStorage storage = InfoBlocksStorage.getInstance();
 
         for (int i = 0; i < storage.getPreviewItems().size(); i++) {
-            if (storage.getInfoBlockStatus(storage.getPreviewItems().get(i).getId()) == MyInfoBlockItem.STATUS_SENDING) {
+            if (storage.getInfoBlockStatus(storage.getPreviewItems().get(i).getId()) == MyInfoblockItem.STATUS_SENDING) {
                 Intent intentMyIntentService = new Intent(this, SendingService.class);
                 intentMyIntentService.putExtra(Const.EXTRA_INFO_BLOCK_ID, storage.getPreviewItems().get(i).getId());
                 startService(intentMyIntentService);

@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import ru.comtrans.R;
-import ru.comtrans.fragments.MyInfoBlocksFragment;
+import ru.comtrans.fragments.MyInfoblocksFragment;
 import ru.comtrans.fragments.ProfileFragment;
 import ru.comtrans.fragments.SettingsFragment;
 
@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity
 
         getSupportActionBar().setTitle(getString(R.string.nav_infoblocks));
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, new MyInfoBlocksFragment());
+        transaction.replace(R.id.container, new MyInfoblocksFragment());
         transaction.commit();
     }
 
@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity
             case R.id.nav_infoblocks:
                 fab.show();
                 getSupportActionBar().setTitle(getString(R.string.nav_infoblocks));
-                transaction.replace(R.id.container,new MyInfoBlocksFragment());
+                transaction.replace(R.id.container,new MyInfoblocksFragment());
                 transaction.commit();
                 break;
             case R.id.nav_profile:

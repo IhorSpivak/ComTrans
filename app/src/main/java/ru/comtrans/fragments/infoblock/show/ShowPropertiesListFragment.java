@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import ru.comtrans.R;
 import ru.comtrans.activities.ShowInfoBlockActivity;
-import ru.comtrans.adapters.InfoBlockAdapter;
+import ru.comtrans.adapters.InfoblockAdapter;
 import ru.comtrans.fragments.BaseFragment;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
@@ -32,7 +32,7 @@ import ru.comtrans.views.DividerItemDecoration;
 public class ShowPropertiesListFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManagerWithSmoothScroller layoutManager;
-    private InfoBlockAdapter adapter;
+    private InfoblockAdapter adapter;
     private InfoBlocksStorage storage;
     private InfoBlockHelper infoBlockHelper;
     private ShowInfoBlockActivity activity;
@@ -99,7 +99,7 @@ public class ShowPropertiesListFragment extends BaseFragment {
         if(items!=null) {
 
             tvHeader.setText(items.get(0).getName());
-            adapter = new InfoBlockAdapter(getContext(), items, page, totalPages, false, new InfoBlockAdapter.OnItemClickListener() {
+            adapter = new InfoblockAdapter(getContext(), items, page, totalPages, false, new InfoblockAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(MainItem item, View view, int position) {
 
@@ -110,7 +110,7 @@ public class ShowPropertiesListFragment extends BaseFragment {
                 public void saveState() {
                     //stub
                 }
-            }, new InfoBlockAdapter.OnBottomBarClickListener() {
+            }, new InfoblockAdapter.OnBottomBarClickListener() {
                 @Override
                 public void onBottomBarClick(int type, int scrollPosition) {
                     switch (type) {

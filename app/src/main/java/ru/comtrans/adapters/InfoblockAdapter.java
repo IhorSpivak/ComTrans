@@ -45,7 +45,7 @@ import ru.comtrans.views.DividerItemDecoration;
 import ru.comtrans.views.ProtectorView;
 
 
-public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<MainItem> items;
     private Context context;
@@ -70,7 +70,7 @@ public class InfoBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
 
-    public InfoBlockAdapter(final Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable,
+    public InfoblockAdapter(final Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable,
                             OnItemClickListener listener, OnBottomBarClickListener bottomBarClickListener) {
         this.context = context;
         this.items = items;

@@ -3,7 +3,7 @@ package ru.comtrans.items;
 /**
  * Created by Artco on 25.07.2016.
  */
-public class MyInfoBlockItem {
+public class MyInfoblockItem {
 
     public static final int STATUS_DRAFT = 11;
     public static final int STATUS_SENDING = 12;
@@ -51,7 +51,7 @@ public class MyInfoBlockItem {
         this.id = id;
     }
 
-    public MyInfoBlockItem(){
+    public MyInfoblockItem(){
 
     }
 
