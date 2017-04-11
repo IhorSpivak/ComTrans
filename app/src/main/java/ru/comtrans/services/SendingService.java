@@ -26,7 +26,7 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
-import ru.comtrans.items.MyInfoBlockItem;
+import ru.comtrans.items.MyInfoblockItem;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.items.ProtectorItem;
 import ru.comtrans.singlets.AppController;
@@ -71,7 +71,7 @@ public class SendingService extends IntentService {
 
 
         id = intent.getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
-        storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_SENDING);
+        storage.setInfoBlockStatus(id, MyInfoblockItem.STATUS_SENDING);
         broadcast =  new Intent(Const.UPDATE_PROGRESS_INFO_BLOCKS_FILTER);
         broadcast.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
 
@@ -401,7 +401,7 @@ public class SendingService extends IntentService {
                         mBuilder.setAutoCancel(true);
                         mNotifyManager.notify(notificationId, mBuilder.build());
 
-                        storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_SENT);
+                        storage.setInfoBlockStatus(id, MyInfoblockItem.STATUS_SENT);
                         Intent i = new Intent(Const.UPDATE_STATUS_INFO_BLOCKS_FILTER);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
                         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
@@ -420,7 +420,7 @@ public class SendingService extends IntentService {
                                     .setProgress(0, 0, false);
                             mBuilder.setAutoCancel(true);
                             mNotifyManager.notify(notificationId, mBuilder.build());
-                            storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_DRAFT);
+                            storage.setInfoBlockStatus(id, MyInfoblockItem.STATUS_DRAFT);
                             Intent i = new Intent(Const.UPDATE_STATUS_INFO_BLOCKS_FILTER);
                             i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
                             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
@@ -432,7 +432,7 @@ public class SendingService extends IntentService {
                     e.printStackTrace();
                     Log.d("TAG", "info block not sent");
 
-                    storage.setInfoBlockStatus(id, MyInfoBlockItem.STATUS_STOPPED);
+                    storage.setInfoBlockStatus(id, MyInfoblockItem.STATUS_STOPPED);
                     Intent i = new Intent(Const.UPDATE_STATUS_INFO_BLOCKS_FILTER);
                     i.putExtra(Const.EXTRA_INFO_BLOCK_ID, id);
                     LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);

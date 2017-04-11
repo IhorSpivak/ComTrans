@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
-import ru.comtrans.items.MyInfoBlockItem;
+import ru.comtrans.items.MyInfoblockItem;
 import ru.comtrans.singlets.InfoBlocksStorage;
 
 /**
@@ -30,31 +30,31 @@ import ru.comtrans.singlets.InfoBlocksStorage;
 public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public interface OnItemClickListener {
-        void onItemClick(MyInfoBlockItem item, int position);
+        void onItemClick(MyInfoblockItem item, int position);
 
-        void onEllipsisClick(MyInfoBlockItem item, int position);
+        void onEllipsisClick(MyInfoblockItem item, int position);
     }
 
-    private ArrayList<MyInfoBlockItem> items;
+    private ArrayList<MyInfoblockItem> items;
     private Context context;
     private final OnItemClickListener listener;
     private InfoBlocksStorage storage;
 
-    public MyInfoBlocksAdapter(Context context, ArrayList<MyInfoBlockItem> items, MyInfoBlocksAdapter.OnItemClickListener listener){
+    public MyInfoBlocksAdapter(Context context, ArrayList<MyInfoblockItem> items, MyInfoBlocksAdapter.OnItemClickListener listener){
         this.items = items;
         this.context = context;
         this.listener = listener;
         storage = InfoBlocksStorage.getInstance();
     }
 
-    public void setItems(ArrayList<MyInfoBlockItem> items) {
+    public void setItems(ArrayList<MyInfoblockItem> items) {
         this.items = items;
         notifyDataSetChanged();
     }
 
     public void removeItem(String id){
-        MyInfoBlockItem deleteItem = null;
-        for (MyInfoBlockItem item :
+        MyInfoblockItem deleteItem = null;
+        for (MyInfoblockItem item :
                 items) {
             if (item.getId().equals(id)){
                 deleteItem = item;
@@ -76,7 +76,7 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        MyInfoBlockItem item = getItem(position);
+        MyInfoblockItem item = getItem(position);
         MyInfoBlockViewHolder myHolder = ((MyInfoBlockViewHolder)holder);
         myHolder.date.setText(item.getDate());
         SimpleDateFormat df = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
@@ -89,20 +89,20 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
         switch (storage.getInfoBlockStatus(item.getId())){
-                case MyInfoBlockItem.STATUS_DRAFT:
+                case MyInfoblockItem.STATUS_DRAFT:
                     myHolder.status.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary));
                     myHolder.status.setText(R.string.status_draft);
                     break;
-                case MyInfoBlockItem.STATUS_SENDING:
+                case MyInfoblockItem.STATUS_SENDING:
                     myHolder.status.setTextColor(ContextCompat.getColor(context,android.R.color.holo_blue_dark));
 //                    myHolder.status.setText(String.format(context.getString(R.string.status_sending),item.getProgress()));
                     myHolder.status.setText(item.getProgress()+" %");
                     break;
-                case MyInfoBlockItem.STATUS_SENT:
+                case MyInfoblockItem.STATUS_SENT:
                     myHolder.status.setTextColor(ContextCompat.getColor(context,android.R.color.holo_green_dark));
                     myHolder.status.setText(R.string.status_sent);
                     break;
-                case MyInfoBlockItem.STATUS_STOPPED:
+                case MyInfoblockItem.STATUS_STOPPED:
                     myHolder.status.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary));
                     myHolder.status.setText(R.string.status_stopped);
                     break;
@@ -132,7 +132,7 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void updateProgress(String id){
         for (int i = 0; i < items.size(); i++) {
-            MyInfoBlockItem item = items.get(i);
+            MyInfoblockItem item = items.get(i);
             if (item.getId().equals(id)){
                 item.setStatus(storage.getInfoBlockStatus(item.getId()));
                 item.setProgress(storage.getInfoBlockProgress(id));
@@ -146,7 +146,7 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void updateStatus(String id){
         for (int i = 0; i < items.size(); i++) {
-            MyInfoBlockItem item = items.get(i);
+            MyInfoblockItem item = items.get(i);
             if (item.getId().equals(id)){
                 item.setStatus(storage.getInfoBlockStatus(item.getId()));
                 items.set(i,item);
@@ -163,7 +163,7 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return items.size();
     }
 
-    public MyInfoBlockItem getItem(int position){
+    public MyInfoblockItem getItem(int position){
         return items.get(position);
     }
 
@@ -197,7 +197,7 @@ public class MyInfoBlocksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         }
 
-        public void bind(final MyInfoBlockItem item, final OnItemClickListener listener) {
+        public void bind(final MyInfoblockItem item, final OnItemClickListener listener) {
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {

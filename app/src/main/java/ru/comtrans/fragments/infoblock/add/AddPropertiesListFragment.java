@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import ru.comtrans.R;
 import ru.comtrans.activities.AddInfoBlockActivity;
 import ru.comtrans.activities.CameraActivity;
 import ru.comtrans.activities.SearchValueActivity;
-import ru.comtrans.adapters.InfoBlockAdapter;
+import ru.comtrans.adapters.InfoblockAdapter;
 import ru.comtrans.dialogs.DatePickerDialogFragment;
 import ru.comtrans.fragments.BaseFragment;
 import ru.comtrans.helpers.Const;
@@ -44,7 +43,7 @@ public class AddPropertiesListFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
     private LinearLayoutManagerWithSmoothScroller layoutManager;
-    private InfoBlockAdapter adapter;
+    private InfoblockAdapter adapter;
     private InfoBlocksStorage storage;
     private InfoBlockHelper infoBlockHelper;
     private AddInfoBlockActivity activity;
@@ -126,7 +125,7 @@ public class AddPropertiesListFragment extends BaseFragment {
 //                }
 //            });
             tvHeader.setText(items.get(0).getName());
-            adapter = new InfoBlockAdapter(getContext(), items, page, totalPages, true, new InfoBlockAdapter.OnItemClickListener() {
+            adapter = new InfoblockAdapter(getContext(), items, page, totalPages, true, new InfoblockAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(MainItem item, View view, final int position) {
                     final Intent i;
@@ -298,7 +297,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                     saveData();
                 }
 
-            }, new InfoBlockAdapter.OnBottomBarClickListener() {
+            }, new InfoblockAdapter.OnBottomBarClickListener() {
                 @Override
                 public void onBottomBarClick(int type, int scrollPosition) {
                     switch (type) {

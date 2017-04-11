@@ -30,8 +30,6 @@ import android.widget.Toast;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +46,7 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.DialogItem;
 import ru.comtrans.items.ListItem;
-import ru.comtrans.items.MyInfoBlockItem;
+import ru.comtrans.items.MyInfoblockItem;
 import ru.comtrans.services.SendingService;
 import ru.comtrans.singlets.AppController;
 import ru.comtrans.singlets.InfoBlocksStorage;
@@ -59,7 +57,7 @@ import ru.comtrans.views.ConnectionProgressDialog;
  * Created by Artco on 06.07.2016.
  */
 
-public class MyInfoBlocksFragment extends Fragment {
+public class MyInfoblocksFragment extends Fragment {
     private RecyclerView recyclerView;
     private InfoBlocksStorage storage;
     private MyInfoBlocksAdapter adapter;
@@ -68,7 +66,7 @@ public class MyInfoBlocksFragment extends Fragment {
     private InfoBlocksUpdateStatusReceiver updateStatusReceiver;
     private TextView tvEmpty;
     private ProgressBar emptyBar;
-    private ArrayList<MyInfoBlockItem> items;
+    private ArrayList<MyInfoblockItem> items;
     private ConnectionProgressDialog progressDialog;
 
 
@@ -189,19 +187,19 @@ public class MyInfoBlocksFragment extends Fragment {
     private void setupList() {
         adapter = new MyInfoBlocksAdapter(getContext(), items, new MyInfoBlocksAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(MyInfoBlockItem item, int position) {
+            public void onItemClick(MyInfoblockItem item, int position) {
                 Intent i;
                 switch (storage.getInfoBlockStatus(item.getId())) {
-                    case MyInfoBlockItem.STATUS_DRAFT:
+                    case MyInfoblockItem.STATUS_DRAFT:
                         i = new Intent(getContext(), AddInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID, item.getId());
                         i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE, item.getLastPosition());
                         startActivity(i);
                         break;
-                    case MyInfoBlockItem.STATUS_SENDING:
+                    case MyInfoblockItem.STATUS_SENDING:
                         Toast.makeText(getContext(), R.string.click_on_sending, Toast.LENGTH_SHORT).show();
                         break;
-                    case MyInfoBlockItem.STATUS_SENT:
+                    case MyInfoblockItem.STATUS_SENT:
                        // storage.setInfoBlockStatus(item.getId(),MyInfoBlockItem.STATUS_DRAFT);
                         i = new Intent(getContext(), ShowInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID, item.getId());
@@ -218,7 +216,7 @@ public class MyInfoBlocksFragment extends Fragment {
             }
 
             @Override
-            public void onEllipsisClick(final MyInfoBlockItem item, int position) {
+            public void onEllipsisClick(final MyInfoblockItem item, int position) {
 
 
                 final DialogArrayAdapter adapter = new DialogArrayAdapter();
@@ -255,9 +253,9 @@ public class MyInfoBlocksFragment extends Fragment {
               //  DialogItem dialogItem4 = new DialogItem(R.string.dialog_send_email,getContext());
 
 
-                if(storage.getInfoBlockStatus(item.getId())!=MyInfoBlockItem.STATUS_SENT) {
+                if(storage.getInfoBlockStatus(item.getId())!= MyInfoblockItem.STATUS_SENT) {
                     DialogItem dialogItem2;
-                    if(storage.getInfoBlockStatus(item.getId())==MyInfoBlockItem.STATUS_STOPPED) {
+                    if(storage.getInfoBlockStatus(item.getId())== MyInfoblockItem.STATUS_STOPPED) {
                         dialogItem2 = new DialogItem(R.string.dialog_restore, getContext());
                     }else {
                         dialogItem2 = new DialogItem(R.string.dialog_send,getContext());
