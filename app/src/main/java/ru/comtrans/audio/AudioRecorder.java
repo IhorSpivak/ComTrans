@@ -48,7 +48,8 @@ public class AudioRecorder {
                 Log.e(LOG_TAG, "prepare() failed");
             }
 
-            mRecorder.start();
+            // TODO app crash here. Need more investigation to fix it
+//            mRecorder.start();
         }
 
     }
@@ -58,7 +59,8 @@ public class AudioRecorder {
     }
 
     private void stopRecording() {
-        mRecorder.stop();
+        // TODO app crash here. Need more investigation to fix it
+//        mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
     }

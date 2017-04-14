@@ -185,8 +185,12 @@ public class PropHelper {
 
                         JsonObject valueObject = val.get(j).getAsJsonObject();
                         JsonObject newValueObject = new JsonObject();
-                        newValueObject.addProperty(ListItem.JSON_VALUE_ID, valueObject.get("id").getAsLong());
-                        newValueObject.addProperty(ListItem.JSON_VALUE_NAME, valueObject.get("name").getAsString());
+                        if (valueObject.has("id") && !valueObject.get("id").isJsonNull()) {
+                            newValueObject.addProperty(ListItem.JSON_VALUE_ID, valueObject.get("id").getAsLong());
+                        }
+                        if (valueObject.has("id") && !valueObject.get("name").isJsonNull()) {
+                            newValueObject.addProperty(ListItem.JSON_VALUE_NAME, valueObject.get("name").getAsString());
+                        }
                         if (valueObject.has("mark") && !valueObject.get("mark").isJsonNull()) {
                             try {
                                 newValueObject.addProperty(ListItem.JSON_VALUE_MARK, valueObject.get("mark").getAsInt());
