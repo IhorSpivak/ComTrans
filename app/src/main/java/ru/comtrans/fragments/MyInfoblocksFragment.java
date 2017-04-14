@@ -1,3 +1,4 @@
+
 package ru.comtrans.fragments;
 
 import android.Manifest;
@@ -28,10 +29,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -83,7 +89,7 @@ public class MyInfoblocksFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               checkAudioRecordingPermission();
+                checkAudioRecordingPermission();
             }
         });
 
@@ -116,14 +122,31 @@ public class MyInfoblocksFragment extends Fragment {
                         JsonArray result = response.body().get("result").getAsJsonArray();
                         if(!result.isJsonNull()&&result.size()>0){
                             ArrayList<ListItem> typeArray = new ArrayList<>();
+                            List<Map<String, List<String>>> categories = new ArrayList<>();
                             for (int i = 0; i < result.size(); i++) {
                                 JsonObject typeObject = result.get(i).getAsJsonObject();
                                 if(!typeObject.isJsonNull()){
                                     ListItem item = new ListItem(typeObject.get("id").getAsInt(),typeObject.get("name").getAsString());
                                     typeArray.add(item);
+
+                                    JsonElement id = typeObject.get("id");
+
+                                    if (id != null && id.getAsInt() > 0) {
+                                        JsonArray array = typeObject.getAsJsonArray("type_link");
+                                        List<String> vehicleIds = new ArrayList<>();
+                                        if (array != null) {
+                                            for (int j = 0; j < array.size(); j++) {
+                                                vehicleIds.add(array.get(j).toString());
+                                            }
+                                        }
+                                        Map<String, List<String>> map = new HashMap<>();
+                                        map.put(typeObject.get("id").getAsString(), vehicleIds);
+                                        categories.add(map);
+                                    }
                                 }
                             }
                             Utility.saveVehicleTypes(typeArray);
+                            Utility.saveCategories(categories);
                             if(isFromButton)
                                 createNewInfoBlock();
                         }
@@ -200,7 +223,7 @@ public class MyInfoblocksFragment extends Fragment {
                         Toast.makeText(getContext(), R.string.click_on_sending, Toast.LENGTH_SHORT).show();
                         break;
                     case MyInfoblockItem.STATUS_SENT:
-                       // storage.setInfoBlockStatus(item.getId(),MyInfoBlockItem.STATUS_DRAFT);
+                        // storage.setInfoBlockStatus(item.getId(),MyInfoBlockItem.STATUS_DRAFT);
                         i = new Intent(getContext(), ShowInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID, item.getId());
                         i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE, item.getLastPosition());
@@ -250,7 +273,7 @@ public class MyInfoblocksFragment extends Fragment {
                 ArrayList<DialogItem> items = new ArrayList<>();
                 DialogItem dialogItem1 = new DialogItem(R.string.dialog_delete,getContext());
                 DialogItem dialogItem3 = new DialogItem(R.string.dialog_neutral,getContext());
-              //  DialogItem dialogItem4 = new DialogItem(R.string.dialog_send_email,getContext());
+                //  DialogItem dialogItem4 = new DialogItem(R.string.dialog_send_email,getContext());
 
 
                 if(storage.getInfoBlockStatus(item.getId())!= MyInfoblockItem.STATUS_SENT) {
@@ -262,10 +285,10 @@ public class MyInfoblocksFragment extends Fragment {
                     }
 
                     items.add(dialogItem2); items.add(dialogItem1); // items.add(dialogItem4);
-                     items.add(dialogItem3);
+                    items.add(dialogItem3);
                 }else {
                     items.add(dialogItem1);  //items.add(dialogItem4);
-                     items.add(dialogItem3);
+                    items.add(dialogItem3);
                 }
                 adapter.setItems(items);
 
@@ -276,7 +299,7 @@ public class MyInfoblocksFragment extends Fragment {
 
 
 
-                }
+            }
 
         });
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -292,7 +315,7 @@ public class MyInfoblocksFragment extends Fragment {
         }else if(Utility.getBoolean(Const.SETTINGS_ALLOWS_MOBILE_CONN)&&!Utility.isConnectingToWifi(getContext())&&!Utility.isConnectingToFastNetwork(getContext())){
             Toast.makeText(getContext(),R.string.toast_weak_internet,Toast.LENGTH_LONG).show();
         }else if(!Utility.getBoolean(Const.SETTINGS_ALLOWS_BIG_DATA)&&size>100){
-           Toast.makeText(getContext(),R.string.toast_settings_data_not_enabled,Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(),R.string.toast_settings_data_not_enabled,Toast.LENGTH_LONG).show();
         }else if(!Utility.getBoolean(Const.SETTINGS_ALLOWS_MOBILE_CONN)&&!Utility.isConnectingToWifi(getContext())){
             Toast.makeText(getContext(),R.string.toast_settings_wifi_not_enabled,Toast.LENGTH_LONG).show();
         }else {
@@ -394,17 +417,17 @@ public class MyInfoblocksFragment extends Fragment {
             }
 
             if(hasRecorderPermission!= PackageManager.PERMISSION_GRANTED){
-                    permissions.add(Manifest.permission.RECORD_AUDIO);
-                }
+                permissions.add(Manifest.permission.RECORD_AUDIO);
+            }
 
             if (!permissions.isEmpty()) {
 
                 requestPermissions(permissions.toArray(new String[permissions.size()]),
-                            Const.REQUEST_PERMISSION_AUDIO_RECORDING);
+                        Const.REQUEST_PERMISSION_AUDIO_RECORDING);
 
 
             } else {
-              createNewInfoBlock();
+                createNewInfoBlock();
             }
         } else {
             createNewInfoBlock();
@@ -414,11 +437,11 @@ public class MyInfoblocksFragment extends Fragment {
     private void createNewInfoBlock(){
         if(Utility.getVehicleTypes()==null) {
             progressDialog.show();
-          //  Toast.makeText(getContext(),R.string.vehicle_type_not_exist,Toast.LENGTH_SHORT).show();
+            //  Toast.makeText(getContext(),R.string.vehicle_type_not_exist,Toast.LENGTH_SHORT).show();
             getVehicleTypes(true);
         }else if(Utility.getInspectionTypes()==null) {
             progressDialog.show();
-         //   Toast.makeText(getContext(),R.string.inspection_type_not_exist,Toast.LENGTH_SHORT).show();
+            //   Toast.makeText(getContext(),R.string.inspection_type_not_exist,Toast.LENGTH_SHORT).show();
             getInspectionTypes(true);
         }else {
             final ListDialogAdapter vehicleTypeAdapter = new ListDialogAdapter(Utility.getVehicleTypes(), getContext());

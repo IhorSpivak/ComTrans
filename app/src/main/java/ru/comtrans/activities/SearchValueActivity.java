@@ -38,6 +38,7 @@ public class SearchValueActivity extends BaseActivity {
     private int screenNum;
     private int extraPosition;
     private boolean canAdd;
+    private long propCode;
     private IdsRelationHelperItem idsRelationHelperItem;
 
 
@@ -60,6 +61,7 @@ public class SearchValueActivity extends BaseActivity {
 
         screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM, -1);
         extraPosition = getIntent().getIntExtra(Const.EXTRA_POSITION, -1);
+        propCode = getIntent().getLongExtra(Const.EXTRA_PROP_CODE, -1);
         idsRelationHelperItem = (IdsRelationHelperItem) getIntent().getSerializableExtra(Const.EXTRA_IDS_HELPER);
         Log.e("TMP_TEST",idsRelationHelperItem.toString());
 //        mark = getIntent().getLongExtra(Const.EXTRA_MARK,-1);
@@ -75,7 +77,7 @@ public class SearchValueActivity extends BaseActivity {
         Log.e("TMP_TEST","items.size="+items.size());
 
         if (items != null) {
-            adapter = new ListAdapter(SearchValueActivity.this, items, idsRelationHelperItem, canAdd);
+            adapter = new ListAdapter(SearchValueActivity.this, items, idsRelationHelperItem, canAdd, propCode);
             listView.setAdapter(adapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -49,7 +49,7 @@ public class PropHelper {
         if (dataArray == null){
             String jsonString = Utility.getSavedData(Const.JSON_PROP_CODE + propCode);
             dataArray = gson.fromJson(jsonString, JsonArray.class);
-    }
+        }
 
         for(int i = 0; i< dataArray.size(); i++){
 
@@ -65,7 +65,7 @@ public class PropHelper {
                         if(array.size()>0){
                             JsonObject jsonObject = array.get(0).getAsJsonObject();
                             if(jsonObject.has("prop_type")){
-                               String propType = jsonObject.get("prop_type").getAsString();
+                                String propType = jsonObject.get("prop_type").getAsString();
                                 switch (propType){
                                     case "F":
                                         screen.addAll(getPhotoItems(array));
@@ -85,7 +85,7 @@ public class PropHelper {
 //                        screen.addAll(getPhotoItems(entry.getValue().getAsJsonArray(),false));
 //                    }else if(entry.getKey().startsWith("video")){
 //                        screen.addAll(getPhotoItems(entry.getValue().getAsJsonArray(),true));
-                 //   }else
+                    //   }else
 //                    if(entry.getKey().startsWith("tyres_scheme")) {
 //                        screen.addAll(getProtectorItems(entry.getValue().getAsJsonArray()));
 //                    }
@@ -225,16 +225,16 @@ public class PropHelper {
 
                         newVal.add(newValueObject);
 
-//                        if (object.get("code").getAsString().equals("general_type_id")) {
-//                            if (newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong() == propCode) {
-//                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
-//                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED, true);
-//                            }
-//                        } else {
-//                            if (j == 0) {
-//                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
-//                            }
-//                        }
+                        if (object.get("code").getAsString().equals("general_type_id")) {
+                            if (newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong() == propCode) {
+                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED, true);
+                            }
+                        } else {
+                            if (j == 0) {
+                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+                            }
+                        }
 
                         if (object.get("code").getAsString().equals("view_type_list")) {
                             if (newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong() == inspectionCode) {
@@ -307,12 +307,12 @@ public class PropHelper {
             JsonObject object = array.get(i).getAsJsonObject();
             JsonObject newObject = new JsonObject();
             if(object!=null&&object.has("code")&&!object.get("code").isJsonNull()
-                   &&object.has("prop_type")&&!object.get("prop_type").isJsonNull()&&
+                    &&object.has("prop_type")&&!object.get("prop_type").isJsonNull()&&
                     object.get("prop_type").getAsString().equals("F")){
 
-                 if(object.get("code").getAsString().startsWith("video")){
-                     isVideo = true;
-                 }
+                if(object.get("code").getAsString().startsWith("video")){
+                    isVideo = true;
+                }
 
 
                 newObject.addProperty(PhotoItem.JSON_TITLE, object.get("name").getAsString());

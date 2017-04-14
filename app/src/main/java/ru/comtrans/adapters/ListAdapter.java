@@ -13,8 +13,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 import ru.comtrans.R;
+import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.IdsRelationHelperItem;
 import ru.comtrans.items.ListItem;
 
@@ -26,24 +29,30 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     //    private long mark;
     private IdsRelationHelperItem idsRelationHelperItem;
     private boolean isNeedSort;
+    private long propCode;
 
 
     private LayoutInflater mInflater;
 
-    public ListAdapter(Context context, ArrayList<ListItem> items, IdsRelationHelperItem idsRelationHelperItem, boolean isNeedSort) {
+    public ListAdapter(Context context, ArrayList<ListItem> items, IdsRelationHelperItem idsRelationHelperItem, boolean isNeedSort, long propCode) {
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         this.items = items;
         this.idsRelationHelperItem = idsRelationHelperItem;
         this.isNeedSort = isNeedSort;
+        this.propCode = propCode;
         enterValues(items);
     }
 
     public void enterValues(ArrayList<ListItem> items) {
         mData.clear();
         switch (idsRelationHelperItem.getCode()) {
+            case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
+                filterByCategory();
+                break;
             case IdsRelationHelperItem.CODE_GENERAL_MARK:
+                String a = "www";
                 //todo type_link
                 break;
             case IdsRelationHelperItem.CODE_GENERAL_MODEL:
@@ -58,9 +67,9 @@ public class ListAdapter extends BaseAdapter implements Filterable {
             case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
                 filterByModel();
                 break;
-            case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
-                filterByModel();
-                break;
+//            case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
+//                filterByModel();
+//                break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_POWER:
                 filterByEngineModel();
                 filterByModel();
@@ -111,6 +120,22 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     //Filters
+
+    private void filterByCategory() {
+        List<Map<String, List<String>>> categories = Utility.getCategories();
+        for (int i = 0; i < categories.size(); i++) {
+            Map<String, List<String>> map = categories.get(i);
+            List<String> transportTypeIds = map.get(String.valueOf(propCode));
+            if (transportTypeIds != null && !transportTypeIds.isEmpty()) {
+                for (int j = 0; j < items.size(); j++) {
+                    if (items.get(j).getId() == -1 || transportTypeIds.contains(String.valueOf(items.get(j).getId()))) {
+                        addItemToTempArray(items.get(j));
+                    }
+                }
+            }
+        }
+
+    }
 
     private void filterByMark(){
         for (ListItem item : items) {

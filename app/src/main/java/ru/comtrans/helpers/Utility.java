@@ -17,6 +17,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -28,6 +30,8 @@ import ru.comtrans.singlets.AppController;
  * Created by Artco on 21.02.2016.
  */
 public class Utility {
+
+    private static List<Map<String, List<String>>> categories;
 
     public static boolean isValidResponse(int responseCode) {
 
@@ -46,7 +50,7 @@ public class Utility {
     public static boolean getBoolean(String key) {
         final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
                 Const.PREFERENCES_NAME, 0);
-                return appData.getBoolean(key, false);
+        return appData.getBoolean(key, false);
     }
 
     public static String getSavedData(String key) {
@@ -71,7 +75,7 @@ public class Utility {
     }
 
     public static void saveStringSet(String key,
-                                Set<String> set) {
+                                     Set<String> set) {
         final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
                 Const.PREFERENCES_NAME, 0);
         SharedPreferences.Editor editor = appData.edit();
@@ -166,7 +170,7 @@ public class Utility {
     }
 
     public static void saveInt(String key,
-                                int data) {
+                               int data) {
         final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
                 Const.PREFERENCES_NAME, 0);
         SharedPreferences.Editor editor = appData.edit();
@@ -340,10 +344,10 @@ public class Utility {
                     return true; // ~ 1-23 Mbps
                 case TelephonyManager.NETWORK_TYPE_UMTS:
                     return true; // ~ 400-7000 kbps
-            /*
-             * Above API level 7, make sure to set android:targetSdkVersion
-             * to appropriate level to use these
-             */
+           /*
+            * Above API level 7, make sure to set android:targetSdkVersion
+            * to appropriate level to use these
+            */
                 case TelephonyManager.NETWORK_TYPE_EHRPD: // API level 11
                     return true; // ~ 1-2 Mbps
                 case TelephonyManager.NETWORK_TYPE_EVDO_B: // API level 9
@@ -402,4 +406,12 @@ public class Utility {
     };
 
 
+    public static void saveCategories(List<Map<String, List<String>>> cat) {
+        categories = cat;
+    }
+
+    public static List<Map<String, List<String>>> getCategories() {
+        return categories;
+    }
 }
+

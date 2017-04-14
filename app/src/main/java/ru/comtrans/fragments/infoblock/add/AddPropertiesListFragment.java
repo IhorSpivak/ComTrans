@@ -50,16 +50,18 @@ public class AddPropertiesListFragment extends BaseFragment {
     private ArrayList<MainItem> items;
     private int page;
     private int totalPages;
+    private long propCode;
     private String infoBlockId;
     private TextView tvHeader;
 
 
-    public static AddPropertiesListFragment newInstance(int page, int totalPages, String infoBlockId) {
+    public static AddPropertiesListFragment newInstance(int page, int totalPages, String infoBlockId, long propCode) {
 
         Bundle args = new Bundle();
         args.putInt(Const.PAGE, page);
         args.putInt(Const.TOTAL_PAGES, totalPages);
         args.putString(Const.EXTRA_INFO_BLOCK_ID, infoBlockId);
+        args.putLong(Const.EXTRA_PROP_CODE, propCode);
         AddPropertiesListFragment fragment = new AddPropertiesListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -80,6 +82,7 @@ public class AddPropertiesListFragment extends BaseFragment {
         page = getArguments().getInt(Const.PAGE);
         totalPages = getArguments().getInt(Const.TOTAL_PAGES);
         infoBlockId = getArguments().getString(Const.EXTRA_INFO_BLOCK_ID);
+        propCode = getArguments().getLong(Const.EXTRA_PROP_CODE);
 
         initPage();
 
@@ -136,9 +139,10 @@ public class AddPropertiesListFragment extends BaseFragment {
                             idsRelationHelperItem.setCode(item.getCode());
                             switch (item.getCode()) {
                                 case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+//                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_GENERAL_MARK:
+                                    String a = "aaa";
                                     break;
                                 case IdsRelationHelperItem.CODE_GENERAL_MODEL:
 //                                    if (infoBlockHelper.getMarkValue().getId() == -1) {
@@ -230,6 +234,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                             i.putExtra(Const.EXTRA_TITLE, item.getName());
                             i.putExtra(Const.EXTRA_POSITION, position);
                             i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+                            i.putExtra(Const.EXTRA_PROP_CODE, propCode);
                             startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
                             break;
 
