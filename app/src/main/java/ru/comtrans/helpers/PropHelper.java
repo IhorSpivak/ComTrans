@@ -229,16 +229,16 @@ public class PropHelper {
 
                         newVal.add(newValueObject);
 
-//                        if (object.get("code").getAsString().equals("general_type_id")) {
-//                            if (newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong() == propCode) {
-//                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
-//                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED, true);
-//                            }
-//                        } else {
-//                            if (j == 0) {
-//                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
-//                            }
-//                        }
+                        if (object.get("code").getAsString().equals("general_type_id")) {
+                            if (newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong() == propCode) {
+                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+                                newObject.addProperty(MainItem.IS_NEVER_MODIFIED, true);
+                            }
+                        } else {
+                            if (j == 0) {
+                                newObject.add(MainItem.JSON_LIST_VALUE, newValueObject);
+                            }
+                        }
 
                         if (object.get("code").getAsString().equals("view_type_list")) {
                             if (newValueObject.get(ListItem.JSON_VALUE_ID).getAsLong() == inspectionCode) {

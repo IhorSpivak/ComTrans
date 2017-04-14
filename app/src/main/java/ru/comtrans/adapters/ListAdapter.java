@@ -52,8 +52,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                 filterByCategory();
                 break;
             case IdsRelationHelperItem.CODE_GENERAL_MARK:
-                String a = "www";
-                //todo type_link
+                filterMark();
                 break;
             case IdsRelationHelperItem.CODE_GENERAL_MODEL:
                 //todo type_link
@@ -137,10 +136,35 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 
     }
 
+    private void filterMark(){
+        for (ListItem item : items) {
+            if (item.getId() == -1 || isValidMark(item.getName())) {
+                addItemToTempArray(item);
+            }
+        }
+    }
+
+    private boolean isValidMark(String name) {
+        List<String> serverMarkNamesErrors = new ArrayList<String>() {{
+            add("");
+            add("ae95d3c7");
+            add("e13a32a1");
+        }};
+
+        if (serverMarkNamesErrors.contains(name)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+
+    //||   != "ae95d3c7" ||  "e13a321"
     private void filterByMark(){
         for (ListItem item : items) {
             Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
-            if (item.getId() == -1 || item.getMark() == idsRelationHelperItem.getMark()) {
+            if (item.getId() == -1 || item.getMark() == idsRelationHelperItem.getMark())  {
                 addItemToTempArray(item);
             }
         }

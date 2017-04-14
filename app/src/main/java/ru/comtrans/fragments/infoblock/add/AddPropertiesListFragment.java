@@ -139,7 +139,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                             idsRelationHelperItem.setCode(item.getCode());
                             switch (item.getCode()) {
                                 case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
-//                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+
                                     break;
                                 case IdsRelationHelperItem.CODE_GENERAL_MODEL:
 //                                    if (infoBlockHelper.getMarkValue().getId() == -1) {
