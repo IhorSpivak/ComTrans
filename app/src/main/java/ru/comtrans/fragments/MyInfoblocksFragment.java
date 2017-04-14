@@ -51,7 +51,7 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.DialogItem;
 import ru.comtrans.items.ListItem;
-import ru.comtrans.items.MyInfoBlockItem;
+import ru.comtrans.items.MyInfoblockItem;
 import ru.comtrans.services.SendingService;
 import ru.comtrans.singlets.AppController;
 import ru.comtrans.singlets.InfoBlocksStorage;
@@ -62,7 +62,7 @@ import ru.comtrans.views.ConnectionProgressDialog;
  * Created by Artco on 06.07.2016.
  */
 
-public class MyInfoBlocksFragment extends Fragment {
+public class MyInfoblocksFragment extends Fragment {
     private RecyclerView recyclerView;
     private InfoBlocksStorage storage;
     private MyInfoBlocksAdapter adapter;
@@ -71,7 +71,7 @@ public class MyInfoBlocksFragment extends Fragment {
     private InfoBlocksUpdateStatusReceiver updateStatusReceiver;
     private TextView tvEmpty;
     private ProgressBar emptyBar;
-    private ArrayList<MyInfoBlockItem> items;
+    private ArrayList<MyInfoblockItem> items;
     private ConnectionProgressDialog progressDialog;
 
 
@@ -88,7 +88,7 @@ public class MyInfoBlocksFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               checkAudioRecordingPermission();
+                checkAudioRecordingPermission();
             }
         });
 
@@ -209,20 +209,20 @@ public class MyInfoBlocksFragment extends Fragment {
     private void setupList() {
         adapter = new MyInfoBlocksAdapter(getContext(), items, new MyInfoBlocksAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(MyInfoBlockItem item, int position) {
+            public void onItemClick(MyInfoblockItem item, int position) {
                 Intent i;
                 switch (storage.getInfoBlockStatus(item.getId())) {
-                    case MyInfoBlockItem.STATUS_DRAFT:
+                    case MyInfoblockItem.STATUS_DRAFT:
                         i = new Intent(getContext(), AddInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID, item.getId());
                         i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE, item.getLastPosition());
                         startActivity(i);
                         break;
-                    case MyInfoBlockItem.STATUS_SENDING:
+                    case MyInfoblockItem.STATUS_SENDING:
                         Toast.makeText(getContext(), R.string.click_on_sending, Toast.LENGTH_SHORT).show();
                         break;
-                    case MyInfoBlockItem.STATUS_SENT:
-                       // storage.setInfoBlockStatus(item.getId(),MyInfoBlockItem.STATUS_DRAFT);
+                    case MyInfoblockItem.STATUS_SENT:
+                        // storage.setInfoBlockStatus(item.getId(),MyInfoBlockItem.STATUS_DRAFT);
                         i = new Intent(getContext(), ShowInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID, item.getId());
                         i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE, item.getLastPosition());
@@ -238,7 +238,7 @@ public class MyInfoBlocksFragment extends Fragment {
             }
 
             @Override
-            public void onEllipsisClick(final MyInfoBlockItem item, int position) {
+            public void onEllipsisClick(final MyInfoblockItem item, int position) {
 
 
                 final DialogArrayAdapter adapter = new DialogArrayAdapter();
@@ -272,22 +272,22 @@ public class MyInfoBlocksFragment extends Fragment {
                 ArrayList<DialogItem> items = new ArrayList<>();
                 DialogItem dialogItem1 = new DialogItem(R.string.dialog_delete,getContext());
                 DialogItem dialogItem3 = new DialogItem(R.string.dialog_neutral,getContext());
-              //  DialogItem dialogItem4 = new DialogItem(R.string.dialog_send_email,getContext());
+                //  DialogItem dialogItem4 = new DialogItem(R.string.dialog_send_email,getContext());
 
 
-                if(storage.getInfoBlockStatus(item.getId())!=MyInfoBlockItem.STATUS_SENT) {
+                if(storage.getInfoBlockStatus(item.getId())!= MyInfoblockItem.STATUS_SENT) {
                     DialogItem dialogItem2;
-                    if(storage.getInfoBlockStatus(item.getId())==MyInfoBlockItem.STATUS_STOPPED) {
+                    if(storage.getInfoBlockStatus(item.getId())== MyInfoblockItem.STATUS_STOPPED) {
                         dialogItem2 = new DialogItem(R.string.dialog_restore, getContext());
                     }else {
                         dialogItem2 = new DialogItem(R.string.dialog_send,getContext());
                     }
 
                     items.add(dialogItem2); items.add(dialogItem1); // items.add(dialogItem4);
-                     items.add(dialogItem3);
+                    items.add(dialogItem3);
                 }else {
                     items.add(dialogItem1);  //items.add(dialogItem4);
-                     items.add(dialogItem3);
+                    items.add(dialogItem3);
                 }
                 adapter.setItems(items);
 
@@ -298,7 +298,7 @@ public class MyInfoBlocksFragment extends Fragment {
 
 
 
-                }
+            }
 
         });
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -314,7 +314,7 @@ public class MyInfoBlocksFragment extends Fragment {
         }else if(Utility.getBoolean(Const.SETTINGS_ALLOWS_MOBILE_CONN)&&!Utility.isConnectingToWifi(getContext())&&!Utility.isConnectingToFastNetwork(getContext())){
             Toast.makeText(getContext(),R.string.toast_weak_internet,Toast.LENGTH_LONG).show();
         }else if(!Utility.getBoolean(Const.SETTINGS_ALLOWS_BIG_DATA)&&size>100){
-           Toast.makeText(getContext(),R.string.toast_settings_data_not_enabled,Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(),R.string.toast_settings_data_not_enabled,Toast.LENGTH_LONG).show();
         }else if(!Utility.getBoolean(Const.SETTINGS_ALLOWS_MOBILE_CONN)&&!Utility.isConnectingToWifi(getContext())){
             Toast.makeText(getContext(),R.string.toast_settings_wifi_not_enabled,Toast.LENGTH_LONG).show();
         }else {
@@ -416,17 +416,17 @@ public class MyInfoBlocksFragment extends Fragment {
             }
 
             if(hasRecorderPermission!= PackageManager.PERMISSION_GRANTED){
-                    permissions.add(Manifest.permission.RECORD_AUDIO);
-                }
+                permissions.add(Manifest.permission.RECORD_AUDIO);
+            }
 
             if (!permissions.isEmpty()) {
 
                 requestPermissions(permissions.toArray(new String[permissions.size()]),
-                            Const.REQUEST_PERMISSION_AUDIO_RECORDING);
+                        Const.REQUEST_PERMISSION_AUDIO_RECORDING);
 
 
             } else {
-              createNewInfoBlock();
+                createNewInfoBlock();
             }
         } else {
             createNewInfoBlock();
@@ -436,11 +436,11 @@ public class MyInfoBlocksFragment extends Fragment {
     private void createNewInfoBlock(){
         if(Utility.getVehicleTypes()==null) {
             progressDialog.show();
-          //  Toast.makeText(getContext(),R.string.vehicle_type_not_exist,Toast.LENGTH_SHORT).show();
+            //  Toast.makeText(getContext(),R.string.vehicle_type_not_exist,Toast.LENGTH_SHORT).show();
             getVehicleTypes(true);
         }else if(Utility.getInspectionTypes()==null) {
             progressDialog.show();
-         //   Toast.makeText(getContext(),R.string.inspection_type_not_exist,Toast.LENGTH_SHORT).show();
+            //   Toast.makeText(getContext(),R.string.inspection_type_not_exist,Toast.LENGTH_SHORT).show();
             getInspectionTypes(true);
         }else {
             final ListDialogAdapter vehicleTypeAdapter = new ListDialogAdapter(Utility.getVehicleTypes(), getContext());

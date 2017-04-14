@@ -141,9 +141,6 @@ public class AddPropertiesListFragment extends BaseFragment {
                                 case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
 //                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                     break;
-                                case IdsRelationHelperItem.CODE_GENERAL_MARK:
-                                    String a = "aaa";
-                                    break;
                                 case IdsRelationHelperItem.CODE_GENERAL_MODEL:
 //                                    if (infoBlockHelper.getMarkValue().getId() == -1) {
 //                                        Toast.makeText(getContext(), R.string.no_mark_toast, Toast.LENGTH_SHORT).show();
