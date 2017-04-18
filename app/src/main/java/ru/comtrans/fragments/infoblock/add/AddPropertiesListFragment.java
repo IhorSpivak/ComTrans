@@ -139,7 +139,6 @@ public class AddPropertiesListFragment extends BaseFragment {
                             idsRelationHelperItem.setCode(item.getCode());
                             switch (item.getCode()) {
                                 case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
-
                                     break;
                                 case IdsRelationHelperItem.CODE_GENERAL_MODEL:
 //                                    if (infoBlockHelper.getMarkValue().getId() == -1) {
@@ -374,6 +373,7 @@ public class AddPropertiesListFragment extends BaseFragment {
 //                }
                 switch (adapter.getItem(position).getCode()) {
                     case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
+                        dropElemValue(IdsRelationHelperItem.CODE_GENERAL_TYPE_ID);
                         break;
                     case IdsRelationHelperItem.CODE_GENERAL_MARK:
                         dropElemValue(IdsRelationHelperItem.CODE_GENERAL_MODEL);

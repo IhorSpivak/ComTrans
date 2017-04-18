@@ -113,6 +113,7 @@
     <string name="warning_message">Вы заполнили не все поля. Если все верно - жмите "Далее", если вы забыли заполнить какие-либо поля - заполните и жмите "Далее"</string>
     <string name="btn_stay">Остаться</string>
     <string name="choose_date">Выберите дату</string>
+    <string name="incorrect_symbol_toast">Некорректный символ. Допускается ввод только латинских символов и цифр</string>
     <string name="phone_prefix">+7</string>
     <string name="phone_prefix_bracket">+7</string>
     <string name="phone_prefix_bracket_value">+7(%1$s</string>

@@ -36,6 +36,7 @@ public class ShowInfoBlockFragment extends BaseFragment implements ViewPager.OnP
     private ShowInfoBlockPagerAdapter adapter;
     private ShowInfoBlockActivity activity;
 
+
     public static ShowInfoBlockFragment newInstance(String id,int page) {
 
         Bundle args = new Bundle();
