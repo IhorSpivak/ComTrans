@@ -439,28 +439,11 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         });
                     }
 
-                    if(item.getCode().equals("man_pts_model")) {
-                        editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                            }
-
-                            @Override
-                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                            }
-
-                            @Override
-                            public void afterTextChanged(Editable s) {
-                                if (infoBlockHelper.getModelValue().getName().equalsIgnoreCase(s.toString())) {
-                                    setConstructorChecked(false);
-                                } else {
-                                    setConstructorChecked(true);
-                                }
-                            }
-                        });
-                    }
+                    if(item.getCode().equals("man_pts_model"))  {
+//                        editTextViewHolder.editText.setAllCaps(true);
+                            editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+                            editTextViewHolder.editText.setFilters(new InputFilter[]{gosNomerFilter});
+                        }
 
                     if(item.getCode().toLowerCase().contains("vin")) {
 
