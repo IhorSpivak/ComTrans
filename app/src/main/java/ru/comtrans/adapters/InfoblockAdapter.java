@@ -62,6 +62,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private InputFilter vinFilter;
     private InputFilter emailFilter;
     private InputFilter gosNomerFilter;
+    private InputFilter modelPtsFilter;
 
 
     public void setItems(ArrayList<MainItem> items) {
@@ -114,6 +115,19 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 for (int i = start; i < end; i++) {
                     if (!String.valueOf(charSequence.charAt(i)).matches("[A-Z0-9]")) { // Accept only capital letters & digits ; otherwise just return
                         Toast.makeText(context, R.string.incorrect_symbol_toast, Toast.LENGTH_SHORT).show();
+                        return "";
+                    }
+                }
+                return null;
+            }
+        };
+
+        modelPtsFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence charSequence, int start, int end, Spanned spanned, int i2, int i3) {
+                for (int i = start; i < end; i++) {
+                    if (!String.valueOf(charSequence.charAt(i)).matches("[A-Z0-9.,\\\\]")) { // Accept only capital letters & digits ; otherwise just return
+                        Toast.makeText(context, R.string.incorrect_symbol_toast_for_model_PTS, Toast.LENGTH_SHORT).show();
                         return "";
                     }
                 }
@@ -439,11 +453,33 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         });
                     }
 
-                    if(item.getCode().equals("man_pts_model"))  {
-//                        editTextViewHolder.editText.setAllCaps(true);
-                            editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
-                            editTextViewHolder.editText.setFilters(new InputFilter[]{gosNomerFilter});
-                        }
+                    if(item.getCode().equals("man_pts_model")) {
+                        editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                                if (infoBlockHelper.getModelValue().getName().equalsIgnoreCase(s.toString())) {
+                                    setConstructorChecked(false);
+                                } else {
+                                    setConstructorChecked(true);
+                                }
+                            }
+                        });
+                    }
+
+                    if(item.getCode().equals("MODEL_PO_PTS")) {
+                        editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+                        editTextViewHolder.editText.setFilters(new InputFilter[]{modelPtsFilter});
+                    }
 
                     if(item.getCode().toLowerCase().contains("vin")) {
 
@@ -1256,4 +1292,5 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 }
+
 
