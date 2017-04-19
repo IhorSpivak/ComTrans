@@ -126,7 +126,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             @Override
             public CharSequence filter(CharSequence charSequence, int start, int end, Spanned spanned, int i2, int i3) {
                 for (int i = start; i < end; i++) {
-                    if (!String.valueOf(charSequence.charAt(i)).matches("[A-Z0-9.,\\\\]")) { // Accept only capital letters & digits ; otherwise just return
+                    if (!String.valueOf(charSequence.charAt(i)).matches("[A-Z0-9\\-.\\\\]")) { // Accept only capital letters & digits ; otherwise just return
                         Toast.makeText(context, R.string.incorrect_symbol_toast_for_model_PTS, Toast.LENGTH_SHORT).show();
                         return "";
                     }
