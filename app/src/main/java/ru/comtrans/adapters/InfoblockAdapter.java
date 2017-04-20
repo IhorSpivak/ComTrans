@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Selection;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
@@ -759,9 +760,19 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         @Override
                         public void afterTextChanged(Editable s) {
+                            if (!s.toString().startsWith("+")) {
+                                editTextViewHolder.editText.setText("+");
+                                Selection.setSelection(editTextViewHolder.editText.getText(), editTextViewHolder.editText
+                                        .getText().length());
+
+                            } else {
+
+                            }
+
                             if(s.length()==12){
                                 editTextViewHolder.textInputLayout.setErrorEnabled(false);
                             }
+
                         }
                     });
 
@@ -776,6 +787,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     if (item.getValue() != null)
                         nonEditableViewHolder.tvText.setText(item.getValue());
                 }
+
                 break;
 
 
