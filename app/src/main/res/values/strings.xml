@@ -114,7 +114,7 @@
     <string name="btn_stay">Остаться</string>
     <string name="choose_date">Выберите дату</string>
     <string name="incorrect_symbol_toast">Некорректный символ. Допускается ввод только латинских символов и цифр</string>
-    <string name="incorrect_symbol_toast_for_model_PTS">Некорректный символ. Допускается ввод только латинских символов,цифр и спецсимволов   . , - , \\ .</string>
+    <string name="incorrect_symbol_toast_for_model_PTS">Некорректный символ. Допускается ввод только заглавных букв,цифр и спецсимволов  ( . ) ,( - ),( \\ ) .</string>
     <string name="phone_prefix">+7</string>
     <string name="phone_prefix_bracket">+7</string>
     <string name="phone_prefix_bracket_value">+7(%1$s</string>
