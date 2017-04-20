@@ -211,6 +211,7 @@ public class PropHelper {
                         if (valueObject.has("kpp_model") && !valueObject.get("kpp_model").isJsonNull() && valueObject.get("kpp_model").isJsonArray()) {
                             newValueObject.add(ListItem.JSON_VALUE_KPP_MODEL, valueObject.get("kpp_model").getAsJsonArray());
                         }
+
                         if (valueObject.has("vehicle_owner") && !valueObject.get("vehicle_owner").isJsonNull() && valueObject.get("vehicle_owner").isJsonArray()) {
                             newValueObject.add(ListItem.JSON_VALUE_VEHICLE_OWNER, valueObject.get("vehicle_owner").getAsJsonArray());
                         }
@@ -366,5 +367,6 @@ public class PropHelper {
 
         return newArray;
     }
+
 
 }

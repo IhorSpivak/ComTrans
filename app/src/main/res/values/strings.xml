@@ -114,7 +114,7 @@
     <string name="btn_stay">Остаться</string>
     <string name="choose_date">Выберите дату</string>
     <string name="incorrect_symbol_toast">Некорректный символ. Допускается ввод только латинских символов и цифр</string>
-    <string name="incorrect_symbol_toast_for_model_PTS">Некорректный символ. Допускается ввод только латинских символов,цифр и спецсимволов   . , - , \ .</string>
+    <string name="incorrect_symbol_toast_for_model_PTS">Некорректный символ. Допускается ввод только латинских символов,цифр и спецсимволов   . , - , \\ .</string>
     <string name="phone_prefix">+7</string>
     <string name="phone_prefix_bracket">+7</string>
     <string name="phone_prefix_bracket_value">+7(%1$s</string>
@@ -190,7 +190,7 @@
     <string name="video_second_text">Для съемки видео, выберите\nсоответсвующую ячейку и тапните\nпо кнопке (1). Объект для съемки\nуказан в описании к видео (2)</string>
     <string name="video_third_text">Для того, чтобы переснять\nвидео, войдите в ячейку с\nуже сделанным видео (1)и\nиспользуйте иконки\nредактирования (2)</string>
 
-    <string name="accepted_numbers_toast">Разрешенные для ввода симолы: 0 1 2 3 4 5 6 7 8 9 A B C D E F G H J K L M N P R S T U V W X Y Z</string>
+    <string name="accepted_numbers_toast">Разрешенные для ввода символы: 0 1 2 3 4 5 6 7 8 9 A B C D E F G H J K L M N P R S T U V W X Y Z</string>
 
 
     <string name="API_URL">http://rc.100fur.ru/ru/api/</string>

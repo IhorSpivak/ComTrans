@@ -56,10 +56,12 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                 break;
             case IdsRelationHelperItem.CODE_GENERAL_MODEL:
                 //todo type_link
+
                 filterByMark();
                 break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
                 //todo type_link
+
                 filterByMark();
                 filterByModel();
                 break;
@@ -149,6 +151,8 @@ public class ListAdapter extends BaseAdapter implements Filterable {
             add("");
             add("ae95d3c7");
             add("e13a32a1");
+            add("947d6a9f");
+            add("bcb48ddd");
         }};
 
         if (serverMarkNamesErrors.contains(name)) {

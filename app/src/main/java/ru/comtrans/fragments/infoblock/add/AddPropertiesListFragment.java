@@ -23,6 +23,7 @@ import ru.comtrans.activities.AddInfoBlockActivity;
 import ru.comtrans.activities.CameraActivity;
 import ru.comtrans.activities.SearchValueActivity;
 import ru.comtrans.adapters.InfoblockAdapter;
+import ru.comtrans.adapters.ListAdapter;
 import ru.comtrans.dialogs.DatePickerDialogFragment;
 import ru.comtrans.fragments.BaseFragment;
 import ru.comtrans.helpers.Const;
@@ -149,6 +150,8 @@ public class AddPropertiesListFragment extends BaseFragment {
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+
+
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
 //                                    if (infoBlockHelper.getMarkValue().getId() == -1 ||
