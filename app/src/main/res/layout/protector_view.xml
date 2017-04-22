@@ -1,50 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/image_layout"
-    android:paddingTop="30dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:paddingBottom="30dp"
-    android:paddingStart="5dp"
-    android:paddingRight="5dp"
     android:paddingEnd="5dp"
     android:paddingLeft="5dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:paddingRight="5dp"
+    android:paddingStart="5dp"
+    android:paddingTop="30dp">
 
-    <LinearLayout
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:layout_width="0px"
-        android:layout_height="0px"/>
-
-
-
-    <ImageView
-        android:id="@+id/tire_scheme_image"
-        android:layout_width="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:scaleType="fitCenter"
+    <TextView
+        android:id="@+id/tire_scheme_header"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-       />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="Схема остатка протектора"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <RelativeLayout
+        android:id="@+id/main_tire_scheme_layout"
         android:layout_width="match_parent"
-        android:id="@+id/left_layout"
-        android:layout_toLeftOf="@id/tire_scheme_image"
-        android:layout_toStartOf="@id/tire_scheme_image"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/tire_scheme_header">
 
-    <RelativeLayout
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+
+        <ImageView
+            android:id="@+id/tire_scheme_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:scaleType="fitCenter" />
+
+        <RelativeLayout
+            android:id="@+id/left_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/tire_scheme_image"
+            android:layout_toStartOf="@id/tire_scheme_image" />
+
+        <RelativeLayout
+            android:id="@+id/right_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/tire_scheme_image"
+            android:layout_toRightOf="@id/tire_scheme_image" />
+    </RelativeLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/tire_scheme_list"
         android:layout_width="match_parent"
-        android:layout_toEndOf="@id/tire_scheme_image"
-        android:layout_toRightOf="@id/tire_scheme_image"
-        android:id="@+id/right_layout"
-        android:layout_height="match_parent"/>
-
-
-
-
+        android:layout_height="match_parent"
+        android:layout_below="@id/tire_scheme_header"
+        android:scrollbars="vertical"
+        android:visibility="gone" />
 
 
 </RelativeLayout>
+
