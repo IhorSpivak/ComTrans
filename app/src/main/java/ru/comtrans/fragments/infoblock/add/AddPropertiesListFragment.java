@@ -143,7 +143,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                                     break;
                                 case IdsRelationHelperItem.CODE_GENERAL_MODEL:
 //                                    if (infoBlockHelper.getMarkValue().getId() == -1) {
-//                                        Toast.makeText(getContext(), R.string.no_mark_toast, Toast.LENGTH_SHORT).show();
+//
 //                                    } else {
                                     idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
 //                                    }

@@ -455,13 +455,14 @@ public class MyInfoblocksFragment extends Fragment {
             vehicleTypeBuilder.setAdapter(vehicleTypeAdapter, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    if (vehicleTypeAdapter.getItem(i).getId() != -1){
                     setInspectionType(vehicleTypeAdapter.getItem(i).getId());
+                    }else {
+                        Toast.makeText(getContext(), R.string.must_to_choose_category, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
             vehicleTypeBuilder.show();
-
-
-
 
         }
     }
@@ -478,11 +479,16 @@ public class MyInfoblocksFragment extends Fragment {
         inspectionTypeBuilder.setAdapter(inspectionAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Intent intent = new Intent(getContext(), AddInfoBlockActivity.class);
-                intent.putExtra(Const.EXTRA_PROP_CODE, vehicleTypeId);
-                intent.putExtra(Const.EXTRA_INSPECTION_CODE,inspectionAdapter.getItem(i).getId());
-                startActivity(intent);
-                dialogInterface.dismiss();
+                if (inspectionAdapter.getItem(i).getId() != -1) {
+                    Intent intent = new Intent(getContext(), AddInfoBlockActivity.class);
+                    intent.putExtra(Const.EXTRA_PROP_CODE, vehicleTypeId);
+                    intent.putExtra(Const.EXTRA_INSPECTION_CODE, inspectionAdapter.getItem(i).getId());
+                    startActivity(intent);
+                    dialogInterface.dismiss();
+                } else {
+                    dialogInterface.cancel();
+                    Toast.makeText(getContext(), R.string.must_to_choose_inspection, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
