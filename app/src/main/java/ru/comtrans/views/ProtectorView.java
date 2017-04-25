@@ -40,8 +40,7 @@ public class ProtectorView extends RelativeLayout {
     private boolean isEditable;
 
 
-
-    public ProtectorView(Context context,int resource,ArrayList<ProtectorItem> items) {
+    public ProtectorView(Context context, int resource, ArrayList<ProtectorItem> items) {
         super(context);
         this.context = context;
         this.resourceId = resource;
@@ -55,15 +54,14 @@ public class ProtectorView extends RelativeLayout {
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.ProtectorView, 0, 0);
 
-        int resId = a.getResourceId(R.styleable.ProtectorView_pvResId,0);
-        if(resId!=0)
+        int resId = a.getResourceId(R.styleable.ProtectorView_pvResId, 0);
+        if (resId != 0)
             resourceId = resId;
         a.recycle();
     }
 
 
-
-    public void setItems(ArrayList<ProtectorItem> items){
+    public void setItems(ArrayList<ProtectorItem> items) {
         this.items = items;
         init();
     }
@@ -72,12 +70,12 @@ public class ProtectorView extends RelativeLayout {
         isEditable = editable;
     }
 
-    private TextView createEditText(boolean isEditable,ProtectorItem item,int position){
+    private TextView createEditText(boolean isEditable, ProtectorItem item, int position) {
 
         TextView editText;
-        if(isEditable){
+        if (isEditable) {
             editText = new EditText(context);
-        }else {
+        } else {
             editText = new TextView(context);
         }
 
@@ -91,24 +89,25 @@ public class ProtectorView extends RelativeLayout {
         editText.setMaxLines(1);
         editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        editText.setTextSize(TypedValue.COMPLEX_UNIT_SP,11);
+        editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
         editText.setSingleLine();
 
 
         return editText;
     }
 
-    private void init(){
+    private void init() {
         helper = InfoBlockHelper.getInstance();
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflater.inflate(R.layout.protector_view, this, true);
-        final RelativeLayout leftLayout = (RelativeLayout) v.findViewById (R.id.left_layout);
-        final RelativeLayout rightLayout = (RelativeLayout) v.findViewById (R.id.right_layout);
-        ImageView image = (ImageView)v.findViewById(R.id.tire_scheme_image);
-        ListItem tireSchemeItem = helper.getTireSchemeValue();
-        int schemeId = tireSchemeItem.getTireSchemeId();
-        setResourceId(schemeId);
+        final RelativeLayout leftLayout = (RelativeLayout) v.findViewById(R.id.left_layout);
+        final RelativeLayout rightLayout = (RelativeLayout) v.findViewById(R.id.right_layout);
+        ImageView image = (ImageView) v.findViewById(R.id.tire_scheme_image);
+        if (helper.getTireSchemeValue() != null) {
+            ListItem tireSchemeItem = helper.getTireSchemeValue();
+            int schemeId = tireSchemeItem.getTireSchemeId();
+            setResourceId(schemeId);
 
 //         OnKeyListener keyListener = new OnKeyListener() {
 //            @Override
@@ -133,9 +132,7 @@ public class ProtectorView extends RelativeLayout {
 //        };
 
 
-
-
-            if(items!=null&&tireSchemeItem.getProtectorValues()!=null) {
+            if (items != null && tireSchemeItem.getProtectorValues() != null) {
                 ArrayList<ProtectorItem> protectorItems = new ArrayList<>();
                 for (int i = 0; i < items.size(); i++) {
 
@@ -147,139 +144,139 @@ public class ProtectorView extends RelativeLayout {
                     }
                 }
 
-                if(resourceId!=0){
-                    Log.d("TAG","resource id "+resourceId);
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(),resourceId);
+                if (resourceId != 0) {
+                    Log.d("TAG", "resource id " + resourceId);
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resourceId);
                     image.setImageResource(resourceId);
 
-                    RelativeLayout.LayoutParams paramsForLeftLayout = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,bitmap.getHeight());
-                    paramsForLeftLayout.addRule(RelativeLayout.LEFT_OF,R.id.tire_scheme_image);
+                    RelativeLayout.LayoutParams paramsForLeftLayout = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, bitmap.getHeight());
+                    paramsForLeftLayout.addRule(RelativeLayout.LEFT_OF, R.id.tire_scheme_image);
 
-                    RelativeLayout.LayoutParams paramsForRightLayout = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,bitmap.getHeight());
-                    paramsForRightLayout.addRule(RelativeLayout.RIGHT_OF,R.id.tire_scheme_image);
+                    RelativeLayout.LayoutParams paramsForRightLayout = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, bitmap.getHeight());
+                    paramsForRightLayout.addRule(RelativeLayout.RIGHT_OF, R.id.tire_scheme_image);
 
                     leftLayout.setLayoutParams(paramsForLeftLayout);
                     rightLayout.setLayoutParams(paramsForRightLayout);
 
                     int height = bitmap.getHeight();
-                    int etHeight = (int) (height*0.14);
-                    int topMargin = (int) (height*0.0652);
-                    int wheelMargin = (int) (height*0.0489);
-                    int halfWheelMargin = wheelMargin/2;
+                    int etHeight = (int) (height * 0.14);
+                    int topMargin = (int) (height * 0.0652);
+                    int wheelMargin = (int) (height * 0.0489);
+                    int halfWheelMargin = wheelMargin / 2;
 
-                    int bottomSecondMargin = topMargin+halfWheelMargin+etHeight;
-                    int bottomThirdMargin = bottomSecondMargin+halfWheelMargin+etHeight;
-
-
-                    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,getResources().getDisplayMetrics());
-
-                        if(schemeId==1||schemeId==2) {
-                            LinearLayout secondAxisLeftLayout = new LinearLayout(context);
-                            secondAxisLeftLayout.setTag("2Left");
-                            secondAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                            RelativeLayout.LayoutParams secondAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
-                            secondAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                            secondAxisLeftLayout.setLayoutParams(secondAxisLeftParams);
-                            secondAxisLeftParams.setMargins(0,0,0,topMargin);
-
-                            LinearLayout secondAxisRightLayout = new LinearLayout(context);
-                            secondAxisRightLayout.setTag("2Right");
-                            secondAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                            RelativeLayout.LayoutParams secondAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
-                            secondAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                            secondAxisRightLayout.setLayoutParams(secondAxisLeftParams);
-                            secondAxisRightParams.setMargins(0,0,0,topMargin);
-
-                            for(int i=0; i<protectorItems.size(); i++) {
-                                ProtectorItem item = protectorItems.get(i);
-                                TextView editText = createEditText(isEditable,item,i);
-                                RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
-                                LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
-                                linearParams.weight = 1;
-
-                                switch (item.getCode()) {
-                                    case "shin_axis11":
-                                        relativeParams.setMargins(margin, topMargin, margin, 0);
-                                        editText.setLayoutParams(relativeParams);
-                                        editText.setTag("shin_axis11");
-                                        leftLayout.addView(editText);
+                    int bottomSecondMargin = topMargin + halfWheelMargin + etHeight;
+                    int bottomThirdMargin = bottomSecondMargin + halfWheelMargin + etHeight;
 
 
-                                        break;
-                                    case "shin_axis12":
-                                        relativeParams.setMargins(margin, topMargin, margin, 0);
-                                        editText.setLayoutParams(relativeParams);
-                                        editText.setTag("shin_axis12");
-                                        rightLayout.addView(editText);
-                                        break;
-                                    case "shin_axis21":
-                                        editText.setTag("shin_axis21");
-                                        linearParams.setMargins(margin, 0, margin,0);
-                                        editText.setLayoutParams(linearParams);
-                                        secondAxisLeftLayout.addView(editText);
-                                        break;
-                                    case "shin_axis22":
-                                        editText.setTag("shin_axis22");
-                                        linearParams.setMargins(margin, 0, margin,0);
-                                        editText.setLayoutParams(linearParams);
-                                        secondAxisLeftLayout.addView(editText);
+                    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
 
-                                        break;
-                                    case "shin_axis23":
-                                        editText.setTag("shin_axis23");
-                                        linearParams.setMargins(margin, 0, margin,0);
-                                        editText.setLayoutParams(linearParams);
-                                        secondAxisRightLayout.addView(editText);
-                                        break;
-                                    case "shin_axis24":
-                                        editText.setTag("shin_axis24");
-                                        linearParams.setMargins(margin, 0, margin,0);
-                                        editText.setLayoutParams(linearParams);
-                                        secondAxisRightLayout.addView(editText);
-                                        break;
-                                }
-
-                            }
-                            leftLayout.addView(secondAxisLeftLayout);
-                            rightLayout.addView(secondAxisRightLayout);
-
-                        }
-
-                    if(schemeId==3||schemeId==4||schemeId==5) {
+                    if (schemeId == 1 || schemeId == 2) {
                         LinearLayout secondAxisLeftLayout = new LinearLayout(context);
+                        secondAxisLeftLayout.setTag("2Left");
                         secondAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams secondAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams secondAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         secondAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         secondAxisLeftLayout.setLayoutParams(secondAxisLeftParams);
-                        secondAxisLeftParams.setMargins(0,0,0,bottomSecondMargin);
+                        secondAxisLeftParams.setMargins(0, 0, 0, topMargin);
+
+                        LinearLayout secondAxisRightLayout = new LinearLayout(context);
+                        secondAxisRightLayout.setTag("2Right");
+                        secondAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
+                        RelativeLayout.LayoutParams secondAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
+                        secondAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                        secondAxisRightLayout.setLayoutParams(secondAxisLeftParams);
+                        secondAxisRightParams.setMargins(0, 0, 0, topMargin);
+
+                        for (int i = 0; i < protectorItems.size(); i++) {
+                            ProtectorItem item = protectorItems.get(i);
+                            TextView editText = createEditText(isEditable, item, i);
+                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
+                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0, etHeight);
+                            linearParams.weight = 1;
+
+                            switch (item.getCode()) {
+                                case "shin_axis11":
+                                    relativeParams.setMargins(margin, topMargin, margin, 0);
+                                    editText.setLayoutParams(relativeParams);
+                                    editText.setTag("shin_axis11");
+                                    leftLayout.addView(editText);
+
+
+                                    break;
+                                case "shin_axis12":
+                                    relativeParams.setMargins(margin, topMargin, margin, 0);
+                                    editText.setLayoutParams(relativeParams);
+                                    editText.setTag("shin_axis12");
+                                    rightLayout.addView(editText);
+                                    break;
+                                case "shin_axis21":
+                                    editText.setTag("shin_axis21");
+                                    linearParams.setMargins(margin, 0, margin, 0);
+                                    editText.setLayoutParams(linearParams);
+                                    secondAxisLeftLayout.addView(editText);
+                                    break;
+                                case "shin_axis22":
+                                    editText.setTag("shin_axis22");
+                                    linearParams.setMargins(margin, 0, margin, 0);
+                                    editText.setLayoutParams(linearParams);
+                                    secondAxisLeftLayout.addView(editText);
+
+                                    break;
+                                case "shin_axis23":
+                                    editText.setTag("shin_axis23");
+                                    linearParams.setMargins(margin, 0, margin, 0);
+                                    editText.setLayoutParams(linearParams);
+                                    secondAxisRightLayout.addView(editText);
+                                    break;
+                                case "shin_axis24":
+                                    editText.setTag("shin_axis24");
+                                    linearParams.setMargins(margin, 0, margin, 0);
+                                    editText.setLayoutParams(linearParams);
+                                    secondAxisRightLayout.addView(editText);
+                                    break;
+                            }
+
+                        }
+                        leftLayout.addView(secondAxisLeftLayout);
+                        rightLayout.addView(secondAxisRightLayout);
+
+                    }
+
+                    if (schemeId == 3 || schemeId == 4 || schemeId == 5) {
+                        LinearLayout secondAxisLeftLayout = new LinearLayout(context);
+                        secondAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
+                        RelativeLayout.LayoutParams secondAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
+                        secondAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                        secondAxisLeftLayout.setLayoutParams(secondAxisLeftParams);
+                        secondAxisLeftParams.setMargins(0, 0, 0, bottomSecondMargin);
 
                         LinearLayout secondAxisRightLayout = new LinearLayout(context);
                         secondAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams secondAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams secondAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         secondAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         secondAxisRightLayout.setLayoutParams(secondAxisLeftParams);
-                        secondAxisRightParams.setMargins(0,0,0,bottomSecondMargin);
+                        secondAxisRightParams.setMargins(0, 0, 0, bottomSecondMargin);
 
                         LinearLayout thirdAxisLeftLayout = new LinearLayout(context);
                         thirdAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisLeftLayout.setLayoutParams(thirdAxisLeftParams);
-                        thirdAxisLeftParams.setMargins(0,0,0,topMargin);
+                        thirdAxisLeftParams.setMargins(0, 0, 0, topMargin);
 
                         LinearLayout thirdAxisRightLayout = new LinearLayout(context);
                         thirdAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisRightLayout.setLayoutParams(thirdAxisRightParams);
-                        thirdAxisRightParams.setMargins(0,0,0,topMargin);
+                        thirdAxisRightParams.setMargins(0, 0, 0, topMargin);
 
 
-                        for(int i=0; i<protectorItems.size(); i++) {
+                        for (int i = 0; i < protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,i);
-                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
-                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
+                            TextView editText = createEditText(isEditable, item, i);
+                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
+                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0, etHeight);
                             linearParams.weight = 1;
 
                             switch (item.getCode()) {
@@ -295,25 +292,25 @@ public class ProtectorView extends RelativeLayout {
                                     break;
                                 case "shin_axis21":
                                 case "shin_axis22":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     secondAxisLeftLayout.addView(editText);
                                     break;
                                 case "shin_axis23":
                                 case "shin_axis24":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     secondAxisRightLayout.addView(editText);
                                     break;
                                 case "shin_axis31":
                                 case "shin_axis32":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisLeftLayout.addView(editText);
                                     break;
                                 case "shin_axis33":
                                 case "shin_axis34":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisRightLayout.addView(editText);
                                     break;
@@ -328,43 +325,43 @@ public class ProtectorView extends RelativeLayout {
 
                     }
 
-                    if(schemeId==6||schemeId==9||schemeId==11||schemeId==12){
+                    if (schemeId == 6 || schemeId == 9 || schemeId == 11 || schemeId == 12) {
 
 
                         LinearLayout thirdAxisLeftLayout = new LinearLayout(context);
                         thirdAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisLeftLayout.setLayoutParams(thirdAxisLeftParams);
-                        thirdAxisLeftParams.setMargins(0,0,0,bottomSecondMargin);
+                        thirdAxisLeftParams.setMargins(0, 0, 0, bottomSecondMargin);
 
                         LinearLayout thirdAxisRightLayout = new LinearLayout(context);
                         thirdAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisRightLayout.setLayoutParams(thirdAxisRightParams);
-                        thirdAxisRightParams.setMargins(0,0,0,bottomSecondMargin);
+                        thirdAxisRightParams.setMargins(0, 0, 0, bottomSecondMargin);
 
                         LinearLayout fourthAxisLeftLayout = new LinearLayout(context);
                         fourthAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams fourthAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams fourthAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         fourthAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         fourthAxisLeftLayout.setLayoutParams(fourthAxisLeftParams);
-                        fourthAxisLeftParams.setMargins(0,0,0,topMargin);
+                        fourthAxisLeftParams.setMargins(0, 0, 0, topMargin);
 
                         LinearLayout fourthAxisRightLayout = new LinearLayout(context);
                         fourthAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams fourthAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams fourthAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         fourthAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         fourthAxisRightLayout.setLayoutParams(fourthAxisRightParams);
-                        fourthAxisRightParams.setMargins(0,0,0,topMargin);
+                        fourthAxisRightParams.setMargins(0, 0, 0, topMargin);
 
 
-                        for(int i=0; i<protectorItems.size(); i++) {
+                        for (int i = 0; i < protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,i);
-                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
-                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
+                            TextView editText = createEditText(isEditable, item, i);
+                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
+                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0, etHeight);
                             linearParams.weight = 1;
 
                             switch (item.getCode()) {
@@ -390,25 +387,25 @@ public class ProtectorView extends RelativeLayout {
                                     break;
                                 case "shin_axis31":
                                 case "shin_axis32":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisLeftLayout.addView(editText);
                                     break;
                                 case "shin_axis33":
                                 case "shin_axis34":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisRightLayout.addView(editText);
                                     break;
                                 case "shin_axis41":
                                 case "shin_axis42":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     fourthAxisLeftLayout.addView(editText);
                                     break;
                                 case "shin_axis43":
                                 case "shin_axis44":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     fourthAxisRightLayout.addView(editText);
                                     break;
@@ -423,43 +420,43 @@ public class ProtectorView extends RelativeLayout {
 
                     }
 
-                    if(schemeId==8){
+                    if (schemeId == 8) {
 
 
                         LinearLayout thirdAxisLeftLayout = new LinearLayout(context);
                         thirdAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisLeftLayout.setLayoutParams(thirdAxisLeftParams);
-                        thirdAxisLeftParams.setMargins(0,0,0,bottomSecondMargin);
+                        thirdAxisLeftParams.setMargins(0, 0, 0, bottomSecondMargin);
 
                         LinearLayout thirdAxisRightLayout = new LinearLayout(context);
                         thirdAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisRightLayout.setLayoutParams(thirdAxisRightParams);
-                        thirdAxisRightParams.setMargins(0,0,0,bottomSecondMargin);
+                        thirdAxisRightParams.setMargins(0, 0, 0, bottomSecondMargin);
 
                         LinearLayout fourthAxisLeftLayout = new LinearLayout(context);
                         fourthAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams fourthAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams fourthAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         fourthAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         fourthAxisLeftLayout.setLayoutParams(fourthAxisLeftParams);
-                        fourthAxisLeftParams.setMargins(0,0,0,topMargin);
+                        fourthAxisLeftParams.setMargins(0, 0, 0, topMargin);
 
                         LinearLayout fourthAxisRightLayout = new LinearLayout(context);
                         fourthAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams fourthAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams fourthAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         fourthAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         fourthAxisRightLayout.setLayoutParams(fourthAxisRightParams);
-                        fourthAxisRightParams.setMargins(0,0,0,topMargin);
+                        fourthAxisRightParams.setMargins(0, 0, 0, topMargin);
 
 
-                        for(int i=0; i<protectorItems.size(); i++) {
+                        for (int i = 0; i < protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,i);
-                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
-                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
+                            TextView editText = createEditText(isEditable, item, i);
+                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
+                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0, etHeight);
                             linearParams.weight = 1;
 
                             switch (item.getCode()) {
@@ -485,13 +482,13 @@ public class ProtectorView extends RelativeLayout {
                                     break;
                                 case "shin_axis31":
                                 case "shin_axis32":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisLeftLayout.addView(editText);
                                     break;
                                 case "shin_axis33":
                                 case "shin_axis34":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisRightLayout.addView(editText);
                                     break;
@@ -519,42 +516,42 @@ public class ProtectorView extends RelativeLayout {
 
                     }
 
-                    if(schemeId==7){
+                    if (schemeId == 7) {
 
                         LinearLayout thirdAxisLeftLayout = new LinearLayout(context);
                         thirdAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisLeftLayout.setLayoutParams(thirdAxisLeftParams);
-                        thirdAxisLeftParams.setMargins(0,0,0,bottomSecondMargin);
+                        thirdAxisLeftParams.setMargins(0, 0, 0, bottomSecondMargin);
 
                         LinearLayout thirdAxisRightLayout = new LinearLayout(context);
                         thirdAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisRightLayout.setLayoutParams(thirdAxisRightParams);
-                        thirdAxisRightParams.setMargins(0,0,0,bottomSecondMargin);
+                        thirdAxisRightParams.setMargins(0, 0, 0, bottomSecondMargin);
 
                         LinearLayout fourthAxisLeftLayout = new LinearLayout(context);
                         fourthAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams fourthAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams fourthAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         fourthAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         fourthAxisLeftLayout.setLayoutParams(fourthAxisLeftParams);
-                        fourthAxisLeftParams.setMargins(0,0,0,topMargin);
+                        fourthAxisLeftParams.setMargins(0, 0, 0, topMargin);
 
                         LinearLayout fourthAxisRightLayout = new LinearLayout(context);
                         fourthAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams fourthAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams fourthAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         fourthAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         fourthAxisRightLayout.setLayoutParams(fourthAxisRightParams);
-                        fourthAxisRightParams.setMargins(0,0,0,topMargin);
+                        fourthAxisRightParams.setMargins(0, 0, 0, topMargin);
 
 
-                        for(int i=0; i<protectorItems.size(); i++) {
+                        for (int i = 0; i < protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,i);
-                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
-                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
+                            TextView editText = createEditText(isEditable, item, i);
+                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
+                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0, etHeight);
                             linearParams.weight = 1;
 
                             switch (item.getCode()) {
@@ -582,25 +579,25 @@ public class ProtectorView extends RelativeLayout {
                                     break;
                                 case "shin_axis31":
                                 case "shin_axis32":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisLeftLayout.addView(editText);
                                     break;
                                 case "shin_axis33":
                                 case "shin_axis34":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisRightLayout.addView(editText);
                                     break;
                                 case "shin_axis41":
                                 case "shin_axis42":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     fourthAxisLeftLayout.addView(editText);
                                     break;
                                 case "shin_axis43":
                                 case "shin_axis44":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     fourthAxisRightLayout.addView(editText);
                                     break;
@@ -615,57 +612,57 @@ public class ProtectorView extends RelativeLayout {
 
                     }
 
-                    if(schemeId==10){
+                    if (schemeId == 10) {
 
                         LinearLayout secondAxisLeftLayout = new LinearLayout(context);
                         secondAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams secondAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams secondAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         secondAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         secondAxisLeftLayout.setLayoutParams(secondAxisLeftParams);
-                        secondAxisLeftParams.setMargins(0,0,0,bottomThirdMargin);
+                        secondAxisLeftParams.setMargins(0, 0, 0, bottomThirdMargin);
 
                         LinearLayout secondAxisRightLayout = new LinearLayout(context);
                         secondAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams secondAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams secondAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         secondAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         secondAxisRightLayout.setLayoutParams(secondAxisLeftParams);
-                        secondAxisRightParams.setMargins(0,0,0,bottomThirdMargin);
+                        secondAxisRightParams.setMargins(0, 0, 0, bottomThirdMargin);
 
 
                         LinearLayout thirdAxisLeftLayout = new LinearLayout(context);
                         thirdAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisLeftLayout.setLayoutParams(thirdAxisLeftParams);
-                        thirdAxisLeftParams.setMargins(0,0,0,bottomSecondMargin);
+                        thirdAxisLeftParams.setMargins(0, 0, 0, bottomSecondMargin);
 
                         LinearLayout thirdAxisRightLayout = new LinearLayout(context);
                         thirdAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisRightLayout.setLayoutParams(thirdAxisRightParams);
-                        thirdAxisRightParams.setMargins(0,0,0,bottomSecondMargin);
+                        thirdAxisRightParams.setMargins(0, 0, 0, bottomSecondMargin);
 
                         LinearLayout fourthAxisLeftLayout = new LinearLayout(context);
                         fourthAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams fourthAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams fourthAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         fourthAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         fourthAxisLeftLayout.setLayoutParams(fourthAxisLeftParams);
-                        fourthAxisLeftParams.setMargins(0,0,0,topMargin);
+                        fourthAxisLeftParams.setMargins(0, 0, 0, topMargin);
 
                         LinearLayout fourthAxisRightLayout = new LinearLayout(context);
                         fourthAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams fourthAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams fourthAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         fourthAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         fourthAxisRightLayout.setLayoutParams(fourthAxisRightParams);
-                        fourthAxisRightParams.setMargins(0,0,0,topMargin);
+                        fourthAxisRightParams.setMargins(0, 0, 0, topMargin);
 
 
-                        for(int i=0; i<protectorItems.size(); i++) {
+                        for (int i = 0; i < protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,i);
-                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
-                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
+                            TextView editText = createEditText(isEditable, item, i);
+                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
+                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0, etHeight);
                             linearParams.weight = 1;
 
                             switch (item.getCode()) {
@@ -681,25 +678,25 @@ public class ProtectorView extends RelativeLayout {
                                     break;
                                 case "shin_axis21":
                                 case "shin_axis22":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     secondAxisLeftLayout.addView(editText);
                                     break;
                                 case "shin_axis23":
                                 case "shin_axis24":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     secondAxisRightLayout.addView(editText);
                                     break;
                                 case "shin_axis31":
                                 case "shin_axis32":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisLeftLayout.addView(editText);
                                     break;
                                 case "shin_axis33":
                                 case "shin_axis34":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisRightLayout.addView(editText);
                                     break;
@@ -730,44 +727,42 @@ public class ProtectorView extends RelativeLayout {
 
                     }
 
-                    if(schemeId==13){
+                    if (schemeId == 13) {
 
                         LinearLayout thirdAxisLeftLayout = new LinearLayout(context);
                         thirdAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisLeftLayout.setLayoutParams(thirdAxisLeftParams);
-                        thirdAxisLeftParams.setMargins(0,0,0,bottomThirdMargin);
+                        thirdAxisLeftParams.setMargins(0, 0, 0, bottomThirdMargin);
 
                         LinearLayout thirdAxisRightLayout = new LinearLayout(context);
                         thirdAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams thirdAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         thirdAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         thirdAxisRightLayout.setLayoutParams(thirdAxisRightParams);
-                        thirdAxisRightParams.setMargins(0,0,0,bottomThirdMargin);
+                        thirdAxisRightParams.setMargins(0, 0, 0, bottomThirdMargin);
 
                         LinearLayout fourthAxisLeftLayout = new LinearLayout(context);
                         fourthAxisLeftLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams fourthAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams fourthAxisLeftParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         fourthAxisLeftParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         fourthAxisLeftLayout.setLayoutParams(fourthAxisLeftParams);
-                        fourthAxisLeftParams.setMargins(0,0,0,bottomSecondMargin);
+                        fourthAxisLeftParams.setMargins(0, 0, 0, bottomSecondMargin);
 
                         LinearLayout fourthAxisRightLayout = new LinearLayout(context);
                         fourthAxisRightLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        RelativeLayout.LayoutParams fourthAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
+                        RelativeLayout.LayoutParams fourthAxisRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
                         fourthAxisRightParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         fourthAxisRightLayout.setLayoutParams(fourthAxisRightParams);
-                        fourthAxisRightParams.setMargins(0,0,0,bottomSecondMargin);
+                        fourthAxisRightParams.setMargins(0, 0, 0, bottomSecondMargin);
 
 
-
-
-                        for(int i=0; i<protectorItems.size(); i++) {
+                        for (int i = 0; i < protectorItems.size(); i++) {
                             ProtectorItem item = protectorItems.get(i);
-                            TextView editText = createEditText(isEditable,item,i);
-                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
-                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
+                            TextView editText = createEditText(isEditable, item, i);
+                            RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, etHeight);
+                            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0, etHeight);
                             linearParams.weight = 1;
 
                             switch (item.getCode()) {
@@ -793,25 +788,25 @@ public class ProtectorView extends RelativeLayout {
                                     break;
                                 case "shin_axis31":
                                 case "shin_axis32":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisLeftLayout.addView(editText);
                                     break;
                                 case "shin_axis33":
                                 case "shin_axis34":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     thirdAxisRightLayout.addView(editText);
                                     break;
                                 case "shin_axis41":
                                 case "shin_axis42":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     fourthAxisLeftLayout.addView(editText);
                                     break;
                                 case "shin_axis43":
                                 case "shin_axis44":
-                                    linearParams.setMargins(margin, 0, margin,0);
+                                    linearParams.setMargins(margin, 0, margin, 0);
                                     editText.setLayoutParams(linearParams);
                                     fourthAxisRightLayout.addView(editText);
                                     break;
@@ -829,7 +824,6 @@ public class ProtectorView extends RelativeLayout {
                                     break;
 
 
-
                             }
 
                         }
@@ -841,19 +835,15 @@ public class ProtectorView extends RelativeLayout {
 
                     }
 
-                }else {
-                    v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0));
+                } else {
+                    v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
                 }
-            }else {
-                v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0));
+            } else {
+                v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
             }
-
-
-
-
-
-
-
+        } else {
+            v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+        }
 
 
     }
@@ -883,8 +873,7 @@ public class ProtectorView extends RelativeLayout {
     }
 
 
-
-    public void setResourceId(int tireSchemeId){
+    public void setResourceId(int tireSchemeId) {
         switch (tireSchemeId) {
             case 1:
                 resourceId = R.drawable.s4x2;
@@ -932,17 +921,6 @@ public class ProtectorView extends RelativeLayout {
         }
 
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
