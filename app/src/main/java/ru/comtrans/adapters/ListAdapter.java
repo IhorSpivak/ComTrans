@@ -149,6 +149,8 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     private boolean isValidMark(String name) {
         List<String> serverMarkNamesErrors = new ArrayList<String>() {{
             add("");
+            add("1");
+            add("2");
             add("ae95d3c7");
             add("e13a32a1");
             add("947d6a9f");
