@@ -106,31 +106,9 @@ public class ProtectorView extends RelativeLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflater.inflate(R.layout.protector_view, this, true);
         ListItem tireSchemeItem = helper.getTireSchemeValue();
+
         int schemeId = tireSchemeItem.getTireSchemeId();
         setResourceId(schemeId);
-
-//         OnKeyListener keyListener = new OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//
-//                    if (event.getAction()==KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-//                        switch ((String)v.getTag()) {
-//                            case "shin_axis11":
-//                                for (int i = 0; i < rightLayout.getChildCount(); i++) {
-//                                    View view = rightLayout.getChildAt(i);
-//                                    if(view instanceof EditText &&view.getTag().equals("shin_axis12")){
-//                                        ((EditText)view).requestFocus();
-//                                    }
-//                                }
-//                                break;
-//                        }
-//                        return true;
-//                    }
-//
-//                return false;
-//            }
-//        };
-
 
 
 
@@ -145,6 +123,8 @@ public class ProtectorView extends RelativeLayout {
                     }
                 }
             }
+
+
 
             if(resourceId!=0){
                 final RelativeLayout leftLayout = (RelativeLayout) v.findViewById (R.id.left_layout);
@@ -194,7 +174,9 @@ public class ProtectorView extends RelativeLayout {
 
                     for(int i=0; i<protectorItems.size(); i++) {
                         ProtectorItem item = protectorItems.get(i);
-                        TextView editText = createEditText(isEditable,item,i);
+                        int a = getProtectorItemPositionByProtectorCode(protectorItems.get(i).getCode());
+                        TextView editText = createEditText(isEditable,item,a);
+//                        TextView editText = createEditText(isEditable,item,i);
                         RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                         LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                         linearParams.weight = 1;
@@ -279,7 +261,9 @@ public class ProtectorView extends RelativeLayout {
 
                     for(int i=0; i<protectorItems.size(); i++) {
                         ProtectorItem item = protectorItems.get(i);
-                        TextView editText = createEditText(isEditable,item,i);
+                        int a = getProtectorItemPositionByProtectorCode(protectorItems.get(i).getCode());
+                        TextView editText = createEditText(isEditable,item,a);
+//                        TextView editText = createEditText(isEditable,item,i);
                         RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                         LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                         linearParams.weight = 1;
@@ -364,7 +348,9 @@ public class ProtectorView extends RelativeLayout {
 
                     for(int i=0; i<protectorItems.size(); i++) {
                         ProtectorItem item = protectorItems.get(i);
-                        TextView editText = createEditText(isEditable,item,i);
+                        int a = getProtectorItemPositionByProtectorCode(protectorItems.get(i).getCode());
+                        TextView editText = createEditText(isEditable,item,a);
+//                        TextView editText = createEditText(isEditable,item,i);
                         RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                         LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                         linearParams.weight = 1;
@@ -459,7 +445,9 @@ public class ProtectorView extends RelativeLayout {
 
                     for(int i=0; i<protectorItems.size(); i++) {
                         ProtectorItem item = protectorItems.get(i);
-                        TextView editText = createEditText(isEditable,item,i);
+                        int a = getProtectorItemPositionByProtectorCode(protectorItems.get(i).getCode());
+                        TextView editText = createEditText(isEditable,item,a);
+//                        TextView editText = createEditText(isEditable,item,i);
                         RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                         LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                         linearParams.weight = 1;
@@ -554,7 +542,9 @@ public class ProtectorView extends RelativeLayout {
 
                     for(int i=0; i<protectorItems.size(); i++) {
                         ProtectorItem item = protectorItems.get(i);
-                        TextView editText = createEditText(isEditable,item,i);
+                        int a = getProtectorItemPositionByProtectorCode(protectorItems.get(i).getCode());
+                        TextView editText = createEditText(isEditable,item,a);
+//                        TextView editText = createEditText(isEditable,item,i);
                         RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                         LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                         linearParams.weight = 1;
@@ -665,7 +655,9 @@ public class ProtectorView extends RelativeLayout {
 
                     for(int i=0; i<protectorItems.size(); i++) {
                         ProtectorItem item = protectorItems.get(i);
-                        TextView editText = createEditText(isEditable,item,i);
+                        int a = getProtectorItemPositionByProtectorCode(protectorItems.get(i).getCode());
+                        TextView editText = createEditText(isEditable,item,a);
+//                        TextView editText = createEditText(isEditable,item,i);
                         RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                         LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                         linearParams.weight = 1;
@@ -767,7 +759,9 @@ public class ProtectorView extends RelativeLayout {
 
                     for(int i=0; i<protectorItems.size(); i++) {
                         ProtectorItem item = protectorItems.get(i);
-                        TextView editText = createEditText(isEditable,item,i);
+                        int a = getProtectorItemPositionByProtectorCode(protectorItems.get(i).getCode());
+                        TextView editText = createEditText(isEditable,item,a);
+//                        TextView editText = createEditText(isEditable,item,i);
                         RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,etHeight);
                         LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(0,etHeight);
                         linearParams.weight = 1;
@@ -860,6 +854,7 @@ public class ProtectorView extends RelativeLayout {
 
 //                    v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0));
             }
+
         }else {
             v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0));
         }
@@ -888,6 +883,7 @@ public class ProtectorView extends RelativeLayout {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
             items.get(position).setValue(charSequence.toString());
             helper.saveProtector(items);
         }

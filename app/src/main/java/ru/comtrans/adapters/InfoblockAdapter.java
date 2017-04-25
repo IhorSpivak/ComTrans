@@ -164,7 +164,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         listViewHolder.title.setText(item.getName());
 
                     if (item.getListValue() != null)
-                        listViewHolder.tvList.setText(item.getListValue().getName());
+                    listViewHolder.tvList.setText(item.getListValue().getName());
 
                     if(item.isError()){
                         listViewHolder.bottomStroke.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
@@ -1217,6 +1217,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 if (isEditable) {
                     v = LayoutInflater.from(parent.getContext())
                             .inflate(R.layout.list_item, parent, false);
+
 
                     return new ListViewHolder(v);
                 } else {

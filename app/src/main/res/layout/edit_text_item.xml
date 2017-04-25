@@ -22,6 +22,7 @@
             android:textColor="@android:color/black"
             android:drawableEnd="@drawable/ic_pen"
             android:singleLine="true"
+            android:hint="выбирете из списка"
             android:drawableRight="@drawable/ic_pen"
             android:id="@+id/edit_text"/>
 

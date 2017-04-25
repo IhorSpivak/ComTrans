@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import ru.comtrans.R;
 import ru.comtrans.items.ListItem;
 
 /**
@@ -43,6 +44,7 @@ public class SpinnerAdapter extends BaseAdapter {
         View row = inflater.inflate(android.R.layout.simple_spinner_item, viewGroup,
                 false);
         ((TextView)row).setText(items.get(i).getName());
+
         return row;
     }
 
@@ -52,6 +54,7 @@ public class SpinnerAdapter extends BaseAdapter {
         View row = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent,
                 false);
         ((TextView)row).setText(items.get(position).getName());
+
 
         return row;
     }

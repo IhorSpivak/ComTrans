@@ -143,9 +143,10 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
                 progressDialog.dismiss();
                 if (response.body().has("status")) {
                     if (response.body().get("status").getAsInt() == 1) {
-                        dataArray = response.body().get("result").getAsJsonArray();
+                        if (response.body().get("result").isJsonNull()) {
+                            dataArray = response.body().get("result").getAsJsonArray();
 
-
+                        }
                         new AsyncTaskForGetProp().execute();
                     } else {
 

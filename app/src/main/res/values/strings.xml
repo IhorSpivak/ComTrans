@@ -153,6 +153,11 @@
     <string name="inspection_type_not_exist">Не подгружены виды осмотра</string>
 
 
+    <string name="choose_from_list">Выбирите из списка</string>
+
+
+
+
 
     //////////////////////InfoBlockTutorialFragment//////////////////////////////
     <string name="tutorial_title">Порядок добавления\nнового инфоблока</string>
