@@ -111,6 +111,9 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                 break;
             case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
                 break;
+            case IdsRelationHelperItem.TYPE_OF_INSPECTION:
+                checkingTypeIspection();
+                break;
             default:
                 break;
         }
@@ -118,6 +121,10 @@ public class ListAdapter extends BaseAdapter implements Filterable {
             addAllItemsToTempArray();
         }
         notifyDataSetChanged();
+    }
+
+    private void checkingTypeIspection() {
+
     }
 
     //Filters

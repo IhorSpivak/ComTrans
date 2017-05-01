@@ -2,6 +2,8 @@ package ru.comtrans.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
@@ -71,8 +73,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
 
-
-
     public InfoblockAdapter(final Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable,
                             OnItemClickListener listener, OnBottomBarClickListener bottomBarClickListener) {
         this.context = context;
@@ -91,7 +91,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 for (int i = start; i < end; i++) {
                     if (!blockCharacterSet.contains(String.valueOf(source.charAt(i)).toLowerCase())) { // Accept only letter & digits ; otherwise just return
                         Toast.makeText(context, R.string.accepted_numbers_toast, Toast.LENGTH_SHORT).show();
-                        return source.toString().substring(0,source.toString().length()-1).toUpperCase();
+                        return source.toString().substring(0, source.toString().length() - 1).toUpperCase();
                     }
                 }
                 return null;
@@ -142,7 +142,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
 
-
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         final MainItem item = getItem(position);
@@ -164,11 +164,11 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         listViewHolder.title.setText(item.getName());
 
                     if (item.getListValue() != null)
-                    listViewHolder.tvList.setText(item.getListValue().getName());
+                        listViewHolder.tvList.setText(item.getListValue().getName());
 
-                    if(item.isError()){
+                    if (item.isError()) {
                         listViewHolder.bottomStroke.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
-                    }else {
+                    } else {
                         listViewHolder.bottomStroke.setBackgroundColor(context.getResources().getColor(R.color.colorSecondary));
                     }
 
@@ -194,9 +194,9 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     calendarViewHolder.picker.setText(R.string.choose_date);
                 }
 
-                if(item.isError()){
+                if (item.isError()) {
                     calendarViewHolder.bottomStroke.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     calendarViewHolder.bottomStroke.setVisibility(View.GONE);
                 }
 
@@ -213,18 +213,18 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 ListItem tireSchemeValue = infoBlockHelper.getTireSchemeValue();
 
-                if(item.getPhotoItems()!=null&&item.getPhotoItems().size()>0){
-                    if(item.getPhotoItems().get(item.getPhotoItems().size()-1).isDefect()){
+                if (item.getPhotoItems() != null && item.getPhotoItems().size() > 0) {
+                    if (item.getPhotoItems().get(item.getPhotoItems().size() - 1).isDefect()) {
                         ArrayList<PhotoItem> photoItems = new ArrayList<>();
                         ArrayList<PhotoItem> defects = new ArrayList<>();
 
                         for (PhotoItem photoItem : item.getPhotoItems()) {
                             if (!photoItem.isDefect()) {
-                                if(photoItem.getIsOs()!=0&&tireSchemeValue!=null&&tireSchemeValue.getId()!=-1){
-                                    if(tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())){
+                                if (photoItem.getIsOs() != 0 && tireSchemeValue != null && tireSchemeValue.getId() != -1) {
+                                    if (tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())) {
                                         photoItems.add(photoItem);
                                     }
-                                }else {
+                                } else {
                                     photoItems.add(photoItem);
                                 }
                             }
@@ -262,7 +262,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         for (PhotoItem photoItem : item.getPhotoItems()) {
                             if (photoItem.isDefect()) {
-                                defects.add(photoItem);
+                                photoItems.add(photoItem);
                             }
                         }
 
@@ -278,16 +278,16 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         }, MainItem.TYPE_PHOTO);
                         photoViewHolder.defectsList.setAdapter(defectsAdapter);
 
-                    }else {
+                    } else {
                         ArrayList<PhotoItem> photoItems = new ArrayList<>();
 
                         for (PhotoItem photoItem : item.getPhotoItems()) {
 
-                            if(photoItem.getIsOs()!=0&&tireSchemeValue.getId()!=-1){
-                                if(tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())){
+                            if (photoItem.getIsOs() != 0 && tireSchemeValue.getId() != -1) {
+                                if (tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())) {
                                     photoItems.add(photoItem);
                                 }
-                            }else {
+                            } else {
                                 photoItems.add(photoItem);
                             }
 
@@ -479,7 +479,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                     if(item.getCode().equals("MODEL_PO_PTS")) {
                         editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
-                        editTextViewHolder.editText.setFilters(new InputFilter[]{modelPtsFilter});
+//                        editTextViewHolder.editText.setFilters(new InputFilter[]{modelPtsFilter});
                     }
 
                     if(item.getCode().toLowerCase().contains("vin")) {
