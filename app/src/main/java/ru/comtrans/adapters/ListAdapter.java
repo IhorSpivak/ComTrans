@@ -50,13 +50,13 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 
     public void enterValues(ArrayList<ListItem> items) {
         mData.clear();
-//        for (ListItem item : items) {
-//            if (item.getId() == -1) {
-//                addItemToTempArray(item);
-//            }
-//        }
+        for (ListItem item : items) {
+            if (item.getId() == -1) {
+                addItemToTempArray(item);
+            }
+        }
         //Maybee it's better solution
-        addItemToTempArray(new ListItem(-1, context.getString(R.string.not_chosen)));
+//        addItemToTempArray(new ListItem(-1, context.getString(R.string.not_chosen)));
         switch (idsRelationHelperItem.getCode()) {
             case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
                 filterByCategory();
@@ -182,7 +182,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     private void filterByMark() {
         for (ListItem item : items) {
             Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
-            if (item.getMark() == idsRelationHelperItem.getMark())  {
+            if (item.getMark() == idsRelationHelperItem.getMark()) {
                 addItemToTempArray(item);
             }
         }
@@ -275,7 +275,15 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     public void addItemToTempArray(final ListItem item) {
-        mData.add(item);
+        boolean alreadyExist = false;
+        for (ListItem locItem : mData) {
+            if (locItem.getId() == item.getId()) {
+                alreadyExist = true;
+                break;
+            }
+        }
+        if (!alreadyExist)
+            mData.add(item);
     }
 
     private void addAllItemsToTempArray() {

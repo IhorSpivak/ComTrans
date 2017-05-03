@@ -418,6 +418,33 @@ public class InfoBlocksStorage {
                             listObject.add(ListItem.JSON_VALUE_VEHICLE_OWNER, vehicleOwnerValues);
                         }
 
+                        if (listItem.getKppMark() != null && listItem.getKppMark().size() > 0) {
+                            JsonArray jsonValues = new JsonArray();
+                            for (Integer integer :
+                                    listItem.getKppMark()) {
+                                jsonValues.add(integer);
+                            }
+                            listObject.add(ListItem.JSON_VALUE_KPP_MARK, jsonValues);
+                        }
+
+                        if (listItem.getKmuMark() != null && listItem.getKmuMark().size() > 0) {
+                            JsonArray jsonValues = new JsonArray();
+                            for (Integer integer :
+                                    listItem.getKmuMark()) {
+                                jsonValues.add(integer);
+                            }
+                            listObject.add(ListItem.JSON_VALUE_KMU_MARK, jsonValues);
+                        }
+
+                        if (listItem.getKhouMark() != null && listItem.getKhouMark().size() > 0) {
+                            JsonArray jsonValues = new JsonArray();
+                            for (Integer integer :
+                                    listItem.getKhouMark()) {
+                                jsonValues.add(integer);
+                            }
+                            listObject.add(ListItem.JSON_VALUE_KHOU_MARK, jsonValues);
+                        }
+
 
                         listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
 
@@ -484,6 +511,33 @@ public class InfoBlocksStorage {
                                     vehicleOwnerValues.add(integer);
                                 }
                                 listObject.add(ListItem.JSON_VALUE_VEHICLE_OWNER, vehicleOwnerValues);
+                            }
+
+                            if (listItem.getKppMark() != null && listItem.getKppMark().size() > 0) {
+                                JsonArray jsonValues = new JsonArray();
+                                for (Integer integer :
+                                        listItem.getKppMark()) {
+                                    jsonValues.add(integer);
+                                }
+                                listObject.add(ListItem.JSON_VALUE_KPP_MARK, jsonValues);
+                            }
+
+                            if (listItem.getKmuMark() != null && listItem.getKmuMark().size() > 0) {
+                                JsonArray jsonValues = new JsonArray();
+                                for (Integer integer :
+                                        listItem.getKmuMark()) {
+                                    jsonValues.add(integer);
+                                }
+                                listObject.add(ListItem.JSON_VALUE_KMU_MARK, jsonValues);
+                            }
+
+                            if (listItem.getKhouMark() != null && listItem.getKhouMark().size() > 0) {
+                                JsonArray jsonValues = new JsonArray();
+                                for (Integer integer :
+                                        listItem.getKhouMark()) {
+                                    jsonValues.add(integer);
+                                }
+                                listObject.add(ListItem.JSON_VALUE_KHOU_MARK, jsonValues);
                             }
 
 
@@ -716,6 +770,33 @@ public class InfoBlocksStorage {
                             listItem.setVehicleOwner(modelsValues);
                         }
 
+                        if (valueObject.has(ListItem.JSON_VALUE_KPP_MARK) && !valueObject.get(ListItem.JSON_VALUE_KPP_MARK).isJsonNull()) {
+                            ArrayList<Integer> innerArrayKValues = new ArrayList<>();
+                            JsonArray innerArrayK = valueObject.getAsJsonArray(ListItem.JSON_VALUE_KPP_MARK);
+                            for (int k = 0; k < innerArrayK.size(); k++) {
+                                innerArrayKValues.add(Integer.parseInt(innerArrayK.get(k).getAsString()));
+                            }
+                            listItem.setKppMark(innerArrayKValues);
+                        }
+
+                        if (valueObject.has(ListItem.JSON_VALUE_KMU_MARK) && !valueObject.get(ListItem.JSON_VALUE_KMU_MARK).isJsonNull()) {
+                            ArrayList<Integer> innerArrayKValues = new ArrayList<>();
+                            JsonArray innerArrayK = valueObject.getAsJsonArray(ListItem.JSON_VALUE_KMU_MARK);
+                            for (int k = 0; k < innerArrayK.size(); k++) {
+                                innerArrayKValues.add(Integer.parseInt(innerArrayK.get(k).getAsString()));
+                            }
+                            listItem.setKmuMark(innerArrayKValues);
+                        }
+
+                        if (valueObject.has(ListItem.JSON_VALUE_KHOU_MARK) && !valueObject.get(ListItem.JSON_VALUE_KHOU_MARK).isJsonNull()) {
+                            ArrayList<Integer> innerArrayKValues = new ArrayList<>();
+                            JsonArray innerArrayK = valueObject.getAsJsonArray(ListItem.JSON_VALUE_KHOU_MARK);
+                            for (int k = 0; k < innerArrayK.size(); k++) {
+                                innerArrayKValues.add(Integer.parseInt(innerArrayK.get(k).getAsString()));
+                            }
+                            listItem.setKhouMark(innerArrayKValues);
+                        }
+
 
                         if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {
                             listItem.setTireSchemeId(valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).getAsInt());
@@ -789,6 +870,33 @@ public class InfoBlocksStorage {
                                     modelsValues.add(Integer.parseInt(modelsArray.get(l).getAsString()));
                                 }
                                 listItem.setVehicleOwner(modelsValues);
+                            }
+
+                            if (valueObject.has(ListItem.JSON_VALUE_KPP_MARK) && !valueObject.get(ListItem.JSON_VALUE_KPP_MARK).isJsonNull()) {
+                                ArrayList<Integer> innerArrayLValues = new ArrayList<>();
+                                JsonArray innerArrayL = valueObject.getAsJsonArray(ListItem.JSON_VALUE_KPP_MARK);
+                                for (int l = 0; l < innerArrayL.size(); l++) {
+                                    innerArrayLValues.add(Integer.parseInt(innerArrayL.get(l).getAsString()));
+                                }
+                                listItem.setKppMark(innerArrayLValues);
+                            }
+
+                            if (valueObject.has(ListItem.JSON_VALUE_KMU_MARK) && !valueObject.get(ListItem.JSON_VALUE_KMU_MARK).isJsonNull()) {
+                                ArrayList<Integer> innerArrayLValues = new ArrayList<>();
+                                JsonArray innerArrayL = valueObject.getAsJsonArray(ListItem.JSON_VALUE_KMU_MARK);
+                                for (int l = 0; l < innerArrayL.size(); l++) {
+                                    innerArrayLValues.add(Integer.parseInt(innerArrayL.get(l).getAsString()));
+                                }
+                                listItem.setKmuMark(innerArrayLValues);
+                            }
+
+                            if (valueObject.has(ListItem.JSON_VALUE_KHOU_MARK) && !valueObject.get(ListItem.JSON_VALUE_KHOU_MARK).isJsonNull()) {
+                                ArrayList<Integer> innerArrayLValues = new ArrayList<>();
+                                JsonArray innerArrayL = valueObject.getAsJsonArray(ListItem.JSON_VALUE_KHOU_MARK);
+                                for (int l = 0; l < innerArrayL.size(); l++) {
+                                    innerArrayLValues.add(Integer.parseInt(innerArrayL.get(l).getAsString()));
+                                }
+                                listItem.setKhouMark(innerArrayLValues);
                             }
 
                             if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {

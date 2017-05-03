@@ -20,6 +20,8 @@ public class ListItem implements Parcelable {
     public static final String JSON_VALUE_KPP_MARK = "value_kpp_mark";
     public static final String JSON_VALUE_KPP_MODEL = "value_kpp_model";
     public static final String JSON_VALUE_VEHICLE_OWNER = "value_vehicle_owner";
+    public static final String JSON_VALUE_KHOU_MARK = "value_khou_mark";
+    public static final String JSON_VALUE_KMU_MARK = "value_kmu_mark";
 
     public static final String JSON_PROTECTOR_VALUES = "protector_values";
     public static final String JSON_TIRE_SCHEME_ID = "tire_scheme_id";
