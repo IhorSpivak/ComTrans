@@ -45,7 +45,6 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         this.idsRelationHelperItem = idsRelationHelperItem;
         this.isNeedSort = isNeedSort;
         this.infoBlockId = infoBlockId;
-        this.inspectionCode = inspectionCode;
         enterValues(items);
     }
 
