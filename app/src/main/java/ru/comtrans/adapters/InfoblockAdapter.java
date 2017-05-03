@@ -44,6 +44,7 @@ import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.PhotoItem;
 import ru.comtrans.singlets.InfoBlockHelper;
+import ru.comtrans.singlets.InfoBlocksStorage;
 import ru.comtrans.views.DividerItemDecoration;
 import ru.comtrans.views.ProtectorView;
 
@@ -66,6 +67,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private InputFilter emailFilter;
     private InputFilter gosNomerFilter;
     private InputFilter modelPtsFilter;
+    private String infoBlockId;
 
 
     public void setItems(ArrayList<MainItem> items) {
@@ -73,7 +75,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
 
-    public InfoblockAdapter(final Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable,
+    public InfoblockAdapter(final Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable, String infoBlockId,
                             OnItemClickListener listener, OnBottomBarClickListener bottomBarClickListener) {
         this.context = context;
         this.items = items;
@@ -82,6 +84,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.page = page;
         this.isEditable = isEditable;
         this.totalPages = totalPages;
+        this.infoBlockId = infoBlockId;
         infoBlockHelper = InfoBlockHelper.getInstance();
         vinFilter = new InputFilter() {
 
@@ -162,10 +165,27 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         listViewHolder.title.setText(item.getName() + "*");
                     else
                         listViewHolder.title.setText(item.getName());
+                    // Stub for category and inspection
+
+                    if(item.getCode().contains("VID_STANDARTA_OSMOTRA")){
+                        for(ListItem localItem : item.getListValues()){
+                            if(localItem.getId() == InfoBlocksStorage.getInfoBlockInspectionCode(infoBlockId)){
+                                items.get(position).setListValue(localItem);
+                                item.setListValue(localItem);
+                            }
+                        }
+                    }
+                    if(item.getCode().contains("section")){
+                        for(ListItem localItem : item.getListValues()){
+                            if(localItem.getId() == InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)){
+                                items.get(position).setListValue(localItem);
+                                item.setListValue(localItem);
+                            }
+                        }
+                    }
 
                     if (item.getListValue() != null)
                         listViewHolder.tvList.setText(item.getListValue().getName());
-
                     if (item.isError()) {
                         listViewHolder.bottomStroke.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
                     } else {

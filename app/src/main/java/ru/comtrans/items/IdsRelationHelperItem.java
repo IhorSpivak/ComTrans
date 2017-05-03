@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 
 public class IdsRelationHelperItem implements Serializable{
+    public static final String CODE_GENERAL_CATEGORY_ID = "section";
     public static final String CODE_GENERAL_TYPE_ID = "general_type_id";
     public static final String CODE_GENERAL_MARK = "general_marka";
     public static final String CODE_GENERAL_MODEL = "general_model";
@@ -25,6 +26,10 @@ public class IdsRelationHelperItem implements Serializable{
     public static final String CODE_TEC_KPP_TYPE = "tec_kpp_type";
     public static final String CODE_VEHICLE_OWNER = "SOBSTVENNIK_CHASTNOE_YUR_LITSO";
     public static final String CODE_FORM_ORGANIZATION = "FORMA_ORGANIZATSII";
+    public static final String CODE_MARK_KHOU = "holod_brand";
+    public static final String CODE_MODEL_KHOU = "holod_model";
+    public static final String CODE_MARK_KMU = "MARKA_KMU";
+    public static final String CODE_MODEL_KMU = "MODEL_KMU";
 
     public static final String TYPE_OF_INSPECTION = "VID_STANDARTA_OSMOTRA";
 
@@ -33,9 +38,12 @@ public class IdsRelationHelperItem implements Serializable{
     private long model;
     private long engineMark;
     private long engineModel;
+    private long kppMark;
     private long kppModel;
     private long vehicleOwner;
     private long inspectionType;
+    private long kmuMark;
+    private long khouMark;
 
     public IdsRelationHelperItem() {
         this.code = "";
@@ -43,9 +51,12 @@ public class IdsRelationHelperItem implements Serializable{
         this.model = -1;
         this.engineMark = -1;
         this.engineModel = -1;
+        this.kppMark = -1;
         this.kppModel = -1;
         this.vehicleOwner = -1;
         this.inspectionType = -1;
+        this.kmuMark = -1;
+        this.khouMark = -1;
     }
 
     public String getCode() {
@@ -88,6 +99,14 @@ public class IdsRelationHelperItem implements Serializable{
         this.engineModel = engineModel;
     }
 
+    public long getKppMark() {
+        return kppMark;
+    }
+
+    public void setKppMark(long kppMark) {
+        this.kppMark = kppMark;
+    }
+
     public long getKppModel() {
         return kppModel;
     }
@@ -109,5 +128,21 @@ public class IdsRelationHelperItem implements Serializable{
 
     public void setInspectionType(long inspectionType) {
         this.inspectionType = inspectionType;
+    }
+
+    public long getKmuMark() {
+        return kmuMark;
+    }
+
+    public void setKmuMark(long kmuMark) {
+        this.kmuMark = kmuMark;
+    }
+
+    public long getKhouMark() {
+        return khouMark;
+    }
+
+    public void setKhouMark(long khouMark) {
+        this.khouMark = khouMark;
     }
 }

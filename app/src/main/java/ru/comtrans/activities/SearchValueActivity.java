@@ -25,6 +25,7 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.items.IdsRelationHelperItem;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.singlets.InfoBlockHelper;
+import ru.comtrans.singlets.InfoBlocksStorage;
 
 public class SearchValueActivity extends BaseActivity {
 
@@ -39,6 +40,7 @@ public class SearchValueActivity extends BaseActivity {
     private int extraPosition;
     private boolean canAdd;
     private long propCode;
+    private String infoBlockId;
     private IdsRelationHelperItem idsRelationHelperItem;
 
 
@@ -61,6 +63,7 @@ public class SearchValueActivity extends BaseActivity {
 
         screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM, -1);
         extraPosition = getIntent().getIntExtra(Const.EXTRA_POSITION, -1);
+        infoBlockId = getIntent().getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
         propCode = getIntent().getLongExtra(Const.EXTRA_PROP_CODE, -1);
         idsRelationHelperItem = (IdsRelationHelperItem) getIntent().getSerializableExtra(Const.EXTRA_IDS_HELPER);
         Log.e("TMP_TEST",idsRelationHelperItem.toString());
@@ -77,7 +80,7 @@ public class SearchValueActivity extends BaseActivity {
         Log.e("TMP_TEST","items.size="+items.size());
 
         if (items != null) {
-            adapter = new ListAdapter(SearchValueActivity.this, items, idsRelationHelperItem, canAdd, propCode);
+            adapter = new ListAdapter(SearchValueActivity.this, items, idsRelationHelperItem, canAdd, infoBlockId);
             listView.setAdapter(adapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

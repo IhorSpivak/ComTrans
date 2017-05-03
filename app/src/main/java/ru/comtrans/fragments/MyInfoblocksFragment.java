@@ -31,8 +31,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,14 +101,14 @@ public class MyInfoblocksFragment extends Fragment {
 
         progressDialog = new ConnectionProgressDialog(getActivity());
 
-        getVehicleTypes(false);
+        getInspectionCategories(false);
         getInspectionTypes(false);
 
 
         return v;
     }
 
-    private void getVehicleTypes(final boolean isFromButton){
+    private void getInspectionCategories(final boolean isFromButton){
         Call<JsonObject> call = AppController.apiInterface.getInspectionCategories();
         call.enqueue(new Callback<JsonObject>() {
             @Override
@@ -144,6 +142,7 @@ public class MyInfoblocksFragment extends Fragment {
                                     }
                                 }
                             }
+
                             Utility.saveVehicleTypes(typeArray);
                             Utility.saveCategories(categories);
                             if(isFromButton)
@@ -216,6 +215,8 @@ public class MyInfoblocksFragment extends Fragment {
                         i = new Intent(getContext(), AddInfoBlockActivity.class);
                         i.putExtra(Const.EXTRA_INFO_BLOCK_ID, item.getId());
                         i.putExtra(Const.EXTRA_INFO_BLOCK_PAGE, item.getLastPosition());
+                        i.putExtra(Const.EXTRA_PROP_CODE, InfoBlocksStorage.getInfoBlockCategoryCode(item.getId()));
+                        i.putExtra(Const.EXTRA_INSPECTION_CODE, InfoBlocksStorage.getInfoBlockInspectionCode(item.getId()));
                         startActivity(i);
                         break;
                     case MyInfoblockItem.STATUS_SENDING:
@@ -437,7 +438,7 @@ public class MyInfoblocksFragment extends Fragment {
         if(Utility.getVehicleTypes()==null) {
             progressDialog.show();
             //  Toast.makeText(getContext(),R.string.vehicle_type_not_exist,Toast.LENGTH_SHORT).show();
-            getVehicleTypes(true);
+            getInspectionCategories(true);
         }else if(Utility.getInspectionTypes()==null) {
             progressDialog.show();
             //   Toast.makeText(getContext(),R.string.inspection_type_not_exist,Toast.LENGTH_SHORT).show();

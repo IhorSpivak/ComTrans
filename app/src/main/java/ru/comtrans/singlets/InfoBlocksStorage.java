@@ -103,22 +103,21 @@ public class InfoBlocksStorage {
 
     }
 
-    public void setInfoBlockStatus(String id, int status) {
+    public static void setInfoBlockStatus(String id, int status) {
         Utility.saveInt("status" + id, status);
     }
 
-    public void setInfoBlockProgress(String id, int progress) {
+    public static void setInfoBlockProgress(String id, int progress) {
         Utility.saveInt("progress" + id, progress);
     }
 
-    public int getInfoBlockProgress(String id) {
+    public static int getInfoBlockProgress(String id) {
         return Utility.getSavedInt("progress" + id);
     }
 
-    public int getInfoBlockStatus(String id) {
+    public static int getInfoBlockStatus(String id) {
         return Utility.getSavedInt("status" + id);
     }
-
 
     public void saveInfoBlockAudio(String id, String path) {
         Utility.saveData("audio" + id, path);
@@ -128,6 +127,22 @@ public class InfoBlocksStorage {
         return Utility.getSavedData("audio" + id);
     }
 
+
+    public static void setInfoBlockCategoryCode(String id, long code) {
+        Utility.saveLong("category_code_" + id, code);
+    }
+
+    public static void setInfoBlockInspectionCode(String id, long code) {
+        Utility.saveLong("inspection_code_" + id, code);
+    }
+
+    public static long getInfoBlockCategoryCode(String id) {
+        return Utility.getSavedLong("category_code_" + id);
+    }
+
+    public static long getInfoBlockInspectionCode(String id) {
+        return Utility.getSavedLong("inspection_code_" + id);
+    }
 
     public ArrayList<MyInfoblockItem> getPreviewItems() {
         ArrayList<MyInfoblockItem> items = new ArrayList<>();

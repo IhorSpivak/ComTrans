@@ -77,12 +77,24 @@ public class InfoBlockHelper {
         return getValueByKey("tec_engine_model");
     }
 
+    public ListItem getMarkKppValue() {
+        return getValueByKey("MARKA_KPP");
+    }
+
     public ListItem getModelKppValue() {
         return getValueByKey("MODEL_KPP");
     }
 
     public ListItem getVehicleOwnerValue() {
         return getValueByKey("SOBSTVENNIK_CHASTNOE_YUR_LITSO");
+    }
+
+    public ListItem getMarkKMUValue() {
+        return getValueByKey("MARKA_KMU");
+    }
+
+    public ListItem getMarkKHOUValue() {
+        return getValueByKey("holod_brand");
     }
 
 

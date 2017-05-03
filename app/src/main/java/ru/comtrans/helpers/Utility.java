@@ -185,6 +185,22 @@ public class Utility {
 
     }
 
+    public static void saveLong(String key,
+                               long data) {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        SharedPreferences.Editor editor = appData.edit();
+        editor.putLong(key, data);
+        editor.apply();
+    }
+
+    public static long getSavedLong(String key) {
+        final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
+                Const.PREFERENCES_NAME, 0);
+        return appData.getLong(key, 0);
+
+    }
+
     public static String getToken() {
         final SharedPreferences appData = AppController.getInstance().getSharedPreferences(
                 Const.PREFERENCES_NAME, 0);

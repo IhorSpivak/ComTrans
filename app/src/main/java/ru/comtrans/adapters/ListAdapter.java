@@ -20,6 +20,7 @@ import ru.comtrans.R;
 import ru.comtrans.helpers.Utility;
 import ru.comtrans.items.IdsRelationHelperItem;
 import ru.comtrans.items.ListItem;
+import ru.comtrans.singlets.InfoBlocksStorage;
 
 public class ListAdapter extends BaseAdapter implements Filterable {
 
@@ -29,43 +30,50 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     //    private long mark;
     private IdsRelationHelperItem idsRelationHelperItem;
     private boolean isNeedSort;
-    private long propCode;
-
+    //    private long propCode;
+    private String infoBlockId;
+    private Context context;
 
     private LayoutInflater mInflater;
 
-    public ListAdapter(Context context, ArrayList<ListItem> items, IdsRelationHelperItem idsRelationHelperItem, boolean isNeedSort, long propCode) {
+    public ListAdapter(Context context, ArrayList<ListItem> items, IdsRelationHelperItem idsRelationHelperItem, boolean isNeedSort, String infoBlockId) {
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+        this.context = context;
         this.items = items;
         this.idsRelationHelperItem = idsRelationHelperItem;
         this.isNeedSort = isNeedSort;
-        this.propCode = propCode;
+        this.infoBlockId = infoBlockId;
         enterValues(items);
     }
 
     public void enterValues(ArrayList<ListItem> items) {
         mData.clear();
+//        for (ListItem item : items) {
+//            if (item.getId() == -1) {
+//                addItemToTempArray(item);
+//            }
+//        }
+        //Maybee it's better solution
+        addItemToTempArray(new ListItem(-1, context.getString(R.string.not_chosen)));
         switch (idsRelationHelperItem.getCode()) {
             case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
                 filterByCategory();
                 break;
             case IdsRelationHelperItem.CODE_GENERAL_MARK:
-                filterMark();
+                filterByCategory();
+//                filterMark();
                 break;
             case IdsRelationHelperItem.CODE_GENERAL_MODEL:
-                //todo type_link
-
+                filterByCategory();
                 filterByMark();
                 break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
-                //todo type_link
-
                 filterByMark();
                 filterByModel();
                 break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
+                filterByEngineMark();
                 filterByModel();
                 break;
 //            case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
@@ -99,20 +107,24 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                 break;
             case IdsRelationHelperItem.CODE_MODEL_KPP:
                 filterByModel();
+                filterByKppMark();
                 break;
             case IdsRelationHelperItem.CODE_TEC_KPP_GEARS:
                 filterByKppModel();
                 break;
             case IdsRelationHelperItem.CODE_TEC_KPP_TYPE:
-                filterByKppModel();
+//                filterByKppModel();
                 break;
             case IdsRelationHelperItem.CODE_FORM_ORGANIZATION:
                 filterByVehicleOwner();
                 break;
-            case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
+            case IdsRelationHelperItem.CODE_MODEL_KHOU:
+                filterByKhouMark();
                 break;
-            case IdsRelationHelperItem.TYPE_OF_INSPECTION:
-                checkingTypeIspection();
+            case IdsRelationHelperItem.CODE_MODEL_KMU:
+                filterByKmuMark();
+                break;
+            case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
                 break;
             default:
                 break;
@@ -123,20 +135,16 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         notifyDataSetChanged();
     }
 
-    private void checkingTypeIspection() {
-
-    }
-
     //Filters
 
     private void filterByCategory() {
         List<Map<String, List<String>>> categories = Utility.getCategories();
         for (int i = 0; i < categories.size(); i++) {
             Map<String, List<String>> map = categories.get(i);
-            List<String> transportTypeIds = map.get(String.valueOf(propCode));
+            List<String> transportTypeIds = map.get(String.valueOf(InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)));
             if (transportTypeIds != null && !transportTypeIds.isEmpty()) {
                 for (int j = 0; j < items.size(); j++) {
-                    if (items.get(j).getId() == -1 || transportTypeIds.contains(String.valueOf(items.get(j).getId()))) {
+                    if (/*items.get(j).getId() == -1 ||*/ transportTypeIds.contains(String.valueOf(items.get(j).getId()))) {
                         addItemToTempArray(items.get(j));
                     }
                 }
@@ -145,7 +153,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 
     }
 
-    private void filterMark(){
+    private void filterMark() {
         for (ListItem item : items) {
             if (item.getId() == -1 || isValidMark(item.getName())) {
                 addItemToTempArray(item);
@@ -172,87 +180,91 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
 
-
     //||   != "ae95d3c7" ||  "e13a321"
-    private void filterByMark(){
+    private void filterByMark() {
         for (ListItem item : items) {
             Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
-            if (item.getId() == -1 || item.getMark() == idsRelationHelperItem.getMark())  {
+            if (/*item.getId() == -1 || */item.getMark() == idsRelationHelperItem.getMark()) {
                 addItemToTempArray(item);
             }
         }
     }
 
-    private void filterByModel(){
+    private void filterByModel() {
         for (ListItem item : items) {
             Log.e("TMP_TEST", "item.getModel()=" + item.getModel());
-            boolean isAdd = false;
-            if(item.getId() == -1)
-                isAdd = true;
-            if (item.getModel() != null && item.getModel().size() != 0)
-                for (int i = 0; i < item.getModel().size(); i++) {
-                    if (item.getModel().get(i) == idsRelationHelperItem.getModel()) {
-                        isAdd = true;
-                        break;
-                    }
-                }
-            if (isAdd)
+            if (filterArrayByLong(item.getModel(), idsRelationHelperItem.getModel()))
                 addItemToTempArray(item);
         }
     }
 
-    private void filterByEngineModel(){
+    private void filterByEngineMark() {
+        for (ListItem item : items) {
+            Log.e("TMP_TEST", "item.getEngineMark()=" + item.getEngineMark());
+            if (/*item.getId() == -1 || */item.getEngineMark() == idsRelationHelperItem.getEngineMark()) {
+                addItemToTempArray(item);
+            }
+        }
+    }
+
+    private void filterByEngineModel() {
         for (ListItem item : items) {
             Log.e("TMP_TEST", "item.getEngineModel()=" + item.getEngineModel());
-            boolean isAdd = false;
-            if(item.getId() == -1)
-                isAdd = true;
-            if (item.getEngineModel() != null && item.getEngineModel().size() != 0)
-                for (int i = 0; i < item.getEngineModel().size(); i++) {
-                    if (item.getEngineModel().get(i) == idsRelationHelperItem.getEngineModel()) {
-                        isAdd = true;
-                        break;
-                    }
-                }
-            if (isAdd)
+            if (filterArrayByLong(item.getEngineModel(), idsRelationHelperItem.getEngineModel()))
                 addItemToTempArray(item);
         }
     }
 
-    private void filterByKppModel(){
+    private void filterByKppMark() {
+        for (ListItem item : items) {
+            Log.e("TMP_TEST", "item.getKppMark()=" + item.getKppMark());
+            if (filterArrayByLong(item.getKppMark(), idsRelationHelperItem.getKppMark()))
+                addItemToTempArray(item);
+        }
+    }
+
+    private void filterByKppModel() {
         for (ListItem item : items) {
             Log.e("TMP_TEST", "item.getKppModel()=" + item.getKppModel());
-            boolean isAdd = false;
-            if(item.getId() == -1)
-                isAdd = true;
-            if (item.getKppModel() != null && item.getKppModel().size() != 0)
-                for (int i = 0; i < item.getKppModel().size(); i++) {
-                    if (item.getKppModel().get(i) == idsRelationHelperItem.getKppModel()) {
-                        isAdd = true;
-                        break;
-                    }
-                }
-            if (isAdd)
+            if (filterArrayByLong(item.getKppModel(), idsRelationHelperItem.getKppModel()))
                 addItemToTempArray(item);
         }
     }
 
-    private void filterByVehicleOwner(){
+    private void filterByVehicleOwner() {
         for (ListItem item : items) {
             Log.e("TMP_TEST", "item.getVehicleOwner()=" + item.getVehicleOwner());
-            boolean isAdd = false;
-            if(item.getId() == -1)
-                isAdd = true;
-            if (item.getVehicleOwner() != null && item.getVehicleOwner().size() != 0)
-                for (int i = 0; i < item.getVehicleOwner().size(); i++) {
-                    if (item.getVehicleOwner().get(i) == idsRelationHelperItem.getVehicleOwner()) {
-                        isAdd = true;
-                        break;
-                    }
-                }
-            if (isAdd)
+            if (filterArrayByLong(item.getVehicleOwner(), idsRelationHelperItem.getVehicleOwner()))
                 addItemToTempArray(item);
         }
+    }
+
+    private void filterByKhouMark() {
+        for (ListItem item : items) {
+            Log.e("TMP_TEST", "item.getVehicleOwner()=" + item.getVehicleOwner());
+            if (filterArrayByLong(item.getKhouMark(), idsRelationHelperItem.getKhouMark()))
+                addItemToTempArray(item);
+        }
+    }
+
+    private void filterByKmuMark() {
+        for (ListItem item : items) {
+            Log.e("TMP_TEST", "item.getVehicleOwner()=" + item.getKmuMark());
+            if (filterArrayByLong(item.getVehicleOwner(), idsRelationHelperItem.getKmuMark()))
+                addItemToTempArray(item);
+        }
+    }
+
+    private boolean filterArrayByLong(ArrayList<Integer> sortItems, long value) {
+        boolean isAdd = false;
+        if (sortItems != null && sortItems.size() != 0)
+            for (int i = 0; i < sortItems.size(); i++) {
+                if (sortItems.get(i) == value) {
+                    isAdd = true;
+                    break;
+                }
+            }
+        return isAdd;
     }
 
     public void addItemToTempArray(final ListItem item) {

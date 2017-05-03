@@ -52,6 +52,7 @@ public class AddPropertiesListFragment extends BaseFragment {
     private int page;
     private int totalPages;
     private long propCode;
+    private long inspectionCode;
     private String infoBlockId;
     private TextView tvHeader;
 
@@ -83,8 +84,9 @@ public class AddPropertiesListFragment extends BaseFragment {
         page = getArguments().getInt(Const.PAGE);
         totalPages = getArguments().getInt(Const.TOTAL_PAGES);
         infoBlockId = getArguments().getString(Const.EXTRA_INFO_BLOCK_ID);
-        propCode = getArguments().getLong(Const.EXTRA_PROP_CODE);
-
+//        propCode = getArguments().getLong(Const.EXTRA_PROP_CODE);
+        propCode = InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId);
+        inspectionCode = InfoBlocksStorage.getInfoBlockInspectionCode(infoBlockId);
         initPage();
 
 
@@ -129,7 +131,7 @@ public class AddPropertiesListFragment extends BaseFragment {
 //                }
 //            });
             tvHeader.setText(items.get(0).getName());
-            adapter = new InfoblockAdapter(getContext(), items, page, totalPages, true, new InfoblockAdapter.OnItemClickListener() {
+            adapter = new InfoblockAdapter(getContext(), items, page, totalPages, true, infoBlockId, new InfoblockAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(MainItem item, View view, final int position) {
                     final Intent i;
@@ -140,45 +142,39 @@ public class AddPropertiesListFragment extends BaseFragment {
                             idsRelationHelperItem.setCode(item.getCode());
                             switch (item.getCode()) {
                                 case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
+                                    //Category from resources
+                                    break;
+                                case IdsRelationHelperItem.CODE_GENERAL_MARK:
+                                    //Category from resources
                                     break;
                                 case IdsRelationHelperItem.CODE_GENERAL_MODEL:
-//                                    if (infoBlockHelper.getMarkValue().getId() == -1) {
-//
-//                                    } else {
+                                    //Category from resources
                                     idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
 //                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-
-
-                                    break;
-                                case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
-//                                    if (infoBlockHelper.getMarkValue().getId() == -1 ||
-//                                            infoBlockHelper.getModelValue().getId() == -1 ||
-//                                            infoBlockHelper.getEngineMarkValue().getId() == -1) {
-//                                        Toast.makeText(getContext(), R.string.no_mark_model_enginemark_toast, Toast.LENGTH_SHORT).show();
-//                                    } else {
                                     idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
+                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                     idsRelationHelperItem.setEngineMark(infoBlockHelper.getEngineMarkValue().getId());
-//                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_POWER:
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getEngineModelValue().getId());
+                                    idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_TYPE:
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getEngineModelValue().getId());
+                                    idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_VOLUME:
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getEngineModelValue().getId());
+                                    idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ECO_CLASS:
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getEngineModelValue().getId());
+                                    idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_SHAS_CAPACITY_TOTAL:
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
@@ -192,18 +188,24 @@ public class AddPropertiesListFragment extends BaseFragment {
                                     break;
                                 case IdsRelationHelperItem.CODE_MODEL_KPP:
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    idsRelationHelperItem.setKppMark(infoBlockHelper.getMarkKppValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_KPP_GEARS:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelKppValue().getId());
+                                    idsRelationHelperItem.setKppModel(infoBlockHelper.getModelKppValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_KPP_TYPE:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelKppValue().getId());
+//                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelKppValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_FORM_ORGANIZATION:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getVehicleOwnerValue().getId());
+                                    idsRelationHelperItem.setVehicleOwner(infoBlockHelper.getVehicleOwnerValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
                                     break;
+                                case IdsRelationHelperItem.CODE_MODEL_KHOU:
+                                    idsRelationHelperItem.setKhouMark(infoBlockHelper.getMarkKHOUValue().getId());
+                                    break;
+                                case IdsRelationHelperItem.CODE_MODEL_KMU:
+                                    idsRelationHelperItem.setKmuMark(infoBlockHelper.getMarkKMUValue().getId());
                                 default:
                                     Log.d("TAG", "int position " + position);
                                     break;
@@ -233,7 +235,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                             i.putExtra(Const.EXTRA_TITLE, item.getName());
                             i.putExtra(Const.EXTRA_POSITION, position);
                             i.putExtra(Const.EXTRA_SCREEN_NUM, page);
-                            i.putExtra(Const.EXTRA_PROP_CODE, propCode);
+                            i.putExtra(Const.EXTRA_INFO_BLOCK_ID, infoBlockId);
                             startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
                             break;
 
@@ -368,6 +370,12 @@ public class AddPropertiesListFragment extends BaseFragment {
                 position = data.getIntExtra(Const.EXTRA_POSITION, -1);
                 Log.d("TAG", "position result " + data.getIntExtra(Const.EXTRA_POSITION, -1));
                 infoBlockHelper.getItems().get(page).get(position).setListValue(item);
+                if (infoBlockHelper.getItems().get(page).get(position).getCode().contains("VID_STANDARTA_OSMOTRA")) {
+                    InfoBlocksStorage.setInfoBlockInspectionCode(infoBlockId, item.getId());
+                }
+                if (infoBlockHelper.getItems().get(page).get(position).getCode().contains("section")) {
+                    InfoBlocksStorage.setInfoBlockCategoryCode(infoBlockId, item.getId());
+                }
 //                if (adapter.getItem(position).getCode().equals("general_marka")) {
 //                    if (adapter.getPositionByCode("general_model") != -1) {
 //                        adapter.getItem(adapter.getPositionByCode("general_model")).setListValue(new ListItem(-1, getString(R.string.not_chosen)));
@@ -375,8 +383,13 @@ public class AddPropertiesListFragment extends BaseFragment {
 //                    }
 //                }
                 switch (adapter.getItem(position).getCode()) {
-                    case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
+                    case IdsRelationHelperItem.CODE_GENERAL_CATEGORY_ID:
                         dropElemValue(IdsRelationHelperItem.CODE_GENERAL_TYPE_ID);
+                        dropElemValue(IdsRelationHelperItem.CODE_GENERAL_MODEL);
+                        dropElemValue(IdsRelationHelperItem.CODE_GENERAL_MARK);
+                        break;
+                    case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
+//                        dropElemValue(IdsRelationHelperItem.CODE_GENERAL_TYPE_ID);
                         break;
                     case IdsRelationHelperItem.CODE_GENERAL_MARK:
                         dropElemValue(IdsRelationHelperItem.CODE_GENERAL_MODEL);
@@ -396,6 +409,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                         dropElemValue(IdsRelationHelperItem.CODE_MODEL_KPP);
                         break;
                     case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
+                        dropElemValue(IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL);
                         break;
                     case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
                         break;
@@ -412,10 +426,11 @@ public class AddPropertiesListFragment extends BaseFragment {
                     case IdsRelationHelperItem.CODE_SHAS_WHEEL_FORMULA:
                         break;
                     case IdsRelationHelperItem.CODE_MARK_KPP:
+                        dropElemValue(IdsRelationHelperItem.CODE_MODEL_KPP);
                         break;
                     case IdsRelationHelperItem.CODE_MODEL_KPP:
                         dropElemValue(IdsRelationHelperItem.CODE_TEC_KPP_GEARS);
-                        dropElemValue(IdsRelationHelperItem.CODE_TEC_KPP_TYPE);
+//                        dropElemValue(IdsRelationHelperItem.CODE_TEC_KPP_TYPE);
                         break;
                     case IdsRelationHelperItem.CODE_TEC_KPP_GEARS:
                         break;
@@ -425,6 +440,12 @@ public class AddPropertiesListFragment extends BaseFragment {
                         break;
                     case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
                         dropElemValue(IdsRelationHelperItem.CODE_FORM_ORGANIZATION);
+                        break;
+                    case IdsRelationHelperItem.CODE_MARK_KHOU:
+                        dropElemValue(IdsRelationHelperItem.CODE_MODEL_KHOU);
+                        break;
+                    case IdsRelationHelperItem.CODE_MARK_KMU:
+                        dropElemValue(IdsRelationHelperItem.CODE_MODEL_KMU);
                         break;
                     default:
                         Log.d("TAG", "int position " + position);

@@ -188,7 +188,7 @@ public class PropHelper {
                         if (valueObject.has("id") && !valueObject.get("id").isJsonNull()) {
                             newValueObject.addProperty(ListItem.JSON_VALUE_ID, valueObject.get("id").getAsLong());
                         }
-                        if (valueObject.has("id") && !valueObject.get("name").isJsonNull()) {
+                        if (valueObject.has("name") && !valueObject.get("name").isJsonNull()) {
                             newValueObject.addProperty(ListItem.JSON_VALUE_NAME, valueObject.get("name").getAsString());
                         }
                         if (valueObject.has("mark") && !valueObject.get("mark").isJsonNull()) {

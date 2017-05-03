@@ -41,6 +41,8 @@ public class ShowPropertiesListFragment extends BaseFragment {
     private int totalPages;
     private String infoBlockId;
     private TextView tvHeader;
+    private long propCode;
+    private long inspectionCode;
 
 
 
@@ -70,6 +72,8 @@ public class ShowPropertiesListFragment extends BaseFragment {
         page = getArguments().getInt(Const.PAGE);
         totalPages = getArguments().getInt(Const.TOTAL_PAGES);
         infoBlockId = getArguments().getString(Const.EXTRA_INFO_BLOCK_ID);
+        propCode = InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId);
+        inspectionCode = InfoBlocksStorage.getInfoBlockInspectionCode(infoBlockId);
 
         initPage();
 
@@ -99,7 +103,7 @@ public class ShowPropertiesListFragment extends BaseFragment {
         if(items!=null) {
 
             tvHeader.setText(items.get(0).getName());
-            adapter = new InfoblockAdapter(getContext(), items, page, totalPages, false, new InfoblockAdapter.OnItemClickListener() {
+            adapter = new InfoblockAdapter(getContext(), items, page, totalPages, false, infoBlockId, new InfoblockAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(MainItem item, View view, int position) {
 

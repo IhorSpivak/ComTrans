@@ -191,6 +191,8 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
             if(isNew) {
                 propHelper = new PropHelper(dataArray,propCode,inspectionCode);
                 storage.saveInfoBlock(infoBlockId, propHelper.getScreens());
+                InfoBlocksStorage.setInfoBlockCategoryCode(infoBlockId, propCode);
+                InfoBlocksStorage.setInfoBlockInspectionCode(infoBlockId, inspectionCode);
                 storage.setInfoBlockStatus(infoBlockId, MyInfoblockItem.STATUS_DRAFT);
             }
 
