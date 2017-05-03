@@ -281,7 +281,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
 
 
     private void setAdapter(){
-        adapter = new AddInfoBlockPagerAdapter(getFragmentManager(),getContext(),infoBlockId,infoBlockHelper.getItemsSize(), propCode);
+        adapter = new AddInfoBlockPagerAdapter(getFragmentManager(),getContext(),infoBlockId,infoBlockHelper.getItemsSize(), propCode, inspectionCode);
         setUiPageViewController();
         activity.viewPager.setAdapter(adapter);
         activity.viewPager.setOffscreenPageLimit(1);

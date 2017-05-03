@@ -31,6 +31,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     private IdsRelationHelperItem idsRelationHelperItem;
     private boolean isNeedSort;
     //    private long propCode;
+    //    private long inspectionCode;
     private String infoBlockId;
     private Context context;
 
@@ -44,6 +45,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         this.idsRelationHelperItem = idsRelationHelperItem;
         this.isNeedSort = isNeedSort;
         this.infoBlockId = infoBlockId;
+        this.inspectionCode = inspectionCode;
         enterValues(items);
     }
 
@@ -76,9 +78,6 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                 filterByEngineMark();
                 filterByModel();
                 break;
-//            case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
-//                filterByModel();
-//                break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_POWER:
                 filterByEngineModel();
                 filterByModel();
@@ -126,6 +125,8 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                 break;
             case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
                 break;
+            case IdsRelationHelperItem.CODE_INSPECTION_TYPE:
+//                chekingCodeInspection();
             default:
                 break;
         }
@@ -179,16 +180,23 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         }
     }
 
-
-    //||   != "ae95d3c7" ||  "e13a321"
     private void filterByMark() {
         for (ListItem item : items) {
             Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
-            if (/*item.getId() == -1 || */item.getMark() == idsRelationHelperItem.getMark()) {
+            if (item.getMark() == idsRelationHelperItem.getMark())  {
                 addItemToTempArray(item);
             }
         }
     }
+//
+//    private void chekingCodeInspection(){
+//        for (ListItem item : items) {
+//
+//            if (item.getId() == inspectionCode)  {
+//                addItemToTempArray(item);
+//            }
+//        }
+//    }
 
     private void filterByModel() {
         for (ListItem item : items) {

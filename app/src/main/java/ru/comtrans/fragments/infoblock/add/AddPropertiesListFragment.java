@@ -57,13 +57,14 @@ public class AddPropertiesListFragment extends BaseFragment {
     private TextView tvHeader;
 
 
-    public static AddPropertiesListFragment newInstance(int page, int totalPages, String infoBlockId, long propCode) {
+    public static AddPropertiesListFragment newInstance(int page, int totalPages, String infoBlockId, long propCode, long inspectionCode) {
 
         Bundle args = new Bundle();
         args.putInt(Const.PAGE, page);
         args.putInt(Const.TOTAL_PAGES, totalPages);
         args.putString(Const.EXTRA_INFO_BLOCK_ID, infoBlockId);
         args.putLong(Const.EXTRA_PROP_CODE, propCode);
+        args.putLong(Const.EXTRA_INSPECTION_CODE, inspectionCode);
         AddPropertiesListFragment fragment = new AddPropertiesListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -88,8 +89,6 @@ public class AddPropertiesListFragment extends BaseFragment {
         propCode = InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId);
         inspectionCode = InfoBlocksStorage.getInfoBlockInspectionCode(infoBlockId);
         initPage();
-
-
     }
 
     private void initUi(View v) {
@@ -150,7 +149,6 @@ public class AddPropertiesListFragment extends BaseFragment {
                                 case IdsRelationHelperItem.CODE_GENERAL_MODEL:
                                     //Category from resources
                                     idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
-//                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
                                     idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
@@ -206,6 +204,9 @@ public class AddPropertiesListFragment extends BaseFragment {
                                     break;
                                 case IdsRelationHelperItem.CODE_MODEL_KMU:
                                     idsRelationHelperItem.setKmuMark(infoBlockHelper.getMarkKMUValue().getId());
+//                                case IdsRelationHelperItem.CODE_INSPECTION_TYPE:
+//                                    idsRelationHelperItem.setInspectionCode(infoBlockHelper.getInspectionCodeValue().getId());
+//                                    break;
                                 default:
                                     Log.d("TAG", "int position " + position);
                                     break;
@@ -236,6 +237,8 @@ public class AddPropertiesListFragment extends BaseFragment {
                             i.putExtra(Const.EXTRA_POSITION, position);
                             i.putExtra(Const.EXTRA_SCREEN_NUM, page);
                             i.putExtra(Const.EXTRA_INFO_BLOCK_ID, infoBlockId);
+                            i.putExtra(Const.EXTRA_PROP_CODE, propCode);
+                            i.putExtra(Const.EXTRA_INSPECTION_CODE, inspectionCode);
                             startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
                             break;
 
@@ -292,8 +295,6 @@ public class AddPropertiesListFragment extends BaseFragment {
                             i.putExtra(Const.EXTRA_SCREEN_NUM, page);
                             startActivityForResult(i, Const.CAMERA_PHOTO_RESULT);
                             break;
-
-
                     }
 
                 }
@@ -446,6 +447,9 @@ public class AddPropertiesListFragment extends BaseFragment {
                         break;
                     case IdsRelationHelperItem.CODE_MARK_KMU:
                         dropElemValue(IdsRelationHelperItem.CODE_MODEL_KMU);
+                        //Don't do this
+//                    case IdsRelationHelperItem.CODE_INSPECTION_TYPE:
+//                        dropElemValue(IdsRelationHelperItem.CODE_INSPECTION_TYPE);
                         break;
                     default:
                         Log.d("TAG", "int position " + position);

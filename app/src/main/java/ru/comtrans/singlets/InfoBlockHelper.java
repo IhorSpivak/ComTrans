@@ -97,6 +97,10 @@ public class InfoBlockHelper {
         return getValueByKey("holod_brand");
     }
 
+    public ListItem getInspectionCodeValue() {
+        return getValueByKey("VID_STANDARTA_OSMOTRA");
+    }
+
 
     public void saveScreen(ArrayList<MainItem> screen, int position) {
         items.set(position, screen);

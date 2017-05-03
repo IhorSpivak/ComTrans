@@ -56,6 +56,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final OnItemClickListener listener;
     private final OnBottomBarClickListener bottomBarClickListener;
     private int page;
+    private long inspectionCode;
     private int totalPages;
     private boolean isEditable;
     private DividerItemDecoration decoration;
@@ -183,6 +184,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             }
                         }
                     }
+
 
                     if (item.getListValue() != null)
                         listViewHolder.tvList.setText(item.getListValue().getName());

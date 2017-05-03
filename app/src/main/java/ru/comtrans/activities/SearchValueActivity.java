@@ -40,6 +40,7 @@ public class SearchValueActivity extends BaseActivity {
     private int extraPosition;
     private boolean canAdd;
     private long propCode;
+    private long inspectionCode;
     private String infoBlockId;
     private IdsRelationHelperItem idsRelationHelperItem;
 
@@ -65,6 +66,7 @@ public class SearchValueActivity extends BaseActivity {
         extraPosition = getIntent().getIntExtra(Const.EXTRA_POSITION, -1);
         infoBlockId = getIntent().getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
         propCode = getIntent().getLongExtra(Const.EXTRA_PROP_CODE, -1);
+        inspectionCode = getIntent().getLongExtra(Const.EXTRA_INSPECTION_CODE, -1);
         idsRelationHelperItem = (IdsRelationHelperItem) getIntent().getSerializableExtra(Const.EXTRA_IDS_HELPER);
         Log.e("TMP_TEST",idsRelationHelperItem.toString());
 //        mark = getIntent().getLongExtra(Const.EXTRA_MARK,-1);

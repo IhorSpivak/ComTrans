@@ -39,6 +39,7 @@ public class ShowPropertiesListFragment extends BaseFragment {
     private ArrayList<MainItem> items;
     private int page;
     private int totalPages;
+    private long inspectionCode;
     private String infoBlockId;
     private TextView tvHeader;
     private long propCode;
@@ -135,7 +136,7 @@ public class ShowPropertiesListFragment extends BaseFragment {
                             break;
                     }
                 }
-            });
+            }, inspectionCode);
             recyclerView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {

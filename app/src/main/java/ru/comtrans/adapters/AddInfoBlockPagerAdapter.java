@@ -17,18 +17,22 @@ public class AddInfoBlockPagerAdapter extends FragmentStatePagerAdapter {
     int pagesCount;
     String infoBlockId;
     long propCode;
+    long inspectionCode;
 
-    public AddInfoBlockPagerAdapter(FragmentManager fm, Context c, String infoBlockId, int pagesCount, long propCode) {
+    public AddInfoBlockPagerAdapter(FragmentManager fm, Context c, String infoBlockId, int pagesCount, long propCode,long inspectionCode) {
         super(fm);
         this.c = c;
         this.pagesCount = pagesCount;
         this.infoBlockId = infoBlockId;
         this.propCode = propCode;
+        this.inspectionCode = inspectionCode;
     }
+
+
 
     @Override
     public Fragment getItem(int position) {
-        return AddPropertiesListFragment.newInstance(position,pagesCount,infoBlockId, propCode);
+        return AddPropertiesListFragment.newInstance(position,pagesCount,infoBlockId, propCode, inspectionCode);
     }
 
     @Override

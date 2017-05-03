@@ -43,6 +43,7 @@ public class MainItem {
     private String name;
     private String code;
     private String value;
+    private String values;
     private String defaultValue;
     private int type;
     private boolean isChecked = false;
