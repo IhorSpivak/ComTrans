@@ -85,6 +85,10 @@ public class InfoBlockHelper {
         return getValueByKey("SOBSTVENNIK_CHASTNOE_YUR_LITSO");
     }
 
+    public ListItem getInspectionCodeValue() {
+        return getValueByKey("VID_STANDARTA_OSMOTRA");
+    }
+
 
     public void saveScreen(ArrayList<MainItem> screen, int position) {
         items.set(position, screen);

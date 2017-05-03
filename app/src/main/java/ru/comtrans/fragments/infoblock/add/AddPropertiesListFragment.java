@@ -52,17 +52,19 @@ public class AddPropertiesListFragment extends BaseFragment {
     private int page;
     private int totalPages;
     private long propCode;
+    private long inspectionCode;
     private String infoBlockId;
     private TextView tvHeader;
 
 
-    public static AddPropertiesListFragment newInstance(int page, int totalPages, String infoBlockId, long propCode) {
+    public static AddPropertiesListFragment newInstance(int page, int totalPages, String infoBlockId, long propCode, long inspectionCode) {
 
         Bundle args = new Bundle();
         args.putInt(Const.PAGE, page);
         args.putInt(Const.TOTAL_PAGES, totalPages);
         args.putString(Const.EXTRA_INFO_BLOCK_ID, infoBlockId);
         args.putLong(Const.EXTRA_PROP_CODE, propCode);
+        args.putLong(Const.EXTRA_INSPECTION_CODE, inspectionCode);
         AddPropertiesListFragment fragment = new AddPropertiesListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -84,6 +86,7 @@ public class AddPropertiesListFragment extends BaseFragment {
         totalPages = getArguments().getInt(Const.TOTAL_PAGES);
         infoBlockId = getArguments().getString(Const.EXTRA_INFO_BLOCK_ID);
         propCode = getArguments().getLong(Const.EXTRA_PROP_CODE);
+        inspectionCode = getArguments().getLong(Const.EXTRA_INSPECTION_CODE);
 
         initPage();
 
@@ -142,9 +145,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                                 case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
                                     break;
                                 case IdsRelationHelperItem.CODE_GENERAL_MODEL:
-//                                    if (infoBlockHelper.getMarkValue().getId() == -1) {
 //
-//                                    } else {
                                     idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
 //                                    }
                                     break;
@@ -204,6 +205,9 @@ public class AddPropertiesListFragment extends BaseFragment {
                                     break;
                                 case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
                                     break;
+//                                case IdsRelationHelperItem.CODE_INSPECTION_TYPE:
+//                                    idsRelationHelperItem.setInspectionCode(infoBlockHelper.getInspectionCodeValue().getId());
+//                                    break;
                                 default:
                                     Log.d("TAG", "int position " + position);
                                     break;
@@ -234,6 +238,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                             i.putExtra(Const.EXTRA_POSITION, position);
                             i.putExtra(Const.EXTRA_SCREEN_NUM, page);
                             i.putExtra(Const.EXTRA_PROP_CODE, propCode);
+                            i.putExtra(Const.EXTRA_INSPECTION_CODE, inspectionCode);
                             startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
                             break;
 
@@ -330,7 +335,7 @@ public class AddPropertiesListFragment extends BaseFragment {
                             break;
                     }
                 }
-            });
+            }, inspectionCode);
             recyclerView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -425,6 +430,9 @@ public class AddPropertiesListFragment extends BaseFragment {
                         break;
                     case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
                         dropElemValue(IdsRelationHelperItem.CODE_FORM_ORGANIZATION);
+                        break;
+                    case IdsRelationHelperItem.CODE_INSPECTION_TYPE:
+                        dropElemValue(IdsRelationHelperItem.CODE_INSPECTION_TYPE);
                         break;
                     default:
                         Log.d("TAG", "int position " + position);

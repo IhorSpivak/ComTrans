@@ -55,6 +55,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final OnItemClickListener listener;
     private final OnBottomBarClickListener bottomBarClickListener;
     private int page;
+    private long inspectionCode;
     private int totalPages;
     private boolean isEditable;
     private DividerItemDecoration decoration;
@@ -74,7 +75,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
     public InfoblockAdapter(final Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable,
-                            OnItemClickListener listener, OnBottomBarClickListener bottomBarClickListener) {
+                            OnItemClickListener listener, OnBottomBarClickListener bottomBarClickListener, long inspectionCode) {
         this.context = context;
         this.items = items;
         this.listener = listener;
@@ -82,6 +83,8 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.page = page;
         this.isEditable = isEditable;
         this.totalPages = totalPages;
+        this.inspectionCode = inspectionCode;
+
         infoBlockHelper = InfoBlockHelper.getInstance();
         vinFilter = new InputFilter() {
 
@@ -163,8 +166,10 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     else
                         listViewHolder.title.setText(item.getName());
 
+
                     if (item.getListValue() != null)
                         listViewHolder.tvList.setText(item.getListValue().getName());
+
 
                     if (item.isError()) {
                         listViewHolder.bottomStroke.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));

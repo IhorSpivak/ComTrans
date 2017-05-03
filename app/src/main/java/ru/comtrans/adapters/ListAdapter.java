@@ -30,11 +30,12 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     private IdsRelationHelperItem idsRelationHelperItem;
     private boolean isNeedSort;
     private long propCode;
+    private long inspectionCode;
 
 
     private LayoutInflater mInflater;
 
-    public ListAdapter(Context context, ArrayList<ListItem> items, IdsRelationHelperItem idsRelationHelperItem, boolean isNeedSort, long propCode) {
+    public ListAdapter(Context context, ArrayList<ListItem> items, IdsRelationHelperItem idsRelationHelperItem, boolean isNeedSort, long propCode, long inspectionCode) {
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -42,6 +43,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         this.idsRelationHelperItem = idsRelationHelperItem;
         this.isNeedSort = isNeedSort;
         this.propCode = propCode;
+        this.inspectionCode = inspectionCode;
         enterValues(items);
     }
 
@@ -68,9 +70,6 @@ public class ListAdapter extends BaseAdapter implements Filterable {
             case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
                 filterByModel();
                 break;
-//            case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
-//                filterByModel();
-//                break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_POWER:
                 filterByEngineModel();
                 filterByModel();
@@ -111,8 +110,8 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                 break;
             case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
                 break;
-            case IdsRelationHelperItem.TYPE_OF_INSPECTION:
-                checkingTypeIspection();
+            case IdsRelationHelperItem.CODE_INSPECTION_TYPE:
+//                chekingCodeInspection();
                 break;
             default:
                 break;
@@ -123,9 +122,6 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         notifyDataSetChanged();
     }
 
-    private void checkingTypeIspection() {
-
-    }
 
     //Filters
 
@@ -171,17 +167,24 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         }
     }
 
-
-
-    //||   != "ae95d3c7" ||  "e13a321"
     private void filterByMark(){
         for (ListItem item : items) {
             Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
-            if (item.getId() == -1 || item.getMark() == idsRelationHelperItem.getMark())  {
+
+            if (item.getMark() == idsRelationHelperItem.getMark())  {
                 addItemToTempArray(item);
             }
         }
     }
+//
+//    private void chekingCodeInspection(){
+//        for (ListItem item : items) {
+//
+//            if (item.getId() == inspectionCode)  {
+//                addItemToTempArray(item);
+//            }
+//        }
+//    }
 
     private void filterByModel(){
         for (ListItem item : items) {

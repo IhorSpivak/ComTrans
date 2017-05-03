@@ -26,7 +26,7 @@ public class IdsRelationHelperItem implements Serializable{
     public static final String CODE_VEHICLE_OWNER = "SOBSTVENNIK_CHASTNOE_YUR_LITSO";
     public static final String CODE_FORM_ORGANIZATION = "FORMA_ORGANIZATSII";
 
-    public static final String TYPE_OF_INSPECTION = "VID_STANDARTA_OSMOTRA";
+    public static final String CODE_INSPECTION_TYPE = "VID_STANDARTA_OSMOTRA";
 
     private String code;
     private long mark;
@@ -35,7 +35,7 @@ public class IdsRelationHelperItem implements Serializable{
     private long engineModel;
     private long kppModel;
     private long vehicleOwner;
-    private long inspectionType;
+    private long inspectionCode;
 
     public IdsRelationHelperItem() {
         this.code = "";
@@ -45,7 +45,7 @@ public class IdsRelationHelperItem implements Serializable{
         this.engineModel = -1;
         this.kppModel = -1;
         this.vehicleOwner = -1;
-        this.inspectionType = -1;
+        this.inspectionCode = -1;
     }
 
     public String getCode() {
@@ -103,11 +103,11 @@ public class IdsRelationHelperItem implements Serializable{
     public void setVehicleOwner(long vehicleOwner) {
         this.vehicleOwner = vehicleOwner;
     }
-    public long getInspectionType() {
-        return inspectionType;
+    public long getInspectionCode() {
+        return inspectionCode;
     }
 
-    public void setInspectionType(long inspectionType) {
-        this.inspectionType = inspectionType;
+    public void setInspectionCode(long inspectionCode) {
+        this.inspectionCode = inspectionCode;
     }
 }
