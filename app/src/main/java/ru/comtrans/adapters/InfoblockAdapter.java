@@ -305,7 +305,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         for (PhotoItem photoItem : item.getPhotoItems()) {
 
-                            if (photoItem.getIsOs() != 0 && tireSchemeValue.getId() != -1) {
+                            if (photoItem.getIsOs() != 0 && tireSchemeValue != null && tireSchemeValue.getId() != -1) {
                                 if (tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())) {
                                     photoItems.add(photoItem);
                                 }
