@@ -103,13 +103,14 @@ public class ProtectorView extends RelativeLayout {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflater.inflate(R.layout.protector_view, this, true);
-//        if (helper.getTireSchemeValue() != null) {
-//            ListItem tireSchemeItem = helper.getTireSchemeValue();
-//            int schemeId = tireSchemeItem.getTireSchemeId();
-//            setResourceId(schemeId);
-        ListItem tireSchemeItem = helper.getTireSchemeValue();
-        int schemeId = tireSchemeItem.getTireSchemeId();
-        setResourceId(schemeId);
+
+        final RelativeLayout leftLayout = (RelativeLayout) v.findViewById(R.id.left_layout);
+        final RelativeLayout rightLayout = (RelativeLayout) v.findViewById(R.id.right_layout);
+        ImageView image = (ImageView) v.findViewById(R.id.tire_scheme_image);
+        if (helper.getTireSchemeValue() != null) {
+            ListItem tireSchemeItem = helper.getTireSchemeValue();
+            int schemeId = tireSchemeItem.getTireSchemeId();
+            setResourceId(schemeId);
 
 //         OnKeyListener keyListener = new OnKeyListener() {
 //            @Override
@@ -147,9 +148,6 @@ public class ProtectorView extends RelativeLayout {
                 }
 
                 if (resourceId != 0) {
-                    final RelativeLayout leftLayout = (RelativeLayout) v.findViewById(R.id.left_layout);
-                    final RelativeLayout rightLayout = (RelativeLayout) v.findViewById(R.id.right_layout);
-                    ImageView image = (ImageView) v.findViewById(R.id.tire_scheme_image);
                     Log.d("TAG", "resource id " + resourceId);
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resourceId);
                     image.setImageResource(resourceId);
@@ -869,11 +867,16 @@ public class ProtectorView extends RelativeLayout {
                     tireSchemeList.setAdapter(adapter);
 
 //                    v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0));
-                }
 
+                } else {
+                    v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+                }
             } else {
                 v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
             }
+        } else {
+            v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+        }
 
     }
 

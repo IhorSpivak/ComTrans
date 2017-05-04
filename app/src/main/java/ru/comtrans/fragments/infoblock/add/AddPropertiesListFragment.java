@@ -178,7 +178,9 @@ public class AddPropertiesListFragment extends BaseFragment {
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_SHAS_WHEEL_FORMULA:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                  if(infoBlockHelper.getModelValue() != null) {
+                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                  }
                                     break;
                                 case IdsRelationHelperItem.CODE_MARK_KPP:
                                     idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
