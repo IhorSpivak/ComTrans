@@ -103,13 +103,13 @@ public class ProtectorView extends RelativeLayout {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflater.inflate(R.layout.protector_view, this, true);
-//        if (helper.getTireSchemeValue() != null) {
+        if (helper.getTireSchemeValue() != null) {
 //            ListItem tireSchemeItem = helper.getTireSchemeValue();
 //            int schemeId = tireSchemeItem.getTireSchemeId();
 //            setResourceId(schemeId);
-        ListItem tireSchemeItem = helper.getTireSchemeValue();
-        int schemeId = tireSchemeItem.getTireSchemeId();
-        setResourceId(schemeId);
+            ListItem tireSchemeItem = helper.getTireSchemeValue();
+            int schemeId = tireSchemeItem.getTireSchemeId();
+            setResourceId(schemeId);
 
 //         OnKeyListener keyListener = new OnKeyListener() {
 //            @Override
@@ -874,6 +874,7 @@ public class ProtectorView extends RelativeLayout {
             } else {
                 v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
             }
+        }
 
     }
 

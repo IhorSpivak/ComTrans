@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -41,13 +42,13 @@ public class CameraActivity extends AppCompatActivity {
     ArrayList<PhotoItem> items;
     public int position;
     public int imagePosition;
-    public  int screenNum;
+    public int screenNum;
     public boolean isFromDefect;
     int isVideoFlag;
     View container;
     private InfoBlockHelper helper;
-
-
+    public int itemsSize = 0;
+    public int defectSize = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,7 @@ public class CameraActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            getWindow().addFlags(SYSTEM_UI_FLAG_LAYOUT_STABLE|SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+            getWindow().addFlags(SYSTEM_UI_FLAG_LAYOUT_STABLE | SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         }
         setContentView(R.layout.activity_camera);
         container = findViewById(R.id.container);
@@ -64,32 +65,42 @@ public class CameraActivity extends AppCompatActivity {
 
         helper = InfoBlockHelper.getInstance();
 
-        isVideoFlag = getIntent().getIntExtra(Const.CAMERA_MODE,-1);
-        screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM,-1);
-        position = getIntent().getIntExtra(Const.EXTRA_POSITION,-1);
-        imagePosition = getIntent().getIntExtra(Const.EXTRA_IMAGE_POSITION,-1);
-        isFromDefect = getIntent().getBooleanExtra(Const.EXTRA_IS_DEFECT,false);
+        isVideoFlag = getIntent().getIntExtra(Const.CAMERA_MODE, -1);
+        screenNum = getIntent().getIntExtra(Const.EXTRA_SCREEN_NUM, -1);
+        position = getIntent().getIntExtra(Const.EXTRA_POSITION, -1);
+        imagePosition = getIntent().getIntExtra(Const.EXTRA_IMAGE_POSITION, -1);
+        isFromDefect = getIntent().getBooleanExtra(Const.EXTRA_IS_DEFECT, false);
 
         InfoBlockHelper helper = InfoBlockHelper.getInstance();
-        items = new ArrayList<>(helper.getPhotos(screenNum,position));
-        new SaveInfoBlockTask(helper.getId(),CameraActivity.this);
+        new SaveInfoBlockTask(helper.getId(), CameraActivity.this);
 
 
-
-
-        switch (isVideoFlag){
+        switch (isVideoFlag) {
             case 0:
                 finish();
                 break;
             case Const.MODE_PHOTO:
+                if (isFromDefect) {
+                    itemsSize = helper.getPhotos(screenNum, position - 2).size();
+                    defectSize = helper.getPhotos(screenNum, position).size();
+                    Log.e("Leol", "defect size " + helper.getPhotos(screenNum, position).size());
+                    items = new ArrayList<>(helper.getPhotos(screenNum, position - 2));
+                    items.addAll(helper.getPhotos(screenNum, position));
+                } else {
+                    itemsSize = helper.getPhotos(screenNum, position).size();
+                    defectSize = helper.getPhotos(screenNum, position + 2).size();
+                    items = new ArrayList<>(helper.getPhotos(screenNum, position));
+                    Log.e("Leol", "defect size " + helper.getPhotos(screenNum, position + 2).size());
+                    items.addAll(helper.getPhotos(screenNum, position + 2));
+                }
                 checkCameraPermission(false);
-                 break;
+                break;
             case Const.MODE_VIDEO:
+                items = new ArrayList<>(helper.getPhotos(screenNum, position));
                 checkCameraPermission(true);
                 break;
 
         }
-
 
 
     }
@@ -97,7 +108,7 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (hasFocus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
             container.setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -105,9 +116,9 @@ public class CameraActivity extends AppCompatActivity {
                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
-
 
 
     public CameraPhotoAdapter getPhotoAdapter() {
@@ -115,9 +126,8 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
-
     @TargetApi(Build.VERSION_CODES.M)
-    private void checkCameraPermission(boolean isVideo){
+    private void checkCameraPermission(boolean isVideo) {
         int hasCameraPermission;
         int hasStoragePermission;
         int hasRecorderPermission;
@@ -132,16 +142,16 @@ public class CameraActivity extends AppCompatActivity {
             if (hasStoragePermission != PackageManager.PERMISSION_GRANTED) {
                 permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
             }
-            if(isVideo){
-                if(hasRecorderPermission!= PackageManager.PERMISSION_GRANTED){
+            if (isVideo) {
+                if (hasRecorderPermission != PackageManager.PERMISSION_GRANTED) {
                     permissions.add(Manifest.permission.RECORD_AUDIO);
                 }
             }
             if (!permissions.isEmpty()) {
-                if(isVideo){
+                if (isVideo) {
                     requestPermissions(permissions.toArray(new String[permissions.size()]),
                             Const.REQUEST_PERMISSION_VIDEO);
-                }else {
+                } else {
                     requestPermissions(permissions.toArray(new String[permissions.size()]),
                             Const.REQUEST_PERMISSION_CAMERA);
                 }
@@ -155,26 +165,26 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     Fragment fragment;
-    private void openCameraFragment(boolean isVideo){
+
+    private void openCameraFragment(boolean isVideo) {
         PhotoItem item;
-        if(imagePosition>=items.size()){
+        if (imagePosition >= items.size()) {
             item = items.get(0);
-        }else {
+        } else {
             item = items.get(imagePosition);
         }
 
         Collections.reverse(items);
-        if(isVideo){
+        if (isVideo) {
             imagePosition = items.indexOf(item);
-            photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
+            photoAdapter = new CameraPhotoAdapter(items, CameraActivity.this);
             fragment = new VideoFragment();
-        }else {
+        } else {
             imagePosition = items.indexOf(item);
-            photoAdapter = new CameraPhotoAdapter(items,CameraActivity.this);
+            photoAdapter = new CameraPhotoAdapter(items, CameraActivity.this);
             fragment = new CameraFragment();
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commitAllowingStateLoss();
-
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commitAllowingStateLoss();
 
 
     }
@@ -203,17 +213,16 @@ public class CameraActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         boolean allow = true;
-        switch (requestCode){
+        switch (requestCode) {
             case Const.REQUEST_PERMISSION_CAMERA:
                 for (int i = 0; i < permissions.length; i++) {
-                    if(grantResults[i] == PackageManager.PERMISSION_DENIED){
+                    if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                         allow = false;
                     }
                 }
-                if(allow) {
+                if (allow) {
                     openCameraFragment(false);
-                }
-                else {
+                } else {
                     Toast.makeText(CameraActivity.this, R.string.not_all_permissions_granted, Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -221,14 +230,13 @@ public class CameraActivity extends AppCompatActivity {
 
             case Const.REQUEST_PERMISSION_VIDEO:
                 for (int i = 0; i < permissions.length; i++) {
-                    if(grantResults[i] == PackageManager.PERMISSION_DENIED){
+                    if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                         allow = false;
                     }
                 }
-                if(allow) {
+                if (allow) {
                     openCameraFragment(true);
-                }
-                else {
+                } else {
                     Toast.makeText(CameraActivity.this, R.string.not_all_permissions_granted, Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -236,26 +244,26 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    public boolean checkIsOs(PhotoItem item){
-       ListItem tireScheme=  helper.getTireSchemeValue();
-        if(tireScheme.getId()==-1)
+    public boolean checkIsOs(PhotoItem item) {
+        ListItem tireScheme = helper.getTireSchemeValue();
+        if (tireScheme.getId() == -1)
             return true;
         return tireScheme.getRevealOs().contains(item.getIsOs());
     }
 
 
     @Override
-    public void onBackPressed(){
-        if(fragment!=null)
-            switch (isVideoFlag){
+    public void onBackPressed() {
+        if (fragment != null)
+            switch (isVideoFlag) {
                 case 0:
                     super.onBackPressed();
                     break;
                 case Const.MODE_PHOTO:
-                    ((CameraFragment)fragment).done(true);
+                    ((CameraFragment) fragment).done(true);
                     break;
                 case Const.MODE_VIDEO:
-                    ((VideoFragment)fragment).done(true);
+                    ((VideoFragment) fragment).done(true);
                     break;
 
             }

@@ -40,6 +40,7 @@ import ru.comtrans.helpers.Const;
 import ru.comtrans.helpers.PartialRegexInputFilter;
 import ru.comtrans.helpers.PhoneTextWatcher;
 import ru.comtrans.helpers.Utility;
+import ru.comtrans.items.IdsRelationHelperItem;
 import ru.comtrans.items.ListItem;
 import ru.comtrans.items.MainItem;
 import ru.comtrans.items.PhotoItem;
@@ -168,7 +169,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         listViewHolder.title.setText(item.getName());
                     // Stub for category and inspection
 
-                    if(item.getCode().contains("VID_STANDARTA_OSMOTRA")){
+                    if(item.getCode().contains(IdsRelationHelperItem.CODE_INSPECTION_TYPE)){
                         for(ListItem localItem : item.getListValues()){
                             if(localItem.getId() == InfoBlocksStorage.getInfoBlockInspectionCode(infoBlockId)){
                                 items.get(position).setListValue(localItem);
@@ -176,7 +177,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             }
                         }
                     }
-                    if(item.getCode().contains("section")){
+                    if(item.getCode().contains(IdsRelationHelperItem.CODE_GENERAL_CATEGORY_ID)){
                         for(ListItem localItem : item.getListValues()){
                             if(localItem.getId() == InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)){
                                 items.get(position).setListValue(localItem);
@@ -231,6 +232,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 break;
 
             case MainItem.TYPE_PHOTO:
+                Log.e("Leol","TYPE_PHOTO position "+position);
                 final PhotoViewHolder photoViewHolder = ((PhotoViewHolder) viewHolder);
 
                 ListItem tireSchemeValue = infoBlockHelper.getTireSchemeValue();
@@ -284,7 +286,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         for (PhotoItem photoItem : item.getPhotoItems()) {
                             if (photoItem.isDefect()) {
-                                photoItems.add(photoItem);
+                                defects.add(photoItem);
                             }
                         }
 
@@ -305,7 +307,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         for (PhotoItem photoItem : item.getPhotoItems()) {
 
-                            if (photoItem.getIsOs() != 0 && tireSchemeValue.getId() != -1) {
+                            if (photoItem.getIsOs() != 0 && tireSchemeValue != null && tireSchemeValue.getId() != -1) {
                                 if (tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())) {
                                     photoItems.add(photoItem);
                                 }
