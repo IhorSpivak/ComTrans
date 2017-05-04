@@ -234,14 +234,19 @@ public class AddPropertiesListFragment extends BaseFragment {
 //
 //                            }
 
-                            i.putExtra(Const.EXTRA_IDS_HELPER, idsRelationHelperItem);
-                            i.putExtra(Const.EXTRA_TITLE, item.getName());
-                            i.putExtra(Const.EXTRA_POSITION, position);
-                            i.putExtra(Const.EXTRA_SCREEN_NUM, page);
-                            i.putExtra(Const.EXTRA_INFO_BLOCK_ID, infoBlockId);
-                            i.putExtra(Const.EXTRA_PROP_CODE, propCode);
-                            i.putExtra(Const.EXTRA_INSPECTION_CODE, inspectionCode);
-                            startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
+
+                            if(item.getCode().contains(IdsRelationHelperItem.CODE_INSPECTION_TYPE) ||
+                                    item.getCode().contains(IdsRelationHelperItem.CODE_GENERAL_CATEGORY_ID)){
+                            }else {
+                                i.putExtra(Const.EXTRA_IDS_HELPER, idsRelationHelperItem);
+                                i.putExtra(Const.EXTRA_TITLE, item.getName());
+                                i.putExtra(Const.EXTRA_POSITION, position);
+                                i.putExtra(Const.EXTRA_SCREEN_NUM, page);
+                                i.putExtra(Const.EXTRA_INFO_BLOCK_ID, infoBlockId);
+                                i.putExtra(Const.EXTRA_PROP_CODE, propCode);
+                                i.putExtra(Const.EXTRA_INSPECTION_CODE, inspectionCode);
+                                startActivityForResult(i, Const.SEARCH_VALUE_RESULT);
+                            }
                             break;
 
                         case MainItem.TYPE_CALENDAR:
@@ -373,10 +378,10 @@ public class AddPropertiesListFragment extends BaseFragment {
                 position = data.getIntExtra(Const.EXTRA_POSITION, -1);
                 Log.d("TAG", "position result " + data.getIntExtra(Const.EXTRA_POSITION, -1));
                 infoBlockHelper.getItems().get(page).get(position).setListValue(item);
-                if (infoBlockHelper.getItems().get(page).get(position).getCode().contains("VID_STANDARTA_OSMOTRA")) {
+                if (infoBlockHelper.getItems().get(page).get(position).getCode().contains(IdsRelationHelperItem.CODE_INSPECTION_TYPE)) {
                     InfoBlocksStorage.setInfoBlockInspectionCode(infoBlockId, item.getId());
                 }
-                if (infoBlockHelper.getItems().get(page).get(position).getCode().contains("section")) {
+                if (infoBlockHelper.getItems().get(page).get(position).getCode().contains(IdsRelationHelperItem.CODE_GENERAL_CATEGORY_ID)) {
                     InfoBlocksStorage.setInfoBlockCategoryCode(infoBlockId, item.getId());
                 }
 //                if (adapter.getItem(position).getCode().equals("general_marka")) {
@@ -468,9 +473,15 @@ public class AddPropertiesListFragment extends BaseFragment {
                 Log.e("WTF", "CAMERA_PHOTO_RESULT");
                 position = data.getIntExtra(Const.EXTRA_POSITION, -1);
                 screenNum = data.getIntExtra(Const.EXTRA_SCREEN_NUM, -1);
+                boolean isDefect = data.getBooleanExtra(Const.EXTRA_IS_DEFECT, false);
                 //  adapter.getItem(position).setPhotoItems(infoBlockHelper.getItems().get(screenNum).get(position).getPhotoItems());
                 try {
                     adapter.notifyItemChanged(position);
+                    if(isDefect){
+                        adapter.notifyItemChanged(position - 2);
+                    }else{
+                        adapter.notifyItemChanged(position + 2);
+                    }
                 } catch (Exception ignored) {
                 }
 

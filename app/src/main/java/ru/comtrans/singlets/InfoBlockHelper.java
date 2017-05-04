@@ -98,7 +98,7 @@ public class InfoBlockHelper {
     }
 
     public ListItem getInspectionCodeValue() {
-        return getValueByKey("VID_STANDARTA_OSMOTRA");
+        return getValueByKey(IdsRelationHelperItem.CODE_INSPECTION_TYPE);
     }
 
 

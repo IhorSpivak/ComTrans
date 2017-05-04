@@ -212,6 +212,18 @@ public class PropHelper {
                             newValueObject.add(ListItem.JSON_VALUE_KPP_MODEL, valueObject.get("kpp_model").getAsJsonArray());
                         }
 
+                        if (valueObject.has("kpp_mark") && !valueObject.get("kpp_mark").isJsonNull() && valueObject.get("kpp_mark").isJsonArray()) {
+                            newValueObject.add(ListItem.JSON_VALUE_KPP_MARK, valueObject.get("kpp_mark").getAsJsonArray());
+                        }
+
+                        if (valueObject.has("kmu_mark") && !valueObject.get("kmu_mark").isJsonNull() && valueObject.get("kmu_mark").isJsonArray()) {
+                            newValueObject.add(ListItem.JSON_VALUE_KMU_MARK, valueObject.get("kmu_mark").getAsJsonArray());
+                        }
+
+                        if (valueObject.has("khou_mark") && !valueObject.get("khou_mark").isJsonNull() && valueObject.get("khou_mark").isJsonArray()) {
+                            newValueObject.add(ListItem.JSON_VALUE_KHOU_MARK, valueObject.get("khou_mark").getAsJsonArray());
+                        }
+
                         if (valueObject.has("vehicle_owner") && !valueObject.get("vehicle_owner").isJsonNull() && valueObject.get("vehicle_owner").isJsonArray()) {
                             newValueObject.add(ListItem.JSON_VALUE_VEHICLE_OWNER, valueObject.get("vehicle_owner").getAsJsonArray());
                         }
