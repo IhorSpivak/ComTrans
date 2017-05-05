@@ -224,6 +224,10 @@ public class PropHelper {
                             newValueObject.add(ListItem.JSON_VALUE_KHOU_MARK, valueObject.get("khou_mark").getAsJsonArray());
                         }
 
+                        if (valueObject.has("sections") && !valueObject.get("sections").isJsonNull() && valueObject.get("sections").isJsonArray()) {
+                            newValueObject.add(ListItem.JSON_VALUE_SECTIONS, valueObject.get("sections").getAsJsonArray());
+                        }
+
                         if (valueObject.has("vehicle_owner") && !valueObject.get("vehicle_owner").isJsonNull() && valueObject.get("vehicle_owner").isJsonArray()) {
                             newValueObject.add(ListItem.JSON_VALUE_VEHICLE_OWNER, valueObject.get("vehicle_owner").getAsJsonArray());
                         }

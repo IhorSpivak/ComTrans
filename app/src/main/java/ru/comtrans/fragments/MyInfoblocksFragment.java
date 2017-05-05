@@ -109,7 +109,7 @@ public class MyInfoblocksFragment extends Fragment {
     }
 
     private void getInspectionCategories(final boolean isFromButton){
-        Call<JsonObject> call = AppController.apiInterface.getInspectionCategories();
+        Call<JsonObject> call = AppController.apiInterface.getInspectionCategories(Utility.getToken());
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -165,7 +165,7 @@ public class MyInfoblocksFragment extends Fragment {
     }
 
     private void getInspectionTypes(final boolean isFromButton){
-        Call<JsonObject> call = AppController.apiInterface.getInspectionTypes();
+        Call<JsonObject> call = AppController.apiInterface.getInspectionTypes(Utility.getToken());
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {

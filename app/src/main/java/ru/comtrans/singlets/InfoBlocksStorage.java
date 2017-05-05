@@ -62,7 +62,7 @@ public class InfoBlocksStorage {
         return id;
     }
 
-    public void removeInfoBlock(String id){
+    public void removeInfoBlock(String id) {
         if (infoBlockIds.contains(id)) {
             infoBlockIds.remove(id);
             Utility.saveStringSet(INFO_BLOCK_IDS, infoBlockIds);
@@ -79,11 +79,12 @@ public class InfoBlocksStorage {
                         JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
 
 
-                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()){
-                            try{
+                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()) {
+                            try {
                                 File file = new File(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
                                 file.delete();
-                            }catch (Exception ignored){}
+                            } catch (Exception ignored) {
+                            }
                         }
 
                     }
@@ -93,10 +94,11 @@ public class InfoBlocksStorage {
 
 
         }
-        try{
+        try {
             File file = new File(getInfoBlockAudio(id));
             file.delete();
-        }catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
 
         Utility.saveData(id, null);
 
@@ -179,7 +181,7 @@ public class InfoBlocksStorage {
                     item.setLastPosition(object.get(MyInfoblockItem.JSON_LAST_POSITION).getAsInt());
 
 
-                if (object.has(MyInfoblockItem.JSON_SIZE) && !object.get(MyInfoblockItem.JSON_SIZE).isJsonNull()){
+                if (object.has(MyInfoblockItem.JSON_SIZE) && !object.get(MyInfoblockItem.JSON_SIZE).isJsonNull()) {
                     item.setSize(object.get(MyInfoblockItem.JSON_SIZE).getAsDouble());
                 }
 
@@ -208,52 +210,51 @@ public class InfoBlocksStorage {
                     date1 = sdf.parse(i1.getDate());
                     date2 = sdf.parse(i2.getDate());
 
-                    if (date1 != null&&date2!=null) {
+                    if (date1 != null && date2 != null) {
                         if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoblockItem.STATUS_DRAFT) {
-                            if(date1.after(date2)){
-                                returnValue =  -1;
-                            }else if(date2.after(date1)){
-                                returnValue =  1;
-                            }else {
-                                returnValue =  0;
+                            if (date1.after(date2)) {
+                                returnValue = -1;
+                            } else if (date2.after(date1)) {
+                                returnValue = 1;
+                            } else {
+                                returnValue = 0;
                             }
                         } else if (i1.getStatus() == MyInfoblockItem.STATUS_DRAFT) {
-                            returnValue =  -1;
+                            returnValue = -1;
                         } else if (i2.getStatus() == MyInfoblockItem.STATUS_DRAFT) {
-                            returnValue =  1;
+                            returnValue = 1;
                         } else if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoblockItem.STATUS_SENDING) {
-                            if(date1.after(date2)){
-                                returnValue =  -1;
-                            }else if(date2.after(date1)){
-                                returnValue =  1;
-                            }else {
-                                returnValue =  0;
+                            if (date1.after(date2)) {
+                                returnValue = -1;
+                            } else if (date2.after(date1)) {
+                                returnValue = 1;
+                            } else {
+                                returnValue = 0;
                             }
                         } else if (i1.getStatus() == MyInfoblockItem.STATUS_SENDING) {
-                            returnValue =  -1;
+                            returnValue = -1;
                         } else if (i2.getStatus() == MyInfoblockItem.STATUS_SENDING) {
-                            returnValue =  1;
+                            returnValue = 1;
                         } else if (i1.getStatus() == i2.getStatus() && i1.getStatus() == MyInfoblockItem.STATUS_SENT) {
-                            if(date1.after(date2)){
-                                returnValue =  -1;
-                            }else if(date2.after(date1)){
-                                returnValue =  1;
-                            }else {
-                                returnValue =  0;
+                            if (date1.after(date2)) {
+                                returnValue = -1;
+                            } else if (date2.after(date1)) {
+                                returnValue = 1;
+                            } else {
+                                returnValue = 0;
                             }
                         } else if (i1.getStatus() == MyInfoblockItem.STATUS_SENT) {
-                            returnValue =  -1;
+                            returnValue = -1;
                         } else if (i2.getStatus() == MyInfoblockItem.STATUS_SENT) {
-                            returnValue =  1;
+                            returnValue = 1;
                         } else {
-                            returnValue =  0;
+                            returnValue = 0;
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return returnValue;
-
 
 
             }
@@ -274,11 +275,10 @@ public class InfoBlocksStorage {
     }
 
 
-
     public void saveInfoBlockPreview(String id, JsonArray block) {
         Gson gson = new Gson();
         JsonObject previewObject = gson.fromJson(Utility.getSavedData("preview" + id), JsonObject.class);
-        if(previewObject==null){
+        if (previewObject == null) {
             previewObject = new JsonObject();
         }
         Calendar c = Calendar.getInstance();
@@ -309,52 +309,52 @@ public class InfoBlocksStorage {
                 }
 
 
-                    if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && (object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PHOTO||
-                    object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_VIDEO)) {
-                        if (object.has(MainItem.JSON_PHOTO_VALUES) && !object.get(MainItem.JSON_PHOTO_VALUES).isJsonNull()) {
-                            JsonArray photoArray = object.get(MainItem.JSON_PHOTO_VALUES).getAsJsonArray();
+                if (object.has(MainItem.JSON_TYPE) && !object.get(MainItem.JSON_TYPE).isJsonNull() && (object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_PHOTO ||
+                        object.get(MainItem.JSON_TYPE).getAsInt() == MainItem.TYPE_VIDEO)) {
+                    if (object.has(MainItem.JSON_PHOTO_VALUES) && !object.get(MainItem.JSON_PHOTO_VALUES).isJsonNull()) {
+                        JsonArray photoArray = object.get(MainItem.JSON_PHOTO_VALUES).getAsJsonArray();
 
-                            for (int k = 0; k < photoArray.size(); k++) {
-                                JsonObject photoObject = photoArray.get(k).getAsJsonObject();
+                        for (int k = 0; k < photoArray.size(); k++) {
+                            JsonObject photoObject = photoArray.get(k).getAsJsonObject();
 
-                                if (photoObject.has(PhotoItem.JSON_SIZE) && !photoObject.get(PhotoItem.JSON_SIZE).isJsonNull()) {
-                                    if(photoObject.get(PhotoItem.JSON_SIZE).getAsDouble()!=0.0) {
-                                        size = size+photoObject.get(PhotoItem.JSON_SIZE).getAsFloat();
-                                        Log.d("TAG", "file size " + photoObject.get(PhotoItem.JSON_SIZE).getAsFloat());
-                                        Log.d("TAG","total size "+size);
-                                    }
-
+                            if (photoObject.has(PhotoItem.JSON_SIZE) && !photoObject.get(PhotoItem.JSON_SIZE).isJsonNull()) {
+                                if (photoObject.get(PhotoItem.JSON_SIZE).getAsDouble() != 0.0) {
+                                    size = size + photoObject.get(PhotoItem.JSON_SIZE).getAsFloat();
+                                    Log.d("TAG", "file size " + photoObject.get(PhotoItem.JSON_SIZE).getAsFloat());
+                                    Log.d("TAG", "total size " + size);
                                 }
 
-                                if (photoObject.has(PhotoItem.JSON_IMAGE_PATH) && !photoObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()
-                                        &&photoObject.has(PhotoItem.JSON_IS_VIDEO)&&!photoObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean()) {
-                                    previewObject.addProperty(MyInfoblockItem.JSON_PHOTO_PATH, photoObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
-
-                                }
                             }
 
+                            if (photoObject.has(PhotoItem.JSON_IMAGE_PATH) && !photoObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()
+                                    && photoObject.has(PhotoItem.JSON_IS_VIDEO) && !photoObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean()) {
+                                previewObject.addProperty(MyInfoblockItem.JSON_PHOTO_PATH, photoObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
 
+                            }
                         }
 
+
                     }
+
+                }
             }
         }
 
         File audioFile = new File(getInfoBlockAudio(id));
-        if(audioFile.exists()) {
+        if (audioFile.exists()) {
             double file_size = audioFile.length() / mb / mb;
-            size = (float) (size+file_size);
+            size = (float) (size + file_size);
         }
         SimpleDateFormat df = new SimpleDateFormat(Const.INFO_BLOCK_FULL_DATE_FORMAT, Locale.getDefault());
         String formattedDate = df.format(c.getTime());
-        previewObject.addProperty(MyInfoblockItem.JSON_SIZE,size);
+        previewObject.addProperty(MyInfoblockItem.JSON_SIZE, size);
         previewObject.addProperty(MyInfoblockItem.JSON_DATE, formattedDate);
         previewObject.addProperty(MyInfoblockItem.JSON_ID, id);
 
         Utility.saveData("preview" + id, previewObject.toString());
     }
 
-    public  String saveInfoBlock(String id, ArrayList<ArrayList<MainItem>> block) {
+    public String saveInfoBlock(String id, ArrayList<ArrayList<MainItem>> block) {
         synchronized (this) {
             JsonArray array = new JsonArray();
 
@@ -443,6 +443,15 @@ public class InfoBlocksStorage {
                                 jsonValues.add(integer);
                             }
                             listObject.add(ListItem.JSON_VALUE_KHOU_MARK, jsonValues);
+                        }
+
+                        if (listItem.getSections() != null && listItem.getSections().size() > 0) {
+                            JsonArray jsonValues = new JsonArray();
+                            for (Integer integer :
+                                    listItem.getSections()) {
+                                jsonValues.add(integer);
+                            }
+                            listObject.add(ListItem.JSON_VALUE_SECTIONS, jsonValues);
                         }
 
 
@@ -540,6 +549,15 @@ public class InfoBlocksStorage {
                                 listObject.add(ListItem.JSON_VALUE_KHOU_MARK, jsonValues);
                             }
 
+                            if (listItem.getSections() != null && listItem.getSections().size() > 0) {
+                                JsonArray jsonValues = new JsonArray();
+                                for (Integer integer :
+                                        listItem.getSections()) {
+                                    jsonValues.add(integer);
+                                }
+                                listObject.add(ListItem.JSON_VALUE_SECTIONS, jsonValues);
+                            }
+
 
                             listObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, listItem.getTireSchemeId());
                             if (listItem.getProtectorValues() != null && listItem.getProtectorValues().size() > 0) {
@@ -603,8 +621,8 @@ public class InfoBlocksStorage {
                             }
 
 
-                            if(photoItem.getIsOs()!=0){
-                                photoObject.addProperty(PhotoItem.JSON_IS_OS,photoItem.getIsOs());
+                            if (photoItem.getIsOs() != 0) {
+                                photoObject.addProperty(PhotoItem.JSON_IS_OS, photoItem.getIsOs());
                             }
                             photoObject.addProperty(PhotoItem.JSON_IMAGE_PATH, photoItem.getImagePath());
                             photoObject.addProperty(PhotoItem.JSON_CODE, photoItem.getCode());
@@ -613,7 +631,7 @@ public class InfoBlocksStorage {
                             photoObject.addProperty(PhotoItem.JSON_TITLE, photoItem.getTitle());
                             photoObject.addProperty(PhotoItem.JSON_IS_EDITED, photoItem.isEdited());
                             photoObject.addProperty(PhotoItem.JSON_IS_SEND, photoItem.isSend());
-                            photoObject.addProperty(PhotoItem.JSON_RE_PHOTO_COUNT,photoItem.getRePhotoCount());
+                            photoObject.addProperty(PhotoItem.JSON_RE_PHOTO_COUNT, photoItem.getRePhotoCount());
                             photoArray.add(photoObject);
                         }
                         object.add(MainItem.JSON_PHOTO_VALUES, photoArray);
@@ -635,7 +653,7 @@ public class InfoBlocksStorage {
         return gson.fromJson(Utility.getSavedData(id), JsonArray.class);
     }
 
-    public ArrayList<Uri> getPhotoAndVideo(String id, Context context){
+    public ArrayList<Uri> getPhotoAndVideo(String id, Context context) {
         ArrayList<Uri> uris = new ArrayList<>();
         Gson gson = new Gson();
         JsonArray array = gson.fromJson(Utility.getSavedData(id), JsonArray.class);
@@ -649,22 +667,21 @@ public class InfoBlocksStorage {
                     for (int k = 0; k < valuesArray.size(); k++) {
                         JsonObject valueObject = valuesArray.get(k).getAsJsonObject();
 
-                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()&&
-                                valueObject.has(PhotoItem.JSON_IS_VIDEO) && !valueObject.get(PhotoItem.JSON_IS_VIDEO).isJsonNull()&&
-                                !valueObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean()&&uris.size()==0){
-                            Log.d("TAG",valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull() &&
+                                valueObject.has(PhotoItem.JSON_IS_VIDEO) && !valueObject.get(PhotoItem.JSON_IS_VIDEO).isJsonNull() &&
+                                !valueObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean() && uris.size() == 0) {
+                            Log.d("TAG", valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
                             File file = new File(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
-                            uris.add(FileProvider.getUriForFile(context,context.getString(R.string.provider_authority),file));
+                            uris.add(FileProvider.getUriForFile(context, context.getString(R.string.provider_authority), file));
                         }
 
 
-
-                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull()&&
-                                valueObject.has(PhotoItem.JSON_IS_VIDEO) && !valueObject.get(PhotoItem.JSON_IS_VIDEO).isJsonNull()&&
-                                valueObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean()&&uris.size()==1){
-                            Log.d("TAG",valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
+                        if (valueObject.has(PhotoItem.JSON_IMAGE_PATH) && !valueObject.get(PhotoItem.JSON_IMAGE_PATH).isJsonNull() &&
+                                valueObject.has(PhotoItem.JSON_IS_VIDEO) && !valueObject.get(PhotoItem.JSON_IS_VIDEO).isJsonNull() &&
+                                valueObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean() && uris.size() == 1) {
+                            Log.d("TAG", valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
                             File file = new File(valueObject.get(PhotoItem.JSON_IMAGE_PATH).getAsString());
-                            uris.add(FileProvider.getUriForFile(context,context.getString(R.string.provider_authority),file));
+                            uris.add(FileProvider.getUriForFile(context, context.getString(R.string.provider_authority), file));
 
                         }
 
@@ -682,8 +699,8 @@ public class InfoBlocksStorage {
         JsonArray array = gson.fromJson(Utility.getSavedData(id), JsonArray.class);
         ArrayList<ArrayList<MainItem>> arrayOfItems = new ArrayList<>();
 
-            for (int i = 0; i < array.size(); i++) {
-                try {
+        for (int i = 0; i < array.size(); i++) {
+            try {
                 JsonArray screenArray = array.get(i).getAsJsonArray();
                 ArrayList<MainItem> mainItems = new ArrayList<>();
                 for (int j = 0; j < screenArray.size(); j++) {
@@ -797,6 +814,15 @@ public class InfoBlocksStorage {
                             listItem.setKhouMark(innerArrayKValues);
                         }
 
+                        if (valueObject.has(ListItem.JSON_VALUE_SECTIONS) && !valueObject.get(ListItem.JSON_VALUE_SECTIONS).isJsonNull()) {
+                            ArrayList<Integer> innerArrayKValues = new ArrayList<>();
+                            JsonArray innerArrayK = valueObject.getAsJsonArray(ListItem.JSON_VALUE_SECTIONS);
+                            for (int k = 0; k < innerArrayK.size(); k++) {
+                                innerArrayKValues.add(Integer.parseInt(innerArrayK.get(k).getAsString()));
+                            }
+                            listItem.setSections(innerArrayKValues);
+                        }
+
 
                         if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {
                             listItem.setTireSchemeId(valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).getAsInt());
@@ -897,6 +923,15 @@ public class InfoBlocksStorage {
                                     innerArrayLValues.add(Integer.parseInt(innerArrayL.get(l).getAsString()));
                                 }
                                 listItem.setKhouMark(innerArrayLValues);
+                            }
+
+                            if (valueObject.has(ListItem.JSON_VALUE_SECTIONS) && !valueObject.get(ListItem.JSON_VALUE_SECTIONS).isJsonNull()) {
+                                ArrayList<Integer> innerArrayLValues = new ArrayList<>();
+                                JsonArray innerArrayL = valueObject.getAsJsonArray(ListItem.JSON_VALUE_SECTIONS);
+                                for (int l = 0; l < innerArrayL.size(); l++) {
+                                    innerArrayLValues.add(Integer.parseInt(innerArrayL.get(l).getAsString()));
+                                }
+                                listItem.setSections(innerArrayLValues);
                             }
 
                             if (valueObject.has(ListItem.JSON_TIRE_SCHEME_ID) && !valueObject.get(ListItem.JSON_TIRE_SCHEME_ID).isJsonNull()) {
@@ -1014,16 +1049,14 @@ public class InfoBlocksStorage {
                     mainItems.add(item);
                 }
                 arrayOfItems.add(mainItems);
-            }catch (Exception ignored){}
-
+            } catch (Exception ignored) {
             }
 
+        }
 
 
         return arrayOfItems;
     }
-
-
 
 
 }

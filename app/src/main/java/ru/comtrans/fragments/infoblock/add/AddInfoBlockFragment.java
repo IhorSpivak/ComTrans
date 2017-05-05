@@ -136,7 +136,7 @@ public class AddInfoBlockFragment extends BaseFragment implements ViewPager.OnPa
 
         if(inspectionCode!=-1)
             inspectionTypeId = String.valueOf(inspectionCode);
-        Call<JsonObject> call = AppController.apiInterface.getPropWithParameters(String.valueOf(propCode),inspectionTypeId);
+        Call<JsonObject> call = AppController.apiInterface.getPropWithParameters(String.valueOf(propCode),inspectionTypeId,Utility.getToken());
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {

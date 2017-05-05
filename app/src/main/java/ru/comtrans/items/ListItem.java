@@ -22,6 +22,7 @@ public class ListItem implements Parcelable {
     public static final String JSON_VALUE_VEHICLE_OWNER = "value_vehicle_owner";
     public static final String JSON_VALUE_KHOU_MARK = "value_khou_mark";
     public static final String JSON_VALUE_KMU_MARK = "value_kmu_mark";
+    public static final String JSON_VALUE_SECTIONS = "value_sections";
 
     public static final String JSON_PROTECTOR_VALUES = "protector_values";
     public static final String JSON_TIRE_SCHEME_ID = "tire_scheme_id";
@@ -41,6 +42,7 @@ public class ListItem implements Parcelable {
     private ArrayList<Integer> revealOs;
     private ArrayList<Integer> khouMark;
     private ArrayList<Integer> kmuMark;
+    private ArrayList<Integer> sections;
     private int tireSchemeId;
 
 
@@ -158,6 +160,14 @@ public class ListItem implements Parcelable {
         this.khouMark = khouMark;
     }
 
+    public ArrayList<Integer> getSections() {
+        return sections;
+    }
+
+    public void setSections(ArrayList<Integer> sections) {
+        this.sections = sections;
+    }
+
     public ArrayList<Integer> getKmuMark() {
         return kmuMark;
     }
@@ -190,6 +200,7 @@ public class ListItem implements Parcelable {
         dest.writeList(this.kppModel);
         dest.writeList(this.khouMark);
         dest.writeList(this.kmuMark);
+        dest.writeList(this.sections);
         dest.writeList(this.vehicleOwner);
         dest.writeInt(this.tireSchemeId);
     }
@@ -214,6 +225,8 @@ public class ListItem implements Parcelable {
         in.readList(this.khouMark, Integer.class.getClassLoader());
         this.kmuMark = new ArrayList<>();
         in.readList(this.kmuMark, Integer.class.getClassLoader());
+        this.sections = new ArrayList<>();
+        in.readList(this.sections, Integer.class.getClassLoader());
         this.vehicleOwner = new ArrayList<>();
         in.readList(this.vehicleOwner, Integer.class.getClassLoader());
         this.tireSchemeId = in.readInt();
