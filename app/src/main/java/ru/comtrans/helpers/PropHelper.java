@@ -228,7 +228,7 @@ public class PropHelper {
                             newValueObject.add(ListItem.JSON_VALUE_VEHICLE_OWNER, valueObject.get("vehicle_owner").getAsJsonArray());
                         }
 
-                        if (valueObject.has("axis_code") && !valueObject.get("axis_code").isJsonNull()) {
+                        if (valueObject.has("axis_code") && !valueObject.get("axis_code").isJsonNull() && !valueObject.get("axis_code").getAsString().isEmpty()) {
                             newValueObject.addProperty(ListItem.JSON_TIRE_SCHEME_ID, valueObject.get("axis_code").getAsInt());
                         }
 
