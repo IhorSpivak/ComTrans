@@ -177,23 +177,24 @@ public class InfoBlockHelper {
 
     public ArrayList<PhotoItem> getPhotos(int screenNum, int position) {
         ArrayList<PhotoItem> newItems = new ArrayList<>();
-        ArrayList<PhotoItem> currentPhotoItems = items.get(screenNum).get(position).getPhotoItems();
-        for (PhotoItem photoItem : currentPhotoItems) {
-            if (!photoItem.isDefect()) {
-                if (photoItem.getIsOs() != 0 && getTireSchemeValue().getId() != -1) {
-                    if (getTireSchemeValue().getRevealOs().contains(photoItem.getIsOs())) {
+        if(position<items.get(screenNum).size()) {
+            ArrayList<PhotoItem> currentPhotoItems = items.get(screenNum).get(position).getPhotoItems();
+            for (PhotoItem photoItem : currentPhotoItems) {
+                if (!photoItem.isDefect()) {
+                    if (photoItem.getIsOs() != 0 && getTireSchemeValue().getId() != -1) {
+                        if (getTireSchemeValue().getRevealOs().contains(photoItem.getIsOs())) {
+                            newItems.add(photoItem);
+                        }
+                    } else {
                         newItems.add(photoItem);
                     }
-                } else {
-                    newItems.add(photoItem);
                 }
             }
+            for (int i = 0; i < currentPhotoItems.size(); i++) {
+                if (currentPhotoItems.get(i).isDefect())
+                    newItems.add(currentPhotoItems.get(i));
+            }
         }
-        for (int i = 0; i < currentPhotoItems.size(); i++) {
-            if (currentPhotoItems.get(i).isDefect())
-                newItems.add(currentPhotoItems.get(i));
-        }
-
         return newItems;
 
     }

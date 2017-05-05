@@ -80,18 +80,29 @@ public class CameraActivity extends AppCompatActivity {
                 finish();
                 break;
             case Const.MODE_PHOTO:
+                ArrayList<PhotoItem> tmpPhotos;
+                ArrayList<PhotoItem> tmpDefects;
                 if (isFromDefect) {
-                    itemsSize = helper.getPhotos(screenNum, position - 2).size();
+                    tmpPhotos = helper.getPhotos(screenNum, position - 2);
+                    tmpDefects = helper.getPhotos(screenNum, position);
+                    itemsSize = tmpPhotos.size();
                     defectSize = helper.getPhotos(screenNum, position).size();
-                    Log.e("Leol", "defect size " + helper.getPhotos(screenNum, position).size());
-                    items = new ArrayList<>(helper.getPhotos(screenNum, position - 2));
-                    items.addAll(helper.getPhotos(screenNum, position));
+                    Log.e("Leol", "photos size " + tmpPhotos.size());
+                    Log.e("Leol", "defect size " + tmpDefects);
+                    items = new ArrayList<>(tmpPhotos);
+                    items.addAll(tmpDefects);
+                    Log.e("Leol", "full size " + items.size());
                 } else {
-                    itemsSize = helper.getPhotos(screenNum, position).size();
+                    tmpPhotos = helper.getPhotos(screenNum, position);
+                    tmpDefects = helper.getPhotos(screenNum, position + 2);
+                    itemsSize = tmpPhotos.size();
                     defectSize = helper.getPhotos(screenNum, position + 2).size();
-                    items = new ArrayList<>(helper.getPhotos(screenNum, position));
-                    Log.e("Leol", "defect size " + helper.getPhotos(screenNum, position + 2).size());
-                    items.addAll(helper.getPhotos(screenNum, position + 2));
+                    items = new ArrayList<>(tmpPhotos);
+                    Log.e("Leol", "photos size " + tmpPhotos.size());
+                    Log.e("Leol", "defect size " + tmpDefects.size());
+                    if (tmpDefects.size()>0 && tmpDefects.get(tmpDefects.size() - 1).isDefect())
+                        items.addAll(tmpDefects);
+                    Log.e("Leol", "full size " + items.size());
                 }
                 checkCameraPermission(false);
                 break;
