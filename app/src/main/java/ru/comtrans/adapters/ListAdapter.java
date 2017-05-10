@@ -59,7 +59,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 //        addItemToTempArray(new ListItem(-1, context.getString(R.string.not_chosen)));
         switch (idsRelationHelperItem.getCode()) {
             case IdsRelationHelperItem.CODE_GENERAL_TYPE_ID:
-                filterByCategory(items);
+                filterGeneralTypeByCategory();
                 break;
             case IdsRelationHelperItem.CODE_GENERAL_MARK:
                 filterByCategory(items);
@@ -175,21 +175,21 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 
     //Filters
 
-//    private void filterByCategory() {
-//        List<Map<String, List<String>>> categories = Utility.getCategories();
-//        for (int i = 0; i < categories.size(); i++) {
-//            Map<String, List<String>> map = categories.get(i);
-//            List<String> transportTypeIds = map.get(String.valueOf(InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)));
-//            if (transportTypeIds != null && !transportTypeIds.isEmpty()) {
-//                for (int j = 0; j < items.size(); j++) {
-//                    if (/*items.get(j).getId() == -1 ||*/ transportTypeIds.contains(String.valueOf(items.get(j).getId()))) {
-//                        addItemToTempArray(items.get(j));
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
+    private void filterGeneralTypeByCategory() {
+        List<Map<String, List<String>>> categories = Utility.getCategories();
+        for (int i = 0; i < categories.size(); i++) {
+            Map<String, List<String>> map = categories.get(i);
+            List<String> transportTypeIds = map.get(String.valueOf(InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)));
+            if (transportTypeIds != null && !transportTypeIds.isEmpty()) {
+                for (int j = 0; j < items.size(); j++) {
+                    if (items.get(j).getId() == -1 || transportTypeIds.contains(String.valueOf(items.get(j).getId()))) {
+                        addItemToTempArray(items.get(j));
+                    }
+                }
+            }
+        }
+
+    }
 
     private void filterByCategory(ArrayList<ListItem> items) {
         for (ListItem item : items) {
