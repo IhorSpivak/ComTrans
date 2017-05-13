@@ -333,8 +333,6 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                     break;
                 }
             }
-        else
-            isAdd = true;
 //        if(sortItems!=null){
 //            Log.e("TMP_TEST","sortItems.size="+sortItems+ "isAdd=" + isAdd);
 //        }
