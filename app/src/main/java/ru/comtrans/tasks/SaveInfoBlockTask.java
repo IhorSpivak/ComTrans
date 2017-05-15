@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import ru.comtrans.R;
 import ru.comtrans.helpers.Const;
@@ -20,7 +21,9 @@ public class SaveInfoBlockTask {
     private String id;
     private OnPostExecuteListener listener;
     private boolean withDialog;
-    private AsyncTaskForSave asyncTaskForSave;
+    AsyncTaskForSave asyncTaskForSave;
+    final String LOG_TAG = "myLogs";
+
 
 
     public interface OnPostExecuteListener {
@@ -48,19 +51,33 @@ public class SaveInfoBlockTask {
         this.id = id;
         this.withDialog = withDialog;
         helper = InfoBlockHelper.getInstance();
-        AsyncTaskForSave asyncTaskForSave = new AsyncTaskForSave();
+
         if(withDialog) {
             new AsyncTaskForSaveAndExit().execute();
-        }else{
-            if(asyncTaskForSave.getStatus() != AsyncTask.Status.RUNNING){
-                asyncTaskForSave = new AsyncTaskForSave();
-                asyncTaskForSave.execute();
-            } else {
-                if (asyncTaskForSave.getStatus() == AsyncTask.Status.RUNNING)
-                    asyncTaskForSave.cancel(true);
-                new AsyncTaskForSave().execute();
+        }else {
+            if (asyncTaskForSave == null || asyncTaskForSave.getStatus() != AsyncTask.Status.RUNNING) {
+                asyncTaskForSave = (AsyncTaskForSave) new AsyncTaskForSave().execute();
+            } else{
+                asyncTaskForSave.cancel(true);
+                asyncTaskForSave = (AsyncTaskForSave) new AsyncTaskForSave().execute();
+
             }
         }
+
+
+//        AsyncTaskForSave asyncTaskForSave = new AsyncTaskForSave();
+//        if(withDialog) {
+//            new AsyncTaskForSaveAndExit().execute();
+//        }else{
+//            if(asyncTaskForSave.getStatus() != AsyncTask.Status.RUNNING){
+//                asyncTaskForSave = new AsyncTaskForSave();
+//                asyncTaskForSave.execute();
+//            } else {
+//                if (asyncTaskForSave.getStatus() == AsyncTask.Status.RUNNING)
+//                    asyncTaskForSave.cancel(true);
+//                new AsyncTaskForSave().execute();
+//            }
+//        }
 
     }
 
