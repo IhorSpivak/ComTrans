@@ -20,6 +20,8 @@ public class SaveInfoBlockTask {
     private String id;
     private OnPostExecuteListener listener;
     private boolean withDialog;
+    private AsyncTaskForSave asyncTaskForSave;
+
 
     public interface OnPostExecuteListener {
         void onPostExecute();
@@ -38,6 +40,7 @@ public class SaveInfoBlockTask {
         init(id,context,listener,withDialog);
     }
 
+
     private void init(String id,Context context, OnPostExecuteListener listener, boolean withDialog){
 
         this.context = context;
@@ -45,11 +48,20 @@ public class SaveInfoBlockTask {
         this.id = id;
         this.withDialog = withDialog;
         helper = InfoBlockHelper.getInstance();
+        AsyncTaskForSave asyncTaskForSave = new AsyncTaskForSave();
         if(withDialog) {
             new AsyncTaskForSaveAndExit().execute();
         }else{
-            new AsyncTaskForSave().execute();
+            if(asyncTaskForSave.getStatus() != AsyncTask.Status.RUNNING){
+                asyncTaskForSave = new AsyncTaskForSave();
+                asyncTaskForSave.execute();
+            } else {
+                if (asyncTaskForSave.getStatus() == AsyncTask.Status.RUNNING)
+                    asyncTaskForSave.cancel(true);
+                new AsyncTaskForSave().execute();
+            }
         }
+
     }
 
     private class AsyncTaskForSaveAndExit extends AsyncTask<Void,Void,Void> {
@@ -69,9 +81,9 @@ public class SaveInfoBlockTask {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            helper.saveAll();
-            if(listener!=null)
-            SystemClock.sleep(800);
+                helper.saveAll();
+                if (listener != null)
+                    SystemClock.sleep(800);
             return null;
         }
 
@@ -90,7 +102,7 @@ public class SaveInfoBlockTask {
         }
     }
 
-    private class AsyncTaskForSave extends AsyncTask<Void,Void,Void> {
+            private class AsyncTaskForSave extends AsyncTask<Void,Void,Void> {
 
         @Override
         protected void onPreExecute() {
@@ -99,7 +111,9 @@ public class SaveInfoBlockTask {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            helper.saveAll();
+            if (isCancelled() == false) {
+                helper.saveAll();
+            }
             return null;
         }
 
