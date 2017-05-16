@@ -551,7 +551,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener{
             Collections.reverse(items);
             InfoBlockHelper helper = InfoBlockHelper.getInstance();
             helper.getItems().get(activity.screenNum).get(activity.position).setPhotoItems(items);
-            new SaveInfoBlockTask(helper.getId(),getContext());
+            SaveInfoBlockTask.getInstance(infoBlockId,getActivity());
         }
     }
 

@@ -10,8 +10,6 @@ import ru.comtrans.fragments.ForgotPasswordInputFragment;
 
 public class ForgotPasswordActivity extends BaseActivity {
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,18 +18,10 @@ public class ForgotPasswordActivity extends BaseActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container,new ForgotPasswordInputFragment())
                 .commit();
-
-
-
-
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

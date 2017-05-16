@@ -30,7 +30,6 @@ public class ShowInfoBlockActivity extends BaseActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.container, ShowInfoBlockFragment.newInstance(infoBlockId, page)).commit();
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -41,5 +40,4 @@ public class ShowInfoBlockActivity extends BaseActivity {
                 return false;
         }
     }
-
 }

@@ -14,7 +14,6 @@ public class LaunchActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
 
-
         Intent i;
         if(Utility.getToken().equals("")) {
             i = new Intent(LaunchActivity.this, LoginActivity.class);
@@ -23,8 +22,6 @@ public class LaunchActivity extends BaseActivity {
         }
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
-
-
     }
 
     @Override

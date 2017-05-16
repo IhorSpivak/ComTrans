@@ -108,12 +108,9 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         smallScreenPhoto.setOnClickListener(this);
         deletePhoto.setOnClickListener(this);
 
-
-
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
         photoViewAttacher = new PhotoViewAttacher(imgPhoto);
         photoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
@@ -123,10 +120,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-
     }
-
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -202,7 +196,6 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
                 setResult(Const.GALLERY_RESULT,i);
                 finish();
                 break;
-
 
         }
     }

@@ -10,8 +10,6 @@ import ru.comtrans.fragments.ProfileFragment;
 
 public class RegistrationActivity extends BaseActivity {
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,16 +18,10 @@ public class RegistrationActivity extends BaseActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
       getSupportFragmentManager().beginTransaction()
               .add(R.id.container, ProfileFragment.newInstance(true))
               .commit();
-
-
     }
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

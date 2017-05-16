@@ -8,6 +8,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import ru.comtrans.R;
+import ru.comtrans.fragments.infoblock.add.AddPropertiesListFragment;
 import ru.comtrans.helpers.Const;
 import ru.comtrans.singlets.InfoBlockHelper;
 import ru.comtrans.views.ConnectionProgressDialog;
@@ -36,6 +37,28 @@ public class SaveInfoBlockTask {
         return instance;
     }
 
+    public static SaveInfoBlockTask getInstance(String id,Context context) {
+        if (instance == null) {
+            instance = new SaveInfoBlockTask();
+        }
+
+        instance.init(id,context,null,false);
+
+        return instance;
+    }
+
+    public static SaveInfoBlockTask getInstance(String id,Context context, OnPostExecuteListener listener, boolean withDialog) {
+        if (instance == null) {
+            instance = new SaveInfoBlockTask();
+        }
+
+        instance.init(id,context,listener,withDialog);
+
+        return instance;
+    }
+
+
+
     public interface OnPostExecuteListener {
         void onPostExecute();
     }
@@ -52,7 +75,9 @@ public class SaveInfoBlockTask {
         init(id,context,listener,withDialog);
     }
 
-    private void init(String id,Context context, OnPostExecuteListener listener, boolean withDialog){
+
+
+    private void init(String id, Context context, OnPostExecuteListener listener, boolean withDialog){
 
         this.context = context;
         this.listener = listener;

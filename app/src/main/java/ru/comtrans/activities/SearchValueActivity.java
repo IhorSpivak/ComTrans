@@ -44,13 +44,11 @@ public class SearchValueActivity extends BaseActivity {
     private String infoBlockId;
     private IdsRelationHelperItem idsRelationHelperItem;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_value);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
 
         listView = (ListView) findViewById(android.R.id.list);
         tvEmpty = (TextView) findViewById(android.R.id.empty);
@@ -98,7 +96,6 @@ public class SearchValueActivity extends BaseActivity {
             });
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -189,10 +186,8 @@ public class SearchValueActivity extends BaseActivity {
                 });
                 dialog.show();
                 return true;
-
         }
 
         return false;
     }
-
 }

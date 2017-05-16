@@ -72,8 +72,7 @@ public class CameraActivity extends AppCompatActivity {
         isFromDefect = getIntent().getBooleanExtra(Const.EXTRA_IS_DEFECT, false);
 
         InfoBlockHelper helper = InfoBlockHelper.getInstance();
-        new SaveInfoBlockTask(helper.getId(), CameraActivity.this);
-
+        SaveInfoBlockTask.getInstance(infoBlockId,CameraActivity.this);
 
         switch (isVideoFlag) {
             case 0:
@@ -112,8 +111,6 @@ public class CameraActivity extends AppCompatActivity {
                 break;
 
         }
-
-
     }
 
     @Override
@@ -131,11 +128,9 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-
     public CameraPhotoAdapter getPhotoAdapter() {
         return photoAdapter;
     }
-
 
     @TargetApi(Build.VERSION_CODES.M)
     private void checkCameraPermission(boolean isVideo) {
@@ -196,7 +191,6 @@ public class CameraActivity extends AppCompatActivity {
             fragment = new CameraFragment();
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commitAllowingStateLoss();
-
 
     }
 
@@ -261,7 +255,6 @@ public class CameraActivity extends AppCompatActivity {
             return true;
         return tireScheme.getRevealOs().contains(item.getIsOs());
     }
-
 
     @Override
     public void onBackPressed() {
