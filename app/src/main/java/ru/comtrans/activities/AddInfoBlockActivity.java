@@ -97,7 +97,7 @@ public class AddInfoBlockActivity extends BaseActivity {
 
 
     private void saveAndExit(){
-        new SaveInfoBlockTask(infoBlockId,AddInfoBlockActivity.this, new SaveInfoBlockTask.OnPostExecuteListener() {
+        SaveInfoBlockTask.getInstance(infoBlockId,AddInfoBlockActivity.this, new SaveInfoBlockTask.OnPostExecuteListener() {
             @Override
             public void onPostExecute() {
                 finish();
@@ -113,3 +113,4 @@ public class AddInfoBlockActivity extends BaseActivity {
 
     }
 }
+

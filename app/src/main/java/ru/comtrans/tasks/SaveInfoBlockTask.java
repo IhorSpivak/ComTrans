@@ -23,22 +23,22 @@ public class SaveInfoBlockTask {
     private OnPostExecuteListener listener;
     private boolean withDialog;
     AsyncTaskForSave asyncTaskForSave;
-//
-    private SaveInfoBlockTask() {
 
-    }
+    private SaveInfoBlockTask() {}
 
-    public static SaveInfoBlockTask getInstance() {
-        if (instance == null)
+    public static SaveInfoBlockTask getInstance(String id, Context context, OnPostExecuteListener listener) {
+        if (instance == null) {
             instance = new SaveInfoBlockTask();
+        }
+
+        instance.init(id,context,listener,true);
+
         return instance;
     }
-
 
     public interface OnPostExecuteListener {
         void onPostExecute();
     }
-
 
     public SaveInfoBlockTask(String id,Context context, OnPostExecuteListener listener){
         init(id,context,listener,true);
@@ -51,7 +51,6 @@ public class SaveInfoBlockTask {
     public SaveInfoBlockTask(String id,Context context, OnPostExecuteListener listener, boolean withDialog){
         init(id,context,listener,withDialog);
     }
-
 
     private void init(String id,Context context, OnPostExecuteListener listener, boolean withDialog){
 
@@ -106,9 +105,9 @@ public class SaveInfoBlockTask {
 
         @Override
         protected Void doInBackground(Void... voids) {
-                helper.saveAll();
-                if (listener != null)
-                    SystemClock.sleep(800);
+            helper.saveAll();
+            if (listener != null)
+                SystemClock.sleep(800);
             return null;
         }
 
@@ -127,7 +126,7 @@ public class SaveInfoBlockTask {
         }
     }
 
-            private class AsyncTaskForSave extends AsyncTask<Void,Void,Void> {
+    private class AsyncTaskForSave extends AsyncTask<Void,Void,Void> {
 
         @Override
         protected void onPreExecute() {
@@ -148,9 +147,10 @@ public class SaveInfoBlockTask {
             super.onPostExecute(aVoid);
             LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Const.REFRESH_INFO_BLOCKS_FILTER));
             if(listener!=null)
-            listener.onPostExecute();
+                listener.onPostExecute();
 
         }
     }
 
 }
+
