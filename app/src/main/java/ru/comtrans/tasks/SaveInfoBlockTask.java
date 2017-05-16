@@ -18,12 +18,21 @@ import ru.comtrans.views.ConnectionProgressDialog;
 public class SaveInfoBlockTask {
     private Context context;
     private InfoBlockHelper helper;
+    private static SaveInfoBlockTask instance;
     private String id;
     private OnPostExecuteListener listener;
     private boolean withDialog;
     AsyncTaskForSave asyncTaskForSave;
-    final String LOG_TAG = "myLogs";
+//
+    private SaveInfoBlockTask() {
 
+    }
+
+    public static SaveInfoBlockTask getInstance() {
+        if (instance == null)
+            instance = new SaveInfoBlockTask();
+        return instance;
+    }
 
 
     public interface OnPostExecuteListener {
@@ -57,10 +66,9 @@ public class SaveInfoBlockTask {
         }else {
             if (asyncTaskForSave == null || asyncTaskForSave.getStatus() != AsyncTask.Status.RUNNING) {
                 asyncTaskForSave = (AsyncTaskForSave) new AsyncTaskForSave().execute();
-            } else{
+            } else {
                 asyncTaskForSave.cancel(true);
                 asyncTaskForSave = (AsyncTaskForSave) new AsyncTaskForSave().execute();
-
             }
         }
 
@@ -129,6 +137,7 @@ public class SaveInfoBlockTask {
         @Override
         protected Void doInBackground(Void... voids) {
             if (isCancelled() == false) {
+
                 helper.saveAll();
             }
             return null;
