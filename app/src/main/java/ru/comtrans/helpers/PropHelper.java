@@ -1,7 +1,5 @@
 package ru.comtrans.helpers;
 
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -106,7 +104,6 @@ public class PropHelper {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private static JsonArray getItems(JsonArray array, long propCode, long inspectionCode){
         JsonArray newArray = new JsonArray();
         for (int i = 0; i < array.size(); i++) {
