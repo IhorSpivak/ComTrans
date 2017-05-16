@@ -160,8 +160,8 @@ public class SaveInfoBlockTask {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            isCancelled();
             if (isCancelled() == false) {
-
                 helper.saveAll();
             }
             return null;
@@ -174,6 +174,12 @@ public class SaveInfoBlockTask {
             if(listener!=null)
                 listener.onPostExecute();
 
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            helper.cancelSaving();
         }
     }
 

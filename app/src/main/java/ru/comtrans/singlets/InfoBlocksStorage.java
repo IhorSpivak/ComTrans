@@ -36,6 +36,7 @@ public class InfoBlocksStorage {
     private Set<String> infoBlockIds;
     private static final String INFO_BLOCK_IDS = "ids";
     private double mb = 1024;
+    private boolean running;
 
     private static InfoBlocksStorage instance;
 
@@ -70,8 +71,14 @@ public class InfoBlocksStorage {
         Gson gson = new Gson();
         JsonArray array = gson.fromJson(Utility.getSavedData(id), JsonArray.class);
         for (int i = 0; i < array.size(); i++) {
+            if (!running) {
+                return;
+            }
             JsonArray screenArray = array.get(i).getAsJsonArray();
             for (int j = 0; j < screenArray.size(); j++) {
+                if (!running) {
+                    return;
+                }
                 JsonObject object = screenArray.get(j).getAsJsonObject();
                 if (object.has(MainItem.JSON_PHOTO_VALUES)) {
                     JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_PHOTO_VALUES);
@@ -1059,6 +1066,9 @@ public class InfoBlocksStorage {
     }
 
 
+    public  void cancelSaving() {
+        running = false;
+    }
 }
 
 
