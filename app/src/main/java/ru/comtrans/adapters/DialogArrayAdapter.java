@@ -18,7 +18,6 @@ import ru.comtrans.items.DialogItem;
 public class DialogArrayAdapter extends BaseAdapter {
     private ArrayList<DialogItem> items;
 
-
     public DialogArrayAdapter() {
 
     }

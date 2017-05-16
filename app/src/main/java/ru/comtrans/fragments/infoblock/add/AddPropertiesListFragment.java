@@ -316,20 +316,20 @@ public class AddPropertiesListFragment extends BaseFragment {
                 public void onBottomBarClick(int type, int scrollPosition) {
                     switch (type) {
                         case 1:
-                            SaveInfoBlockTask.getInstance(infoBlockId,getActivity());
+                            SaveInfoBlockTask.getInstance(infoBlockId,getContext());
                             storage.updateInfoBlockPage(infoBlockId, page - 1);
                             activity.viewPager.setCurrentItem(page - 1);
                             break;
                         case 2:
                             if (page + 1 == totalPages) {
-                                SaveInfoBlockTask.getInstance(infoBlockId,getActivity(), new SaveInfoBlockTask.OnPostExecuteListener() {
+                                SaveInfoBlockTask.getInstance(infoBlockId,getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
                                     @Override
                                     public void onPostExecute() {
                                         getActivity().finish();
                                     }
                                 });
                             } else {
-                                SaveInfoBlockTask.getInstance(infoBlockId,getActivity());
+                                SaveInfoBlockTask.getInstance(infoBlockId,getContext());
                                 storage.updateInfoBlockPage(infoBlockId, page + 1);
                                 activity.viewPager.setCurrentItem(page + 1);
                             }

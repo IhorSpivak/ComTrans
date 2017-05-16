@@ -33,7 +33,7 @@ public class InfoBlockHelper {
         return instance;
     }
 
-    private InfoBlockHelper() {
+    public InfoBlockHelper() {
         items = new ArrayList<>();
         storage = InfoBlocksStorage.getInstance();
     }

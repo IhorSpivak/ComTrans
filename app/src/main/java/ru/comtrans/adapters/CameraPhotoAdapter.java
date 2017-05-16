@@ -31,7 +31,6 @@ public class CameraPhotoAdapter extends BaseAdapter {
         return items;
     }
 
-
     public void setDefectsCount(int defectsCount) {
         this.defectsCount = defectsCount;
     }
@@ -86,13 +85,11 @@ public class CameraPhotoAdapter extends BaseAdapter {
             selectedPosition++;
             defectsCount++;
 
-
         items.add(0,new PhotoItem(String.format(context.getString(R.string.default_defect_name)
                 ,defectsCount),true));
         }
         notifyDataSetChanged();
     }
-
 
     public void setTitleForItem(PhotoItem item,int position) {
         items.remove(position);
@@ -110,7 +107,6 @@ public class CameraPhotoAdapter extends BaseAdapter {
         items.remove(position);
         notifyDataSetChanged();
     }
-
 
     public int getFactDefectCount(){
         int count = 0;
@@ -139,8 +135,6 @@ public class CameraPhotoAdapter extends BaseAdapter {
             return false;
         }
     }
-
-
 
     public int getPhotosCount(){
         int count = 0;
@@ -197,14 +191,12 @@ public class CameraPhotoAdapter extends BaseAdapter {
             viewHolder.imgDefect.setVisibility(View.GONE);
         }
 
-
         if(item.getTitle().length()>9){
             viewHolder.title.setText(item.getTitle().substring(0,9)+"...");
         }else {
             viewHolder.title.setText(item.getTitle());
         }
         Log.d("TAG",item.getTitle());
-
 
         if(item.getImagePath()!=null) {
             File file = new File(item.getImagePath());
@@ -219,7 +211,6 @@ public class CameraPhotoAdapter extends BaseAdapter {
                 notifyDataSetChanged();
             }
 
-
         }else {
             viewHolder.addPhoto.setVisibility(View.VISIBLE);
             viewHolder.photo.setVisibility(View.INVISIBLE);
@@ -228,6 +219,4 @@ public class CameraPhotoAdapter extends BaseAdapter {
 
         return convertView;
     }
-
-
 }

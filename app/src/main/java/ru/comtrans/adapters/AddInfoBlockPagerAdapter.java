@@ -28,8 +28,6 @@ public class AddInfoBlockPagerAdapter extends FragmentStatePagerAdapter {
         this.inspectionCode = inspectionCode;
     }
 
-
-
     @Override
     public Fragment getItem(int position) {
         return AddPropertiesListFragment.newInstance(position,pagesCount,infoBlockId, propCode, inspectionCode);
@@ -39,7 +37,6 @@ public class AddInfoBlockPagerAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return pagesCount;
     }
-
 
 }
 

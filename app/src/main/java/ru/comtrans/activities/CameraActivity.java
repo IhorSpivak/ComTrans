@@ -72,7 +72,7 @@ public class CameraActivity extends AppCompatActivity {
         isFromDefect = getIntent().getBooleanExtra(Const.EXTRA_IS_DEFECT, false);
 
         InfoBlockHelper helper = InfoBlockHelper.getInstance();
-        SaveInfoBlockTask.getInstance(infoBlockId,CameraActivity.this);
+        SaveInfoBlockTask.getInstance(helper.getId(),CameraActivity.this);
 
         switch (isVideoFlag) {
             case 0:

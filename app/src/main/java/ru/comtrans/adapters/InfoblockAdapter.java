@@ -75,7 +75,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.items = items;
     }
 
-
     public InfoblockAdapter(final Context context, ArrayList<MainItem> items, int page, int totalPages, boolean isEditable, String infoBlockId,
                             OnItemClickListener listener, OnBottomBarClickListener bottomBarClickListener) {
         this.context = context;
@@ -145,7 +144,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return items;
     }
 
-
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
@@ -153,15 +151,12 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final PhotoContainerAdapter adapter;
         PhotoContainerAdapter defectsAdapter;
 
-
         int count;
 
         switch (getItemViewType(position)) {
             case MainItem.TYPE_LIST:
                 if (isEditable) {
                     ListViewHolder listViewHolder = ((ListViewHolder) viewHolder);
-
-
                     if (item.isRequired())
                         listViewHolder.title.setText(item.getName() + "*");
                     else
@@ -185,7 +180,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         }
                     }
 
-
                     if (item.getListValue() != null)
                         listViewHolder.tvList.setText(item.getListValue().getName());
                     if (item.isError()) {
@@ -202,7 +196,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 }
                 break;
-
 
             case MainItem.TYPE_CALENDAR:
                 final CalendarViewHolder calendarViewHolder = (CalendarViewHolder) viewHolder;
@@ -288,7 +281,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             }
                         }
 
-
                         LinearLayoutManager defectsManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
                         photoViewHolder.defectsList.setLayoutManager(defectsManager);
                         defectsAdapter = new PhotoContainerAdapter(context, defects, new PhotoContainerAdapter.OnItemClickListener() {
@@ -312,7 +304,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             } else {
                                 photoItems.add(photoItem);
                             }
-
                         }
 
                         final LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -345,11 +336,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             photoViewHolder.progressBar.setProgress(0);
                         }
                     }
-
-
                 }
-
-
 
                 break;
 
@@ -396,8 +383,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
                     editTextViewHolder.editText.setText(item.getValue());
 
-
-
                     if(item.getCode().toLowerCase().contains("vin")){
                         editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT| InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
                         editTextViewHolder.editText.setFilters(new InputFilter[] {vinFilter,new InputFilter.AllCaps(),new InputFilter.LengthFilter(17)});
@@ -419,8 +404,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         editTextViewHolder.textInputLayout.setHint(item.getName());
                     }
 
-
-
                     editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         public void onFocusChange(View v, boolean hasFocus) {
                             if (!hasFocus) {
@@ -437,7 +420,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         editTextViewHolder.editText.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
                         editTextViewHolder.editText.setFocusableInTouchMode(false);
                         editTextViewHolder.editText.setText(item.getDefaultValue());
-
                     }
 
                     if (item.getCode().equals("general_number_gos")) {
@@ -445,7 +427,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         editTextViewHolder.editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
                         editTextViewHolder.editText.setFilters(new InputFilter[]{gosNomerFilter});
                     }
-
 
                     if(item.isCapitalize()){
                         editTextViewHolder.editText.setInputType(InputType.TYPE_CLASS_TEXT| InputType.TYPE_TEXT_FLAG_CAP_WORDS);
@@ -572,9 +553,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         }
                     });
 
-
-
-
                 } else {
                     NonEditableViewHolder nonEditableViewHolder = ((NonEditableViewHolder) viewHolder);
                     nonEditableViewHolder.title.setText(item.getName());
@@ -585,9 +563,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         nonEditableViewHolder.tvText.setText(item.getDefaultValue());
                     }
                 }
-
-
-
 
                 break;
 
@@ -626,7 +601,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
                     else
                         editTextViewHolder.textInputLayout.setHint(item.getName());
-
 
                     editTextViewHolder.editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
@@ -682,7 +656,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         }else {
                             editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
                         }
-
                     }
 
                     editTextViewHolder.editText.addTextChangedListener(new TextWatcher() {
@@ -748,8 +721,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     editTextViewHolder.editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(12)});
                     editTextViewHolder.editText.setKeyListener(DigitsKeyListener.getInstance("0123456789+-()"));
 
-
-
                     editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         public void onFocusChange(View v, boolean hasFocus) {
                             if (!hasFocus) {
@@ -758,8 +729,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         }
                     });
-
-
 
                     if(item.isError()){
                         editTextViewHolder.textInputLayout.setErrorEnabled(true);
@@ -798,11 +767,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         }
                     });
 
-
-
-
-
-
                 } else {
                     NonEditableViewHolder nonEditableViewHolder = ((NonEditableViewHolder) viewHolder);
                     nonEditableViewHolder.title.setText(item.getName());
@@ -811,7 +775,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
 
                 break;
-
 
             case MainItem.TYPE_HEADER:
 
@@ -855,7 +818,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 } else if (page + 1 == totalPages) {
                     bottomBarViewHolder.btnNext.setText(R.string.save_infoblock);
                 }
-
 
                 bottomBarViewHolder.btnNext.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -951,7 +913,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                 isMainEntered = false;
                                             }
                                             break;
-
                                     }
                                 }
                             }
@@ -968,7 +929,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                 bottomBarClickListener.onBottomBarClick(3, finalScrollPosition);
                                             }
                                         }).show();
-
 
                             } else{
                                 infoBlockHelper.saveScreen(items, page);
@@ -997,15 +957,11 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 tireSchemeViewHolder.protectorView.setEditable(isEditable);
                 tireSchemeViewHolder.protectorView.setItems(item.getProtectorItems());
                 break;
-
-
-
         }
+
         if(!item.isNeverModified())
             ((CustomViewHolder) viewHolder).bind(item, listener);
-
     }
-
 
     public int getPositionByCode(String code){
         for (int i = 0; i < items.size(); i++) {
@@ -1026,7 +982,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public MainItem getItem(int position) {
         return items.get(position);
     }
-
 
     public ListItem setConstructorChecked(boolean isChecked){
         for (MainItem item :

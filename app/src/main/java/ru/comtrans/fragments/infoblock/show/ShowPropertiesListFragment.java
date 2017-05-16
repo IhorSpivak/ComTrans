@@ -123,7 +123,7 @@ public class ShowPropertiesListFragment extends BaseFragment {
                             break;
                         case 2:
                             if (page + 1 == totalPages) {
-                                SaveInfoBlockTask.getInstance(infoBlockId,getActivity(), new SaveInfoBlockTask.OnPostExecuteListener() {
+                                SaveInfoBlockTask.getInstance(infoBlockId,getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
                                     @Override
                                     public void onPostExecute() {
                                         getActivity().finish();

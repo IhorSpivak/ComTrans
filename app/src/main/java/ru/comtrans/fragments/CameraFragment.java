@@ -518,13 +518,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener {
                 getActivity().getParent().setResult(Const.CAMERA_PHOTO_RESULT, i);
             }
             getActivity().finish();
-            SaveInfoBlockTask.getInstance(infoBlockId,getActivity());
+            SaveInfoBlockTask.getInstance(helper.getId(), getContext());
 
         } else {
             ArrayList<PhotoItem> items = new ArrayList<>(activity.getPhotoAdapter().getItems());
             Collections.reverse(items);
             saveData(items);
-            SaveInfoBlockTask.getInstance(infoBlockId,getActivity());
+            SaveInfoBlockTask.getInstance(helper.getId(), getContext());
         }
     }
 
