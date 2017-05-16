@@ -160,10 +160,7 @@ public class SaveInfoBlockTask {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            isCancelled();
-            if (isCancelled() == false) {
-                helper.saveAll();
-            }
+            helper.saveAll();
             return null;
         }
 

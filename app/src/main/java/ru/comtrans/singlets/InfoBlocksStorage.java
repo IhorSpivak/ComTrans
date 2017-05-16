@@ -71,14 +71,8 @@ public class InfoBlocksStorage {
         Gson gson = new Gson();
         JsonArray array = gson.fromJson(Utility.getSavedData(id), JsonArray.class);
         for (int i = 0; i < array.size(); i++) {
-            if (!running) {
-                return;
-            }
             JsonArray screenArray = array.get(i).getAsJsonArray();
             for (int j = 0; j < screenArray.size(); j++) {
-                if (!running) {
-                    return;
-                }
                 JsonObject object = screenArray.get(j).getAsJsonObject();
                 if (object.has(MainItem.JSON_PHOTO_VALUES)) {
                     JsonArray valuesArray = object.getAsJsonArray(MainItem.JSON_PHOTO_VALUES);
@@ -366,8 +360,14 @@ public class InfoBlocksStorage {
             JsonArray array = new JsonArray();
 
             for (int i = 0; i < block.size(); i++) {
+                if (!running) {
+                    return id;
+                }
                 JsonArray screenArray = new JsonArray();
                 for (int j = 0; j < block.get(i).size(); j++) {
+                    if (!running) {
+                        return id;
+                    }
                     JsonObject object = new JsonObject();
                     MainItem item = block.get(i).get(j);
 

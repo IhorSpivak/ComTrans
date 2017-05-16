@@ -111,7 +111,7 @@ public class InfoBlockHelper {
     }
 
     public void cancelSaving(){
-        InfoBlocksStorage.cancelSaving();
+        storage.cancelSaving();
     }
 
     public void saveProtector(ArrayList<ProtectorItem> protectorItems) {
