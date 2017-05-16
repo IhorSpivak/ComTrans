@@ -35,6 +35,7 @@ import ru.comtrans.items.ProtectorItem;
 public class InfoBlocksStorage {
     private Set<String> infoBlockIds;
     private static final String INFO_BLOCK_IDS = "ids";
+    final String LOG_TAG = "myLogs";
     private double mb = 1024;
     private boolean running;
 
@@ -1068,6 +1069,7 @@ public class InfoBlocksStorage {
 
     public  void cancelSaving() {
         running = false;
+
     }
 }
 

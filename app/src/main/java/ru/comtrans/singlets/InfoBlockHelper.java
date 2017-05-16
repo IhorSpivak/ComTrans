@@ -15,6 +15,7 @@ import ru.comtrans.items.ProtectorItem;
  */
 public class InfoBlockHelper {
     private InfoBlocksStorage storage;
+    final String LOG_TAG = "myLogs";
     private static InfoBlockHelper instance;
     private ArrayList<ArrayList<MainItem>> items;
     private String id;

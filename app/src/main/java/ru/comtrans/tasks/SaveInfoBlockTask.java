@@ -18,6 +18,7 @@ import ru.comtrans.views.ConnectionProgressDialog;
  */
 public class SaveInfoBlockTask {
     private Context context;
+    final String LOG_TAG = "myLogs";
     private InfoBlockHelper helper;
     private static SaveInfoBlockTask instance;
     private String id;
@@ -177,6 +178,7 @@ public class SaveInfoBlockTask {
         protected void onCancelled() {
             super.onCancelled();
             helper.cancelSaving();
+
         }
     }
 
