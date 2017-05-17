@@ -184,7 +184,7 @@ public class SaveInfoBlockTask {
         protected void onCancelled() {
             super.onCancelled();
             helper.cancelSaving();
-            Log.e(LOG_TAG, "AsyncTask существует. Процесс закрытия  helper.cancelSaving()");
+            Log.e(LOG_TAG, "AsyncTask exist. Closing process helper.cancelSaving()");
 
         }
     }

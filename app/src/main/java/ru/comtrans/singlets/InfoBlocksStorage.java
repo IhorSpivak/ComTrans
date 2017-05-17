@@ -35,9 +35,9 @@ import ru.comtrans.items.ProtectorItem;
 public class InfoBlocksStorage {
     private Set<String> infoBlockIds;
     private static final String INFO_BLOCK_IDS = "ids";
-    final String LOG_TAG = "myLogs";
+    private  String LOG_TAG = "myLogs";
     private double mb = 1024;
-    private boolean running;
+    private boolean shouldStopSaving;
 
     private static InfoBlocksStorage instance;
 
@@ -361,17 +361,19 @@ public class InfoBlocksStorage {
             JsonArray array = new JsonArray();
 
             for (int i = 0; i < block.size(); i++) {
-                if (!running) {
-                    Log.e(LOG_TAG, "AsyncTask существует. Процесс закрытия " + running);
+                if (!shouldStopSaving) {
+                    Log.e(LOG_TAG, "AsyncTask exist. Closing process" + shouldStopSaving);
+                    shouldStopSaving = false;
                     return id;
                 }
                 JsonArray screenArray = new JsonArray();
                 for (int j = 0; j < block.get(i).size(); j++) {
-                    if (!running) {
-                        Log.e(LOG_TAG, "AsyncTask существует. Процесс закрытия " + running);
+                    if (!shouldStopSaving) {
+                        Log.e(LOG_TAG, "AsyncTask exist. Closing process" + shouldStopSaving);
                         return id;
                     }
                     JsonObject object = new JsonObject();
+
                     MainItem item = block.get(i).get(j);
 
                     object.addProperty(MainItem.JSON_CODE, item.getCode());
@@ -1070,8 +1072,8 @@ public class InfoBlocksStorage {
 
 
     public  void cancelSaving() {
-        running = false;
-        Log.e(LOG_TAG, "AsyncTask существует. Процесс закрытия " + running);
+        shouldStopSaving = true;
+
 
     }
 }
