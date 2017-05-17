@@ -25,6 +25,7 @@ public class SaveInfoBlockTask {
     private OnPostExecuteListener listener;
     private boolean withDialog;
     AsyncTaskForSave asyncTaskForSave;
+    AsyncTaskForSaveAndExit asyncTaskForSaveAndExit;
 
     private SaveInfoBlockTask() {}
 
@@ -88,7 +89,13 @@ public class SaveInfoBlockTask {
         helper = InfoBlockHelper.getInstance();
 
         if(withDialog) {
-            new AsyncTaskForSaveAndExit().execute();
+            if (asyncTaskForSaveAndExit == null || asyncTaskForSaveAndExit.getStatus() != AsyncTask.Status.RUNNING) {
+                asyncTaskForSaveAndExit = (AsyncTaskForSaveAndExit) new AsyncTaskForSaveAndExit().execute();
+            } else {
+                asyncTaskForSaveAndExit.cancel(true);
+                asyncTaskForSaveAndExit = (AsyncTaskForSaveAndExit) new AsyncTaskForSaveAndExit().execute();
+            }
+
         }else {
             if (asyncTaskForSave == null || asyncTaskForSave.getStatus() != AsyncTask.Status.RUNNING) {
                 asyncTaskForSave = (AsyncTaskForSave) new AsyncTaskForSave().execute();
@@ -153,6 +160,12 @@ public class SaveInfoBlockTask {
             LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Const.REFRESH_INFO_BLOCKS_FILTER));
             listener.onPostExecute();
 
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            helper.cancelSaving();
         }
     }
 
