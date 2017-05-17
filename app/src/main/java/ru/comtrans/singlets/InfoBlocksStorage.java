@@ -362,11 +362,13 @@ public class InfoBlocksStorage {
 
             for (int i = 0; i < block.size(); i++) {
                 if (!running) {
+                    Log.e(LOG_TAG, "AsyncTask существует. Процесс закрытия " + running);
                     return id;
                 }
                 JsonArray screenArray = new JsonArray();
                 for (int j = 0; j < block.get(i).size(); j++) {
                     if (!running) {
+                        Log.e(LOG_TAG, "AsyncTask существует. Процесс закрытия " + running);
                         return id;
                     }
                     JsonObject object = new JsonObject();
@@ -1069,6 +1071,7 @@ public class InfoBlocksStorage {
 
     public  void cancelSaving() {
         running = false;
+        Log.e(LOG_TAG, "AsyncTask существует. Процесс закрытия " + running);
 
     }
 }

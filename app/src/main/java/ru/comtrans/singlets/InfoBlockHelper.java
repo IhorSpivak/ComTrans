@@ -113,6 +113,7 @@ public class InfoBlockHelper {
 
     public void cancelSaving(){
         storage.cancelSaving();
+        Log.e(LOG_TAG, "AsyncTask существует. Процесс закрытия  storage.cancelSaving()");
     }
 
     public void saveProtector(ArrayList<ProtectorItem> protectorItems) {

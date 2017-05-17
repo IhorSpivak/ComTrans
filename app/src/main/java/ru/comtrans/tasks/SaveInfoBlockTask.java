@@ -18,7 +18,7 @@ import ru.comtrans.views.ConnectionProgressDialog;
  */
 public class SaveInfoBlockTask {
     private Context context;
-    final String LOG_TAG = "myLogs";
+    private final String LOG_TAG = "myLogs";
     private InfoBlockHelper helper;
     private static SaveInfoBlockTask instance;
     private String id;
@@ -64,6 +64,7 @@ public class SaveInfoBlockTask {
         void onPostExecute();
     }
 
+
     public SaveInfoBlockTask(String id,Context context, OnPostExecuteListener listener){
         init(id,context,listener,true);
     }
@@ -91,9 +92,12 @@ public class SaveInfoBlockTask {
         }else {
             if (asyncTaskForSave == null || asyncTaskForSave.getStatus() != AsyncTask.Status.RUNNING) {
                 asyncTaskForSave = (AsyncTaskForSave) new AsyncTaskForSave().execute();
+                Log.e(LOG_TAG, "AsyncTask не существует, создаем AsyncTaskForSave");
             } else {
                 asyncTaskForSave.cancel(true);
                 asyncTaskForSave = (AsyncTaskForSave) new AsyncTaskForSave().execute();
+                Log.e(LOG_TAG, "AsyncTask существует. Закрываем его, создаем новый AsyncTaskForSave");
+
             }
         }
 
@@ -161,6 +165,8 @@ public class SaveInfoBlockTask {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            isCancelled();
+            Log.d(LOG_TAG, "isCancelled: " + isCancelled());
             helper.saveAll();
             return null;
         }
@@ -178,6 +184,7 @@ public class SaveInfoBlockTask {
         protected void onCancelled() {
             super.onCancelled();
             helper.cancelSaving();
+            Log.e(LOG_TAG, "AsyncTask существует. Процесс закрытия  helper.cancelSaving()");
 
         }
     }
