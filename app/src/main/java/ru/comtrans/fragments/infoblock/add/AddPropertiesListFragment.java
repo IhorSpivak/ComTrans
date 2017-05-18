@@ -178,9 +178,9 @@ public class AddPropertiesListFragment extends BaseFragment {
                                     idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_SHAS_WHEEL_FORMULA:
-                                  if(infoBlockHelper.getModelValue() != null) {
+                                    if(infoBlockHelper.getModelValue() != null) {
                                         idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                  }
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_MARK_KPP:
                                     idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
@@ -325,7 +325,10 @@ public class AddPropertiesListFragment extends BaseFragment {
                                 SaveInfoBlockTask.getInstance(infoBlockId, getContext(), new SaveInfoBlockTask.OnPostExecuteListener() {
                                     @Override
                                     public void onPostExecute() {
-                                        getActivity().finish();
+                                        Log.e("Ighor", "onPostExecute() getActivity() = " + getActivity());
+                                        if (getActivity() != null) {
+                                            getActivity().finish();
+                                        }
                                     }
                                 });
                             } else {
@@ -507,3 +510,4 @@ public class AddPropertiesListFragment extends BaseFragment {
     }
 
 }
+

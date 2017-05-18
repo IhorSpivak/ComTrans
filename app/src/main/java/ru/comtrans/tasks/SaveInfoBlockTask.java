@@ -91,38 +91,24 @@ public class SaveInfoBlockTask {
         if(withDialog) {
             if (asyncTaskForSaveAndExit == null || asyncTaskForSaveAndExit.getStatus() != AsyncTask.Status.RUNNING) {
                 asyncTaskForSaveAndExit = (AsyncTaskForSaveAndExit) new AsyncTaskForSaveAndExit().execute();
-                Log.e(LOG_TAG, "AsyncTask не существует, создаем asyncTaskForSaveAndExit");
+                Log.e("Ihor", "AsyncTaskForSaveAndExit не существует, создаем AsyncTaskForSaveAndExit");
             } else {
                 asyncTaskForSaveAndExit.cancel(true);
                 asyncTaskForSaveAndExit = (AsyncTaskForSaveAndExit) new AsyncTaskForSaveAndExit().execute();
-                Log.e(LOG_TAG, "AsyncTask существует. Закрываем его, создаем новый asyncTaskForSaveAndExit");
+                Log.e("Ihor", "AsyncTaskForSaveAndExit существует. Закрываем его, создаем новый AsyncTaskForSaveAndExit");
             }
-        } else {
+
+        }else {
             if (asyncTaskForSave == null || asyncTaskForSave.getStatus() != AsyncTask.Status.RUNNING) {
                 asyncTaskForSave = (AsyncTaskForSave) new AsyncTaskForSave().execute();
-                Log.e(LOG_TAG, "AsyncTask не существует, создаем AsyncTaskForSave");
+                Log.e("Ihor", "AsyncTaskForSave не существует, создаем AsyncTaskForSave");
             } else {
                 asyncTaskForSave.cancel(true);
                 asyncTaskForSave = (AsyncTaskForSave) new AsyncTaskForSave().execute();
-                Log.e(LOG_TAG, "AsyncTask существует. Закрываем его, создаем новый AsyncTaskForSave");
+                Log.e("Ihor", "AsyncTaskForSave существует. Закрываем его, создаем новый AsyncTaskForSave");
 
             }
         }
-
-
-//        AsyncTaskForSave asyncTaskForSave = new AsyncTaskForSave();
-//        if(withDialog) {
-//            new AsyncTaskForSaveAndExit().execute();
-//        }else{
-//            if(asyncTaskForSave.getStatus() != AsyncTask.Status.RUNNING){
-//                asyncTaskForSave = new AsyncTaskForSave();
-//                asyncTaskForSave.execute();
-//            } else {
-//                if (asyncTaskForSave.getStatus() == AsyncTask.Status.RUNNING)
-//                    asyncTaskForSave.cancel(true);
-//                new AsyncTaskForSave().execute();
-//            }
-//        }
 
     }
 
@@ -143,11 +129,9 @@ public class SaveInfoBlockTask {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            isCancelled();
-            Log.e(LOG_TAG, "isCancelled: " + isCancelled());
             helper.saveAll();
             if (listener != null)
-                SystemClock.sleep(8000);
+                SystemClock.sleep(800);
             return null;
         }
 
@@ -182,7 +166,7 @@ public class SaveInfoBlockTask {
         @Override
         protected Void doInBackground(Void... voids) {
             isCancelled();
-            Log.e(LOG_TAG, "isCancelled: " + isCancelled());
+            Log.d(LOG_TAG, "isCancelled: " + isCancelled());
             helper.saveAll();
             return null;
         }
@@ -206,4 +190,3 @@ public class SaveInfoBlockTask {
     }
 
 }
-

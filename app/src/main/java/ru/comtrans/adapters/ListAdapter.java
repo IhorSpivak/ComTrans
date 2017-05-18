@@ -439,8 +439,9 @@ public class ListAdapter extends BaseAdapter implements Filterable {
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-
-                enterValues((ArrayList<ListItem>) results.values);
+//                enterValues((ArrayList<ListItem>) results.values);
+                ArrayList<ListItem> filteredValues = (ArrayList<ListItem>)results.values;
+                mData = filteredValues;
                 notifyDataSetChanged();
             }
 
