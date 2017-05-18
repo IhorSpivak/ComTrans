@@ -91,12 +91,13 @@ public class SaveInfoBlockTask {
         if(withDialog) {
             if (asyncTaskForSaveAndExit == null || asyncTaskForSaveAndExit.getStatus() != AsyncTask.Status.RUNNING) {
                 asyncTaskForSaveAndExit = (AsyncTaskForSaveAndExit) new AsyncTaskForSaveAndExit().execute();
+                Log.e(LOG_TAG, "AsyncTask не существует, создаем asyncTaskForSaveAndExit");
             } else {
                 asyncTaskForSaveAndExit.cancel(true);
                 asyncTaskForSaveAndExit = (AsyncTaskForSaveAndExit) new AsyncTaskForSaveAndExit().execute();
+                Log.e(LOG_TAG, "AsyncTask существует. Закрываем его, создаем новый asyncTaskForSaveAndExit");
             }
-
-        }else {
+        } else {
             if (asyncTaskForSave == null || asyncTaskForSave.getStatus() != AsyncTask.Status.RUNNING) {
                 asyncTaskForSave = (AsyncTaskForSave) new AsyncTaskForSave().execute();
                 Log.e(LOG_TAG, "AsyncTask не существует, создаем AsyncTaskForSave");
@@ -142,9 +143,11 @@ public class SaveInfoBlockTask {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            isCancelled();
+            Log.e(LOG_TAG, "isCancelled: " + isCancelled());
             helper.saveAll();
             if (listener != null)
-                SystemClock.sleep(800);
+                SystemClock.sleep(8000);
             return null;
         }
 
@@ -179,7 +182,7 @@ public class SaveInfoBlockTask {
         @Override
         protected Void doInBackground(Void... voids) {
             isCancelled();
-            Log.d(LOG_TAG, "isCancelled: " + isCancelled());
+            Log.e(LOG_TAG, "isCancelled: " + isCancelled());
             helper.saveAll();
             return null;
         }

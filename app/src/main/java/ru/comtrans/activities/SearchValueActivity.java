@@ -97,17 +97,23 @@ public class SearchValueActivity extends BaseActivity {
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search_value, menu);
         addValueItem = menu.findItem(R.id.action_add);
-        if (!canAdd) {
+
+        MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
+
+        searchView = (SearchView) myActionMenuItem.getActionView();
+
+                if (!canAdd) {
             if (addValueItem != null)
                 addValueItem.setVisible(false);
-            invalidateOptionsMenu();
+//            invalidateOptionsMenu();
         }
-        final MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) myActionMenuItem.getActionView();
+
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

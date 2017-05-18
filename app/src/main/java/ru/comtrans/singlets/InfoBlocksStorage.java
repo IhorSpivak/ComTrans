@@ -1073,8 +1073,6 @@ public class InfoBlocksStorage {
 
     public  void cancelSaving() {
         shouldStopSaving = true;
-
-
     }
 }
 

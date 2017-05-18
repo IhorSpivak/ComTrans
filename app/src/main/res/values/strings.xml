@@ -90,7 +90,7 @@
     <string name="btn_next">Далее</string>
     <string name="btn_done">Отправить</string>
     <string name="no_mark_toast">Выберите марку!</string>
-    <string name="no_mark_model_enginemark_toast">Выберите марку ТС, модель ТС и марку двигателя!</string>
+    <string name="no_mark_model_enaction_searchginemark_toast">Выберите марку ТС, модель ТС и марку двигателя!</string>
 
 
     //////////////////////////SearchValueActivity////////////////////////////////
