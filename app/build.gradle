@@ -44,6 +44,23 @@ android {
                 }
             }
         }
+        master {
+            debuggable true
+            applicationIdSuffix '.master'
+            versionNameSuffix '-MASTER'
+            signingConfig signingConfigs.debug
+            signingConfig getSigningConfig()
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def date = new Date();
+                    def formattedDate = date.format('dd.MM.yyyy')
+                    def newName = output.outputFile.name
+                    newName = newName.replace("app-", "$appName")
+                    newName = newName.replace("master", "-" + formattedDate + " v$versionCode")
+                    output.outputFile = new File(output.outputFile.parent, newName)
+                }
+            }
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
