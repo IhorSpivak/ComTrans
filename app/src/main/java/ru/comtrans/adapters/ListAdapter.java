@@ -50,11 +50,6 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 
     public void enterValues(ArrayList<ListItem> items) {
         mData.clear();
-        for (ListItem item : items) {
-            if (item.getId() == -1) {
-                addItemToTempArray(item);
-            }
-        }
         //Maybee it's better solution
 //        addItemToTempArray(new ListItem(-1, context.getString(R.string.not_chosen)));
         switch (idsRelationHelperItem.getCode()) {
@@ -166,8 +161,11 @@ public class ListAdapter extends BaseAdapter implements Filterable {
             default:
                 break;
         }
+
         if (getCount() <= 1){
             addAllItemsToTempArray();
+        }else{
+            mData.add(0, new ListItem(-1, context.getString(R.string.not_chosen)));
         }
 
         notifyDataSetChanged();
@@ -182,21 +180,13 @@ public class ListAdapter extends BaseAdapter implements Filterable {
             List<String> transportTypeIds = map.get(String.valueOf(InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)));
             if (transportTypeIds != null && !transportTypeIds.isEmpty()) {
                 for (int j = 0; j < items.size(); j++) {
-                    if (items.get(j).getId() == -1 || transportTypeIds.contains(String.valueOf(items.get(j).getId()))) {
+                    if (transportTypeIds.contains(String.valueOf(items.get(j).getId()))) {
                         addItemToTempArray(items.get(j));
                     }
                 }
             }
         }
 
-    }
-
-    private void filterByCategory(ArrayList<ListItem> items) {
-        for (ListItem item : items) {
-//            Log.e("TMP_TEST", "item.getCategory()=" + InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId));
-            if (filterArrayByLong(item.getSections(), InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)))
-                addItemToTempArray(item);
-        }
     }
 
     private void filterMark() {
@@ -225,13 +215,29 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         }
     }
 
-    private void filterByMark(ArrayList<ListItem> items) {
-        for (ListItem item : items) {
-//            Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
-            if (item.getMark() == idsRelationHelperItem.getMark()) {
+    private void filterByCategory(ArrayList<ListItem> items) {
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        mData.clear();
+        Log.e("TMP_TEST", "InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)=" + InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId));
+        for (ListItem item : lItems) {
+            if (filterArrayByLong(item.getSections(), InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)))
                 addItemToTempArray(item);
-            }
         }
+        Log.e("TMP_TEST", "mData.size()=" + mData.size());
+    }
+
+    private void filterByMark(ArrayList<ListItem> items) {
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        mData.clear();
+        for (ListItem item : lItems) {
+//            Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
+//            if (item.getMark() == idsRelationHelperItem.getMark()) {
+//                addItemToTempArray(item);
+//            }
+            if (filterArrayByLong(item.getMark(), idsRelationHelperItem.getMark()))
+                addItemToTempArray(item);
+        }
+        Log.e("TMP_TEST", "mData.size()=" + mData.size());
     }
 //
 //    private void chekingCodeInspection(){
@@ -254,13 +260,20 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     private void filterByEngineMark(ArrayList<ListItem> items) {
+//        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+//        mData.clear();
+//        for (ListItem item : lItems) {
+////            Log.e("TMP_TEST", "item.getEngineMark()=" + item.getEngineMark());
+//            if (/*item.getId() == -1 || */item.getEngineMark() == idsRelationHelperItem.getEngineMark()) {
+//                addItemToTempArray(item);
+//            }
+//        }
         ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
         mData.clear();
         for (ListItem item : lItems) {
-//            Log.e("TMP_TEST", "item.getEngineMark()=" + item.getEngineMark());
-            if (/*item.getId() == -1 || */item.getEngineMark() == idsRelationHelperItem.getEngineMark()) {
+//            Log.e("TMP_TEST", "item.getEngineModel()=" + item.getEngineModel());
+            if (filterArrayByLong(item.getEngineMark(), idsRelationHelperItem.getEngineMark()))
                 addItemToTempArray(item);
-            }
         }
     }
 
