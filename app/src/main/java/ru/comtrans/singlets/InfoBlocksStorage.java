@@ -432,14 +432,14 @@ public class InfoBlocksStorage {
                         listObject.add(ListItem.JSON_PROTECTOR_VALUES, saveInfoBlockStrItem(listItem.getProtectorValues()));
                         listObject.add(ListItem.JSON_REVEAL_OS, saveInfoBlockIntItem(listItem.getRevealOs()));
 
-                        if (listItem.getRevealOs() != null && listItem.getRevealOs().size() > 0) {
-                            JsonArray revealOsValues = new JsonArray();
-                            for (Integer integer :
-                                    listItem.getRevealOs()) {
-                                revealOsValues.add(integer);
-                            }
-                            listObject.add(ListItem.JSON_REVEAL_OS, revealOsValues);
-                        }
+//                        if (listItem.getRevealOs() != null && listItem.getRevealOs().size() > 0) {
+//                            JsonArray revealOsValues = new JsonArray();
+//                            for (Integer integer :
+//                                    listItem.getRevealOs()) {
+//                                revealOsValues.add(integer);
+//                            }
+//                            listObject.add(ListItem.JSON_REVEAL_OS, revealOsValues);
+//                        }
 
                         object.add(MainItem.JSON_LIST_VALUE, listObject);
                     }

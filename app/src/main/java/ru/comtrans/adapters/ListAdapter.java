@@ -48,6 +48,66 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         enterValues(items);
     }
 
+    private void filterForModel(ArrayList<ListItem> items) {
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
+        mData.clear();
+        for (ListItem item : lItems) {
+            FilterState filterState1 = filterArrayByLongWithFilterState(item.getSections(), InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId));
+            FilterState filterState2 = filterArrayByLongWithFilterState(item.getMark(), idsRelationHelperItem.getMark());
+            if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
+                    && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
+                addItemToTempArray(item);
+        }
+    }
+
+    private void filterForKppModel(ArrayList<ListItem> items) {
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
+        mData.clear();
+        for (ListItem item : lItems) {
+            FilterState filterState1 = filterArrayByLongWithFilterState(item.getKppMark(), idsRelationHelperItem.getKppMark());
+            FilterState filterState2 = filterArrayByLongWithFilterState(item.getModel(), idsRelationHelperItem.getModel());
+            if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
+                    && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
+                addItemToTempArray(item);
+        }
+    }
+
+    private void filterByMarkAndModel(ArrayList<ListItem> items) {
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
+        mData.clear();
+        for (ListItem item : lItems) {
+            FilterState filterState1 = filterArrayByLongWithFilterState(item.getMark(), idsRelationHelperItem.getMark());
+            FilterState filterState2 = filterArrayByLongWithFilterState(item.getModel(), idsRelationHelperItem.getModel());
+            if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
+                    && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
+                addItemToTempArray(item);
+        }
+    }
+
+    private void filterForEngineModel(ArrayList<ListItem> items) {
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
+        mData.clear();
+        for (ListItem item : lItems) {
+            FilterState filterState1 = filterArrayByLongWithFilterState(item.getEngineMark(), idsRelationHelperItem.getEngineMark());
+            FilterState filterState2 = filterArrayByLongWithFilterState(item.getModel(), idsRelationHelperItem.getModel());
+            if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
+                    && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
+                addItemToTempArray(item);
+        }
+    }
+
+    private void filterByEngineModelAndModel(ArrayList<ListItem> items) {
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
+        mData.clear();
+        for (ListItem item : lItems) {
+            FilterState filterState1 = filterArrayByLongWithFilterState(item.getMark(), idsRelationHelperItem.getMark());
+            FilterState filterState2 = filterArrayByLongWithFilterState(item.getEngineModel(), idsRelationHelperItem.getEngineModel());
+            if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
+                    && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
+                addItemToTempArray(item);
+        }
+    }
+
     public void enterValues(ArrayList<ListItem> items) {
         mData.clear();
         //Maybee it's better solution
@@ -62,60 +122,78 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                 break;
             case IdsRelationHelperItem.CODE_GENERAL_MODEL:
                 if (idsRelationHelperItem.getMark() != -1) {
-                    filterByMark(items);
-                    filterByCategory(mData);
+//                    filterByMark(items);
+//                    filterByCategory(mData);
+                    filterForModel(items);
                 } else {
                     filterByCategory(items);
                 }
                 break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
-                if (idsRelationHelperItem.getMark() != -1) {
-                    filterByMark(items);
-                    filterByModel(mData);
-                } else {
+                if (idsRelationHelperItem.getMark() == -1) {
                     filterByModel(items);
+                } else if (idsRelationHelperItem.getModel() == -1) {
+                    filterByMark(items);
+                } else {
+//                    filterByMark(items);
+//                    filterByModel(mData);
+                    filterByMarkAndModel(items);
                 }
                 break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
-                if (idsRelationHelperItem.getEngineMark() != -1) {
-                    filterByEngineMark(items);
-                    filterByModel(mData);
-                } else {
+                if (idsRelationHelperItem.getEngineMark() == -1) {
                     filterByModel(items);
+                } else if (idsRelationHelperItem.getModel() == -1) {
+                    filterByEngineMark(items);
+                } else {
+//                    filterByEngineMark(items);
+//                    filterByModel(mData);
+                    filterForEngineModel(items);
                 }
                 break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_POWER:
-                if (idsRelationHelperItem.getEngineModel() != -1) {
-                    filterByEngineModel(items);
-                    filterByModel(mData);
-                } else {
+                if (idsRelationHelperItem.getEngineModel() == -1) {
                     filterByModel(items);
+                } else if (idsRelationHelperItem.getModel() == -1) {
+                    filterByEngineModel(items);
+                } else {
+//                    filterByEngineModel(items);
+//                    filterByModel(mData);
+                    filterByEngineModelAndModel(items);
                 }
                 break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_TYPE:
-                if (idsRelationHelperItem.getEngineModel() != -1) {
-                    filterByEngineModel(items);
-                    filterByModel(mData);
-                } else {
+                if (idsRelationHelperItem.getEngineModel() == -1) {
                     filterByModel(items);
+                } else if (idsRelationHelperItem.getModel() == -1) {
+                    filterByEngineModel(items);
+                } else {
+//                    filterByEngineModel(items);
+//                    filterByModel(mData);
+                    filterByEngineModelAndModel(items);
                 }
                 break;
             case IdsRelationHelperItem.CODE_TEC_ENGINE_VOLUME:
-                if (idsRelationHelperItem.getEngineModel() != -1) {
-                    filterByEngineModel(items);
-                    filterByModel(mData);
-                } else {
+                if (idsRelationHelperItem.getEngineModel() == -1) {
                     filterByModel(items);
+                } else if (idsRelationHelperItem.getModel() == -1) {
+                    filterByEngineModel(items);
+                } else {
+//                    filterByEngineModel(items);
+//                    filterByModel(mData);
+                    filterByEngineModelAndModel(items);
                 }
                 break;
             case IdsRelationHelperItem.CODE_TEC_ECO_CLASS:
-                if (idsRelationHelperItem.getEngineModel() != -1) {
-                    filterByEngineModel(items);
-                    filterByModel(mData);
-                } else {
+                if (idsRelationHelperItem.getEngineModel() == -1) {
                     filterByModel(items);
+                } else if (idsRelationHelperItem.getModel() == -1) {
+                    filterByEngineModel(items);
+                } else {
+//                    filterByEngineModel(items);
+//                    filterByModel(mData);
+                    filterByEngineModelAndModel(items);
                 }
-                ;
                 break;
             case IdsRelationHelperItem.CODE_SHAS_CAPACITY_TOTAL:
                 filterByModel(items);
@@ -124,19 +202,25 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                 filterByModel(items);
                 break;
             case IdsRelationHelperItem.CODE_MARK_KPP:
-                if (idsRelationHelperItem.getMark() != -1) {
-                    filterByMark(items);
-                    filterByModel(mData);
-                } else {
+                if (idsRelationHelperItem.getMark() == -1) {
                     filterByModel(items);
+                } else if (idsRelationHelperItem.getModel() == -1) {
+                    filterByMark(items);
+                } else {
+//                    filterByMark(items);
+//                    filterByModel(mData);
+                    filterByMarkAndModel(items);
                 }
                 break;
             case IdsRelationHelperItem.CODE_MODEL_KPP:
-                if (idsRelationHelperItem.getModel() != -1) {
+                if (idsRelationHelperItem.getKppMark() == -1) {
                     filterByModel(items);
-                    filterByKppMark(mData);
-                } else {
+                } else if (idsRelationHelperItem.getModel() == -1) {
                     filterByKppMark(items);
+                } else {
+//                    filterByModel(items);
+//                    filterByKppMark(mData);
+                    filterForKppModel(items);
                 }
                 break;
             case IdsRelationHelperItem.CODE_TEC_KPP_GEARS:
@@ -162,9 +246,9 @@ public class ListAdapter extends BaseAdapter implements Filterable {
                 break;
         }
 
-        if (getCount() <= 1){
+        if (getCount() < 1) {
             addAllItemsToTempArray();
-        }else{
+        } else {
             mData.add(0, new ListItem(-1, context.getString(R.string.not_chosen)));
         }
 
@@ -216,7 +300,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     private void filterByCategory(ArrayList<ListItem> items) {
-        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
         Log.e("TMP_TEST", "InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)=" + InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId));
         for (ListItem item : lItems) {
@@ -227,7 +311,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     private void filterByMark(ArrayList<ListItem> items) {
-        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
         for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
@@ -250,10 +334,11 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 //    }
 
     private void filterByModel(ArrayList<ListItem> items) {
-        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
+        Log.e("TMP_TEST", "idsRelationHelperItem.getModel()=" + idsRelationHelperItem.getModel());
         for (ListItem item : lItems) {
-//            Log.e("TMP_TEST", "item.getModel()=" + item.getModel());
+            Log.e("TMP_TEST", "item.getModel().size=" + item.getModel().size());
             if (filterArrayByLong(item.getModel(), idsRelationHelperItem.getModel()))
                 addItemToTempArray(item);
         }
@@ -268,7 +353,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 //                addItemToTempArray(item);
 //            }
 //        }
-        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
         for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getEngineModel()=" + item.getEngineModel());
@@ -278,7 +363,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     private void filterByEngineModel(ArrayList<ListItem> items) {
-        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
         for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getEngineModel()=" + item.getEngineModel());
@@ -288,7 +373,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     private void filterByKppMark(ArrayList<ListItem> items) {
-        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
         for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getKppMark()=" + item.getKppMark());
@@ -298,7 +383,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     private void filterByKppModel(ArrayList<ListItem> items) {
-        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
         for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getKppModel()=" + item.getKppModel());
@@ -308,7 +393,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     private void filterByVehicleOwner(ArrayList<ListItem> items) {
-        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
         for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getVehicleOwner()=" + item.getVehicleOwner());
@@ -318,7 +403,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     private void filterByKhouMark(ArrayList<ListItem> items) {
-        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
         for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getVehicleOwner()=" + item.getVehicleOwner());
@@ -328,7 +413,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     private void filterByKmuMark(ArrayList<ListItem> items) {
-        ArrayList<ListItem> lItems = (ArrayList<ListItem>)items.clone();
+        ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
         for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getVehicleOwner()=" + item.getKmuMark());
@@ -338,18 +423,29 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     private boolean filterArrayByLong(ArrayList<Integer> sortItems, long value) {
-        boolean isAdd = false;
-        if (sortItems != null && sortItems.size() != 0)
+        switch (filterArrayByLongWithFilterState(sortItems, value)) {
+            case EXIST:
+                return true;
+            case ABSENT:
+            case EMPTY:
+            default:
+                return false;
+        }
+    }
+
+    private FilterState filterArrayByLongWithFilterState(ArrayList<Integer> sortItems, long value) {
+        if (sortItems != null && sortItems.size() != 0) {
             for (int i = 0; i < sortItems.size(); i++) {
                 if (sortItems.get(i) == value) {
-                    isAdd = true;
-                    break;
+                    return FilterState.EXIST;
                 }
             }
+            return FilterState.ABSENT;
+        } else
+            return FilterState.EMPTY;
 //        if(sortItems!=null){
 //            Log.e("TMP_TEST","sortItems.size="+sortItems+ "isAdd=" + isAdd);
 //        }
-        return isAdd;
     }
 
     public void addItemToTempArray(final ListItem item) {
@@ -453,7 +549,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
 //                enterValues((ArrayList<ListItem>) results.values);
-                ArrayList<ListItem> filteredValues = (ArrayList<ListItem>)results.values;
+                ArrayList<ListItem> filteredValues = (ArrayList<ListItem>) results.values;
                 mData = filteredValues;
                 notifyDataSetChanged();
             }
@@ -493,4 +589,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         public TextView textView;
     }
 
+    private enum FilterState {
+        EXIST, ABSENT, EMPTY
+    }
 }
