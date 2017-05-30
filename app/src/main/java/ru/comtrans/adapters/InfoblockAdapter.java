@@ -59,6 +59,8 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private long inspectionCode;
     private int totalPages;
     private boolean isEditable;
+    private boolean isFirstFlagChecked;
+    private boolean isSecondFlagChecked;
     private DividerItemDecoration decoration;
     private InfoBlockHelper infoBlockHelper;
     private String blockCharacterSet = "0123456789ABCDEFGHJKLMNPRSTUVWXYZ".toLowerCase();
@@ -233,6 +235,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         ArrayList<PhotoItem> photoItems = new ArrayList<>();
                         ArrayList<PhotoItem> defects = new ArrayList<>();
 
+
                         for (PhotoItem photoItem : item.getPhotoItems()) {
                             if (!photoItem.isDefect()) {
                                 if (photoItem.getIsOs() != 0 && tireSchemeValue != null && tireSchemeValue.getId() != -1) {
@@ -243,6 +246,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                     photoItems.add(photoItem);
                                 }
                             }
+
                         }
 
                         final LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -298,9 +302,32 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         for (PhotoItem photoItem : item.getPhotoItems()) {
 
                             if (photoItem.getIsOs() != 0 && tireSchemeValue != null && tireSchemeValue.getId() != -1) {
-                                if (tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())) {
+                                if(tireSchemeValue.getRevealOs() != null) {
+                                    if (tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())) {
+                                        photoItems.add(photoItem);
+                                    }
+                                }
+                            }else if(item.getCode().equals("ph_docs")){
+                                if(!isCheckBoxChecked("doc_FLAG_doc_sts")){
+                                    if(photoItem.getCode()!=null&&(photoItem.getCode().equals("doc_STSScan1")
+                                            ||photoItem.getCode().equals("doc_STSScan2"))){
+
+                                    }else {
+                                        photoItems.add(photoItem);
+                                    }
+                                }else if(!isCheckBoxChecked("doc_FLAG_doc_pts")){
+                                    if(photoItem.getCode()!=null&&(photoItem.getCode().equals("doc_PTSScan1")
+                                            ||photoItem.getCode().equals("doc_PTSScan2")
+                                            ||photoItem.getCode().equals("doc_PTSScan3")
+                                            ||photoItem.getCode().equals("doc_PTSScan4"))){
+
+                                    }else {
+                                        photoItems.add(photoItem);
+                                    }
+                                }else {
                                     photoItems.add(photoItem);
                                 }
+
                             } else {
                                 photoItems.add(photoItem);
                             }
@@ -797,6 +824,8 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 else
                     flagViewHolder.checkBox.setText(item.getName());
                 flagViewHolder.checkBox.setChecked(item.isChecked());
+
+
                 if (isEditable) {
                     flagViewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
@@ -995,6 +1024,16 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         }
         return null;
+    }
+
+    private boolean isCheckBoxChecked(String code){
+        for (MainItem item :
+                items) {
+            if(item.getCode()!=null&&item.getCode().equals(code)){
+                return item.isChecked();
+            }
+        }
+        return false;
     }
 
     private class InfoBlockTextWatcher implements TextWatcher {

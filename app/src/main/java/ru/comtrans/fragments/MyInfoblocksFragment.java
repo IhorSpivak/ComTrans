@@ -142,7 +142,6 @@ public class MyInfoblocksFragment extends Fragment {
                                     }
                                 }
                             }
-
                             Utility.saveVehicleTypes(typeArray);
                             Utility.saveCategories(categories);
                             if(isFromButton)
