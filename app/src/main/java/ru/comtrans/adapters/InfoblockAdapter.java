@@ -59,8 +59,6 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private long inspectionCode;
     private int totalPages;
     private boolean isEditable;
-    private boolean isFirstFlagChecked;
-    private boolean isSecondFlagChecked;
     private DividerItemDecoration decoration;
     private InfoBlockHelper infoBlockHelper;
     private String blockCharacterSet = "0123456789ABCDEFGHJKLMNPRSTUVWXYZ".toLowerCase();
@@ -297,41 +295,8 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         photoViewHolder.defectsList.setAdapter(defectsAdapter);
 
                     } else {
-                        ArrayList<PhotoItem> photoItems = new ArrayList<>();
+                        ArrayList<PhotoItem> photoItems = infoBlockHelper.getPhotos(page,position);
 
-                        for (PhotoItem photoItem : item.getPhotoItems()) {
-
-                            if (photoItem.getIsOs() != 0 && tireSchemeValue != null && tireSchemeValue.getId() != -1) {
-                                if(tireSchemeValue.getRevealOs() != null) {
-                                    if (tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())) {
-                                        photoItems.add(photoItem);
-                                    }
-                                }
-                            }else if(item.getCode().equals("ph_docs")){
-                                if(!isCheckBoxChecked("doc_FLAG_doc_sts")){
-                                    if(photoItem.getCode()!=null&&(photoItem.getCode().equals("doc_STSScan1")
-                                            ||photoItem.getCode().equals("doc_STSScan2"))){
-
-                                    }else {
-                                        photoItems.add(photoItem);
-                                    }
-                                }else if(!isCheckBoxChecked("doc_FLAG_doc_pts")){
-                                    if(photoItem.getCode()!=null&&(photoItem.getCode().equals("doc_PTSScan1")
-                                            ||photoItem.getCode().equals("doc_PTSScan2")
-                                            ||photoItem.getCode().equals("doc_PTSScan3")
-                                            ||photoItem.getCode().equals("doc_PTSScan4"))){
-
-                                    }else {
-                                        photoItems.add(photoItem);
-                                    }
-                                }else {
-                                    photoItems.add(photoItem);
-                                }
-
-                            } else {
-                                photoItems.add(photoItem);
-                            }
-                        }
 
                         final LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
                         manager.setAutoMeasureEnabled(true);
@@ -832,6 +797,23 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                             listener.saveState();
                             item.setChecked(b);
+                            if(item.getCode()!=null&&(item.getCode().equals("doc_FLAG_doc_sts")
+                                    ||item.getCode().equals("doc_FLAG_doc_pts"))){
+
+                                int position = getPositionByCode("Фото документов");
+                                if(position!=-1){
+                                    final MainItem item1 = items.get(position);
+                                    item1.setError(!item1.isError());
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            notifyItemChanged(items.indexOf(item1));
+                                        }
+                                    }).run();
+
+                                }
+
+                            }
                         }
                     });
                     flagViewHolder.checkBox.setClickable(true);
@@ -1003,6 +985,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
 
+
     @Override
     public int getItemCount() {
         return items.size();
@@ -1026,15 +1009,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return null;
     }
 
-    private boolean isCheckBoxChecked(String code){
-        for (MainItem item :
-                items) {
-            if(item.getCode()!=null&&item.getCode().equals(code)){
-                return item.isChecked();
-            }
-        }
-        return false;
-    }
+
 
     private class InfoBlockTextWatcher implements TextWatcher {
         private int position;

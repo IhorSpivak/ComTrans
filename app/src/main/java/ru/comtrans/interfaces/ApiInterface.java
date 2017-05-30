@@ -2,6 +2,8 @@ package ru.comtrans.interfaces;
 
 import com.google.gson.JsonObject;
 
+import java.util.HashMap;
+
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;

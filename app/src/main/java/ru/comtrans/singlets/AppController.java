@@ -41,7 +41,6 @@ public class AppController extends Application {
         Fabric.with(this, new Crashlytics());
 
 
-
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
@@ -59,7 +58,7 @@ public class AppController extends Application {
                     public Response intercept(Chain chain) throws IOException {
                         Request original = chain.request();
 
-                        // Request customization: add request headers
+                        // RequestItems customization: add request headers
                         Request.Builder requestBuilder = original.newBuilder()
                                 .header("Authorization", "Basic ZGV2bXVzdDplTk5vU3AjWFJ3MzhR"); // <-- this is the important line
 

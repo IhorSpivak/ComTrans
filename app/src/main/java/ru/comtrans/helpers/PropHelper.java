@@ -177,7 +177,7 @@ public class PropHelper {
                 }
 
 
-                if (object.has("val") && !object.get("val").isJsonNull()) {
+                if (object.has("val") && !object.get("val").isJsonNull()&&object.get("val").isJsonArray()) {
 
                     JsonArray newVal = new JsonArray();
                     JsonArray val = object.get("val").getAsJsonArray();
@@ -372,12 +372,13 @@ public class PropHelper {
         }
         JsonObject photoObject = new JsonObject();
 
+
         if(isVideo){
             photoObject.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_VIDEO);
         }else {
             photoObject.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_PHOTO);
         }
-
+        photoObject.addProperty(MainItem.JSON_CODE,array.get(0).getAsJsonObject().get("group").getAsString());
         photoObject.add(MainItem.JSON_PHOTO_VALUES,photoArray);
         newArray.add(photoObject);
 

@@ -58,6 +58,23 @@ public class InfoBlockHelper {
         return null;
     }
 
+    private MainItem getItemByCode(String code){
+        for (ArrayList<MainItem> array :
+                items) {
+            for (MainItem item :
+                    array) {
+                if(item.getCode()!=null&&item.getCode().equals(code)){
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+
+    public MainItem getFlagStsItem(){return getItemByCode("doc_FLAG_doc_sts");}
+
+    public MainItem getFlagPtsItem(){return getItemByCode("doc_FLAG_doc_pts");}
+
     public ListItem getTireSchemeValue() {
         return getValueByKey("shas_wheel_formula");
     }
@@ -184,13 +201,35 @@ public class InfoBlockHelper {
     public ArrayList<PhotoItem> getPhotos(int screenNum, int position) {
         ArrayList<PhotoItem> newItems = new ArrayList<>();
         if(position<items.get(screenNum).size()) {
-            ArrayList<PhotoItem> currentPhotoItems = items.get(screenNum).get(position).getPhotoItems();
+            MainItem item = items.get(screenNum).get(position);
+            ArrayList<PhotoItem> currentPhotoItems = item.getPhotoItems();
             for (PhotoItem photoItem : currentPhotoItems) {
                 if (!photoItem.isDefect()) {
                     if (photoItem.getIsOs() != 0 && getTireSchemeValue().getId() != -1) {
                         if (getTireSchemeValue().getRevealOs().contains(photoItem.getIsOs())) {
                             newItems.add(photoItem);
                         }
+                    }else if(item.getCode()!=null&&item.getCode().equals("Фото документов")){
+
+                        if(photoItem.getCode()!=null&&(photoItem.getCode().equals("doc_STSScan1")
+                                ||photoItem.getCode().equals("doc_STSScan2"))){
+                            if(getFlagStsItem()!=null&&getFlagStsItem().isChecked()){
+                                newItems.add(photoItem);
+                            }
+
+                        }else if(photoItem.getCode()!=null&&(photoItem.getCode().equals("doc_PTSScan1")
+                                ||photoItem.getCode().equals("doc_PTSScan2")
+                                ||photoItem.getCode().equals("doc_PTSScan3")
+                                ||photoItem.getCode().equals("doc_PTSScan4"))){
+
+                            if(getFlagPtsItem()!=null&&getFlagPtsItem().isChecked()){
+                                newItems.add(photoItem);
+                            }
+
+                        }else {
+                            newItems.add(photoItem);
+                        }
+
                     } else {
                         newItems.add(photoItem);
                     }
@@ -204,6 +243,8 @@ public class InfoBlockHelper {
         return newItems;
 
     }
+
+
 
 
     public int getItemsSize() {
