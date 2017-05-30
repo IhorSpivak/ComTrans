@@ -109,7 +109,7 @@ public class ProtectorView extends RelativeLayout {
         ImageView image = (ImageView) v.findViewById(R.id.tire_scheme_image);
         if (helper.getTireSchemeValue() != null) {
             ListItem tireSchemeItem = helper.getTireSchemeValue();
-            int schemeId = tireSchemeItem.getTireSchemeId();
+            int schemeId = tireSchemeItem.getTireSchemeId().get(0);
             setResourceId(schemeId);
 
 //         OnKeyListener keyListener = new OnKeyListener() {

@@ -164,17 +164,21 @@ public class SearchValueActivity extends BaseActivity {
                                     Toast.makeText(SearchValueActivity.this, R.string.value_exist_toast, Toast.LENGTH_SHORT).show();
                                 } else {
                                     ListItem listItem = new ListItem(-2, etValue.getText().toString().trim());
-                                    if (idsRelationHelperItem.getMark() != -1) {
-                                        listItem.setMark((int) idsRelationHelperItem.getMark());
-                                    }
-                                    if (idsRelationHelperItem.getEngineMark() != -1) {
-                                        listItem.setEngineMark((int) idsRelationHelperItem.getEngineMark());
-                                    }
-                                    if (idsRelationHelperItem.getModel() != -1) {
-                                        ArrayList<Integer> model = new ArrayList<>();
-                                        model.add((int) idsRelationHelperItem.getModel());
-                                        listItem.setModel(model);
-                                    }
+//                                    if (idsRelationHelperItem.getMark() != -1) {
+//                                        ArrayList<Integer> item = new ArrayList<>();
+//                                        item.add((int) idsRelationHelperItem.getMark());
+//                                        listItem.setMark(item);
+//                                    }
+//                                    if (idsRelationHelperItem.getEngineMark() != -1) {
+//                                        ArrayList<Integer> item = new ArrayList<>();
+//                                        item.add((int) idsRelationHelperItem.getEngineMark());
+//                                        listItem.setEngineMark(item);
+//                                    }
+//                                    if (idsRelationHelperItem.getModel() != -1) {
+//                                        ArrayList<Integer> item = new ArrayList<>();
+//                                        item.add((int) idsRelationHelperItem.getModel());
+//                                        listItem.setModel(item);
+//                                    }
                                     adapter.addItem(listItem);
                                     searchView.onActionViewCollapsed();
                                     searchView.setQuery("", false);

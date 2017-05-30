@@ -201,6 +201,6 @@
     <string name="accepted_numbers_toast">Разрешенные для ввода символы: 0 1 2 3 4 5 6 7 8 9 A B C D E F G H J K L M N P R S T U V W X Y Z</string>
 
 
-    <string name="API_URL">http://rc.must.auction.ru/ru/api/</string>
+    <string name="API_URL">http://rc.must.auction/ru/api/</string>
 </resources>
 

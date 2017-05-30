@@ -30,8 +30,9 @@ public class ListItem implements Parcelable {
 
     private long id;
     private String name;
-    private int mark;
-    private int engineMark;
+    private ArrayList<Integer> mark;
+    private ArrayList<Integer> engineMark;
+    private ArrayList<Integer> tireSchemeId;
 
     private ArrayList<Integer> model;
     private ArrayList<Integer> engineModel;
@@ -43,7 +44,6 @@ public class ListItem implements Parcelable {
     private ArrayList<Integer> khouMark;
     private ArrayList<Integer> kmuMark;
     private ArrayList<Integer> sections;
-    private int tireSchemeId;
 
 
 
@@ -63,28 +63,28 @@ public class ListItem implements Parcelable {
         this.protectorValues = protectorValues;
     }
 
-    public int getTireSchemeId() {
-        return tireSchemeId;
-    }
-
-    public void setTireSchemeId(int tireSchemeId) {
-        this.tireSchemeId = tireSchemeId;
-    }
-
-    public int getMark() {
+    public ArrayList<Integer> getMark() {
         return mark;
     }
 
-    public void setMark(int mark) {
+    public void setMark(ArrayList<Integer> mark) {
         this.mark = mark;
     }
 
-    public int getEngineMark() {
+    public ArrayList<Integer> getEngineMark() {
         return engineMark;
     }
 
-    public void setEngineMark(int engineMark) {
+    public void setEngineMark(ArrayList<Integer> engineMark) {
         this.engineMark = engineMark;
+    }
+
+    public ArrayList<Integer> getTireSchemeId() {
+        return tireSchemeId;
+    }
+
+    public void setTireSchemeId(ArrayList<Integer> tireSchemeId) {
+        this.tireSchemeId = tireSchemeId;
     }
 
     public ArrayList<Integer> getModel() {
@@ -190,8 +190,8 @@ public class ListItem implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(this.id);
         dest.writeString(this.name);
-        dest.writeInt(this.mark);
-        dest.writeInt(this.engineMark);
+        dest.writeList(this.mark);
+        dest.writeList(this.engineMark);
         dest.writeStringList(this.protectorValues);
         dest.writeList(this.revealOs);
         dest.writeList(this.model);
@@ -202,14 +202,16 @@ public class ListItem implements Parcelable {
         dest.writeList(this.kmuMark);
         dest.writeList(this.sections);
         dest.writeList(this.vehicleOwner);
-        dest.writeInt(this.tireSchemeId);
+        dest.writeList(this.tireSchemeId);
     }
 
     protected ListItem(Parcel in) {
         this.id = in.readLong();
         this.name = in.readString();
-        this.mark = in.readInt();
-        this.engineMark = in.readInt();
+        this.mark = new ArrayList<>();
+        in.readList(this.mark, Integer.class.getClassLoader());
+        this.engineMark = new ArrayList<>();
+        in.readList(this.engineMark, Integer.class.getClassLoader());
         this.protectorValues = in.createStringArrayList();
         this.revealOs = new ArrayList<>();
         in.readList(this.revealOs, Integer.class.getClassLoader());
@@ -229,7 +231,8 @@ public class ListItem implements Parcelable {
         in.readList(this.sections, Integer.class.getClassLoader());
         this.vehicleOwner = new ArrayList<>();
         in.readList(this.vehicleOwner, Integer.class.getClassLoader());
-        this.tireSchemeId = in.readInt();
+        this.tireSchemeId = new ArrayList<>();
+        in.readList(this.tireSchemeId, Integer.class.getClassLoader());
     }
 
     public static final Creator<ListItem> CREATOR = new Creator<ListItem>() {
