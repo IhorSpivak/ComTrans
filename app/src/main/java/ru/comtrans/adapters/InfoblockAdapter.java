@@ -146,7 +146,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int position) {
         final MainItem item = getItem(position);
         final PhotoContainerAdapter adapter;
         PhotoContainerAdapter defectsAdapter;
@@ -851,6 +851,18 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                 }
                                                 isMainEntered = false;
                                                 break;
+                                            }else {
+                                                item.setError(false);
+                                            }
+                                            break;
+                                        case MainItem.TYPE_PHOTO:
+                                            if (item.getValue() == null || item.getPhotoItems().get(position).getImagePath() == null) {
+                                                item.setError(true);
+                                                notifyItemChanged(items.indexOf(item));
+                                                if(scrollPosition==-1){
+                                                    scrollPosition = items.indexOf(item);
+                                                }
+                                                isMainEntered = false;
                                             }else {
                                                 item.setError(false);
                                             }

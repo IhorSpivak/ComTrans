@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    android:layout_marginTop="12dp"
+    android:layout_marginLeft="12dp"
+    android:layout_marginRight="12dp"
+    android:background="@color/cardview_dark_background">
+
+    <LinearLayout
+        android:id="@+id/oneLL"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/cardview_dark_background"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/period"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Период"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:linksClickable="true"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+        <TextView
+            android:id="@+id/period_value"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="с 01.01.2017 по 19.01.2017"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/twoLL"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/fieldInspections"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Выездных осмотров"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+        <TextView
+            android:id="@+id/fieldInspectionValue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="50"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/threeLL"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/sentIB"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_weight="1"
+            android:background="@color/cardview_light_background"
+            android:gravity="center"
+            android:text="Отправленных ИБ"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/sentIBValue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_weight="1"
+            android:background="@color/cardview_light_background"
+            android:gravity="center"
+            android:text="45"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fourLL"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/moderated"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Прошедших модерацию"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+        <TextView
+            android:id="@+id/moderatedValue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="35"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_weight="1"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fiveLL"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/notModerated"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Не прошли модерацию"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+        <TextView
+            android:id="@+id/notModeratedValue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="10"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sixLL"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/qualityMyIB"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Качество моих ИБ"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+        <TextView
+            android:id="@+id/qualityMyIBValue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="тест"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sevenLL"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/myRating"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Мой рейтинг"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+        <TextView
+            android:id="@+id/myRatingValue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="тест"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/eightLL"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/moneyEarned"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Денег заработано"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+        <TextView
+            android:id="@+id/moneyEarnedValue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="тест"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/cardview_light_background"/>
+
+    </LinearLayout>
+
+</LinearLayout>
