@@ -35,6 +35,21 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/titleStar"
+        android:textColor="@color/colorPrimaryDark"
+        android:padding="2dp"
+        android:textSize="30sp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="50dp"
+        android:text=""
+        android:gravity="right"
+        android:singleLine="true"
+        android:ellipsize="marquee"/>
+
+
 
 
     <TextView
@@ -46,5 +61,4 @@
         android:gravity="center"
         android:singleLine="true"
         android:ellipsize="marquee"/>
-
 </RelativeLayout>

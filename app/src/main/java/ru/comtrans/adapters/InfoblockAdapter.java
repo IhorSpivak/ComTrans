@@ -857,7 +857,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                             break;
                                         case MainItem.TYPE_PHOTO:
                                             if (item.getValue() == null || item.getPhotoItems().get(position).getImagePath() == null) {
-                                                item.setError(true);
+                                                item.getPhotoItems().get(position).setError(true);
                                                 notifyItemChanged(items.indexOf(item));
                                                 if(scrollPosition==-1){
                                                     scrollPosition = items.indexOf(item);

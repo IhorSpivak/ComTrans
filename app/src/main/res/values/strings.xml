@@ -111,7 +111,7 @@
     <string name="infoblock_saving">Сохранение инфоблока</string>
     <string name="infoblock_deleting">Удаление инфоблока</string>
     <string name="warning_title">Внимание</string>
-    <string name="required_warning_message">Заполните все обязательные поля обозначенные звездочкой в этом разделе инфоблока</string>
+    <string name="required_warning_message">Заполните все обязательные поля фотографии обозначенные звездочкой в этом разделе инфоблока</string>
     <string name="bad_warning_message">Поля тип, марка, модель, гос.номер и год выпуска являются обязательными для заполнения</string>
     <string name="warning_message">Вы заполнили не все поля. Если все верно - жмите "Далее", если вы забыли заполнить какие-либо поля - заполните и жмите "Далее"</string>
     <string name="btn_stay">Остаться</string>

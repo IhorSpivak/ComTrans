@@ -8,7 +8,6 @@ import android.os.Parcelable;
  */
 public class PhotoItem implements Parcelable {
 
-
     public static final String JSON_IS_DEFECT = "is_defect";
     public static final String JSON_TITLE = "title";
     public static final String JSON_SIZE = "size";
@@ -21,13 +20,13 @@ public class PhotoItem implements Parcelable {
     public static final String JSON_IS_EDITED = "is_edited";
     public static final String JSON_RE_PHOTO_COUNT = "re_photo_count";
     public static final String JSON_IS_OS = "is_os";
-
-
-
-
-
+    public static final String JSON_IS_REQUIRED = "is_required";
+    public static final String JSON_IS_ERROR = "isError";
+    
     private long size;
     private boolean isDefect;
+    private boolean isError;
+    private boolean isRequired;
     private String title;
     private String imagePath;
     private long id;
@@ -46,6 +45,23 @@ public class PhotoItem implements Parcelable {
     public void setIsOs(int isOs) {
         this.isOs = isOs;
     }
+
+    public boolean isRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(boolean required) {
+        isRequired = required;
+    }
+
+    public boolean isError() {
+        return isError;
+    }
+
+    public void setError(boolean error) {
+        this.isError = error;
+    }
+
 
     public void incrementRePhotoCount(){
         rePhotoCount++;
@@ -159,6 +175,8 @@ public class PhotoItem implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(this.size);
         dest.writeByte(this.isDefect ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isRequired ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isError ? (byte) 1 : (byte) 0);
         dest.writeString(this.title);
         dest.writeString(this.imagePath);
         dest.writeLong(this.id);
@@ -173,6 +191,8 @@ public class PhotoItem implements Parcelable {
     protected PhotoItem(Parcel in) {
         this.size = in.readLong();
         this.isDefect = in.readByte() != 0;
+        this.isRequired = in.readByte() != 0;
+        this.isError = in.readByte() != 0;
         this.title = in.readString();
         this.imagePath = in.readString();
         this.id = in.readLong();

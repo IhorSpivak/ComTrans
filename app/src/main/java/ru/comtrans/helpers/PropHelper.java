@@ -336,13 +336,25 @@ public class PropHelper {
                     isVideo = true;
                 }
 
-
                 newObject.addProperty(PhotoItem.JSON_TITLE, object.get("name").getAsString());
                 newObject.addProperty(PhotoItem.JSON_CODE, object.get("code").getAsString());
 
                 if (object.has("is_os") && !object.get("is_os").isJsonNull()) {
                     newObject.addProperty(PhotoItem.JSON_IS_OS, object.get("is_os").getAsInt());
                 }
+                if (object.has("is_required") && !object.get("is_required").isJsonNull()) {
+                    newObject.addProperty(PhotoItem.JSON_IS_REQUIRED, object.get("is_required").getAsString());
+                }
+
+
+                if (object.has("is_required") && !object.get("is_required").isJsonNull() && object.get("Y").getAsBoolean()) {
+                    newObject.addProperty(PhotoItem.JSON_IS_REQUIRED, true);
+                } else {
+                    newObject.addProperty(PhotoItem.JSON_IS_DEFECT, false);
+                }
+
+
+
                 if (i == array.size() - 1) {
                     if (object.has("is_defect") && !object.get("is_defect").isJsonNull() && object.get("is_defect").getAsBoolean()) {
                         newObject.addProperty(PhotoItem.JSON_IS_DEFECT, true);
@@ -365,7 +377,6 @@ public class PropHelper {
                     }
                 }
                 photoArray.add(newObject);
-
 
             }
 
