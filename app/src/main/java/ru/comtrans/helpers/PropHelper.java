@@ -316,6 +316,7 @@ public class PropHelper {
 
     private static JsonArray getPhotoItems(JsonArray array){
         boolean isVideo = false;
+        boolean isRequired = false;
         JsonArray newArray = new JsonArray();
 
         JsonObject header = new JsonObject();
@@ -342,15 +343,14 @@ public class PropHelper {
                 if (object.has("is_os") && !object.get("is_os").isJsonNull()) {
                     newObject.addProperty(PhotoItem.JSON_IS_OS, object.get("is_os").getAsInt());
                 }
+
+
                 if (object.has("is_required") && !object.get("is_required").isJsonNull()) {
-                    newObject.addProperty(PhotoItem.JSON_IS_REQUIRED, object.get("is_required").getAsString());
-                }
+                    if(object.get("is_required").getAsString().equals("Y")) {
+                        newObject.addProperty(PhotoItem.JSON_IS_REQUIRED, true);
+                        isRequired = true;
+                    }
 
-
-                if (object.has("is_required") && !object.get("is_required").isJsonNull() && object.get("Y").getAsBoolean()) {
-                    newObject.addProperty(PhotoItem.JSON_IS_REQUIRED, true);
-                } else {
-                    newObject.addProperty(PhotoItem.JSON_IS_DEFECT, false);
                 }
 
 
@@ -389,6 +389,8 @@ public class PropHelper {
         }else {
             photoObject.addProperty(MainItem.JSON_TYPE,MainItem.TYPE_PHOTO);
         }
+
+        photoObject.addProperty(MainItem.JSON_IS_REQUIRED,isRequired);
         photoObject.addProperty(MainItem.JSON_CODE,array.get(0).getAsJsonObject().get("group").getAsString());
         photoObject.add(MainItem.JSON_PHOTO_VALUES,photoArray);
         newArray.add(photoObject);

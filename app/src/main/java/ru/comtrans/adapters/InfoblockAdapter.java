@@ -840,6 +840,8 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             for (MainItem item :
                                     items) {
 
+
+
                                 if (item.isRequired()) {
                                     switch (item.getType()) {
                                         case MainItem.TYPE_LIST:
@@ -856,15 +858,16 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                             }
                                             break;
                                         case MainItem.TYPE_PHOTO:
-                                            if (item.getValue() == null || item.getPhotoItems().get(position).getImagePath() == null) {
-                                                item.getPhotoItems().get(position).setError(true);
-                                                notifyItemChanged(items.indexOf(item));
-                                                if(scrollPosition==-1){
-                                                    scrollPosition = items.indexOf(item);
+                                            if(item.getPhotoItems()!=null&&item.getPhotoItems().size()>0){
+                                                for (int i = 0; i < item.getPhotoItems().size(); i++) {
+                                                    PhotoItem photoItem = item.getPhotoItems().get(i);
+                                                    if(photoItem.isRequired()&&photoItem.getImagePath()==null){
+                                                        photoItem.setError(true);
+                                                        isMainEntered = false;
+                                                        item.setError(true);
+                                                        notifyItemChanged(items.indexOf(item));
+                                                    }
                                                 }
-                                                isMainEntered = false;
-                                            }else {
-                                                item.setError(false);
                                             }
                                             break;
                                         case MainItem.TYPE_CALENDAR:

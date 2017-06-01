@@ -25,6 +25,7 @@ public class PhotoContainerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     Context c;
     ArrayList<PhotoItem> items;
     int type;
+    TextView titleStar;
     private final OnItemClickListener listener;
 
     public interface OnItemClickListener {
@@ -77,6 +78,18 @@ public class PhotoContainerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 }else {
                     ((PhotoViewHolder)holder).title.setTextColor(Color.BLACK);
                 }
+
+                if(item.isRequired()){
+                    ((PhotoViewHolder)holder).titleStar.setText("*");
+                } else {
+                    ((PhotoViewHolder)holder).titleStar.setText("");
+                }
+
+                if(item.isError()){
+                    ((PhotoViewHolder)holder).photoLayout.setBackgroundResource(R.drawable.photo_is_required_marking);
+                } else {
+                    ((PhotoViewHolder)holder).photoLayout.setBackgroundResource(R.drawable.info_block_photo_borders);
+                }
                 break;
             case MainItem.TYPE_VIDEO:
                 ((VideoViewHolder)holder).title.setText(item.getTitle());
@@ -117,6 +130,7 @@ public class PhotoContainerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         public TextView title;
         public RelativeLayout photoLayout;
         public ImageView imageThumbnail;
+        public TextView titleStar;
 
 
 
@@ -125,6 +139,7 @@ public class PhotoContainerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             title = (TextView)itemView.findViewById(R.id.title);
             photoLayout = (RelativeLayout)itemView.findViewById(R.id.photo_layout);
             imageThumbnail = (ImageView)itemView.findViewById(R.id.image);
+            titleStar = (TextView)itemView.findViewById(R.id.titleStar);
         }
 
     }

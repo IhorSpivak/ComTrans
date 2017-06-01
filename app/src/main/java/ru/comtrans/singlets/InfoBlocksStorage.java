@@ -518,6 +518,7 @@ public class InfoBlocksStorage {
                             photoObject.addProperty(PhotoItem.JSON_TITLE, photoItem.getTitle());
                             photoObject.addProperty(PhotoItem.JSON_IS_EDITED, photoItem.isEdited());
                             photoObject.addProperty(PhotoItem.JSON_IS_SEND, photoItem.isSend());
+                            photoObject.addProperty(PhotoItem.JSON_IS_REQUIRED,photoItem.isRequired());
                             photoObject.addProperty(PhotoItem.JSON_RE_PHOTO_COUNT, photoItem.getRePhotoCount());
                             photoArray.add(photoObject);
                         }
@@ -783,6 +784,9 @@ public class InfoBlocksStorage {
 
                             if (valueObject.has(PhotoItem.JSON_IS_SEND) && !valueObject.get(PhotoItem.JSON_IS_SEND).isJsonNull())
                                 photoItem.setSend(valueObject.get(PhotoItem.JSON_IS_SEND).getAsBoolean());
+
+                            if (valueObject.has(PhotoItem.JSON_IS_REQUIRED) && !valueObject.get(PhotoItem.JSON_IS_REQUIRED).isJsonNull())
+                                photoItem.setRequired(valueObject.get(PhotoItem.JSON_IS_REQUIRED).getAsBoolean());
 
                             if (valueObject.has(PhotoItem.JSON_IS_VIDEO) && !valueObject.get(PhotoItem.JSON_IS_VIDEO).isJsonNull())
                                 photoItem.setVideo(valueObject.get(PhotoItem.JSON_IS_VIDEO).getAsBoolean());

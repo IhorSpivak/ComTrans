@@ -85,8 +85,8 @@ public class CameraPhotoAdapter extends BaseAdapter {
             selectedPosition++;
             defectsCount++;
 
-        items.add(0,new PhotoItem(String.format(context.getString(R.string.default_defect_name)
-                ,defectsCount),true));
+            items.add(0,new PhotoItem(String.format(context.getString(R.string.default_defect_name)
+                    ,defectsCount),true));
         }
         notifyDataSetChanged();
     }
@@ -215,7 +215,7 @@ public class CameraPhotoAdapter extends BaseAdapter {
             viewHolder.addPhoto.setVisibility(View.VISIBLE);
             viewHolder.photo.setVisibility(View.INVISIBLE);
         }
-      //  viewHolder.txtItem.setText(getItem(position));
+        //  viewHolder.txtItem.setText(getItem(position));
 
         return convertView;
     }
