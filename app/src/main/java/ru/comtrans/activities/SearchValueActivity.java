@@ -29,12 +29,14 @@ import ru.comtrans.singlets.InfoBlocksStorage;
 
 public class SearchValueActivity extends BaseActivity {
 
+//
     private ListView listView;
     private TextView tvEmpty;
     private ArrayList<ListItem> items;
     private ListAdapter adapter;
     private MenuItem addValueItem;
     private SearchView searchView;
+
     private InfoBlockHelper helper;
     private int screenNum;
     private int extraPosition;
