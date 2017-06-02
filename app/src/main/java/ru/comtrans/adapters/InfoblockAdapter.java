@@ -804,6 +804,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                 if(position!=-1){
                                     final MainItem item1 = items.get(position);
                                     item1.setError(!item1.isError());
+
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {

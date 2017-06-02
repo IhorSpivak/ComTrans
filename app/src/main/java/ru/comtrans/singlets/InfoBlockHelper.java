@@ -215,6 +215,9 @@ public class InfoBlockHelper {
                                 ||photoItem.getCode().equals("doc_STSScan2"))){
                             if(getFlagStsItem()!=null&&getFlagStsItem().isChecked()){
                                 newItems.add(photoItem);
+                                photoItem.setRequired(true);
+                            } else {
+                                photoItem.setRequired(false);
                             }
 
                         }else if(photoItem.getCode()!=null&&(photoItem.getCode().equals("doc_PTSScan1")
@@ -223,9 +226,15 @@ public class InfoBlockHelper {
                                 ||photoItem.getCode().equals("doc_PTSScan4"))){
 
                             if(getFlagPtsItem()!=null&&getFlagPtsItem().isChecked()){
+                                if(photoItem.getCode().equals("doc_PTSScan1") ||photoItem.getCode().equals("doc_PTSScan2")){
+                                    photoItem.setRequired(true);
+                                } else  {
+                                    photoItem.setRequired(false);
+                                }
                                 newItems.add(photoItem);
+                            } else {
+                                photoItem.setRequired(false);
                             }
-
                         }else {
                             newItems.add(photoItem);
                         }
