@@ -205,7 +205,8 @@ public class InfoBlockHelper {
             ArrayList<PhotoItem> currentPhotoItems = item.getPhotoItems();
             for (PhotoItem photoItem : currentPhotoItems) {
                 if (!photoItem.isDefect()) {
-                    if (photoItem.getIsOs() != 0 && getTireSchemeValue().getId() != -1) {
+//                    if (photoItem.getIsOs() != 0 && getTireSchemeValue().getId() != -1) {
+                    if (photoItem.getIsOs() != 0 && getTireSchemeValue() != null) {
                         if (getTireSchemeValue().getRevealOs().contains(photoItem.getIsOs())) {
                             newItems.add(photoItem);
                         }
@@ -216,25 +217,25 @@ public class InfoBlockHelper {
                             if(getFlagStsItem()!=null&&getFlagStsItem().isChecked()){
                                 newItems.add(photoItem);
                                 photoItem.setRequired(true);
-                            } else {
-                                photoItem.setRequired(false);
+                            }else {
+                            photoItem.setRequired(false);
                             }
-
                         }else if(photoItem.getCode()!=null&&(photoItem.getCode().equals("doc_PTSScan1")
                                 ||photoItem.getCode().equals("doc_PTSScan2")
                                 ||photoItem.getCode().equals("doc_PTSScan3")
                                 ||photoItem.getCode().equals("doc_PTSScan4"))){
 
                             if(getFlagPtsItem()!=null&&getFlagPtsItem().isChecked()){
-                                if(photoItem.getCode().equals("doc_PTSScan1") ||photoItem.getCode().equals("doc_PTSScan2")){
-                                    photoItem.setRequired(true);
-                                } else  {
-                                    photoItem.setRequired(false);
-                                }
-                                newItems.add(photoItem);
-                            } else {
-                                photoItem.setRequired(false);
+                            if(photoItem.getCode().equals("doc_PTSScan1") ||photoItem.getCode().equals("doc_PTSScan2")){
+                             photoItem.setRequired(true);
+                            } else  {
+                             photoItem.setRequired(false);
                             }
+                            newItems.add(photoItem);
+                        } else {
+                        photoItem.setRequired(false);
+                        }
+
                         }else {
                             newItems.add(photoItem);
                         }

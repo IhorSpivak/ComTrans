@@ -338,7 +338,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         mData.clear();
         Log.e("TMP_TEST", "idsRelationHelperItem.getModel()=" + idsRelationHelperItem.getModel());
         for (ListItem item : lItems) {
-            Log.e("TMP_TEST", "item.getModel().size=" + item.getModel().size());
+//            Log.e("TMP_TEST", "item.getModel().size=" + item.getModel().size());
             if (filterArrayByLong(item.getModel(), idsRelationHelperItem.getModel()))
                 addItemToTempArray(item);
         }
