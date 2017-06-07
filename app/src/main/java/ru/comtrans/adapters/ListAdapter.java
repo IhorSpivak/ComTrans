@@ -63,48 +63,65 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     private void filterForKppModel(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
-            FilterState filterState1 = filterArrayByLongWithFilterState(item.getKppMark(), idsRelationHelperItem.getKppMark());
-            FilterState filterState2 = filterArrayByLongWithFilterState(item.getModel(), idsRelationHelperItem.getModel());
-            if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
-                    && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
-                addItemToTempArray(item);
+        if(lItems != null) {
+            for (ListItem item : lItems) {
+                if(item.getKppMark() != null && item.getModel() !=null) {
+                    FilterState filterState1 = filterArrayByLongWithFilterState(item.getKppMark(), idsRelationHelperItem.getKppMark());
+                    FilterState filterState2 = filterArrayByLongWithFilterState(item.getModel(), idsRelationHelperItem.getModel());
+                    if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
+                            && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
+                        addItemToTempArray(item);
+                }
+            }
         }
     }
 
     private void filterByMarkAndModel(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
-            FilterState filterState1 = filterArrayByLongWithFilterState(item.getMark(), idsRelationHelperItem.getMark());
-            FilterState filterState2 = filterArrayByLongWithFilterState(item.getModel(), idsRelationHelperItem.getModel());
-            if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
-                    && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
-                addItemToTempArray(item);
+        if(lItems != null) {
+            for (ListItem item : lItems) {
+                if(item.getMark() != null && item.getModel() != null ) {
+                    FilterState filterState1 = filterArrayByLongWithFilterState(item.getMark(), idsRelationHelperItem.getMark());
+                    FilterState filterState2 = filterArrayByLongWithFilterState(item.getModel(), idsRelationHelperItem.getModel());
+                    if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
+                            && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
+                        addItemToTempArray(item);
+                }
+
+            }
         }
     }
 
     private void filterForEngineModel(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
-            FilterState filterState1 = filterArrayByLongWithFilterState(item.getEngineMark(), idsRelationHelperItem.getEngineMark());
-            FilterState filterState2 = filterArrayByLongWithFilterState(item.getModel(), idsRelationHelperItem.getModel());
-            if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
-                    && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
-                addItemToTempArray(item);
+        if(lItems != null) {
+            for (ListItem item : lItems) {
+                if (item.getEngineMark() != null && item.getModel() != null) {
+                    FilterState filterState1 = filterArrayByLongWithFilterState(item.getEngineMark(), idsRelationHelperItem.getEngineMark());
+                    FilterState filterState2 = filterArrayByLongWithFilterState(item.getModel(), idsRelationHelperItem.getModel());
+                    if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
+                            && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
+                        addItemToTempArray(item);
+                }
+            }
         }
     }
 
     private void filterByEngineModelAndModel(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
-            FilterState filterState1 = filterArrayByLongWithFilterState(item.getMark(), idsRelationHelperItem.getMark());
-            FilterState filterState2 = filterArrayByLongWithFilterState(item.getEngineModel(), idsRelationHelperItem.getEngineModel());
-            if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
-                    && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
-                addItemToTempArray(item);
+        if(lItems != null) {
+            for (ListItem item : lItems) {
+                if (item.getMark() != null && item.getEngineModel() != null) {
+                    FilterState filterState1 = filterArrayByLongWithFilterState(item.getMark(), idsRelationHelperItem.getMark());
+                    FilterState filterState2 = filterArrayByLongWithFilterState(item.getEngineModel(), idsRelationHelperItem.getEngineModel());
+                    if ((filterState1 != FilterState.ABSENT && filterState2 != FilterState.ABSENT)
+                            && (filterState1 != FilterState.EMPTY || filterState2 != FilterState.EMPTY))
+                        addItemToTempArray(item);
+                }
+            }
         }
     }
 
@@ -274,9 +291,11 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
     private void filterMark() {
-        for (ListItem item : items) {
-            if (item.getId() == -1 || isValidMark(item.getName())) {
-                addItemToTempArray(item);
+        if (items != null) {
+            for (ListItem item : items) {
+                if (item.getId() == -1 || isValidMark(item.getName())) {
+                    addItemToTempArray(item);
+                }
             }
         }
     }
@@ -302,26 +321,35 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     private void filterByCategory(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        Log.e("TMP_TEST", "InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)=" + InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId));
-        for (ListItem item : lItems) {
-            if (filterArrayByLong(item.getSections(), InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)))
-                addItemToTempArray(item);
+//        Log.e("TMP_TEST", "InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)=" + InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId));
+        if(lItems != null) {
+            for (ListItem item : lItems) {
+                if(item.getSections() != null) {
+                    if (filterArrayByLong(item.getSections(), InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)))
+                        addItemToTempArray(item);
+                }
+            }
+//            Log.e("TMP_TEST", "mData.size()=" + mData.size());
+
         }
-        Log.e("TMP_TEST", "mData.size()=" + mData.size());
     }
 
     private void filterByMark(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
+        if(lItems != null) {
+            for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getMark()=" + item.getMark());
 //            if (item.getMark() == idsRelationHelperItem.getMark()) {
 //                addItemToTempArray(item);
 //            }
-            if (filterArrayByLong(item.getMark(), idsRelationHelperItem.getMark()))
-                addItemToTempArray(item);
+                if (item.getMark() != null) {
+                    if (filterArrayByLong(item.getMark(), idsRelationHelperItem.getMark()))
+                        addItemToTempArray(item);
+                }
+            }
+//            Log.e("TMP_TEST", "mData.size()=" + mData.size());
         }
-        Log.e("TMP_TEST", "mData.size()=" + mData.size());
     }
 //
 //    private void chekingCodeInspection(){
@@ -336,11 +364,15 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     private void filterByModel(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        Log.e("TMP_TEST", "idsRelationHelperItem.getModel()=" + idsRelationHelperItem.getModel());
-        for (ListItem item : lItems) {
+//        Log.e("TMP_TEST", "idsRelationHelperItem.getModel()=" + idsRelationHelperItem.getModel());
+        if(lItems != null) {
+            for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getModel().size=" + item.getModel().size());
-            if (filterArrayByLong(item.getModel(), idsRelationHelperItem.getModel()))
-                addItemToTempArray(item);
+                if (item.getModel() != null) {
+                    if (filterArrayByLong(item.getModel(), idsRelationHelperItem.getModel()))
+                        addItemToTempArray(item);
+                }
+            }
         }
     }
 
@@ -355,70 +387,99 @@ public class ListAdapter extends BaseAdapter implements Filterable {
 //        }
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
+        if(lItems != null) {
+            for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getEngineModel()=" + item.getEngineModel());
-            if (filterArrayByLong(item.getEngineMark(), idsRelationHelperItem.getEngineMark()))
-                addItemToTempArray(item);
+                if (item.getEngineMark() != null) {
+                    if (filterArrayByLong(item.getEngineMark(), idsRelationHelperItem.getEngineMark()))
+                        addItemToTempArray(item);
+                }
+            }
         }
     }
 
     private void filterByEngineModel(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
+        if(lItems != null) {
+            for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getEngineModel()=" + item.getEngineModel());
-            if (filterArrayByLong(item.getEngineModel(), idsRelationHelperItem.getEngineModel()))
-                addItemToTempArray(item);
+                if(item.getEngineModel() != null){
+                    if (filterArrayByLong(item.getEngineModel(), idsRelationHelperItem.getEngineModel()))
+                        addItemToTempArray(item);
+                }
+            }
         }
     }
 
     private void filterByKppMark(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
+        if(lItems != null) {
+            for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getKppMark()=" + item.getKppMark());
-            if (filterArrayByLong(item.getKppMark(), idsRelationHelperItem.getKppMark()))
-                addItemToTempArray(item);
+                if(item.getKppMark() != null) {
+                    if (filterArrayByLong(item.getKppMark(), idsRelationHelperItem.getKppMark()))
+                        addItemToTempArray(item);
+                }
+            }
         }
     }
 
     private void filterByKppModel(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
+        if(lItems != null) {
+            for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getKppModel()=" + item.getKppModel());
-            if (filterArrayByLong(item.getKppModel(), idsRelationHelperItem.getKppModel()))
-                addItemToTempArray(item);
+                if(item.getKppModel() != null) {
+                    if (filterArrayByLong(item.getKppModel(), idsRelationHelperItem.getKppModel()))
+                        addItemToTempArray(item);
+                }
+            }
         }
     }
 
     private void filterByVehicleOwner(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
+        if (lItems != null) {
+            for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getVehicleOwner()=" + item.getVehicleOwner());
-            if (filterArrayByLong(item.getVehicleOwner(), idsRelationHelperItem.getVehicleOwner()))
-                addItemToTempArray(item);
+                if (item.getVehicleOwner() != null) {
+                    if (filterArrayByLong(item.getVehicleOwner(), idsRelationHelperItem.getVehicleOwner()))
+                        addItemToTempArray(item);
+                }
+            }
         }
     }
 
     private void filterByKhouMark(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
+        if (lItems != null) {
+            for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getVehicleOwner()=" + item.getVehicleOwner());
-            if (filterArrayByLong(item.getKhouMark(), idsRelationHelperItem.getKhouMark()))
-                addItemToTempArray(item);
+                if(item.getKhouMark() != null) {
+                    if (filterArrayByLong(item.getKhouMark(), idsRelationHelperItem.getKhouMark()))
+                        addItemToTempArray(item);
+                }
+            }
         }
     }
 
     private void filterByKmuMark(ArrayList<ListItem> items) {
         ArrayList<ListItem> lItems = (ArrayList<ListItem>) items.clone();
         mData.clear();
-        for (ListItem item : lItems) {
+        if (lItems != null) {
+            for (ListItem item : lItems) {
 //            Log.e("TMP_TEST", "item.getVehicleOwner()=" + item.getKmuMark());
-            if (filterArrayByLong(item.getVehicleOwner(), idsRelationHelperItem.getKmuMark()))
-                addItemToTempArray(item);
+                if (item.getVehicleOwner() != null) {
+                    if (filterArrayByLong(item.getVehicleOwner(), idsRelationHelperItem.getKmuMark()))
+                        addItemToTempArray(item);
+                }
+            }
+
         }
     }
 

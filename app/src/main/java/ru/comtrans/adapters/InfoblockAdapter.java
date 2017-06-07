@@ -172,10 +172,12 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         }
                     }
                     if(item.getCode().contains("section")){
-                        for(ListItem localItem : item.getListValues()){
-                            if(localItem.getId() == InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)){
-                                items.get(position).setListValue(localItem);
-                                item.setListValue(localItem);
+                        if(item.getListValues() != null) {
+                            for (ListItem localItem : item.getListValues()) {
+                                if (localItem.getId() == InfoBlocksStorage.getInfoBlockCategoryCode(infoBlockId)) {
+                                    items.get(position).setListValue(localItem);
+                                    item.setListValue(localItem);
+                                }
                             }
                         }
                     }
@@ -226,25 +228,26 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case MainItem.TYPE_PHOTO:
                 final PhotoViewHolder photoViewHolder = ((PhotoViewHolder) viewHolder);
 
-                ListItem tireSchemeValue = infoBlockHelper.getTireSchemeValue();
+                    ListItem tireSchemeValue = infoBlockHelper.getTireSchemeValue();
 
                 if (item.getPhotoItems() != null && item.getPhotoItems().size() > 0) {
                     if (item.getPhotoItems().get(item.getPhotoItems().size() - 1).isDefect()) {
                         ArrayList<PhotoItem> photoItems = new ArrayList<>();
                         ArrayList<PhotoItem> defects = new ArrayList<>();
 
-
-                        for (PhotoItem photoItem : item.getPhotoItems()) {
-                            if (!photoItem.isDefect()) {
-                                if (photoItem.getIsOs() != 0 && tireSchemeValue != null && tireSchemeValue.getId() != -1) {
-                                    if (tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())) {
+                        if( item.getPhotoItems() != null) {
+                            for (PhotoItem photoItem : item.getPhotoItems()) {
+                                if (!photoItem.isDefect()) {
+                                    if (photoItem.getIsOs() != 0 && tireSchemeValue != null && tireSchemeValue.getId() != -1) {
+                                        if (tireSchemeValue.getRevealOs().contains(photoItem.getIsOs())) {
+                                            photoItems.add(photoItem);
+                                        }
+                                    } else {
                                         photoItems.add(photoItem);
                                     }
-                                } else {
-                                    photoItems.add(photoItem);
                                 }
-                            }
 
+                            }
                         }
 
                         final LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -846,17 +849,20 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                 if (item.isRequired()) {
                                     switch (item.getType()) {
                                         case MainItem.TYPE_LIST:
+                                            if (item.getListValue() != null) {
                                             if (item.getListValue().getId() == -1) {
                                                 item.setError(true);
                                                 notifyItemChanged(items.indexOf(item));
-                                                if(scrollPosition==-1){
+                                                if (scrollPosition == -1) {
                                                     scrollPosition = items.indexOf(item);
                                                 }
                                                 isMainEntered = false;
                                                 break;
-                                            }else {
+                                            } else {
                                                 item.setError(false);
                                             }
+                                        }
+
                                             break;
                                         case MainItem.TYPE_PHOTO:
                                             ArrayList<PhotoItem> photoItems  = infoBlockHelper.getPhotos(page, position);
