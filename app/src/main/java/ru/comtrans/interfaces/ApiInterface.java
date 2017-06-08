@@ -42,7 +42,7 @@ public interface ApiInterface {
     @GET("prop/{vehicleTypeId}/{inspectionTypeId}")
     Call<JsonObject> getPropWithParameters(@Path("vehicleTypeId") String vehicleTypeId,
                                            @Path("inspectionTypeId") String inspectionTypeId,
-                                           @Query("token") String token);
+                                           @Header("token") String token);
 
     @GET("prop-value/834")
     Call<JsonObject> getVehicleTypes();

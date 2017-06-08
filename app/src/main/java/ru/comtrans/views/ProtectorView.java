@@ -913,42 +913,42 @@ public class ProtectorView extends RelativeLayout {
 
     public void setResourceId(int tireSchemeId){
         switch (tireSchemeId) {
-            case 1:
-                resourceId = R.drawable.s4x2;
-                break;
-            case 2:
-                resourceId = R.drawable.s4x4;
-                break;
-            case 3:
-                resourceId = R.drawable.s6x2;
-                break;
-            case 4:
-                resourceId = R.drawable.s6x4;
-                break;
+//            case 1:
+//                resourceId = R.drawable.s4x2;
+//                break;
+//            case 2:
+//                resourceId = R.drawable.s4x4;
+//                break;
+//            case 3:
+//                resourceId = R.drawable.s6x2;
+//                break;
+//            case 4:
+//                resourceId = R.drawable.s6x4;
+//                break;
             case 5:
                 resourceId = R.drawable.s6x6;
                 break;
-            case 6:
-                resourceId = R.drawable.s8x2;
-                break;
-            case 7:
-                resourceId = R.drawable.s8x2x4;
-                break;
-            case 8:
-                resourceId = R.drawable.s8x2x6;
-                break;
-            case 9:
-                resourceId = R.drawable.s8x4;
-                break;
+//            case 6:
+//                resourceId = R.drawable.s8x2;
+//                break;
+//            case 7:
+//                resourceId = R.drawable.s8x2x4;
+//                break;
+//            case 8:
+//                resourceId = R.drawable.s8x2x6;
+//                break;
+//            case 9:
+//                resourceId = R.drawable.s8x4;
+//                break;
             case 10:
                 resourceId = R.drawable.s8x4x4;
                 break;
-            case 11:
-                resourceId = R.drawable.s8x6;
-                break;
-            case 12:
-                resourceId = R.drawable.s8x8;
-                break;
+//            case 11:
+//                resourceId = R.drawable.s8x6;
+//                break;
+//            case 12:
+//                resourceId = R.drawable.s8x8;
+//                break;
             case 13:
                 resourceId = R.drawable.s10x4x6;
                 break;

@@ -29,8 +29,6 @@ public class AddInfoBlockActivity extends BaseActivity {
     boolean isNew = false;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,13 +40,10 @@ public class AddInfoBlockActivity extends BaseActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
 
-
         infoBlockId = getIntent().getStringExtra(Const.EXTRA_INFO_BLOCK_ID);
         page = getIntent().getIntExtra(Const.EXTRA_INFO_BLOCK_PAGE,0);
         propCode = getIntent().getLongExtra(Const.EXTRA_PROP_CODE,0);
         inspectionCode = getIntent().getLongExtra(Const.EXTRA_INSPECTION_CODE,-1);
-
-
 
 
         if(infoBlockId==null){
@@ -64,7 +59,6 @@ public class AddInfoBlockActivity extends BaseActivity {
         openMainFragment();
 
 
-
     }
 
     protected void onPause(){
@@ -74,8 +68,6 @@ public class AddInfoBlockActivity extends BaseActivity {
     private void openMainFragment(){
         getSupportFragmentManager().beginTransaction().replace(R.id.container, AddInfoBlockFragment.newInstance(infoBlockId, page,propCode,inspectionCode, isNew)).commit();
     }
-
-
 
 
     @Override
@@ -93,7 +85,6 @@ public class AddInfoBlockActivity extends BaseActivity {
     public void onBackPressed() {
         saveAndExit();
     }
-
 
 
     private void saveAndExit(){

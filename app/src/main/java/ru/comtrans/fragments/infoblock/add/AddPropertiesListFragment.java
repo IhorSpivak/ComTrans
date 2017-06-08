@@ -147,35 +147,51 @@ public class AddPropertiesListFragment extends BaseFragment {
                                     //Category from resources
                                     break;
                                 case IdsRelationHelperItem.CODE_GENERAL_MODEL:
-                                    //Category from resources
-                                    idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
+                                    if(infoBlockHelper.getMarkValue() != null) {
+                                        //Category from resources
+                                        idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_MARK:
-                                    idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    if(infoBlockHelper.getMarkValue() != null && infoBlockHelper.getModelValue() != null) {
+                                        idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
+                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_MODEL:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    idsRelationHelperItem.setEngineMark(infoBlockHelper.getEngineMarkValue().getId());
+                                    if(infoBlockHelper.getEngineMarkValue() != null && infoBlockHelper.getModelValue() != null) {
+                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                        idsRelationHelperItem.setEngineMark(infoBlockHelper.getEngineMarkValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_POWER:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
+                                    if(infoBlockHelper.getModelValue() != null && infoBlockHelper.getEngineModelValue() != null) {
+                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                        idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_TYPE:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
+                                    if(infoBlockHelper.getModelValue() != null && infoBlockHelper.getEngineModelValue() != null) {
+                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                        idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ENGINE_VOLUME:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
+                                    if(infoBlockHelper.getModelValue() != null && infoBlockHelper.getEngineModelValue() != null) {
+                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                        idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_ECO_CLASS:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
+                                    if(infoBlockHelper.getModelValue() != null && infoBlockHelper.getEngineModelValue() != null) {
+                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                        idsRelationHelperItem.setEngineModel(infoBlockHelper.getEngineModelValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_SHAS_CAPACITY_TOTAL:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    if(infoBlockHelper.getModelValue() != null) {
+                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_SHAS_WHEEL_FORMULA:
                                     if(infoBlockHelper.getModelValue() != null) {
@@ -183,26 +199,36 @@ public class AddPropertiesListFragment extends BaseFragment {
                                     }
                                     break;
                                 case IdsRelationHelperItem.CODE_MARK_KPP:
-                                    idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    if(infoBlockHelper.getMarkValue() != null && infoBlockHelper.getModelValue() != null) {
+                                        idsRelationHelperItem.setMark(infoBlockHelper.getMarkValue().getId());
+                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_MODEL_KPP:
-                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
-                                    idsRelationHelperItem.setKppMark(infoBlockHelper.getMarkKppValue().getId());
+                                    if(infoBlockHelper.getMarkKppValue() != null && infoBlockHelper.getModelValue() != null) {
+                                        idsRelationHelperItem.setModel(infoBlockHelper.getModelValue().getId());
+                                        idsRelationHelperItem.setKppMark(infoBlockHelper.getMarkKppValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_KPP_GEARS:
-                                    idsRelationHelperItem.setKppModel(infoBlockHelper.getModelKppValue().getId());
+                                    if(infoBlockHelper.getModelKppValue() != null) {
+                                        idsRelationHelperItem.setKppModel(infoBlockHelper.getModelKppValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_TEC_KPP_TYPE:
 //                                    idsRelationHelperItem.setModel(infoBlockHelper.getModelKppValue().getId());
                                     break;
                                 case IdsRelationHelperItem.CODE_FORM_ORGANIZATION:
-                                    idsRelationHelperItem.setVehicleOwner(infoBlockHelper.getVehicleOwnerValue().getId());
+                                    if(infoBlockHelper.getVehicleOwnerValue() != null) {
+                                        idsRelationHelperItem.setVehicleOwner(infoBlockHelper.getVehicleOwnerValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_VEHICLE_OWNER:
                                     break;
                                 case IdsRelationHelperItem.CODE_MODEL_KHOU:
-                                    idsRelationHelperItem.setKhouMark(infoBlockHelper.getMarkKHOUValue().getId());
+                                    if(infoBlockHelper.getMarkKHOUValue() != null) {
+                                        idsRelationHelperItem.setKhouMark(infoBlockHelper.getMarkKHOUValue().getId());
+                                    }
                                     break;
                                 case IdsRelationHelperItem.CODE_MODEL_KMU:
                                     idsRelationHelperItem.setKmuMark(infoBlockHelper.getMarkKMUValue().getId());
