@@ -228,7 +228,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case MainItem.TYPE_PHOTO:
                 final PhotoViewHolder photoViewHolder = ((PhotoViewHolder) viewHolder);
 
-                    ListItem tireSchemeValue = infoBlockHelper.getTireSchemeValue();
+                ListItem tireSchemeValue = infoBlockHelper.getTireSchemeValue();
 
                 if (item.getPhotoItems() != null && item.getPhotoItems().size() > 0) {
                     if (item.getPhotoItems().get(item.getPhotoItems().size() - 1).isDefect()) {
@@ -706,14 +706,12 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         editTextViewHolder.textInputLayout.setHint(item.getName() + "*");
                     else
                         editTextViewHolder.textInputLayout.setHint(item.getName());
-                    editTextViewHolder.editText.setInputType(InputType.TYPE_CLASS_PHONE);
                     editTextViewHolder.textWatcher.updatePosition(viewHolder.getAdapterPosition());
-                    if(item.getValue()!=null&&!item.getValue().equals("")) {
+                    if(item.getValue()!=null&&!item.getValue().equals("")&&editTextViewHolder.editText.getText().toString().equals("")) {
                         editTextViewHolder.editText.setText(item.getValue());
-                    }else {
-                        editTextViewHolder.editText.setText("+7");
                     }
-                    editTextViewHolder.editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(12)});
+                    editTextViewHolder.editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16)});
+                    editTextViewHolder.editText.addTextChangedListener(new PhoneTextWatcher(editTextViewHolder.editText,context));
                     editTextViewHolder.editText.setKeyListener(DigitsKeyListener.getInstance("0123456789+-()"));
 
                     editTextViewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -726,10 +724,12 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     });
 
                     if(item.isError()){
+                        Selection.setSelection(editTextViewHolder.editText.getText(), editTextViewHolder.editText
+                                .getText().length());
                         editTextViewHolder.textInputLayout.setErrorEnabled(true);
-                        if(item.getValue().equals("")||item.getValue().equals("+7"))
+                        if(item.getValue().equals("")||item.getValue().equals("+7("))
                             editTextViewHolder.textInputLayout.setError(context.getString(R.string.required_field));
-                        else if(item.getValue().length()<12)
+                        else if(item.getValue().length()<16)
                             editTextViewHolder.textInputLayout.setError(context.getString(R.string.phone_invalid));
                     }
 
@@ -746,16 +746,9 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         @Override
                         public void afterTextChanged(Editable s) {
-                            if (!s.toString().startsWith("+")) {
-                                editTextViewHolder.editText.setText("+");
-                                Selection.setSelection(editTextViewHolder.editText.getText(), editTextViewHolder.editText
-                                        .getText().length());
 
-                            } else {
 
-                            }
-
-                            if(s.length()==12){
+                            if(s.length()==16){
                                 editTextViewHolder.textInputLayout.setErrorEnabled(false);
                             }
 
@@ -844,39 +837,37 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             for (MainItem item :
                                     items) {
 
-
-
                                 if (item.isRequired()) {
                                     switch (item.getType()) {
                                         case MainItem.TYPE_LIST:
                                             if (item.getListValue() != null) {
-                                            if (item.getListValue().getId() == -1) {
-                                                item.setError(true);
-                                                notifyItemChanged(items.indexOf(item));
-                                                if (scrollPosition == -1) {
-                                                    scrollPosition = items.indexOf(item);
+                                                if (item.getListValue().getId() == -1) {
+                                                    item.setError(true);
+                                                    notifyItemChanged(items.indexOf(item));
+                                                    if (scrollPosition == -1) {
+                                                        scrollPosition = items.indexOf(item);
+                                                    }
+                                                    isMainEntered = false;
+                                                    break;
+                                                } else {
+                                                    item.setError(false);
                                                 }
-                                                isMainEntered = false;
-                                                break;
-                                            } else {
-                                                item.setError(false);
                                             }
-                                        }
 
                                             break;
                                         case MainItem.TYPE_PHOTO:
                                             ArrayList<PhotoItem> photoItems  = infoBlockHelper.getPhotos(page, position);
 
                                             if(photoItems != null){
-                                                    for (int i = 0; i < photoItems.size(); i++) {
-                                                        PhotoItem photoItem = photoItems.get(i);
-                                                        if (photoItem.isRequired() && photoItem.getImagePath() == null) {
-                                                            photoItem.setError(true);
-                                                            isMainEntered = false;
-                                                            item.setError(true);
-                                                            notifyItemChanged(items.indexOf(item));
-                                                        }
+                                                for (int i = 0; i < photoItems.size(); i++) {
+                                                    PhotoItem photoItem = photoItems.get(i);
+                                                    if (photoItem.isRequired() && photoItem.getImagePath() == null) {
+                                                        photoItem.setError(true);
+                                                        isMainEntered = false;
+                                                        item.setError(true);
+                                                        notifyItemChanged(items.indexOf(item));
                                                     }
+                                                }
                                             }
                                             break;
                                         case MainItem.TYPE_CALENDAR:
@@ -906,8 +897,8 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                             break;
                                         case MainItem.TYPE_PHONE:
                                             if (item.getValue() != null) {
-                                                if(item.getValue().equals(context.getString(R.string.phone_prefix_bracket))
-                                                        ||item.getValue().equals("")||item.getValue().length()!=12){
+                                                if(item.getValue().equals("+7(")
+                                                        ||item.getValue().equals("")||item.getValue().length()!=16){
                                                     item.setError(true);
                                                     notifyItemChanged(items.indexOf(item));
                                                     isMainEntered = false;
@@ -1100,6 +1091,7 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
+
     private static class EditTextViewHolder extends CustomViewHolder {
         public TextInputEditText editText;
         public TextInputLayout textInputLayout;
@@ -1242,9 +1234,9 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     return new NonEditableViewHolder(v);
                 }
             case MainItem.TYPE_EMAIL:
-            case MainItem.TYPE_PHONE:
             case MainItem.TYPE_STRING:
             case MainItem.TYPE_NUMBER:
+            case MainItem.TYPE_PHONE:
                 if (isEditable) {
                     v = LayoutInflater.from(parent.getContext())
                             .inflate(R.layout.edit_text_item, parent, false);
@@ -1256,6 +1248,18 @@ public class InfoblockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                     return new NonEditableViewHolder(v);
                 }
+//            case MainItem.TYPE_PHONE:
+//                if (isEditable) {
+//                    v = LayoutInflater.from(parent.getContext())
+//                            .inflate(R.layout.phone_item, parent, false);
+//
+//                    return new PhoneViewHolder(v, new InfoBlockTextWatcher());
+//                } else {
+//                    v = LayoutInflater.from(parent.getContext())
+//                            .inflate(R.layout.non_editable_item, parent, false);
+//
+//                    return new NonEditableViewHolder(v);
+//                }
             case MainItem.TYPE_HEADER:
                 v = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.header_item, parent, false);

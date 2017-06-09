@@ -3,6 +3,7 @@ package ru.comtrans.helpers;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 
 import ru.comtrans.R;
@@ -37,6 +38,11 @@ public class PhoneTextWatcher implements TextWatcher {
         String tmp;
         if (value.length() > posNum) {
             switch (value.length()) {
+//                case 1:
+//                    tmp ="+7("+value;
+//                    etTelephone.setText(tmp);
+//                    etTelephone.setSelection(etTelephone.getText().length());
+//                    break;
                 case 6:
                     tmp = value + ")";
                     etTelephone.setText(tmp);
@@ -80,7 +86,8 @@ public class PhoneTextWatcher implements TextWatcher {
         }
         posNum = value.length();
         if (posNum < 3) {
-            etTelephone.setText(String.format(context.getString(R.string.phone_prefix_bracket_value), value));
+            //  etTelephone.setText(String.format(context.getString(R.string.phone_prefix_bracket_value), value));
+            etTelephone.setText("+7(");
             etTelephone.setSelection(etTelephone.getText().length());
         }
 
